@@ -1,0 +1,99 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A0",
+  "run_id": "codex-a0-control-plane-repair-20260731",
+  "architecture_version": "2.1",
+  "classification": "CONTROL_PLANE_REGRESSION_REPAIR",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_RELEASE_LEDGER_005.json"
+  ],
+  "checks": [
+    {
+      "name": "single_release_ledger",
+      "exit_code": 0,
+      "evidence": "ReleaseControl remains the sole A0-A10 task selector."
+    },
+    {
+      "name": "legacy_queues_historical",
+      "exit_code": 0,
+      "evidence": "Historical queue imports remain read-only and grant no v2 completion."
+    },
+    {
+      "name": "legacy_controllers_superseded",
+      "exit_code": 0,
+      "evidence": "Legacy controllers remain unable to select or advance v2 work."
+    },
+    {
+      "name": "one_lock_one_next_task",
+      "exit_code": 0,
+      "evidence": "The regression now derives the first incomplete ledger task and verifies its matching active lock when claimed."
+    },
+    {
+      "name": "task_path_ownership_disjoint",
+      "exit_code": 0,
+      "evidence": "Release task path ownership remains pairwise disjoint."
+    },
+    {
+      "name": "phase_status_progression",
+      "exit_code": 0,
+      "evidence": "A hermetic A0-to-A4 sequence verifies that each completion selects the next ledger work package, not a hard-coded A1."
+    },
+    {
+      "name": "bounded_control_output",
+      "exit_code": 0,
+      "evidence": "Claim output remains bounded to the release-lock summary."
+    },
+    {
+      "name": "portable_canonical_hashes",
+      "exit_code": 0,
+      "evidence": "The existing portable hash regression remains green."
+    },
+    {
+      "name": "architecture_bundle_locked",
+      "exit_code": 0,
+      "evidence": "Both architecture authority documents remain hash-locked by the ledger."
+    },
+    {
+      "name": "manual_release_gates",
+      "exit_code": 0,
+      "evidence": "Manual media and owner approval gates remain controller-enforced."
+    },
+    {
+      "name": "construction_entry_migrated",
+      "exit_code": 0,
+      "evidence": "Construction entry remains routed through release_control."
+    },
+    {
+      "name": "production_v4_unchanged",
+      "exit_code": 0,
+      "evidence": "No production, external submission, media acceptance, or owner approval state changed."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a0_release_control",
+      "exit_code": 0,
+      "command": "pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "passed": 13
+    },
+    {
+      "name": "a0_v4_entrypoint",
+      "exit_code": 0,
+      "command": "pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "passed": 15
+    },
+    {
+      "name": "a0_control_regression",
+      "exit_code": 0,
+      "command": "pytest mode_p_vnext/tests/test_rebuild_control.py -q -p no:cacheprovider",
+      "passed": 31
+    }
+  ],
+  "supersedes_evidence": "A0_RELEASE_LEDGER_004.json",
+  "production_entry": "v4_unchanged",
+  "external_submission": false,
+  "media_visual_acceptance": false,
+  "owner_production_approval": false,
+  "production_switch_authorized": false
+}

@@ -191,18 +191,16 @@ def test_release_control_has_one_legal_next_task_and_at_most_one_matching_lock()
     control = ReleaseControl.default()
     assert control.audit() == []
     state = control.load_state()
-    if "A0" in state["completed_tasks"]:
-        assert control.next_task().task_id == "A1"
-        assert state["status"] == "ARCHITECTURE_MIGRATION_REQUIRED"
-        assert state["current_task"] is None
-        assert state["current_owner"] is None
-        assert state["lock_token"] is None
-        assert state["next_task"] == "A1"
-        assert not control.lock_path.exists()
-    elif state["status"] == "IN_PROGRESS":
-        assert control.next_task().task_id == "A0"
-        assert state["completed_tasks"] == []
-        assert state["current_task"] == "A0"
+    completed = set(state["completed_tasks"])
+    expected = next(
+        (task for task in control.load_tasks() if task.task_id not in completed),
+        None,
+    )
+
+    if state["status"] == "IN_PROGRESS":
+        assert expected is not None
+        assert control.next_task().task_id == expected.task_id
+        assert state["current_task"] == expected.task_id
         assert state["current_owner"]
         assert state["lock_token"]
         lock = _read_json(control.lock_path)
@@ -210,13 +208,18 @@ def test_release_control_has_one_legal_next_task_and_at_most_one_matching_lock()
         assert lock["owner"] == state["current_owner"]
         assert lock["token"] == state["lock_token"]
     else:
-        assert control.next_task().task_id == "A0"
-        assert state["status"] == "BASELINE_REPAIR_REQUIRED"
-        assert state["completed_tasks"] == []
+        actual = control.next_task()
+        if expected is not None:
+            assert actual is not None
+            assert actual.task_id == expected.task_id
+            assert state["status"] == expected.pending_status
+            assert state["next_task"] == expected.task_id
+        else:
+            assert actual is None
+            assert state["next_task"] is None
         assert state["current_task"] is None
         assert state["current_owner"] is None
         assert state["lock_token"] is None
-        assert state["next_task"] == "A0"
         assert not control.lock_path.exists()
 
     historical_locks = [
@@ -369,6 +372,7 @@ def _minimal_release_state():
 
 
 def test_phase_status_progression_uses_the_next_work_package(tmp_path):
+    work_packages = ["A0", "A1", "A2", "A3", "A4"]
     tasks = {
         "schema_version": "2.0",
         "architecture_version": "2.1",
@@ -377,8 +381,13 @@ def test_phase_status_progression_uses_the_next_work_package(tmp_path):
         "status_after_all": "DONE",
         "tasks": [
             _minimal_release_task("A0", [], "BASELINE_REPAIR_REQUIRED"),
-            _minimal_release_task(
-                "A1", ["A0"], "ARCHITECTURE_MIGRATION_REQUIRED"
+            *(
+                _minimal_release_task(
+                    task_id,
+                    [work_packages[index - 1]],
+                    "ARCHITECTURE_MIGRATION_REQUIRED",
+                )
+                for index, task_id in enumerate(work_packages[1:], start=1)
             ),
         ],
     }
@@ -386,29 +395,32 @@ def test_phase_status_progression_uses_the_next_work_package(tmp_path):
     _write_json(control.tasks_path, tasks)
     _write_json(control.state_path, _minimal_release_state())
 
-    claim = control.claim("A0", "phase-test")
-    evidence = (
-        tmp_path
-        / "MODE_P_REDESIGN_PROJECT"
-        / "vnext_repair_evidence"
-        / "A0_PHASE.json"
-    )
-    _write_json(
-        evidence,
-        {
-            "task_id": "A0",
-            "changed_paths": [],
-            "checks": [{"name": "ok", "exit_code": 0}],
-        },
-    )
-    state = control.complete("A0", "phase-test", claim["token"], evidence)
-    assert state["status"] == "ARCHITECTURE_MIGRATION_REQUIRED"
-    assert state["next_task"] == "A1"
+    for index, task_id in enumerate(work_packages[:-1]):
+        claim = control.claim(task_id, "phase-test")
+        evidence = (
+            tmp_path
+            / "MODE_P_REDESIGN_PROJECT"
+            / "vnext_repair_evidence"
+            / f"{task_id}_PHASE.json"
+        )
+        _write_json(
+            evidence,
+            {
+                "task_id": task_id,
+                "changed_paths": [],
+                "checks": [{"name": "ok", "exit_code": 0}],
+            },
+        )
+        state = control.complete(task_id, "phase-test", claim["token"], evidence)
+        expected = work_packages[index + 1]
+        assert state["status"] == "ARCHITECTURE_MIGRATION_REQUIRED"
+        assert state["next_task"] == expected
+        assert control.next_task().task_id == expected
 
-    claim = control.claim("A1", "phase-test")
-    state = control.fail("A1", "phase-test", claim["token"], None)
+    claim = control.claim("A4", "phase-test")
+    state = control.fail("A4", "phase-test", claim["token"], None)
     assert state["status"] == "ARCHITECTURE_MIGRATION_REQUIRED"
-    assert state["next_task"] == "A1"
+    assert state["next_task"] == "A4"
 
 
 def test_claim_cli_summary_is_bounded():
