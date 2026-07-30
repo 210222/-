@@ -1,0 +1,94 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A1",
+  "run_id": "codex-a1-canonical-domain-v2-1-20260730",
+  "architecture_version": "2.1",
+  "architecture_authority": {
+    "base": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
+    "normative_amendment": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md",
+    "decision": "A1 freezes pure canonical schemas and adapters only; assembly, retrieval, projections, prompts, and media behavior remain owned by their later tasks."
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/compat/__init__.py",
+    "01_调度器/mode_p_vnext/compat/legacy_checkpoint.py",
+    "01_调度器/mode_p_vnext/domain/__init__.py",
+    "01_调度器/mode_p_vnext/domain/artifact.py",
+    "01_调度器/mode_p_vnext/domain/blocking.py",
+    "01_调度器/mode_p_vnext/domain/decisions.py",
+    "01_调度器/mode_p_vnext/domain/direction.py",
+    "01_调度器/mode_p_vnext/domain/evidence.py",
+    "01_调度器/mode_p_vnext/domain/facts.py",
+    "01_调度器/mode_p_vnext/domain/ids.py",
+    "01_调度器/mode_p_vnext/domain/knowledge.py",
+    "01_调度器/mode_p_vnext/domain/projection.py",
+    "01_调度器/mode_p_vnext/domain/release.py",
+    "01_调度器/mode_p_vnext/domain/time.py",
+    "01_调度器/mode_p_vnext/domain/vec.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_CANONICAL_DOMAIN_001.json"
+  ],
+  "checks": [
+    {
+      "name": "canonical_artifact_envelope",
+      "exit_code": 0,
+      "evidence": "ArtifactEnvelope canonicalizes its content, validates local SHA-256 binding, freezes dependencies, and rejects a forged content hash."
+    },
+    {
+      "name": "canonical_24000_tick_timebase",
+      "exit_code": 0,
+      "evidence": "CanonicalTimeline accepts only 24000 ticks/second; TickRange is half-open and GenerationSegmentTimeline begins locally at zero."
+    },
+    {
+      "name": "draft_artifact_separation",
+      "exit_code": 0,
+      "evidence": "The four creative Draft families do not expose IDs, hashes, dependency digests, ticks, timelines, or VEC contract identifiers; IdFactory and ArtifactEnvelope are local-domain assembly types."
+    },
+    {
+      "name": "no_duplicate_domain_authority",
+      "exit_code": 0,
+      "evidence": "Every domain module declares a unique canonical type authority list; the A1 test checks both module-local and package-wide uniqueness."
+    },
+    {
+      "name": "domain_schemas_frozen_for_downstream",
+      "exit_code": 0,
+      "evidence": "All canonical dataclass schemas are frozen and every A1 module declares schema version 2.1 for downstream consumers."
+    },
+    {
+      "name": "legacy_read_adapter_only",
+      "exit_code": 0,
+      "evidence": "The one-way B0/K2 adapter reads the retained JSON checkpoint into a canonical BlockingDraft ArtifactEnvelope and the mechanical import check forbids imports from legacy runtime code."
+    }
+  ],
+  "review": {
+    "finding": "Legacy vNext contracts and schema modules duplicate authority for artifacts, facts, timelines, and blocking; their time semantics cannot be imported into v2.1.",
+    "root_cause": "The prior implementation grew as historical pipeline contracts rather than a single pure domain boundary.",
+    "considered_options": [
+      {
+        "option": "Reuse legacy schema classes directly",
+        "decision": "rejected",
+        "reason": "Would retain duplicate authority and allow old pipeline/runtime dependencies to shape canonical v2.1 data."
+      },
+      {
+        "option": "Create a parallel v2.1 domain with bidirectional adapters",
+        "decision": "rejected",
+        "reason": "Bidirectional conversion would let historical representations become a new normative write path."
+      },
+      {
+        "option": "Create pure frozen canonical schemas with a one-way legacy reader",
+        "decision": "accepted",
+        "reason": "It preserves historical evidence while making v2.1 the only authority for all new downstream work."
+      }
+    ],
+    "residual_risk": "A1 defines schemas only. Local VEC assembly, retrieval, renderer equivalence, bounded prompt compilation, media evidence, and production gates remain deliberately deferred to A2-A10."
+  },
+  "observed_test_result": {
+    "command": "pytest mode_p_vnext/tests/test_a1_domain_model.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+    "exit_code": 0,
+    "passed": 22
+  },
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}
