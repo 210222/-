@@ -1,0 +1,55 @@
+{
+  "schema_version": "2.0",
+  "task_id": "A0",
+  "run_id": "codex-a0-architecture-v2-20260730",
+  "architecture_version": "2.0",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/release_control.py",
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "01_调度器/mode_p/test_active_entrypoints.py",
+    ".claude/commands/mode-p-vnext-rebuild.md",
+    "MODE_P_REDESIGN_PROJECT/README.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_STATE.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_RELEASE_LEDGER_001.json"
+  ],
+  "checks": [
+    {
+      "name": "single_release_ledger",
+      "exit_code": 0,
+      "evidence": "ReleaseControl is bound to the only architecture-v2 task, state, and lock paths; audit returned no issues."
+    },
+    {
+      "name": "legacy_queues_historical",
+      "exit_code": 0,
+      "evidence": "R, DDO, and CPL snapshots are imported with HISTORICAL_READ_ONLY disposition and cannot grant v2 completion."
+    },
+    {
+      "name": "one_lock_one_next_task",
+      "exit_code": 0,
+      "evidence": "The sole ReleaseLedger returned A0 before claim and created one matching exclusive lock."
+    },
+    {
+      "name": "construction_entry_migrated",
+      "exit_code": 0,
+      "evidence": "/mode-p-vnext-rebuild routes audit, next, claim, complete, fail, recover, and invalidate through release_control."
+    },
+    {
+      "name": "production_v4_unchanged",
+      "exit_code": 0,
+      "evidence": "31 focused control, compatibility, and active-entrypoint checks passed; all external and production gates remain false."
+    }
+  ],
+  "observed_test_result": {
+    "command": "pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_cpl_0_completion_control.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+    "exit_code": 0,
+    "passed": 31
+  },
+  "legacy_queue_disposition": "HISTORICAL_READ_ONLY",
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

@@ -2,13 +2,20 @@
 
 > vNext 重构入口：`/mode-p-vnext-rebuild [task_id]`
 >
-> vNext 权威规范：`MODE_P_VNEXT_LOOP_SPEC.md`
+> vNext v2.1 权威架构包：
+> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md` +
+> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md`
 >
-> vNext 工程协议：`MODE_P_VNEXT_REBUILD_LOOP.md`
+> vNext v2.1 工程协议：`MODE_P_VNEXT_CONSTRUCTION_V2.md`
 >
-> vNext 实施与状态：`MODE_P_VNEXT_IMPLEMENTATION_PLAN.md`、`MODE_P_VNEXT_PROGRESS.md`
+> vNext v2 任务与状态：`MODE_P_VNEXT_RELEASE_TASKS.json`、
+> `MODE_P_VNEXT_RELEASE_STATE.json`
 >
-> 迁移方式：隔离重写后原子替换。以下 v3/v4 章程保留为当前生产基线说明，不作为 vNext 任务源。
+> 唯一控制命令：`python -m mode_p_vnext.release_control`
+>
+> 迁移方式：模块化单体内隔离迁移，验证后再提出独立生产切换方案。旧 R、DDO、
+> CPL、V0–V10 任务及以下 v3/v4 章程均只作历史证据和当前生产基线说明，不再是
+> vNext 施工任务源。
 
 > 状态：v3.0 活动管道重构与回归验证中。
 > 实施入口：`IMPLEMENTATION_PLAN.md`

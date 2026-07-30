@@ -1,0 +1,107 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A0",
+  "run_id": "codex-a0-final-portable-v2-1-20260730",
+  "architecture_version": "2.1",
+  "architecture_authority": {
+    "base": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
+    "normative_amendment": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md",
+    "decision": "Architecture is normative; the construction plan is its executable projection."
+  },
+  "changed_paths": [
+    ".claude/commands/mode-p-vnext-rebuild.md",
+    "01_调度器/mode_p/test_active_entrypoints.py",
+    "01_调度器/mode_p_vnext/rebuild_control.py",
+    "01_调度器/mode_p_vnext/release_control.py",
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "CLAUDE.md",
+    "MODE_P_REDESIGN_PROJECT/README.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_STATE.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_ARCHITECTURE_AUTHORITY_BLOCKER_002.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_RELEASE_LEDGER_001.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_RELEASE_LEDGER_003.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_RELEASE_LEDGER_004.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/ARCHITECTURE_AUTHORITY_DECISION_001.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_CONSTRUCTION_PLAN_AUDIT_V2.0.md"
+  ],
+  "checks": [
+    {
+      "name": "single_release_ledger",
+      "exit_code": 0,
+      "evidence": "ReleaseControl is the only A0-A10 selector and owns the sole release state and lock."
+    },
+    {
+      "name": "legacy_queues_historical",
+      "exit_code": 0,
+      "evidence": "R, DDO, and CPL snapshots remain preserved with HISTORICAL_READ_ONLY disposition and grant no v2.1 completion."
+    },
+    {
+      "name": "legacy_controllers_superseded",
+      "exit_code": 0,
+      "evidence": "Legacy next, claim, complete, and invalidate paths fail closed when the sole ReleaseLedger exists; read-only audit/status and stale-lock cleanup remain possible."
+    },
+    {
+      "name": "one_lock_one_next_task",
+      "exit_code": 0,
+      "evidence": "The release audit returned one eligible A0 task, and claim created one matching lock and state transition."
+    },
+    {
+      "name": "task_path_ownership_disjoint",
+      "exit_code": 0,
+      "evidence": "All A0-A10 allowed path patterns are pairwise disjoint; numbered Evidence globs use an underscore delimiter."
+    },
+    {
+      "name": "phase_status_progression",
+      "exit_code": 0,
+      "evidence": "Pending states are derived from the next task phase, including A7 architecture migration, A8 text shadow, A9 holdout, and A10 media."
+    },
+    {
+      "name": "bounded_control_output",
+      "exit_code": 0,
+      "evidence": "Claim CLI returned six summary fields while the complete manifest remained only in the lock."
+    },
+    {
+      "name": "portable_canonical_hashes",
+      "exit_code": 0,
+      "evidence": "UTF-8 text hashes normalize CRLF to LF, while binary hashes remain byte-exact; focused regression covers both paths."
+    },
+    {
+      "name": "architecture_bundle_locked",
+      "exit_code": 0,
+      "evidence": "Every loaded A task locks both the unchanged v2.0 base hash and the v2.1 normative amendment hash; state was updated only through rebase-architecture."
+    },
+    {
+      "name": "manual_release_gates",
+      "exit_code": 0,
+      "evidence": "A10 completion requires separately recorded media and owner Evidence with live hashes; owner approval binds the current media hash and cannot authorize production."
+    },
+    {
+      "name": "construction_entry_migrated",
+      "exit_code": 0,
+      "evidence": "Root guidance, README, construction protocol, and /mode-p-vnext-rebuild all select release_control and the v2.1 authority bundle."
+    },
+    {
+      "name": "production_v4_unchanged",
+      "exit_code": 0,
+      "evidence": "A10 checks production_entry before completion; A0 leaves all external, media, owner, and production gates false."
+    }
+  ],
+  "observed_test_result": {
+    "command": "pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_rebuild_control.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+    "exit_code": 0,
+    "passed": 59
+  },
+  "review_records": [
+    "ARCHITECTURE_AUTHORITY_DECISION_001.md",
+    "MODE_P_VNEXT_CONSTRUCTION_PLAN_AUDIT_V2.0.md"
+  ],
+  "supersedes_evidence": "A0_RELEASE_LEDGER_003.json",
+  "legacy_queue_disposition": "HISTORICAL_READ_ONLY",
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

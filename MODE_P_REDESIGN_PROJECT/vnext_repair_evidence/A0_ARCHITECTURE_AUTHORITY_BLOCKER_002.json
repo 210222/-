@@ -1,0 +1,55 @@
+{
+  "schema_version": "2.0",
+  "task_id": "A0",
+  "run_id": "codex-a0-plan-audit-20260730",
+  "status": "FAILED_GOVERNANCE_REBASE_REQUIRED",
+  "failure_class": "ARCHITECTURE_CHANGE_REQUIRED",
+  "reason": "The construction-plan audit found both plan defects and architecture ambiguities. Architecture authority must be revised and re-locked before A0 can be completed honestly.",
+  "authority_decision": [
+    "current explicit user requirements and production safety",
+    "normative architecture",
+    "derived construction plan",
+    "legacy implementation and evidence"
+  ],
+  "architecture_ambiguities": [
+    {
+      "id": "ARCH-AMB-001",
+      "summary": "A10 combines media evidence and owner approval while the ReleaseLedger phase model defines them as separate gates."
+    },
+    {
+      "id": "ARCH-AMB-002",
+      "summary": "The architecture requires artifact drift detection but does not explicitly assign exclusive write ownership of each artifact to one work package."
+    }
+  ],
+  "construction_defects": [
+    {
+      "id": "PLAN-001",
+      "summary": "The inherited controller hard-codes REPAIR_REQUIRED after every nonterminal task instead of preserving architecture phases."
+    },
+    {
+      "id": "PLAN-002",
+      "summary": "A1/A2 artifact paths overlap with later A tasks, so legitimate downstream edits would invalidate upstream evidence."
+    },
+    {
+      "id": "PLAN-003",
+      "summary": "Evidence glob A1*.json can also match A10 evidence."
+    },
+    {
+      "id": "PLAN-004",
+      "summary": "Legacy controllers and root guidance can still select obsolete R/DDO/CPL work."
+    },
+    {
+      "id": "PLAN-005",
+      "summary": "Claim output serializes the complete workspace manifest and needlessly expands the model context."
+    },
+    {
+      "id": "PLAN-006",
+      "summary": "A10 manual media and owner gates can be represented only as self-reported check names in the first plan."
+    }
+  ],
+  "required_action": "Release the A0 lock through fail, revise the architecture authority, regenerate the construction registry, and rerun A0 from a new claim.",
+  "media_visual_acceptance": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

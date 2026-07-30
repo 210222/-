@@ -82,26 +82,25 @@ Gate reports, or fixed revision-round limits as active MODE:P behavior.
 
 ## Implementation work
 
-### vNext rebuild repair gate
+### vNext architecture-v2.1 release gate
 
-vNext engineering is currently in `REPAIR_REQUIRED`, governed by:
+vNext engineering is governed only by the architecture-v2.1 ReleaseLedger:
 
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_LOOP_REPAIR_PLAN.md`
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REPAIR_TASKS.json`
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REBUILD_STATE.json`
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REBUILD_LOOP.md`
+- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md`
+- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md`
+- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json`
+- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_STATE.json`
+- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md`
 - `.claude/commands/mode-p-vnext-rebuild.md`
 
-For `/mode-p-vnext-rebuild`, never use the old v4 `IMPLEMENTATION_PLAN.md` or
-`PROGRESS.md` as the task source. Run `python -m mode_p_vnext.rebuild_control
-audit/status/next/claim/complete/fail/recover/invalidate` from `01_调度器`. The model must not directly edit
-machine state, exclusive locks, completion lists, or task checkboxes. Until the
-repair controller emits `V_TASK_REVALIDATION_REQUIRED`, only R tasks are legal;
-V0-V10, Shadow, Pilot, Canary, and Production are blocked.
-
-The SD2 research-source family and its minimum-context loading rules are defined
-in `MODE_P_VNEXT_REBUILD_LOOP.md`; research documents remain read-only and never
-replace current capability-profile facts or higher-weight Golden evidence.
+For `/mode-p-vnext-rebuild`, run `python -m mode_p_vnext.release_control
+audit/status/next/claim/complete/fail/recover/invalidate` from `01_调度器`.
+The model must not directly edit machine state, exclusive locks, completion
+lists, release gates, or task checkboxes. R, DDO, CPL, and V0-V10 controllers
+are historical/read-only task sources after the sole ledger exists. A10 media
+acceptance and owner approval are separate hash-bound gates; the model must
+never record owner approval for the user. Until a separately authorized
+production-switch task succeeds, v4 remains the sole production path.
 
 The following legacy instructions apply only `/mode-p-rebuild`, never
 `/mode-p-vnext-rebuild`: obey `MODE_P_REDESIGN_PROJECT/IMPLEMENTATION_PLAN.md` and

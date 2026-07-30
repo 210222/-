@@ -237,19 +237,23 @@ class ActiveCommandTests(unittest.TestCase):
         self.assertIn("vNext engineering task", meta["description"])
         self.assertNotIn("Agent", meta["allowed-tools"])
         required = (
-            "MODE_P_VNEXT_REBUILD_LOOP.md",
-            "MODE_P_VNEXT_LOOP_REPAIR_PLAN.md",
-            "MODE_P_VNEXT_REPAIR_TASKS.json",
-            "MODE_P_VNEXT_REBUILD_STATE.json",
-            "01_调度器/mode_p_vnext/",
-            "one task",
+            "MODE_P_VNEXT_CONSTRUCTION_V2.md",
+            "MODE_P_VNEXT_RELEASE_TASKS.json",
+            "MODE_P_VNEXT_RELEASE_STATE.json",
+            "release_control audit",
+            "release_control status",
+            "release_control next",
+            "release_control claim",
+            "release_control complete",
+            "release_control fail",
+            "release_control recover",
+            "release_control invalidate",
+            "one A0-A10 task",
             "black-box",
-            "PRODUCTION_ENTRY_UNCHANGED",
-            "Do not start Shadow automatically",
-            "rebuild_control audit",
-            "rebuild_control claim",
-            "rebuild_control complete",
-            "Never directly edit the machine state JSON",
+            "PRODUCTION_SWITCH: NOT_PERFORMED",
+            "Do not start Shadow, media generation, or production switching automatically",
+            "Never directly edit state",
+            "historical evidence only",
         )
         for marker in required:
             self.assertIn(marker, text)
@@ -257,27 +261,32 @@ class ActiveCommandTests(unittest.TestCase):
             "python -m run_mode_p submit",
             "python -m mode_p_pilot",
             "python -m batch_dp",
+            "python -m mode_p_vnext.rebuild_control claim",
+            "MODE_P_VNEXT_LOOP_REPAIR_PLAN.md",
+            "MODE_P_VNEXT_REPAIR_TASKS.json",
         )
         for marker in forbidden:
             self.assertNotIn(marker, text)
 
         command = _read(".claude/commands/mode-p-vnext-rebuild.md")
         root_guidance = _read("CLAUDE.md")
-        loop = _read("MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REBUILD_LOOP.md")
+        construction = _read(
+            "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md"
+        )
 
         for marker in (
-            "rebuild_control audit",
-            "rebuild_control status",
-            "rebuild_control next",
-            "rebuild_control claim",
-            "rebuild_control complete",
-            "rebuild_control fail",
-            "rebuild_control recover",
-            "rebuild_control invalidate",
+            "release_control audit",
+            "release_control status",
+            "release_control next",
+            "release_control claim",
+            "release_control complete",
+            "release_control fail",
+            "release_control recover",
+            "release_control invalidate",
             "verification_commands",
-            "artifact_hashes",
+            "产物哈希",
         ):
-            self.assertIn(marker, command + "\n" + loop)
+            self.assertIn(marker, command + "\n" + construction)
 
         self.assertIn("only `/mode-p-rebuild`", root_guidance)
         for stale in (
@@ -288,31 +297,18 @@ class ActiveCommandTests(unittest.TestCase):
             "`MODE_P_VNEXT_PROGRESS.md` 写入命令",
             "/mode-p-vnext-rebuild V0.1",
         ):
-            self.assertNotIn(stale, command + "\n" + loop)
+            self.assertNotIn(stale, command + "\n" + construction)
 
-        loop = _read("MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REBUILD_LOOP.md")
-        for source in (
-            "03_知识库/sd2_model_capability.md",
-            "03_知识库/sd2_storyboard_prompt_quality_standard.md",
-            "03_知识库/导演手册_视觉叙事决策框架.md",
-            "01_调度器/mode_p/knowledge/core/sd2.md",
-        ):
-            self.assertIn(source, loop)
         for marker in (
-            "SD2 专题源集合",
-            "Golden",
-            "sd2_capability_profile.json",
-            "capsules",
-            "source_path",
-            "source_hash",
-            "claim_id",
-            "evidence_tier",
-            "HUMAN_VIDEO_PROMPT",
-            "RENDER_PAYLOAD",
-            "按需检索",
-            "禁止整份加载",
+            "HISTORICAL_READ_ONLY",
+            "B1 Prompt 硬上限 12K",
+            "B1 Draft Schema 硬上限 4.5K",
+            "模型只输出 Draft",
+            "文本验证不能设置 `media_visual_acceptance=true`",
+            "任何 A 任务都不得修改 `/mode-p-pilot`",
+            "首个合法施工任务只能是 A0",
         ):
-            self.assertIn(marker, loop)
+            self.assertIn(marker, construction)
 
     def test_real_model_acceptance_is_an_explicit_separate_command(self) -> None:
         rebuild = _read(".claude/commands/mode-p-rebuild.md")

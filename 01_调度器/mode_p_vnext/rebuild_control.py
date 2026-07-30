@@ -29,6 +29,9 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Set, 
 TASKS_REL = Path("MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REPAIR_TASKS.json")
 STATE_REL = Path("MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REBUILD_STATE.json")
 LOCK_REL = Path("MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REBUILD.lock.json")
+SOLE_RELEASE_STATE_REL = Path(
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_STATE.json"
+)
 
 _MUTABLE_CONTROL_PATHS = {
     STATE_REL.as_posix(),
@@ -80,7 +83,20 @@ def _canonical_json_bytes(value: Any) -> bytes:
 
 
 def _sha256_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    """Hash text canonically so Git LF/CRLF checkout policy cannot cause drift."""
+
+    payload = path.read_bytes()
+    try:
+        text = payload.decode("utf-8")
+    except UnicodeDecodeError:
+        canonical = payload
+    else:
+        canonical = (
+            text.replace("\r\n", "\n").encode("utf-8")
+            if "\x00" not in text
+            else payload
+        )
+    return hashlib.sha256(canonical).hexdigest()
 
 
 def _atomic_write_json(path: Path, value: Any) -> None:
@@ -283,6 +299,9 @@ class Task:
     required_checks: Sequence[str]
     verification_commands: Sequence[VerificationCommand]
     locked_verification_inputs: Mapping[str, str]
+    phase: str = ""
+    pending_status: str = "REPAIR_REQUIRED"
+    manual_gates: Sequence[str] = ()
 
 
 class RebuildControl:
@@ -318,6 +337,11 @@ class RebuildControl:
 
     def load_tasks(self) -> List[Task]:
         document = self._load_tasks_document()
+        global_locked = document.get("locked_verification_inputs", {})
+        if not isinstance(global_locked, dict):
+            raise ControlError(
+                "registry locked_verification_inputs must be an object"
+            )
         raw_tasks = document.get("tasks")
         if not isinstance(raw_tasks, list) or not raw_tasks:
             raise ControlError("repair task registry must contain a non-empty tasks list")
@@ -361,16 +385,49 @@ class RebuildControl:
                         "verification command names must be non-empty and unique"
                     )
 
+                phase = str(raw.get("phase", ""))
+                pending_status = str(
+                    raw.get("pending_status", "REPAIR_REQUIRED")
+                )
+                if not pending_status.strip():
+                    raise ControlError(
+                        f"task {raw.get('task_id')} pending_status must be non-empty"
+                    )
+                raw_manual_gates = raw.get("manual_gates", [])
+                if (
+                    not isinstance(raw_manual_gates, list)
+                    or not all(
+                        isinstance(gate, str) and gate.strip()
+                        for gate in raw_manual_gates
+                    )
+                    or len(raw_manual_gates) != len(set(raw_manual_gates))
+                ):
+                    raise ControlError(
+                        f"task {raw.get('task_id')} manual_gates must be a "
+                        "unique list of non-empty strings"
+                    )
+
                 # Parse locked_verification_inputs.
                 locked_inputs: Dict[str, str] = {}
-                raw_locked = raw.get("locked_verification_inputs")
+                raw_locked = raw.get("locked_verification_inputs", {})
                 if raw_locked is not None:
                     if not isinstance(raw_locked, dict):
                         raise ControlError(
                             f"task {raw.get('task_id')} locked_verification_inputs "
                             f"must be an object"
                         )
+                    combined_locked = dict(global_locked)
                     for rel_path, expected_hash in raw_locked.items():
+                        if (
+                            rel_path in combined_locked
+                            and combined_locked[rel_path] != expected_hash
+                        ):
+                            raise ControlError(
+                                f"task {raw.get('task_id')} overrides global locked "
+                                f"input with a different hash: {rel_path}"
+                            )
+                        combined_locked[rel_path] = expected_hash
+                    for rel_path, expected_hash in combined_locked.items():
                         norm = _normalise_rel_path(str(rel_path))
                         if not isinstance(expected_hash, str) or len(expected_hash) != 64:
                             raise ControlError(
@@ -399,6 +456,9 @@ class RebuildControl:
                         required_checks=tuple(raw["required_checks"]),
                         verification_commands=tuple(commands),
                         locked_verification_inputs=locked_inputs,
+                        phase=phase,
+                        pending_status=pending_status,
+                        manual_gates=tuple(raw_manual_gates),
                     )
                 )
             except (KeyError, TypeError, ValueError) as exc:
@@ -414,6 +474,25 @@ class RebuildControl:
         if len(mapping) != len(tasks):
             raise ControlError("duplicate task_id in repair task registry")
         return mapping
+
+    def _assert_task_authority(self) -> None:
+        """Prevent historical controllers from selecting or advancing work.
+
+        Read-only audit/status and stale-lock fail/recover remain available so
+        legacy evidence can still be inspected and abandoned safely.
+        """
+
+        if self.state_rel == SOLE_RELEASE_STATE_REL:
+            return
+        release_state_path = self.root / SOLE_RELEASE_STATE_REL
+        if not release_state_path.is_file():
+            return
+        release_state = _read_json(release_state_path)
+        if release_state.get("authority") == "SOLE_VNEXT_CONSTRUCTION_LEDGER":
+            raise ControlError(
+                "legacy construction controller is historical read-only; "
+                "use python -m mode_p_vnext.release_control"
+            )
 
     def _validate_locked_inputs(
         self, task: Task, phase: str
@@ -588,6 +667,7 @@ class RebuildControl:
         return issues
 
     def next_task(self) -> Optional[Task]:
+        self._assert_task_authority()
         issues = self.audit()
         if issues:
             raise ControlError("control audit failed: " + "; ".join(issues))
@@ -604,6 +684,7 @@ class RebuildControl:
         raise ControlError("no eligible task; dependency graph or state is inconsistent")
 
     def claim(self, task_id: str, owner: str) -> Dict[str, Any]:
+        self._assert_task_authority()
         if not owner.strip():
             raise ControlError("owner must be non-empty")
         issues = self.audit()
@@ -860,6 +941,7 @@ class RebuildControl:
         token: str,
         evidence_path: Path,
     ) -> Dict[str, Any]:
+        self._assert_task_authority()
         state = self._require_lock(task_id, owner, token)
         mapping = self._task_map()
         if task_id not in mapping:
@@ -974,7 +1056,6 @@ class RebuildControl:
             )
             state["next_task"] = None
         else:
-            state["status"] = "REPAIR_REQUIRED"
             completed_set = set(completed)
             next_task = next(
                 task
@@ -982,6 +1063,7 @@ class RebuildControl:
                 if task.task_id not in completed_set
                 and all(dep in completed_set for dep in task.depends_on)
             )
+            state["status"] = next_task.pending_status
             state["next_task"] = next_task.task_id
         _atomic_write_json(self.state_path, state)
         self.lock_path.unlink()
@@ -990,6 +1072,7 @@ class RebuildControl:
     def invalidate(self, task_id: str, *, owner: str, reason: str) -> Dict[str, Any]:
         """Reopen a completed task whose evidence no longer proves current code."""
 
+        self._assert_task_authority()
         if self.lock_path.exists():
             raise ControlError("cannot invalidate while an exclusive repair lock exists")
         if not owner.strip():
@@ -1029,7 +1112,7 @@ class RebuildControl:
         completed.remove(task_id)
         state.update(
             {
-                "status": "REPAIR_REQUIRED",
+                "status": mapping[task_id].pending_status,
                 "completed_tasks": completed,
                 "evidence_records": records,
                 "invalidated_records": invalidated,
@@ -1052,6 +1135,9 @@ class RebuildControl:
         evidence_path: Optional[Path],
     ) -> Dict[str, Any]:
         state = self._require_lock(task_id, owner, token)
+        mapping = self._task_map()
+        if task_id not in mapping:
+            raise ControlError(f"unknown repair task: {task_id}")
         record: Dict[str, Any] = {
             "task_id": task_id,
             "failed_at": _utc_now(),
@@ -1065,7 +1151,7 @@ class RebuildControl:
             record["evidence_sha256"] = _sha256_file(resolved)
         state.update(
             {
-                "status": "REPAIR_REQUIRED",
+                "status": mapping[task_id].pending_status,
                 "current_task": None,
                 "current_owner": None,
                 "lock_token": None,
@@ -1093,9 +1179,16 @@ class RebuildControl:
         if alive and not force:
             raise ControlError(f"lock owner process is still alive: pid={pid}")
         state = self.load_state()
+        task_id = str(lock.get("task_id", ""))
+        mapping = self._task_map()
+        pending_status = (
+            mapping[task_id].pending_status
+            if task_id in mapping
+            else "REPAIR_REQUIRED"
+        )
         state.update(
             {
-                "status": "REPAIR_REQUIRED",
+                "status": pending_status,
                 "current_task": None,
                 "current_owner": None,
                 "lock_token": None,
