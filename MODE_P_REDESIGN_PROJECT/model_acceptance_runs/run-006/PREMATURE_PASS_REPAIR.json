@@ -1,0 +1,8 @@
+{
+  "prior_passed_at": "2026-07-18T14:49:09.408219+00:00",
+  "reason": "Premature pass: production feedback used scene submit, leaving batch DP_STATE and episode RUN_STATE unclosed.",
+  "reopened_at": "2026-07-18T14:57:02.326175+00:00",
+  "required_next_step": "close official runtime state, then run guard complete",
+  "run_id": "run-006",
+  "schema_version": "1.0"
+}

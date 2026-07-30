@@ -1,0 +1,2 @@
+FAIL sd2_preflight
+non_visible_language: Scene context contains non-visible expression '内心'. Translate it into observable action or image state.

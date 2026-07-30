@@ -1,0 +1,1 @@
+READY scene_004: scene_004-3 direction flip in-frame; A'Ze enters left [0.0s], pouch under truck [1.0s], exits top-left [2.5s]; pursuers at scene_004-4 [2.0s] and A'Ze scene_004-5 [0.0s] keep leftward; engine scene_004-6 [3.5s] off-screen per L47. (226)

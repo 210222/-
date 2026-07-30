@@ -1,0 +1,198 @@
+{
+  "schema_version": "1.0",
+  "description": "Independent structural signature for R1.3 Golden format validation. Describes section order, counts, sentinel strings, and structural invariants for four archetypes. Does NOT reconstruct or duplicate prompt bodies.",
+  "storyboard_template": {
+    "sections": [
+      {"index": 1, "id": "scene_title", "description": "Scene title with derived duration in seconds"},
+      {"index": 2, "id": "at_references", "description": "@character, @scene, @props reference declarations"},
+      {"index": 3, "id": "style_declaration", "description": "Black-and-white line-art storyboard style, aspect ratio, pencil rendering"},
+      {"index": 4, "id": "color_legend", "description": "Annotation color system: red=body movement, blue=camera movement, green=composition, orange=light direction"},
+      {"index": 5, "id": "shared_anchors", "description": "Shared visual anchors across all panels in the segment"},
+      {"index": 6, "id": "numbering_meaning", "description": "Numbered phase definitions with camera specs per phase"},
+      {"index": 7, "id": "phase_panels", "description": "Phase-separated panel descriptions with timing, shot size, focal length, camera motion, and inline color annotations"},
+      {"index": 8, "id": "hold_handoff", "description": "Final HOLD state and segment handoff/transition"},
+      {"index": 9, "id": "sb_prohibitions", "description": "Storyboard-specific prohibitions (e.g., no soft-edge vignettes)"}
+    ],
+    "sentinel_strings": [
+      "黑白手绘线稿",
+      "故事板",
+      "分镜",
+      "16:9",
+      "红色箭头",
+      "蓝色箭头",
+      "绿色标记",
+      "橙色标记",
+      "共享视觉锚",
+      "画面保持"
+    ],
+    "structural_invariants": {
+      "panel_count_independent_of_duration": true,
+      "integer_second_display": true,
+      "no_one_panel_per_second_assumption": true,
+      "half_open_tick_ownership": true,
+      "color_annotations_inline_in_panels": true,
+      "phase_separators_between_groups": true,
+      "hold_states_explicit": true,
+      "sb_content_black_and_white": true
+    }
+  },
+  "video_template": {
+    "sections": [
+      {"index": 1, "id": "upload_refs", "description": "@upload reference images section"},
+      {"index": 2, "id": "ref_responsibilities", "description": "Explicit responsibility for every reference image"},
+      {"index": 3, "id": "numbering_meaning", "description": "Numbered phase definitions with camera specs and timeline"},
+      {"index": 4, "id": "arrow_explanation", "description": "Storyboard arrow interpretation guide"},
+      {"index": 5, "id": "storyboard_priority", "description": "Storyboard reference priority over text descriptions"},
+      {"index": 6, "id": "target_style", "description": "Live-action or target style, resolution, cinematic quality"},
+      {"index": 7, "id": "shared_lighting", "description": "Shared lighting, stability, and environmental requirements"},
+      {"index": 8, "id": "timeline", "description": "Complete ordered timeline with phase-separated per-second descriptions"},
+      {"index": 9, "id": "audio_track", "description": "@audio track section"},
+      {"index": 10, "id": "prohibitions", "description": "@prohibitions with human-readable routing marker"},
+      {"index": 11, "id": "transition", "description": "@transition / end-of-segment handoff"}
+    ],
+    "sentinel_strings": [
+      "@上传参考图",
+      "@音轨",
+      "@禁止",
+      "@转场",
+      "真人实拍",
+      "电影级光影",
+      "故事板箭头",
+      "故事板参考优先级",
+      "编号含义"
+    ],
+    "structural_invariants": {
+      "one_preferred_execution_only": true,
+      "no_a_b_variants": true,
+      "each_reference_has_responsibility": true,
+      "prohibitions_auditable": true,
+      "routing_marker_present": true,
+      "per_second_timeline_within_phases": true
+    }
+  },
+  "archetypes": {
+    "gun_barrel": {
+      "scene_id": "gun_barrel_ep8",
+      "description": "Attention-contraction chain: WS→MS→MCU→CU→ECU. Rico inspects gun barrel under desk lamp.",
+      "storyboard": {
+        "phase_count": 3,
+        "has_camera_push": true,
+        "has_hold_end": true,
+        "has_handoff": true,
+        "required_sentinels": [
+          "枪管",
+          "Rico",
+          "台灯",
+          "2800K",
+          "枪膛"
+        ]
+      },
+      "video": {
+        "phase_count": 4,
+        "has_prohibitions": true,
+        "required_sentinels": [
+          "真人实拍",
+          "8K",
+          "不是漩涡",
+          "枪管检查"
+        ]
+      }
+    },
+    "audience": {
+      "scene_id": "audience_ep6",
+      "description": "Three internal shots with hard cuts: WS→MCU→ECU. Information-scale progression with audience venue.",
+      "storyboard": {
+        "phase_count": 3,
+        "has_internal_cuts": true,
+        "has_handoff": true,
+        "required_sentinels": [
+          "观众席",
+          "LED",
+          "全景",
+          "中近景",
+          "大特写"
+        ]
+      },
+      "video": {
+        "phase_count": 3,
+        "has_prohibitions": true,
+        "required_sentinels": [
+          "真人实拍",
+          "8K",
+          "观众",
+          "场馆"
+        ]
+      }
+    },
+    "prep_area": {
+      "scene_id": "prep_area_ep6",
+      "description": "Single continuous fixed-camera shot. Delayed character entry, explicit brief pause. No invented internal cuts.",
+      "storyboard": {
+        "phase_count": 1,
+        "has_internal_cuts": false,
+        "is_fixed_camera": true,
+        "required_sentinels": [
+          "备赛区",
+          "单一连续",
+          "固定机位",
+          "Iuri"
+        ]
+      },
+      "video": {
+        "phase_count": 1,
+        "has_prohibitions": true,
+        "required_sentinels": [
+          "真人实拍",
+          "8K",
+          "备赛区",
+          "固定"
+        ]
+      }
+    },
+    "alley": {
+      "scene_id": "alley_ep6",
+      "description": "Multi-phase motion path: low-angle→tilt-up→helicopter→car. Locked event/direction/landing nodes with OPTIMIZABLE connection record.",
+      "storyboard": {
+        "phase_count": 4,
+        "has_camera_motion_path": true,
+        "required_sentinels": [
+          "窄巷",
+          "低角度",
+          "仰摇",
+          "直升机",
+          "轿车"
+        ]
+      },
+      "video": {
+        "phase_count": 4,
+        "has_prohibitions": true,
+        "required_sentinels": [
+          "真人实拍",
+          "8K",
+          "窄巷",
+          "直升机",
+          "轿车"
+        ]
+      }
+    }
+  },
+  "no_semantic_rewrite": {
+    "rules": [
+      "Preserve parentheses exactly as supplied",
+      "Preserve physical correction phrases (e.g., '不是漩涡', '不是笑')",
+      "Preserve color temperatures and distances verbatim",
+      "Preserve Unicode characters and punctuation byte-for-byte",
+      "Do not summarize, translate, or replace synonyms",
+      "Do not invent transition language",
+      "Storyboard [SB] node IDs must be an ordered subset of video node IDs",
+      "Shared shot IDs, phase IDs, anchors, ticks, boundary types, and handoff IDs must agree between views"
+    ],
+    "sentinel_injection": {
+      "parentheses": "（这是一个测试括号）",
+      "correction": "不是漩涡也不是幻觉",
+      "distance": "约60cm处",
+      "temperature": "2800K暖白",
+      "unicode": "→①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬🔴🔵🟢🟠"
+    }
+  }
+}

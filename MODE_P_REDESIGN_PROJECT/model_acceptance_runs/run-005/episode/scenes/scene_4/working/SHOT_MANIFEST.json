@@ -1,0 +1,363 @@
+{
+  "manifest_version": "1.1",
+  "scene_id": "scene_4",
+  "master_version": "scene_4/v1.0",
+  "master_content_hash": "19b9df664d73b0cdd34d3f619c71445f195c01587477ed8eb09d5bdf3e6593ad",
+  "compiler_version": "1.6.0",
+  "shots": [
+    {
+      "shot_id": "scene_4-1",
+      "duration": 7.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "second_nodes",
+      "story_fact_ref": {
+        "text_start": "快递员阿泽抱着文件袋沿坡道向上跑。两名追赶者从下一层冲上来。",
+        "source_scene_id": "scene_4",
+        "source_line_start": 42,
+        "source_line_end": 42
+      },
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "ramp_mid|0|-0.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_1",
+            "position": "ramp_lower|1.5|-2.0",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_2",
+            "position": "ramp_lower|2.0|-2.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "document_bag",
+            "held_by": "aze",
+            "location": "aze_arms|0|0"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "parking_corner|3.0|0"
+          },
+          {
+            "prop_id": "drainage_ditch",
+            "held_by": "none",
+            "location": "ramp_top_crossing|0|1.0"
+          }
+        ],
+        "light_main": {
+          "direction": "mixed_overhead",
+          "color_temp_k": 3100,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "night_rain",
+        "environment": "parking_garage"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "ramp_upper|0|0.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_1",
+            "position": "ramp_mid|1.5|-1.0",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_2",
+            "position": "ramp_mid|2.0|-1.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "document_bag",
+            "held_by": "aze",
+            "location": "aze_arms|0|0"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "parking_corner|3.0|0.5"
+          },
+          {
+            "prop_id": "drainage_ditch",
+            "held_by": "none",
+            "location": "ramp_top_crossing|0|1.0"
+          }
+        ],
+        "light_main": {
+          "direction": "mixed_overhead",
+          "color_temp_k": 3100,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "night_rain",
+        "environment": "parking_garage"
+      },
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production",
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "entry_boundary_id": "SCENE_ENTRY",
+      "exit_boundary_id": "scene_4-2"
+    },
+    {
+      "shot_id": "scene_4-2",
+      "duration": 10.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "second_nodes",
+      "story_fact_ref": {
+        "text_start": "阿泽跨过排水沟，在转角处把文件袋滑进一辆停着的货车底部，自己继续向顶层跑。追赶者只看见他的背影，越过货车追了上去。",
+        "source_scene_id": "scene_4",
+        "source_line_start": 44,
+        "source_line_end": 45
+      },
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "ramp_upper|0|0.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_1",
+            "position": "ramp_mid|1.5|-1.0",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_2",
+            "position": "ramp_mid|2.0|-1.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "document_bag",
+            "held_by": "aze",
+            "location": "aze_arms|0|0"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "parking_corner|3.0|0.5"
+          },
+          {
+            "prop_id": "drainage_ditch",
+            "held_by": "none",
+            "location": "ramp_top_crossing|0|1.0"
+          }
+        ],
+        "light_main": {
+          "direction": "mixed_overhead",
+          "color_temp_k": 3100,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "night_rain",
+        "environment": "parking_garage"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "ramp_upper_next|0.5|2.0",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_1",
+            "position": "near_truck|2.5|1.0",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running"
+          },
+          {
+            "entity_id": "pursuer_2",
+            "position": "near_truck|3.0|0.7",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "document_bag",
+            "held_by": "none",
+            "location": "under_truck|3.0|0.3"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "parking_corner|3.0|0.5"
+          },
+          {
+            "prop_id": "drainage_ditch",
+            "held_by": "none",
+            "location": "ramp_top_crossing|0|1.0"
+          }
+        ],
+        "light_main": {
+          "direction": "mixed_overhead",
+          "color_temp_k": 3100,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "night_rain",
+        "environment": "parking_garage"
+      },
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production",
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "entry_boundary_id": "scene_4-1",
+      "exit_boundary_id": "scene_4-3"
+    },
+    {
+      "shot_id": "scene_4-3",
+      "duration": 6.0,
+      "scene_expression": "contemplative_silence",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "阿泽到达顶层边缘后停下，听见下方传来货车发动的声音。",
+        "source_scene_id": "scene_4",
+        "source_line_start": 47,
+        "source_line_end": 47
+      },
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "ramp_upper_next|0.5|2.0",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_1",
+            "position": "near_truck|2.5|1.0",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running"
+          },
+          {
+            "entity_id": "pursuer_2",
+            "position": "near_truck|3.0|0.7",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "document_bag",
+            "held_by": "none",
+            "location": "under_truck|3.0|0.3"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "parking_corner|3.0|0.5"
+          },
+          {
+            "prop_id": "drainage_ditch",
+            "held_by": "none",
+            "location": "ramp_top_crossing|0|1.0"
+          }
+        ],
+        "light_main": {
+          "direction": "mixed_overhead",
+          "color_temp_k": 3100,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "night_rain",
+        "environment": "parking_garage"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "roof_edge|0|4.0",
+            "facing": "toward_edge",
+            "screen_direction": "static",
+            "posture": "standing_catching_breath"
+          },
+          {
+            "entity_id": "pursuer_1",
+            "position": "near_truck|2.5|1.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running"
+          },
+          {
+            "entity_id": "pursuer_2",
+            "position": "near_truck|3.0|1.2",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "document_bag",
+            "held_by": "none",
+            "location": "under_truck|3.0|0.3"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "parking_corner|3.0|0.5"
+          },
+          {
+            "prop_id": "drainage_ditch",
+            "held_by": "none",
+            "location": "ramp_top_crossing|0|1.0"
+          }
+        ],
+        "light_main": {
+          "direction": "mixed_overhead",
+          "color_temp_k": 3100,
+          "ratio": "1:5"
+        },
+        "action_phase": "recover",
+        "weather": "night_rain",
+        "environment": "parking_garage"
+      },
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production",
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "entry_boundary_id": "scene_4-2",
+      "exit_boundary_id": "SCENE_EXIT"
+    }
+  ]
+}

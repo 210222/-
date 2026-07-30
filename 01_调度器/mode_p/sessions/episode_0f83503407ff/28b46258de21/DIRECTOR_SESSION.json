@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "episode_session_id": "28b46258de21",
+  "director_agent_id": "afff9b1f422405138",
+  "resolved_model": "deepseek-v4-pro",
+  "bound_at": "2026-07-19T15:05:31.431568+00:00",
+  "resume_events": [
+    {
+      "sequence": 1,
+      "event_id": "ep_docs_v1",
+      "recorded_at": "2026-07-19T15:11:17.365589+00:00"
+    },
+    {
+      "sequence": 2,
+      "event_id": "scene_masters_v1",
+      "recorded_at": "2026-07-19T15:12:51.095327+00:00"
+    },
+    {
+      "sequence": 3,
+      "event_id": "scene_masters_v2",
+      "recorded_at": "2026-07-19T15:20:42.403131+00:00"
+    }
+  ]
+}

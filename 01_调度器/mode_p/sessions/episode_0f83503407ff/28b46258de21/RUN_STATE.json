@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "script_source_hash": "fdd908e19b70449b3c52fbb37e8654a129f1951840564988b236babc679e8ada",
+  "stage": "delivery",
+  "active_scenes": [
+    1,
+    2
+  ],
+  "total_batches": 1,
+  "scene_states": [
+    {
+      "scene_index": 1,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_001",
+      "stage": "batch_commit",
+      "artifact_generation": 1,
+      "master_sha256": "fc3f9d48bcccc911fab03ab5d9e5a6a04ce5b42151decac13503df05945aeda1",
+      "manifest_sha256": "86f747157ee19bdb52d21f3d9a4fc3114a8055e101fcab89eddd23094e967530"
+    },
+    {
+      "scene_index": 2,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_002",
+      "stage": "batch_commit",
+      "artifact_generation": 1,
+      "master_sha256": "8bb9efa0222ce0723d0c07b09860a023845a0f192f07bfa2e92cf2050bb27f5e",
+      "manifest_sha256": "dc78a579d3ffa8ff27c2842e0595d1e4a817c2937e777eb342ff7feeaaeb0383"
+    }
+  ],
+  "state_sha256": "6d6fa6e9b03931ee5fbb07de0b0e8e3900493ee8eb09dc3cb86234e8becabf58"
+}

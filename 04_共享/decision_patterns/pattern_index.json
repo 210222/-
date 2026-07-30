@@ -1,0 +1,59 @@
+{
+  "_meta": {
+    "version": "v1.0",
+    "date": "2026-07-07",
+    "total_patterns": 3,
+    "design": "Layer 2 历史模式库 — 按场景类型+空间布局索引",
+    "principle": "历史模式只提供满足适用条件的案例，不替代当前剧本的导演设计",
+    "usage": "仅在scene_type与spatial_layout同时满足明确适用条件时加载；无匹配时只加载导演核心"
+  },
+
+  "scene_categories": {
+    "室内对话": {
+      "description": "室内空间·角色对话为主·无动作戏",
+      "variants": [
+        {
+          "layout": "工作台前",
+          "pattern_dir": "室内对话_单室_工作台前",
+          "reference_ep": "EP15_Rico工作室",
+          "key_features": ["工作台/操作台", "单光源chiaroscuro", "极简运镜", "暖色基调"],
+          "match_keywords": ["工作台", "操作台", "工具墙", "吊灯", "2800K", "chiaroscuro"]
+        },
+        {
+          "layout": "面对面",
+          "pattern_dir": "室内对话_单室_面对面",
+          "reference_ep": "EP14_案情室",
+          "key_features": ["会议/对话空间", "均匀照明", "几乎全固定", "冷色基调"],
+          "match_keywords": ["白板", "会议桌", "格栅灯", "5000K", "制度空间", "无影灯"]
+        }
+      ]
+    },
+    "室内调查": {
+      "description": "室内空间·科学/调查/证据展示·有对话",
+      "variants": [
+        {
+          "layout": "实验室",
+          "pattern_dir": "室内调查_实验室",
+          "reference_ep": "EP13_鉴证科实验室",
+          "key_features": ["实验设备", "多光源系统", "证据特写", "三光源冷暖分层"],
+          "match_keywords": ["显微镜", "实验室", "证据", "屏幕", "3200K", "5000K"]
+        }
+      ]
+    }
+  },
+
+  "matching_rules": {
+    "method": "关键词匹配 + 空间特征匹配",
+    "fields_to_match": ["scene_type", "spatial_keywords", "character_count", "has_action"],
+    "fallback": null,
+    "no_match_policy": "只加载导演核心，不加载历史模式"
+  },
+
+  "pending_patterns": [
+    "室外场景",
+    "动作戏场景(打斗/追逐/悬疑)",
+    "多人对话(≥3人)",
+    "夜景室内",
+    "混合空间(多室连通)"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "stage": "ready_for_scene_design",
+  "script_source_hash": "fdd908e19b70449b3c52fbb37e8654a129f1951840564988b236babc679e8ada",
+  "episode_id": "episode_0f83503407ff",
+  "episode_version": "28b46258de214221b6e85d437ae7aea22419f6e6aa14f00a7b67512624a6b07b",
+  "project_mode": "standalone",
+  "project_id": "",
+  "active_scenes": [
+    1,
+    2
+  ],
+  "facts_ready": true,
+  "episode_documents_ready": true
+}

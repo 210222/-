@@ -1,0 +1,28 @@
+{
+  "schema_version": "ddo-evidence-v1",
+  "task_id": "DDO-1",
+  "run_id": "DDO-1_003",
+  "reason": "Controlled revalidation after CPL-1 added field provenance, unknown-field downgrade, explicit conflict decisions, and the real catalog snapshot.",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "01_调度器/mode_p_vnext/director_vnext1/capsules.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-1_003.json"
+  ],
+  "checks": [
+    {"name": "provenance", "exit_code": 0},
+    {"name": "confidence", "exit_code": 0},
+    {"name": "contraindication", "exit_code": 0},
+    {"name": "k1_k2_separation", "exit_code": 0},
+    {"name": "no_template_fallback", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_1_capsules", "exit_code": 0, "summary": "6 passed"}
+  ],
+  "scope": {
+    "external_generation_invoked": false,
+    "deepseek_visual_validation_claimed": false,
+    "media_visual_acceptance_claimed": false,
+    "production_entry_changed": false
+  }
+}

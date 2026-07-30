@@ -1,0 +1,29 @@
+{
+  "schema_version": "ddo-evidence-v1",
+  "task_id": "DDO-3",
+  "run_id": "DDO-3_002",
+  "reason": "VEC now owns typed reference-binding requirements for identity, wardrobe, prop geometry, and scene layout; upload order cannot become authority.",
+  "status": "VERIFIED_TEXT_ONLY",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "01_调度器/mode_p_vnext/director_vnext1/agent.py",
+    "01_调度器/mode_p_vnext/tests/test_ddo_3_vec.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-3_002.json"
+  ],
+  "checks": [
+    {"name": "blocking_before_camera", "exit_code": 0},
+    {"name": "candidate_record", "exit_code": 0},
+    {"name": "decision_provenance", "exit_code": 0},
+    {"name": "vec_fail_closed", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_3_vec", "exit_code": 0, "summary": "3 passed in 0.07s"}
+  ],
+  "scope": {
+    "external_generation_invoked": false,
+    "production_entry_changed": false,
+    "storyboard_or_video_projection_added": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

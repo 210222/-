@@ -1,0 +1,200 @@
+{
+  "schema_version": "1.1",
+  "script_source_hash": "535240582f020fee98eb1ea7592027bbb968ce5b0a72ad27bb8b0a88cf281160",
+  "mode": "single_batch",
+  "director_scope": "episode",
+  "director_resume_required": true,
+  "authoritative": true,
+  "provisional_reasons": [],
+  "total_scenes": 3,
+  "selected_scenes": [
+    1,
+    2,
+    3
+  ],
+  "total_batches": 1,
+  "budget_profile": {
+    "schema_version": "1.0",
+    "profile_id": "claude-code-director-user-1m-v1",
+    "source": "user_config",
+    "context_window_tokens": 1000000,
+    "reserved_system_tool_tokens": 80000,
+    "reserved_output_tokens": 64000,
+    "max_output_tokens_per_call": 64000,
+    "safety_margin_ratio": 0.15,
+    "missing_document_reserve_tokens": 16000,
+    "token_estimator_version": "unicode_conservative_v1",
+    "safety_margin_tokens": 150000,
+    "detected_input_budget": 706000,
+    "detected_output_budget": 64000
+  },
+  "estimator_version": "unicode_conservative_v1",
+  "shared_measurements": [
+    {
+      "label": "SCRIPT_STRUCTURE.json",
+      "character_count": 1227,
+      "estimated_tokens": 412,
+      "content_sha256": "8829979e25d94e0109a52871c078bc68c266271ae1c453c6be99e001cc743764",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/01_调度器/mode_p/sessions/EP12/8fb6a62fa7c8/SCRIPT_STRUCTURE.json"
+    },
+    {
+      "label": "SCRIPT_FACTS.md",
+      "character_count": 2840,
+      "estimated_tokens": 2465,
+      "content_sha256": "82700e8989a6e3d5690d79347ff0f1d48affc89be37b8e0a62cfadc4b82aeb8b",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/01_调度器/mode_p/sessions/EP12/8fb6a62fa7c8/SCRIPT_FACTS.md"
+    },
+    {
+      "label": "EPISODE_VISUAL_BIBLE.md",
+      "character_count": 3497,
+      "estimated_tokens": 3571,
+      "content_sha256": "997303aaeb4d756e528c40008802996e38aec527fd45cf3a466970876d37d2c0",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/01_调度器/mode_p/sessions/EP12/8fb6a62fa7c8/EPISODE_VISUAL_BIBLE.md"
+    },
+    {
+      "label": "EPISODE_CONTINUITY_LEDGER.md",
+      "character_count": 3072,
+      "estimated_tokens": 2751,
+      "content_sha256": "10e0565694da42c6f76c4127cc913e0c0b6ecfd440bf6ba05d66bf1d5ebdcba9",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/01_调度器/mode_p/sessions/EP12/8fb6a62fa7c8/EPISODE_CONTINUITY_LEDGER.md"
+    },
+    {
+      "label": "director_core.md",
+      "character_count": 1517,
+      "estimated_tokens": 1880,
+      "content_sha256": "c5ec56aa59675e702ee61fed6252933b1735d326f71ffc1ee8c845404b647be5",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/01_调度器/mode_p/knowledge/core/director_core.md"
+    },
+    {
+      "label": "editing_transition.md",
+      "character_count": 904,
+      "estimated_tokens": 1092,
+      "content_sha256": "84eac446041fe44310c80609e03e72ffa732b85be7bd644c8f72291967c09437",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/01_调度器/mode_p/knowledge/core/editing_transition.md"
+    },
+    {
+      "label": "performance.md",
+      "character_count": 856,
+      "estimated_tokens": 1044,
+      "content_sha256": "26e54571f1319f96092c58fe722c0a2586c22eb49148401974c4589076a31dbb",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/01_调度器/mode_p/knowledge/core/performance.md"
+    },
+    {
+      "label": "sd2.md",
+      "character_count": 750,
+      "estimated_tokens": 776,
+      "content_sha256": "f32d2483b5a8e810a7a2499c6c9571e538e084ba3378bfe07d69cd0605bcd6d7",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/01_调度器/mode_p/knowledge/core/sd2.md"
+    },
+    {
+      "label": "CLAUDE.md",
+      "character_count": 4551,
+      "estimated_tokens": 1389,
+      "content_sha256": "7c071615449e69cb29d39ccad3793ace24714661e5928c75945c3c23f9619441",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/CLAUDE.md"
+    },
+    {
+      "label": "mode-p-director.md",
+      "character_count": 2716,
+      "estimated_tokens": 802,
+      "content_sha256": "3bf27f8ad7ac8fa4d892cc03fc0791f0260fba83c960f214b89c1ad4eb76c58d",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/.claude/agents/mode-p-director.md"
+    },
+    {
+      "label": "director_agent.md",
+      "character_count": 4708,
+      "estimated_tokens": 4355,
+      "content_sha256": "315941ca1c9c4e7f94f8e50a6280c1bd29fffb8c7fd0c819a44485a2deac18a3",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/02_Agent/director_agent.md"
+    },
+    {
+      "label": "director_master_template.md",
+      "character_count": 4225,
+      "estimated_tokens": 2911,
+      "content_sha256": "b68ec7d4904d7c0cf0ed4bd922189831b33558019061da21ea991cc13f9f6faf",
+      "source": "C:/Users/21022/Desktop/导演系统/导演系统_v5/01_调度器/mode_p/director_master_template.md"
+    },
+    {
+      "label": "USER_VISUAL_CONSTRAINTS",
+      "character_count": 0,
+      "estimated_tokens": 8,
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "caller_input"
+    }
+  ],
+  "scene_measurements": [
+    {
+      "scene_index": 1,
+      "source_characters": 340,
+      "source_tokens": 422,
+      "estimated_shots": 4,
+      "shot_estimate_basis": "nonempty_line_capacity_estimate_v1",
+      "estimated_output_tokens": 4035,
+      "capsules": [],
+      "capsule_characters": 0,
+      "capsule_tokens": 0,
+      "source_measurement": "script_content"
+    },
+    {
+      "scene_index": 2,
+      "source_characters": 368,
+      "source_tokens": 463,
+      "estimated_shots": 5,
+      "shot_estimate_basis": "nonempty_line_capacity_estimate_v1",
+      "estimated_output_tokens": 4658,
+      "capsules": [],
+      "capsule_characters": 0,
+      "capsule_tokens": 0,
+      "source_measurement": "script_content"
+    },
+    {
+      "scene_index": 3,
+      "source_characters": 304,
+      "source_tokens": 380,
+      "estimated_shots": 3,
+      "shot_estimate_basis": "nonempty_line_capacity_estimate_v1",
+      "estimated_output_tokens": 3410,
+      "capsules": [],
+      "capsule_characters": 0,
+      "capsule_tokens": 0,
+      "source_measurement": "script_content"
+    }
+  ],
+  "batches": [
+    {
+      "batch_index": 1,
+      "label": "Scenes 1-3",
+      "scene_indices": [
+        1,
+        2,
+        3
+      ],
+      "shared_input_characters": 30863,
+      "scene_input_characters": 1012,
+      "capsule_input_characters": 0,
+      "estimated_input_tokens": 24721,
+      "estimated_output_tokens": 12103,
+      "input_headroom_tokens": 681279,
+      "output_headroom_tokens": 51897,
+      "estimated_shots": 12,
+      "loaded_capsules": [],
+      "shared_documents": [
+        "SCRIPT_STRUCTURE.json",
+        "SCRIPT_FACTS.md",
+        "EPISODE_VISUAL_BIBLE.md",
+        "EPISODE_CONTINUITY_LEDGER.md"
+      ],
+      "prior_committed_ledger_required": false,
+      "fresh_dp_required": true,
+      "same_episode_director_required": true
+    }
+  ],
+  "shared_documents": [
+    "SCRIPT_STRUCTURE.json",
+    "SCRIPT_FACTS.md",
+    "EPISODE_VISUAL_BIBLE.md",
+    "EPISODE_CONTINUITY_LEDGER.md"
+  ],
+  "split_reasons": [],
+  "warning": ""
+}

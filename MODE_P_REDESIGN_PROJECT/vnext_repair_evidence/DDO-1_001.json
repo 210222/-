@@ -1,0 +1,22 @@
+{
+  "task_id": "DDO-1",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "01_调度器/mode_p_vnext/director_vnext1/capsules.py",
+    "01_调度器/mode_p_vnext/tests/test_ddo_1_capsules.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-1_001.json"
+  ],
+  "checks": [
+    {"name": "provenance", "exit_code": 0},
+    {"name": "confidence", "exit_code": 0},
+    {"name": "contraindication", "exit_code": 0},
+    {"name": "k1_k2_separation", "exit_code": 0},
+    {"name": "no_template_fallback", "exit_code": 0}
+  ],
+  "scope": {
+    "full_source_documents_loaded_at_runtime": false,
+    "director_choice_automated_by_retrieval": false,
+    "external_generation_invoked": false,
+    "production_entry_changed": false
+  }
+}

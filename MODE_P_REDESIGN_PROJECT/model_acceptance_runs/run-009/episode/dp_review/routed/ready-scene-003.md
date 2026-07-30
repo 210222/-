@@ -1,0 +1,1 @@
+READY scene_003: scene_003-1 [5.0s] enters tunnel, scene_003-5 [1.5s] exits; L32 at scene_003-2 [1.5s] and L36 at scene_003-4 [1.0s] inside light black window; badge sound [5.5s] and card sound [10.0s] deliver two dry hits; [12.0s] matches ledger. (229)

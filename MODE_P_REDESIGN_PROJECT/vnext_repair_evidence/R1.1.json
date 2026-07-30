@@ -1,0 +1,74 @@
+{
+  "task_id": "R1.1",
+  "completed_at": "2026-07-23T03:00:00Z",
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_FREEZE_MANIFEST.json",
+    "01_调度器/mode_p_vnext/tests/test_v0_1_baseline.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R1.1.json"
+  ],
+  "checks": [
+    {
+      "name": "no_null_authority_hash",
+      "exit_code": 0,
+      "output": "All 13 authority_files entries have real 64-char hex SHA-256 hashes. Zero nulls. Verified by test_no_null_authority_hash."
+    },
+    {
+      "name": "authority_drift_detected",
+      "exit_code": 0,
+      "output": "AuthorityFileHashTests (6 methods) verifies: section exists, exactly 13 files, required fields, no null hashes, all files exist on disk, and all hashes match current disk content. Drift reports expected-vs-actual diff per file."
+    },
+    {
+      "name": "missing_media_not_silent",
+      "exit_code": 0,
+      "output": "GoldenMediaHashTests now has 13 methods (up from 2). Each of the 8 golden_media entries carries an explicit 'status' field (available|missing). status=available entries require file existence + matching SHA-256 + matching byte count — absence is a HARD FAIL. status=missing entries require non-empty missing_reason and produce an explicit structured record. Controlled-fixture tests prove: (a) available+missing_file FAILS, (b) missing+reason PASSES with explicit record, (c) missing+empty_reason FAILS, (d) corrupt hash FAILS, (e) byte mismatch FAILS, (f) absent status field FAILS. The _validate_golden_media_entry function has zero silent-continue-after-exists-check patterns. Available: 8, Missing: 0."
+    }
+  ],
+  "media_status_counts": {
+    "available": 8,
+    "missing": 0,
+    "entries": {
+      "gun_barrel_sb": "available",
+      "gun_barrel_video": "available",
+      "audience_sb": "available",
+      "audience_video": "available",
+      "prep_area_sb": "available",
+      "prep_area_video": "available",
+      "alley_sb": "available",
+      "alley_video": "available"
+    }
+  },
+  "regression": {
+    "command": "python -m pytest mode_p_vnext/tests/test_v0_1_baseline.py -q",
+    "result": "30 passed, 165 subtests passed in 0.75s"
+  },
+  "golden_media_repair": {
+    "before": {
+      "status_field": false,
+      "silent_skip": "test_v0_1_baseline.py line 166-168: if not fpath.exists(): continue",
+      "test_count": 19,
+      "golden_test_methods": 2,
+      "missing_media_not_silent_cited": "authority-file behavior only"
+    },
+    "after": {
+      "status_field": true,
+      "silent_skip": "eliminated — _validate_golden_media_entry uses status-aware validation",
+      "test_count": 30,
+      "golden_test_methods": 13,
+      "missing_media_not_silent_cited": "Golden media status-aware validation + controlled fixtures + authority-file hard-fail"
+    }
+  },
+  "produced_artifacts": [
+    {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_FREEZE_MANIFEST.json",
+      "role": "Added status field (available) to all 8 golden_media entries; added availability_summary to common_media_facts"
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/tests/test_v0_1_baseline.py",
+      "role": "Added _validate_golden_media_entry validator; expanded GoldenMediaHashTests from 2 to 13 methods with status-aware existence, hash, byte, and controlled-fixture coverage; eliminated silent continue-over-missing"
+    },
+    {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R1.1.json",
+      "role": "Updated evidence with media_status_counts, golden_media_repair before/after, and 30-test regression result"
+    }
+  ]
+}

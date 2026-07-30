@@ -1,0 +1,18 @@
+{
+  "created_at": "2026-07-19T12:09:37.409568+00:00",
+  "director_agent": "mode-p-director",
+  "director_call_id": null,
+  "director_model": null,
+  "dp_adversarial_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\dp_adversarial_packet.md",
+  "dp_adversarial_sha256": "ca8aeb2e8f2ee59485090e11258ed2fad97ad65684f700ba6503b299be718a14",
+  "dp_agents": [],
+  "evidence_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-013",
+  "fixed_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "invalid_reason": "Director resolvedModel was deepseek-v4-flash, not deepseek-v4-pro as required by acceptance protocol",
+  "invalidated_at": "2026-07-19T12:18:12.325743+00:00",
+  "owner": "claude-code",
+  "run_id": "run-013",
+  "schema_version": 3,
+  "status": "invalid"
+}

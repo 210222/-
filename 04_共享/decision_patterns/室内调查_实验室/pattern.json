@@ -1,0 +1,130 @@
+{
+  "_meta": {
+    "scene_type": "室内调查_实验室",
+    "canonical_reference": "EP13_鉴证科实验室",
+    "date_extracted": "2026-07-07",
+    "total_shots": 17,
+    "total_duration_sec": 58,
+    "characters": 2,
+    "pipeline": "v7.0 Scene Designer M-Level·刚生成",
+    "key_principle": "三光源系统(3200K底光+5000K顶光+6500K蓝光)·证据展示+对白·科学氛围"
+  },
+
+  "spatial_layout": {
+    "room_shape": "矩形长条形·~8m纵深×~5m宽×~3m高",
+    "key_elements": [
+      "工作台(居中偏右·显微镜+载物台+证据袋)",
+      "双排金属实验台(沿纵深延伸·间距~2.5m)",
+      "巨幅LED屏幕(后区·蓝屏保·弹道模拟)",
+      "玻璃物证橱窗(左侧墙·证物箱·编号标签)",
+      "复合工作站(右前·多连屏·蓝光键盘470nm)",
+      "百叶窗(右侧墙·金属叶片·半开·窗外城市全景)",
+      "灰色金属消防门(短边·不锈钢把手·外连走廊3500K)"
+    ],
+    "placement_areas": [
+      "工作台前(坐姿·1人/Vincent·显微镜操作区)",
+      "实验台间通道(站姿·1-2人·走动空间)",
+      "屏幕前方(站姿·1人·讲解位置)",
+      "门口区域(站姿·1人·到访者Miguel位置)"
+    ],
+    "forbidden_areas": ["显微镜载物台上方", "玻璃橱窗内", "LED屏幕后方"]
+  },
+
+  "verified_camera_setups": {
+    "evidence_ecu": {
+      "function": "弹头微距·冷开场·证据建立",
+      "shot_type": "ECU",
+      "focal_length": "100mm",
+      "angle": "水平·载物台高度",
+      "dof": "极浅f/1.4",
+      "kb_rules": ["D-TRI-06(插入变体)", "C-KTZ-01", "C-FI2-NS-16"],
+      "narrative": "弹头变形的黄铜弧面在侧光下变成微缩山脊和峡谷——这是一个发现"
+    },
+    "character_at_work": {
+      "function": "Vincent在显微镜前工作·建立人物",
+      "shot_type": "近景",
+      "focal_length": "50mm",
+      "angle": "眼平·正面偏右",
+      "dof": "中浅f/2.8-f/4",
+      "kb_rules": ["D-TRI-06", "C-FI-02", "L-3PT-01"],
+      "lighting_note": "底光(3200K显微镜反弹)+顶光(5000K)·非人化·倒置阴影"
+    },
+    "screen_evidence": {
+      "function": "LED屏幕弹道模拟展示",
+      "shot_type": "特写",
+      "focal_length": "35mm",
+      "angle": "正面·屏幕垂直",
+      "dof": "深f/8",
+      "kb_rules": ["D-TRI-06(插入变体)", "C-FI-21"],
+      "lighting_note": "屏幕蓝光(6500K)+顶光反射"
+    },
+    "dialogue_setup": {
+      "function": "双人对话·Vincent讲解+Miguel反应",
+      "shot_type": ["近景(Vincent)", "近景(Miguel)", "中景(双人同框)"],
+      "focal_length": ["50mm", "50mm", "35mm"],
+      "angle": ["眼平·微侧", "眼平·微侧", "眼平"],
+      "dof": ["浅f/2.8", "浅f/2.8", "中f/5.6"],
+      "kb_rules": ["D-TRI-05(外反拍)", "D-TRI-06(内反拍)", "D-DUO-01(面对面)"]
+    }
+  },
+
+  "verified_lighting": {
+    "primary": {
+      "source": "显微镜环形LED(底部·载物台上方~3cm)",
+      "color_temp": 3200,
+      "character": "钨丝暖色·15°掠射角·弹头侧光",
+      "anchor": "场景九宫格·格5(中中★核心)"
+    },
+    "ambient": {
+      "source": "天花板LED平板灯(四块一组)",
+      "color_temp": 5000,
+      "character": "冷白·无影灯·科学客观",
+      "anchor": "场景九宫格"
+    },
+    "accent": {
+      "source": "复合工作站蓝光键盘",
+      "color_temp": 6500,
+      "character": "冷域极限标志·幽蓝微光(470nm)",
+      "anchor": "场景九宫格·格2(工作站区)"
+    },
+    "corridor": {
+      "source": "门外走廊吸顶灯",
+      "color_temp": 3500,
+      "character": "暖黄·外部世界·门缝漏入",
+      "anchor": "门口楼道九宫格"
+    },
+    "style": "三光源系统·底光主导面部(非人化)→摘眼镜后变为眼平→双人对话恢复正常照明",
+    "key_transition": "摘眼镜动作=布光节拍·裸眼露出后'人'浮现"
+  },
+
+  "verified_movement": {
+    "static_ratio": 0.59,
+    "key_movements": [
+      {"shot": "镜#1(弹头ECU)", "type": "极慢推近", "speed": 0.1, "duration": 2, "kb_rule": "M-20R-07"},
+      {"shot": "镜#4(Vincent近景)", "type": "固定+手持感", "detail": "允许±1cm呼吸式位移"},
+      {"shot": "其他", "type": "固定", "count": 15}
+    ],
+    "design_principle": "运镜服务于证据展示的叙事节奏·推近=揭示·静止=观察"
+  },
+
+  "color_temperature_system": {
+    "indoor_ambient": {"value": 5000, "character": "冷白·科学·制度"},
+    "microscope_led": {"value": 3200, "character": "暖色·证据焦点"},
+    "screen_blue": {"value": 6500, "character": "冷域极限·数据世界"},
+    "corridor_warm": {"value": 3500, "character": "暖黄·外部·人的温度"},
+    "design_note": "3200K底光+5000K顶光=冷暖分层·非人化→正常化的人物弧线"
+  },
+
+  "design_lesson": {
+    "what_works": [
+      "17镜·58秒·从冷开场弹头→人物建立→证据展示→双人对话的完整叙事弧",
+      "三光源系统给16/16相邻镜零跳轴提供了光照变化动机",
+      "Scene Designer M-Level二合一模式·不含运镜域·Movement Designer单独处理"
+    ],
+    "what_to_watch": [
+      "59%静态·未触发静态快速通道(需≥80%)",
+      "F3~15句对白·接近M/C边界",
+      "百叶窗外的城市全景需确认参考图覆盖"
+    ]
+  }
+}

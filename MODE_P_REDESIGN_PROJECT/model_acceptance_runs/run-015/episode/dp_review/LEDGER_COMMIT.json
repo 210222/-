@@ -1,0 +1,12 @@
+{
+  "episode_id": "director_transfer_4scenes",
+  "committed_at": "2026-07-19T14:47:06.662254+00:00",
+  "scene_indices": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "bible_sha256": "d42aeb0cd14fcb505f2585ab9099e77a1dd3a92bcb36237fe852be8374c91e03",
+  "ledger_sha256": "8a696f943fb96303b9ef5bf7ca17dfa9cb41eb1f5ac3d8495a61502a6b428de4"
+}

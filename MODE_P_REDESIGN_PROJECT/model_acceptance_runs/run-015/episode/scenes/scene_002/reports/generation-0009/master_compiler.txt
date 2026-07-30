@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Malformed or unknown state-key line in 接入状态键：[M]: '- character:zhoulan position:水槽旁站立（画面左） facing:面向周成（画面右） screen_direction:right_to_left（周岚视线方向） posture:直立，双臂自然或微交叉'

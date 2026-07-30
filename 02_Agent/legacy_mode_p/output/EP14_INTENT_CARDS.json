@@ -1,0 +1,61 @@
+{
+  "scene": "案情室",
+  "total_shots": 7,
+  "intent_groups": [
+    {
+      "group_id": "G1",
+      "group_name": "空间建立·冷白制度",
+      "visual_strategy": "[空间建立] + 冷白无影·制度空间·全景锚定",
+      "shots": [
+        "镜#1"
+      ],
+      "narrative_function": "建立·空间+人物位置",
+      "character_psychology": "两人在案情室面对面·制度性对话即将开始",
+      "audience_feeling": "客观·冷静·制度感",
+      "rhythm_position": "起点·静态",
+      "key_differences": null
+    },
+    {
+      "group_id": "G2",
+      "group_name": "双人对话·标准三角形",
+      "visual_strategy": "[标准对话三角形] + 冷白5000K均匀照明·标准外反拍+内反拍",
+      "shots": [
+        "镜#2",
+        "镜#3",
+        "镜#4"
+      ],
+      "narrative_function": "推进·双人对话正反打",
+      "character_psychology": "Miguel提问·Vincent回答·信息交换",
+      "audience_feeling": "跟随对话节奏·信息接收",
+      "rhythm_position": "中段·平稳",
+      "key_differences": "镜#2(双人中景·外反拍)·镜#3(Miguel近景·内反拍)·镜#4(Vincent近景·内反拍)"
+    },
+    {
+      "group_id": "G3",
+      "group_name": "单人反应·情绪收束",
+      "visual_strategy": "[标准单人对白] + 浅景深·分离主体",
+      "shots": [
+        "镜#5"
+      ],
+      "narrative_function": "反应·情绪焦点",
+      "character_psychology": "单人面部·对白接收后的微表情",
+      "audience_feeling": "亲密·关注",
+      "rhythm_position": "微升",
+      "key_differences": null
+    },
+    {
+      "group_id": "G4",
+      "group_name": "空间收尾·再交代",
+      "visual_strategy": "[空间建立] + 拉远·回到全景·对话结束",
+      "shots": [
+        "镜#6",
+        "镜#7"
+      ],
+      "narrative_function": "收尾·空间再交代",
+      "character_psychology": "对话结束·两人位置关系最终确认",
+      "audience_feeling": "完结感",
+      "rhythm_position": "回落·终点",
+      "key_differences": null
+    }
+  ]
+}

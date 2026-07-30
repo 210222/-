@@ -1,0 +1,497 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_001",
+  "master_version": "scene_001/v1.0",
+  "master_content_hash": "a043f15ec9fb5d2ef16f279d6c2eaa06dc49e41ccb11730a01020024cc5ecce3",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_001-1",
+      "duration": 8.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "林警探将停车场照片推至桌中央（L5）；指控许然声称九点前离开（L7）。",
+        "source_scene_id": "scene_001",
+        "source_line_start": 5,
+        "source_line_end": 7
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "面向许然",
+            "screen_direction": "static",
+            "posture": "前倾"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "lin",
+            "location": "桌面近林警探一侧"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "prepare"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "面向许然",
+            "screen_direction": "static",
+            "posture": "前倾，双手已收回"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "视线落于桌面照片",
+            "screen_direction": "static",
+            "posture": "直坐，双手静止，未触碰照片"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B0",
+      "exit_boundary_id": "scene_001-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-2",
+      "duration": 7.0,
+      "scene_expression": "suspense_reveal",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "许然没有碰照片（L9），从外套内袋取出警徽放在照片旁（L9-L10），反问林警探（L11）。",
+        "source_scene_id": "scene_001",
+        "source_line_start": 9,
+        "source_line_end": 11
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "面向许然",
+            "screen_direction": "static",
+            "posture": "前倾，双手已收回"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "视线落于桌面照片",
+            "screen_direction": "static",
+            "posture": "直坐，双手静止，未触碰照片"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐，手已收回，等待"
+          },
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "视线锁于桌面的警徽",
+            "screen_direction": "static",
+            "posture": "僵停，手仍压在照片附近"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "桌面中央，照片旁"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "impact"
+      },
+      "entry_boundary_id": "scene_001-B1",
+      "exit_boundary_id": "scene_001-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-3",
+      "duration": 5.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "林警探停住，收回压在照片上的手（L13）。",
+        "source_scene_id": "scene_001",
+        "source_line_start": 13,
+        "source_line_end": 13
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐，手已收回，等待"
+          },
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "视线锁于桌面的警徽",
+            "screen_direction": "static",
+            "posture": "僵停，手仍压在照片附近"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "桌面中央，照片旁"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "impact"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "视线锁于警徽",
+            "screen_direction": "static",
+            "posture": "微后靠，双手收回身前"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐，等待"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "桌面中央，照片旁"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      },
+      "entry_boundary_id": "scene_001-B2",
+      "exit_boundary_id": "scene_001-B3",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_001-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_001-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "面向许然",
+            "screen_direction": "static",
+            "posture": "前倾"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "lin",
+            "location": "桌面近林警探一侧"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "prepare"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B1",
+      "from_ref": "scene_001-1",
+      "to_ref": "scene_001-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "面向许然",
+            "screen_direction": "static",
+            "posture": "前倾，双手已收回"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "视线落于桌面照片",
+            "screen_direction": "static",
+            "posture": "直坐，双手静止，未触碰照片"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "面向许然",
+            "screen_direction": "static",
+            "posture": "前倾，双手已收回"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "视线落于桌面照片",
+            "screen_direction": "static",
+            "posture": "直坐，双手静止，未触碰照片"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B2",
+      "from_ref": "scene_001-2",
+      "to_ref": "scene_001-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐，手已收回，等待"
+          },
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "视线锁于桌面的警徽",
+            "screen_direction": "static",
+            "posture": "僵停，手仍压在照片附近"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "桌面中央，照片旁"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "impact"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐，手已收回，等待"
+          },
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "视线锁于桌面的警徽",
+            "screen_direction": "static",
+            "posture": "僵停，手仍压在照片附近"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "桌面中央，照片旁"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "impact"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B3",
+      "from_ref": "scene_001-3",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "视线锁于警徽",
+            "screen_direction": "static",
+            "posture": "微后靠，双手收回身前"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐，等待"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "桌面中央，照片旁"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

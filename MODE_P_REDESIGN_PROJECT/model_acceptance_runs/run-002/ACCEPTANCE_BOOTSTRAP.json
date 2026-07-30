@@ -1,0 +1,16 @@
+{
+  "created_at": "2026-07-17T01:56:14.402383+00:00",
+  "director_agent": "mode-p-director",
+  "director_call_id": null,
+  "director_model": null,
+  "dp_agents": [],
+  "evidence_dir": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-002",
+  "fixed_input": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "invalid_reason": "Acceptance run stopped before provenance binding because active KB Guard configuration and its regression test changed to fix subdirectory working-directory portability; evidence is not implementation-immutable and hook failures occurred during Director writes.",
+  "invalidated_at": "2026-07-17T02:07:21.224594+00:00",
+  "owner": "claude-code",
+  "run_id": "run-002",
+  "schema_version": 2,
+  "status": "invalid"
+}

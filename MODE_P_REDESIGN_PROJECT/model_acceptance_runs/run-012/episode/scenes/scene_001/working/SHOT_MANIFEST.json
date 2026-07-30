@@ -1,0 +1,704 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_001",
+  "master_version": "scene_001/v1.0",
+  "master_content_hash": "23c17c679cd6ebe2fd35628be8a23b3a5e18afef9f5e9432a533dadc888ef3f2",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_001-1",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L5——林警探与许然隔桌相对；林警探把一张模糊的停车场照片推到桌中央。",
+        "source_scene_id": "scene_001",
+        "source_line_start": 5,
+        "source_line_end": 5
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_upright_fingertips_on_photo",
+            "wardrobe": "dark_shirt_rolled_sleeves"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge",
+            "wardrobe": "dark_jacket_over_shirt"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_north_edge_under_lin_fingertips"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "story_time": "night",
+        "environment": "windowless_interrogation_room_quiet"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B0",
+      "exit_boundary_id": "scene_001-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-2",
+      "duration": 8.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L7——林警探：「你说九点前就离开了。」",
+        "source_scene_id": "scene_001",
+        "source_line_start": 7,
+        "source_line_end": 7
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B1",
+      "exit_boundary_id": "scene_001-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-3",
+      "duration": 12.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L9——许然没有碰照片，从外套内袋取出一枚警徽放在照片旁；L11——许然：「先问问这枚警徽昨晚为什么在你的车里。」",
+        "source_scene_id": "scene_001",
+        "source_line_start": 9,
+        "source_line_end": 11
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_gaze_on_lin_hands_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "table_center_right_of_photo"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B2",
+      "exit_boundary_id": "scene_001-B3",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-4",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L13——林警探停住，收回压在照片上的手。",
+        "source_scene_id": "scene_001",
+        "source_line_start": 13,
+        "source_line_end": 13
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_gaze_on_lin_hands_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "table_center_right_of_photo"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_hand_resting_at_table_edge"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "table_center_right_of_photo"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B3",
+      "exit_boundary_id": "scene_001-B4",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_001-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_001-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_upright_fingertips_on_photo",
+            "wardrobe": "dark_shirt_rolled_sleeves"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge",
+            "wardrobe": "dark_jacket_over_shirt"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_north_edge_under_lin_fingertips"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "story_time": "night",
+        "environment": "windowless_interrogation_room_quiet"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B1",
+      "from_ref": "scene_001-1",
+      "to_ref": "scene_001-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B2",
+      "from_ref": "scene_001-2",
+      "to_ref": "scene_001-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "jacket_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B3",
+      "from_ref": "scene_001-3",
+      "to_ref": "scene_001-4",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_gaze_on_lin_hands_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "table_center_right_of_photo"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_lean_forward_fingers_pinning_photo"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_gaze_on_lin_hands_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center_pinned_by_lin_fingers"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "table_center_right_of_photo"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B4",
+      "from_ref": "scene_001-4",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "interrogation_room|table_north_side|chair",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_hand_resting_at_table_edge"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "interrogation_room|table_south_side|chair",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_upright_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "table_center_right_of_photo"
+          }
+        ],
+        "light_main": {
+          "direction": "top_down_overhead",
+          "color_temp_k": 4300,
+          "ratio": "1:8"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

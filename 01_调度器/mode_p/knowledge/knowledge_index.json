@@ -1,0 +1,362 @@
+{
+  "schema_version": "1.1",
+  "description": "MODE:P knowledge index — metadata only, no full knowledge text. Director selects up to three capsules; context_retriever validates the request and filters validated experience.",
+  "core": [
+    {
+      "path": "core/director_core.md",
+      "always_load": true,
+      "topics": [
+        "narrative_priority",
+        "spatial_authority",
+        "visual_intensity",
+        "shot_motivation",
+        "visual_center",
+        "physical_light_source",
+        "transition_motivation",
+        "performance_visibility",
+        "shot_boundary",
+        "sd2_boundary"
+      ],
+      "content_sha256": "c5ec56aa59675e702ee61fed6252933b1735d326f71ffc1ee8c845404b647be5",
+      "byte_size": 4427
+    },
+    {
+      "path": "core/sd2.md",
+      "always_load": true,
+      "topics": [
+        "generation_modes",
+        "text_only",
+        "first_last_frame",
+        "omni_reference",
+        "duration_limits",
+        "face_limits",
+        "action_complexity",
+        "capability_boundary"
+      ],
+      "content_sha256": "f32d2483b5a8e810a7a2499c6c9571e538e084ba3378bfe07d69cd0605bcd6d7",
+      "byte_size": 1862
+    },
+    {
+      "path": "core/performance.md",
+      "always_load": true,
+      "topics": [
+        "visible_action",
+        "posture",
+        "gaze",
+        "facial_expression",
+        "rhythm",
+        "breathing",
+        "micro_movement"
+      ],
+      "content_sha256": "26e54571f1319f96092c58fe722c0a2586c22eb49148401974c4589076a31dbb",
+      "byte_size": 2452
+    },
+    {
+      "path": "core/editing_transition.md",
+      "always_load": true,
+      "topics": [
+        "cut_motivation",
+        "action_cut",
+        "reaction_cut",
+        "graphic_match",
+        "sound_bridge",
+        "block_cut",
+        "in_camera",
+        "post_production",
+        "dissolve"
+      ],
+      "content_sha256": "84eac446041fe44310c80609e03e72ffa732b85be7bd644c8f72291967c09437",
+      "byte_size": 2574
+    }
+  ],
+  "capsules": [
+    {
+      "path": "capsules/dialogue_power.md",
+      "scene_types": [
+        "dialogue",
+        "two_person",
+        "power_shift"
+      ],
+      "drama_intents": [
+        "relationship_change",
+        "power_dynamic",
+        "revelation_through_speech"
+      ],
+      "space_conditions": [
+        "indoor",
+        "enclosed",
+        "face_to_face"
+      ],
+      "character_count_range": {
+        "min": 2,
+        "max": 2
+      },
+      "motion_complexity": "low",
+      "sd2_risk_tags": [
+        "face_identity"
+      ],
+      "verified_count": 0,
+      "experience_status": "none",
+      "content_sha256": "87bae44403cd708cc5ff5119285d157a22509473c901b251419794b389149bc2",
+      "byte_size": 1171
+    },
+    {
+      "path": "capsules/action_chase.md",
+      "scene_types": [
+        "action",
+        "chase",
+        "physical_conflict"
+      ],
+      "drama_intents": [
+        "tension_release",
+        "survival",
+        "spatial_transition"
+      ],
+      "space_conditions": [
+        "open",
+        "multiple_zones",
+        "obstacle_path"
+      ],
+      "character_count_range": {
+        "min": 1,
+        "max": null
+      },
+      "motion_complexity": "high",
+      "sd2_risk_tags": [
+        "fast_motion",
+        "face_identity",
+        "motion_blur",
+        "duration_limit"
+      ],
+      "verified_count": 0,
+      "experience_status": "none",
+      "content_sha256": "fa675e1614889b81c6c70921836ac891e34d89a398f41d73510c32e01386c3c9",
+      "byte_size": 936
+    },
+    {
+      "path": "capsules/suspense_reveal.md",
+      "scene_types": [
+        "suspense",
+        "revelation",
+        "information_control"
+      ],
+      "drama_intents": [
+        "hide_reveal",
+        "audience_knowledge_gap",
+        "delayed_discovery"
+      ],
+      "space_conditions": [
+        "enclosed",
+        "partial_visibility",
+        "shadow_zones"
+      ],
+      "character_count_range": {
+        "min": 1,
+        "max": null
+      },
+      "motion_complexity": "low",
+      "sd2_risk_tags": [
+        "dark_scene",
+        "subtle_expression"
+      ],
+      "verified_count": 0,
+      "experience_status": "none",
+      "content_sha256": "7d28694a1e9a42ee83aede0aae92ddcc3cb5d478444edb1449f552b4c55b0ac4",
+      "byte_size": 876
+    },
+    {
+      "path": "capsules/contemplative_silence.md",
+      "scene_types": [
+        "reflective",
+        "silent",
+        "intimate"
+      ],
+      "drama_intents": [
+        "internal_state",
+        "environment_relationship",
+        "passage_of_time"
+      ],
+      "space_conditions": [
+        "enclosed",
+        "open",
+        "natural"
+      ],
+      "character_count_range": {
+        "min": 1,
+        "max": 1
+      },
+      "motion_complexity": "minimal",
+      "sd2_risk_tags": [
+        "boring_frame",
+        "overlong_static"
+      ],
+      "verified_count": 0,
+      "experience_status": "none",
+      "content_sha256": "d3f715319b1a60697f658acd95df34790f0342a84e05d77770d34d65dd5df6d9",
+      "byte_size": 601
+    },
+    {
+      "path": "capsules/crowd_attention.md",
+      "scene_types": [
+        "crowd",
+        "multi_person",
+        "group_dialogue"
+      ],
+      "drama_intents": [
+        "attention_handoff",
+        "group_dynamic",
+        "power_distribution"
+      ],
+      "space_conditions": [
+        "indoor",
+        "enclosed",
+        "shared_plane"
+      ],
+      "character_count_range": {
+        "min": 3,
+        "max": null
+      },
+      "motion_complexity": "medium",
+      "sd2_risk_tags": [
+        "face_count",
+        "identity_blur",
+        "attention_confusion"
+      ],
+      "verified_count": 0,
+      "experience_status": "none",
+      "content_sha256": "0235b532792bcff191a239b225786738790dc6265eab9723a89d80376923f043",
+      "byte_size": 2235
+    },
+    {
+      "path": "capsules/investigation_object.md",
+      "scene_types": [
+        "investigation",
+        "evidence_discovery",
+        "object_examination"
+      ],
+      "drama_intents": [
+        "discovery",
+        "forensic_detail",
+        "information_release"
+      ],
+      "space_conditions": [
+        "indoor",
+        "close_up",
+        "tabletop"
+      ],
+      "character_count_range": {
+        "min": 1,
+        "max": null
+      },
+      "motion_complexity": "medium",
+      "sd2_risk_tags": [
+        "text_rendering",
+        "small_object",
+        "focus_shift"
+      ],
+      "verified_count": 0,
+      "experience_status": "none",
+      "content_sha256": "1c24275557e049b5016bdf719ed0b2aad53329968bdec832f796378dfa057627",
+      "byte_size": 2176
+    },
+    {
+      "path": "capsules/montage.md",
+      "scene_types": [
+        "montage",
+        "time_compression",
+        "process_summary"
+      ],
+      "drama_intents": [
+        "time_passage",
+        "process_evolution",
+        "parallel_events"
+      ],
+      "space_conditions": [
+        "multiple_locations",
+        "variable"
+      ],
+      "character_count_range": {
+        "min": 0,
+        "max": null
+      },
+      "motion_complexity": "low",
+      "sd2_risk_tags": [
+        "temporal_discontinuity",
+        "visual_jump"
+      ],
+      "verified_count": 0,
+      "experience_status": "none",
+      "content_sha256": "ed95f34cde7ce6aaccbb15ae15fc1bb09bcb54a6946f147e9edd13faa544c7a9",
+      "byte_size": 2205
+    },
+    {
+      "path": "capsules/cross_space_transition.md",
+      "scene_types": [
+        "transition",
+        "multi_location",
+        "spatial_bridge"
+      ],
+      "drama_intents": [
+        "location_change",
+        "journey",
+        "context_shift"
+      ],
+      "space_conditions": [
+        "multiple_locations",
+        "connected_exit_entry"
+      ],
+      "character_count_range": {
+        "min": 0,
+        "max": null
+      },
+      "motion_complexity": "medium",
+      "sd2_risk_tags": [
+        "spatial_disorientation",
+        "light_mismatch",
+        "direction_flip"
+      ],
+      "verified_count": 0,
+      "experience_status": "none",
+      "content_sha256": "e556ebbcc60c6a2fd12062462b4d2a528684f5c8754a128c1da198f3704b22b7",
+      "byte_size": 2403
+    },
+    {
+      "path": "capsules/omni_reference.md",
+      "scene_types": [
+        "reference_dependent",
+        "continuity_critical",
+        "identity_sensitive"
+      ],
+      "drama_intents": [
+        "identity_preservation",
+        "action_continuity",
+        "style_consistency"
+      ],
+      "space_conditions": [
+        "variable"
+      ],
+      "character_count_range": {
+        "min": 0,
+        "max": null
+      },
+      "motion_complexity": "variable",
+      "sd2_risk_tags": [
+        "reference_conflict",
+        "over_referencing",
+        "mode_conflict"
+      ],
+      "verified_count": 0,
+      "experience_status": "none",
+      "content_sha256": "99a7175d7b64f316ef990ccb874abf1ba435ff48189b1dfe80879393d9911e3d",
+      "byte_size": 3051
+    }
+  ],
+  "index_updated_at": "2026-07-15T19:42:55.299103+00:00",
+  "index_statistics": {
+    "total_entries": 13,
+    "total_bytes": 26969,
+    "changed_since_last": [
+      "core/director_core.md"
+    ]
+  }
+}

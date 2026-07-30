@@ -1,0 +1,13 @@
+EPISODE REVIEW: PASS
+
+Cross-scene consistency review confirms that all four scenes cohere under the declared visual philosophy and episodic structure. Specific findings:
+
+**Visual Bible consistency:** All four scenes execute the Visual Bible's core principles. Practical-source lighting is demonstrable in every scene (single fluorescent tube in Scene 1, window morning light in Scene 2, compartment lamp + window in Scene 3, mixed fluorescent/sodium in Scene 4). The "objects as power carriers" motif is present in all four: photo and badge (Scene 1), letter and key (Scene 2), memory card and work ID (Scene 3), document bag (Scene 4). The "desk as power exchange field" motif declared in the Bible is consistent — every key object transfer occurs on a flat surface. Camera strategies match: fixed tripod for dialogue scenes (1, 2, 3), handheld for the pursuit scene (4), with Scene 3's slight handheld justified by train vibration. Color palettes declared per scene match the visual design: cold fluorescent green-shift (Scene 1), warm amber morning (Scene 2), dynamic tunnel-to-light transition (Scene 3), cold concrete with warm sodium accent (Scene 4).
+
+**Continuity Ledger accuracy:** The Ledger correctly records all four scenes as independent narrative units with no shared characters, locations, props, or temporal continuity. Canonical opening and closing states extracted from the Masters confirm internal consistency within each scene. The ledger's documentation of each scene's entry/exit states, prop transitions, and unresolved narrative suspensions is accurate and complete.
+
+**Cross-scene thematic arc:** Under the anthology title "四种压力下的决定," each scene embodies a distinct pressure type: interrogation power-reversal (Scene 1), familial concealment (Scene 2), transactional negotiation under time constraint (Scene 3), and physical pursuit resolved by tactical deception (Scene 4). The four pressure modes — accusation, discovery, bargaining, and flight — form a coherent spectrum without requiring narrative interconnection.
+
+**Structural integrity:** All four scenes have internally consistent opening-to-closing arcs. Scene 1: power reverses from Lin to Xu, ending with Lin's hand withdrawn. Scene 2: Zhou Lan accepts the key but leaves the letter — accepting guidance while refusing to normalize the deception. Scene 3: the exchange completes but the true intent behind Gu Yan's flipped ID remains suspended. Scene 4: Aze's strategy succeeds (bag hidden, truck engine confirms retrieval) but his own safety remains unresolved. No scene contradicts its own opening conditions or declared dramatic trajectory.
+
+No revision required.

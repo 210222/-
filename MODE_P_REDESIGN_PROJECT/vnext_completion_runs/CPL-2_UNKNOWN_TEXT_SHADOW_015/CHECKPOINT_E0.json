@@ -1,0 +1,66 @@
+{
+  "checkpoint": "CHECKPOINT_E0.json",
+  "created_at": "2026-07-30T06:47:07.842809+00:00",
+  "episode_direction": {
+    "character_arc": [
+      "Lin Lan realizes she must assert her own authority when her mentor Zhao Heng freezes during the blackout crisis.",
+      "Zhao Heng confronts the loss of control he once wielded effortlessly over the theatre and his protégé."
+    ],
+    "director_id": "director-vnext1-deepseek",
+    "episode_id": "UNK-E01",
+    "information_priorities": [
+      "The emergency key as the literal and symbolic object of transferred authority.",
+      "The shifting power dynamic between mentor and protégé revealed through hesitation and decisive action."
+    ],
+    "thematic_axis": "Inherited authority versus earned agency when a crisis strips away the illusion of control.",
+    "visual_development_goal": "A darkened backstage world where emergency lighting carves isolation and the key glints as the sole point of decision."
+  },
+  "episode_input_sha256": "922d9976326565c4432c153b712e0407c6fe1af23dbd4b99771067d9bf31414f",
+  "media_visual_acceptance": false,
+  "model_calls": [
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 25250,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 3689,
+      "rejection_reason": "$.character_arc[0] must be a string",
+      "request_id": "",
+      "request_sha256": "d033c1c6b040717989dc51a0b98a5f56e35ed8f57b0747aa911c172d2431cc76",
+      "response_sha256": "114e51c17e2a23614486d69b5d75f936860bddfbf11783f92111e6c3df303380",
+      "schema_chars": 632,
+      "schema_transport": "native_argv",
+      "stage": "E0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": true,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 12860,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 3946,
+      "rejection_reason": "",
+      "request_id": "",
+      "request_sha256": "9f0ec66619d4e787f7af959f700fd84676dd88ee65511759bca48e4e82b467cc",
+      "response_sha256": "26e758a27f0f357670571c64843eb11a64d80d9daca6777ac41f4b0dc0706663",
+      "schema_chars": 632,
+      "schema_transport": "native_argv",
+      "stage": "E0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    }
+  ],
+  "production_entry_changed": false,
+  "schema_version": "director-text-shadow-checkpoint-v1"
+}

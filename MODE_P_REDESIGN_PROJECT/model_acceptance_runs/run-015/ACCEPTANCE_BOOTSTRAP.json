@@ -1,0 +1,69 @@
+{
+  "created_at": "2026-07-19T12:56:32.948723+00:00",
+  "director_agent": "mode-p-director",
+  "director_bound_at": "2026-07-19T12:57:13.931527+00:00",
+  "director_call_id": "a5e96db70fec7bf61",
+  "director_model": "deepseek-v4-pro",
+  "director_provenance": {
+    "agent_call_id": "a5e96db70fec7bf61",
+    "agent_tool_use_id": "call_00_qz1F2eK5gSscWE9YDw442792",
+    "agent_type": "mode-p-director",
+    "portable_transcript_path": "provenance/director-a5e96db70fec7bf61.jsonl",
+    "portable_transcript_sha256": "e685bdcce00357d349e0db2e2513bc4d37935507681da530470076c1dd93469f",
+    "prompt_sha256": "3a07bb5a9e2257b03f7ba455385fa7e5639e0a932d382abbe53d434891ecc39a",
+    "resolved_model": "deepseek-v4-pro",
+    "tool_call_record_sha256": "786afd5c836d07f930d1830fa931efb3fde934511adb564a6e94e398cbad5075",
+    "tool_result_record_sha256": "e30c499c628fc2f2f2c29795cf24cebbba56df4f959327c47140b91fe859f0f3",
+    "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\fd50dadd-3a27-4504-b531-0537ca6648c4.jsonl"
+  },
+  "dp_adversarial_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\dp_adversarial_packet.md",
+  "dp_adversarial_sha256": "ca8aeb2e8f2ee59485090e11258ed2fad97ad65684f700ba6503b299be718a14",
+  "dp_agents": [
+    {
+      "agent_call_id": "a54d42f37d11c56d3",
+      "bound_at": "2026-07-19T13:30:00+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a54d42f37d11c56d3",
+        "agent_tool_use_id": "call_00_yksWEKxYCniIb7yIBLJS1035",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-adversarial-1-a54d42f37d11c56d3.jsonl",
+        "portable_transcript_sha256": "d596da75b88780b20762393e6aad80b438f201faed4d4507d1ddff35c51391f0",
+        "prompt_sha256": "f1dd08dc7bb927b40b62fc0449d3d6ed98d8a539ad7c644ab651b26c35109854",
+        "resolved_model": "deepseek-v4-pro",
+        "response_sha256": "1e85ebd7797d0c8eb621b4d7bbe39b14a3c00b986e8da6fa086a77d6027eb0cc",
+        "tool_call_record_sha256": "af4b82b5eb12aedf9cd0e318abec4ae59ea767b1351a8bc2dffde8599faa9446",
+        "tool_result_record_sha256": "0d6eadb6f7efffa83bc4fc0d5c7340b6d71ff648d83ae410ca4b78f2201b5a03"
+      },
+      "response_sha256": "1e85ebd7797d0c8eb621b4d7bbe39b14a3c00b986e8da6fa086a77d6027eb0cc",
+      "review_id": "adversarial-1"
+    },
+    {
+      "agent_call_id": "a215a1647c5a8eece",
+      "bound_at": "2026-07-19T14:00:00+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a215a1647c5a8eece",
+        "agent_tool_use_id": "call_00_b5Wu6bi5ZqcONWQJV8dC5611",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-production-1-a215a1647c5a8eece.jsonl",
+        "portable_transcript_sha256": "2d9b93ad7812f76e2f408d8f6791ceacce8eb991e81a33a8007dd794b61201dc",
+        "prompt_sha256": "9cf1dcf85f87d9833f2fa8d3a1c3a3a881938accbb026d86927847727995bd0e",
+        "resolved_model": "deepseek-v4-pro",
+        "response_sha256": "d41f65cd9207fa86755e504373c75cebbb5281c29cdc9975d9af2889f409afa7",
+        "tool_call_record_sha256": "9877d3f9817e8b9033a6856a538c2d765d3843e42e0dc29a111b1cda157b4e9b",
+        "tool_result_record_sha256": "a1d0e1dc234de63807b8318b938b50eb661ee026da960e1b9315a493dc194547"
+      },
+      "response_sha256": "d41f65cd9207fa86755e504373c75cebbb5281c29cdc9975d9af2889f409afa7",
+      "review_id": "production-1"
+    }
+  ],
+  "evidence_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015",
+  "fixed_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "owner": "claude-code",
+  "passed_at": "2026-07-19T14:47:54.861303+00:00",
+  "run_id": "run-015",
+  "schema_version": 3,
+  "status": "passed"
+}

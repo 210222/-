@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_1",
+  "stage": "batch_commit",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 1,
+  "master_path": "DIRECTOR_MASTER.md",
+  "master_sha256": "0469fbe3e2def2a836b4c1cf5d3d134dc5decaa52cd39edd58015ea7acde76d7",
+  "manifest_path": "working/SHOT_MANIFEST.json",
+  "manifest_sha256": "3fb03d3c321fb614c3d89825a34779a9a08b82fc1aeec6cda5363f80a07fa5cf",
+  "checks": {
+    "final_master_sync": {
+      "passed": true,
+      "stage": "final_check",
+      "artifact_generation": 1,
+      "master_sha256": "0469fbe3e2def2a836b4c1cf5d3d134dc5decaa52cd39edd58015ea7acde76d7",
+      "manifest_sha256": "3fb03d3c321fb614c3d89825a34779a9a08b82fc1aeec6cda5363f80a07fa5cf",
+      "report_path": "reports/generation-0001/final_master_sync.txt",
+      "report_sha256": "a7a9367e8eae8f73ccc87ab546503332529e2e783ad4b3e556147a1244802fee"
+    }
+  },
+  "dp_review": {
+    "status": "ready",
+    "artifact_generation": 1,
+    "master_sha256": "0469fbe3e2def2a836b4c1cf5d3d134dc5decaa52cd39edd58015ea7acde76d7",
+    "manifest_sha256": "3fb03d3c321fb614c3d89825a34779a9a08b82fc1aeec6cda5363f80a07fa5cf",
+    "review_path": "reviews/dp-0001.md",
+    "review_sha256": "3705f015c6eb9adfd6e7a26ff135ce2df2e530cd55dfc0f8f9efbd4331a9e914",
+    "issue_fingerprint": null,
+    "stalled": false
+  },
+  "dp_issue_history": [],
+  "episode_review": null,
+  "committed_batches": [
+    {
+      "batch_index": 1,
+      "artifact_generation": 1,
+      "master_sha256": "0469fbe3e2def2a836b4c1cf5d3d134dc5decaa52cd39edd58015ea7acde76d7",
+      "manifest_sha256": "3fb03d3c321fb614c3d89825a34779a9a08b82fc1aeec6cda5363f80a07fa5cf",
+      "commit_path": "commits/delivery-2d291173526f4b76b9fce898a6c37cbb.json",
+      "commit_sha256": "3cef515ff077c3a5bd25b588b12c79901d53c07c0da68f3b182223546f595121"
+    }
+  ],
+  "dp_attempts": 1,
+  "revision_count": 0,
+  "transition_sequence": 6,
+  "updated_at": "2026-07-17T04:02:23.777985+00:00",
+  "state_sha256": "92a9e55f3ac44065579a16385d2ecf45baea94961088ab58d11ea92422752a33"
+}

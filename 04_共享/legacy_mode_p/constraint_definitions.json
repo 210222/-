@@ -1,0 +1,224 @@
+{
+  "_meta": {
+    "version": "v1.0",
+    "date": "2026-07-07",
+    "design": "Layer 1 结构化约束 — v7.0推理架构",
+    "principle": "规则不被LLM'读'和'理解'——规则被编译为输出字段的合法值域。Agent从可选菜单中选，系统自动检查。",
+    "total_rules_covered": "~220 (P0+P1)",
+    "source_kb": "03_导演知识库_v5.0.md"
+  },
+
+  "domains": {
+    "对话场景": {
+      "trigger": "scene_type in ['双人对话','三人对话','多人对话']",
+      "kb_sections": ["§1.1","§1.2","§1.3","§1.4","§1.5"],
+
+      "shot_type": {
+        "rule_refs": ["D-TRI-04","D-TRI-05","D-TRI-06","C-KTZ-01"],
+        "type": "enum",
+        "valid_values": ["大特写","特写","近景","中近景","中景","中全景","全景"],
+        "violation": "阻断",
+        "violation_code": "SHT-01",
+        "fix_hint": "景别必须使用标准术语·不可自创词"
+      },
+
+      "axis_side": {
+        "rule_refs": ["D-TRI-01","D-TRI-02","D-TRI-03","D-DUO-13","GEN-09"],
+        "type": "enum",
+        "valid_values": ["左","右"],
+        "cross_shot_constraint": {
+          "rule": "相邻镜axis_side必须一致·除非有标注的过波镜(空镜/插入/特写)",
+          "check": "spatial_check.S01",
+          "violation": "阻断",
+          "violation_code": "AXS-01"
+        },
+        "fix_hint": "机位必须在关系线同一侧·跳轴需过波镜"
+      },
+
+      "focal_length": {
+        "rule_refs": ["M-LEN-01","M-LEN-02"],
+        "type": "range_per_shot_type",
+        "ranges": {
+          "大特写": [85, 200],
+          "特写": [85, 135],
+          "近景": [50, 100],
+          "中近景": [35, 85],
+          "中景": [24, 50],
+          "中全景": [24, 35],
+          "全景": [16, 35]
+        },
+        "check": "spatial_check.S03",
+        "violation": "警告",
+        "violation_code": "FOC-01",
+        "fix_hint": "调整为景别匹配的焦距范围"
+      },
+
+      "shot_type_jump": {
+        "rule_refs": ["C-FI-06","E-MTC-01"],
+        "type": "adjacent_constraint",
+        "max_jump": 3,
+        "description": "相邻镜景别跳变不超过3级（如全景→中景✅ 全景→大特写⚠️）",
+        "check": "spatial_check.S02",
+        "violation": "警告",
+        "violation_code": "JMP-01",
+        "fix_hint": "插入中间景别过渡镜·形成递进链"
+      },
+
+      "coverage_camera_count": {
+        "rule_refs": ["D-TRI-09","COV-ACT-01"],
+        "type": "range",
+        "range": [3, 8],
+        "description": "对话场景基础机位: 3-8个（三角形底边2+顶端1+变体）",
+        "violation": "警告",
+        "violation_code": "COV-01",
+        "fix_hint": "三角形原理最少3机位·主镜头+外反拍+内反拍"
+      },
+
+      "eyeline_match": {
+        "rule_refs": ["D-TRI-01","E-MTC-03"],
+        "type": "cross_shot_check",
+        "description": "角色A视线方向在相邻镜中保持空间连贯",
+        "check": "spatial_check.S07 (需角色视线向量)",
+        "violation": "警告",
+        "violation_code": "EYE-01",
+        "fix_hint": "确认角色视线方向与关系线一致·相邻镜保持"
+      }
+    },
+
+    "动作场景": {
+      "trigger": "scene_type in ['打斗','追逐','悬疑']",
+      "kb_sections": ["§2.1","§2.2","§2.3","§2.4"],
+
+      "action_rhythm": {
+        "rule_refs": ["A-ACT-01","A-ACT-02"],
+        "type": "structure",
+        "description": "三阶段节奏: 建立(空间)→对抗(动作)→释放(结果)",
+        "violation": "警告",
+        "violation_code": "RHY-01"
+      },
+
+      "action_direction_consistency": {
+        "rule_refs": ["A-ACT-03","E-MTC-02"],
+        "type": "cross_shot_check",
+        "description": "动作方向在相邻镜中保持一致·如A从左向右跑·下镜仍左→右",
+        "violation": "阻断",
+        "violation_code": "DIR-01"
+      },
+
+      "movement_speed": {
+        "rule_refs": ["M-MOT-04","M-20R-07"],
+        "type": "range",
+        "range": [0, 3.0],
+        "description": "运镜速度上限: 3.0x · 超过=甩镜/冲刺·需标注",
+        "check": "spatial_check.S04",
+        "violation": "警告",
+        "violation_code": "SPD-01"
+      },
+
+      "spatial_feasibility": {
+        "rule_refs": ["M-MOT-03","P-FAL-06"],
+        "type": "spatial_check",
+        "description": "运镜路径不穿墙·窄空间(<3m纵深)禁用横移",
+        "check": "spatial_check.S06",
+        "violation": "阻断",
+        "violation_code": "SPC-01"
+      }
+    },
+
+    "光影色彩": {
+      "trigger": "always (所有场景)",
+      "kb_sections": ["§6.1","§6.2","§6.3","§6.4"],
+
+      "light_source_anchor": {
+        "rule_refs": ["L-3PT-01","L-SRC-01","管道铁律#4"],
+        "type": "required_field",
+        "description": "每个光源必须有物理锚点——可追溯到参考图格位或空间地图坐标",
+        "violation": "阻断",
+        "violation_code": "LIT-01",
+        "fix_hint": "标注光源在参考图中的格位·或空间地图中的坐标"
+      },
+
+      "color_temp_consistency": {
+        "rule_refs": ["L-CT-01","L-CT-02"],
+        "type": "cross_shot_check",
+        "description": "同一场景·同一光源条件下·色温K值跨镜一致",
+        "check": "spatial_check (待实现)",
+        "violation": "警告",
+        "violation_code": "CT-01",
+        "fix_hint": "锁定光源色温K值·跨镜逐字复制·不可改一字"
+      },
+
+      "color_temp_range": {
+        "rule_refs": ["L-CT-03"],
+        "type": "range",
+        "range": [1700, 20000],
+        "description": "色温有效范围: 1700K(火柴)-20000K(蓝天)",
+        "violation": "警告",
+        "violation_code": "CT-02"
+      }
+    },
+
+    "通用约束": {
+      "trigger": "always (所有场景·所有Agent)",
+
+      "segment_duration": {
+        "rule_refs": ["管道铁律#1","E-RHY-01"],
+        "type": "range",
+        "range": [0, 15],
+        "description": "单段生成时长: 0-15秒·超过=阻断",
+        "check": "gate0_scan.R01",
+        "violation": "阻断",
+        "violation_code": "DUR-01"
+      },
+
+      "no_process_verbs": {
+        "rule_refs": ["管道铁律#5","sd2.0 S1.3"],
+        "type": "regex",
+        "pattern": "正在|刚(?!好)|开始[^前]|持续[^时间]",
+        "description": "首帧零过程动词·Seko渲染为已完成态",
+        "check": "gate0_scan.R02",
+        "violation": "阻断",
+        "violation_code": "VRB-01"
+      },
+
+      "no_negative_words": {
+        "rule_refs": ["管道铁律#10","sd2.0正向指令解析"],
+        "type": "regex",
+        "pattern": "不要|避免|禁止|不能|不应|勿|别|切勿|严禁",
+        "description": "台本正文零负向词·sd2.0将一切token当正向指令",
+        "check": "gate0_scan.R09",
+        "violation": "阻断",
+        "violation_code": "NEG-01"
+      },
+
+      "kb_rule_id_in_output": {
+        "rule_refs": ["输出规范"],
+        "type": "regex",
+        "pattern": "D-TRI-|M-MOT-|C-COM-|P-REN-|P-FAL-|L-3PT-|E-MTC-|GEN-|VS-LS-",
+        "description": "KB规则ID不进入台本正文·仅在设计报告中",
+        "check": "gate0_scan.R12",
+        "violation": "警告",
+        "violation_code": "KBD-01"
+      },
+
+      "p_fal_avoidance": {
+        "rule_refs": ["P-FAL-01~10","管道铁律#2"],
+        "type": "checklist",
+        "items": [
+          "P-FAL-01: 面部变形(低角度+广角)→使用≥35mm+眼平",
+          "P-FAL-02: 多人口型误差(>3人)→≤2人对话场景使用SekoTalk",
+          "P-FAL-03: 高频视觉噪声→避免条纹/细格/密集纹理",
+          "P-FAL-04: 画面文字不可控→无关键文字依赖",
+          "P-FAL-05: 身份漂移→Character Anchor逐字复制·不可改一字",
+          "P-FAL-06: 窄空间横移禁用→空间纵深<3m时禁用横移",
+          "P-FAL-07: 极端运动形变→速度≤3.0x",
+          "P-FAL-08: 画布+口型互斥→不同时启用",
+          "P-FAL-09: 多人面部差异(≥3人)→尽量≤2人同框",
+          "P-FAL-10: 光照突变→色温渐变≥0.5s过渡"
+        ],
+        "violation": "阻断",
+        "violation_code": "PFA-01~10"
+      }
+    }
+  }
+}

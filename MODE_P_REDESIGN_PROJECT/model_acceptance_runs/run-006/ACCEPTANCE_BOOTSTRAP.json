@@ -1,0 +1,70 @@
+{
+  "created_at": "2026-07-18T13:47:18.743634+00:00",
+  "director_agent": "mode-p-director",
+  "director_bound_at": "2026-07-18T13:49:20.870386+00:00",
+  "director_call_id": "a6a45155a0efbcd1d",
+  "director_model": "deepseek-v4-pro",
+  "director_provenance": {
+    "agent_call_id": "a6a45155a0efbcd1d",
+    "agent_tool_use_id": "call_00_DtW8UpKe7kRXr7rfd6Dh4181",
+    "agent_type": "mode-p-director",
+    "portable_transcript_path": "provenance/director-a6a45155a0efbcd1d.jsonl",
+    "portable_transcript_sha256": "7d57f741563b09f98a1b0fdfb2538f5108d66a5d27b19e81d98f22e91dabaf43",
+    "prompt_sha256": "023a5d66a19f73d01968dfd42bc145ba11cf97e35517dafddec0a4b14d8170d2",
+    "resolved_model": "deepseek-v4-pro",
+    "tool_call_record_sha256": "534008da44e0b7f05576992a82ba2d780c36b6817a87452ab69297db11f70634",
+    "tool_result_record_sha256": "8454ec0b6288248ebf856cafa644e7d24d2ba118ecf04070049a3010243ef1bf",
+    "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\e7613356-d7d3-43bb-97f2-6ee1bada7a48.jsonl"
+  },
+  "dp_adversarial_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\dp_adversarial_packet.md",
+  "dp_adversarial_sha256": "ca8aeb2e8f2ee59485090e11258ed2fad97ad65684f700ba6503b299be718a14",
+  "dp_agents": [
+    {
+      "agent_call_id": "a7675229c398874fd",
+      "bound_at": "2026-07-18T14:31:58.875393+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a7675229c398874fd",
+        "agent_tool_use_id": "call_00_0pbdROFqyTRNDfiD6nhn1404",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-adversarial-002-a7675229c398874fd.jsonl",
+        "portable_transcript_sha256": "55b826bf520dd1b65606466764c2ff44d9f923c3084abe4510718857ac929e28",
+        "prompt_sha256": "f44dfd912e3c7377afa3d9d9437b5cb28ad3235a091a8a67eb18156a969b5f0c",
+        "resolved_model": "deepseek-v4-pro",
+        "tool_call_record_sha256": "87358019ce0226f7f4ae416bbe45ab3cbf3051ed605d3c30e28da2e73f871c81",
+        "tool_result_record_sha256": "81d31fd2cf8d8c4b970d547374d1408f43d59188f911c8ea35a6744ad22276e4",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\e7613356-d7d3-43bb-97f2-6ee1bada7a48.jsonl"
+      },
+      "review_id": "adversarial-002"
+    },
+    {
+      "agent_call_id": "a5c24bc37af17e78a",
+      "bound_at": "2026-07-18T14:38:07.595644+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a5c24bc37af17e78a",
+        "agent_tool_use_id": "call_00_3lyD11ZV10vrJzbF9H1n8048",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-production-001-a5c24bc37af17e78a.jsonl",
+        "portable_transcript_sha256": "c60abb5a235c457d25e91ba8ff870f5651da0e0de89ae30094872b913333bd75",
+        "prompt_sha256": "4dff7b46b2225bfe5e1bad17c508f7ff1c7815aef160f42d717088dc6a4de00a",
+        "resolved_model": "deepseek-v4-pro",
+        "tool_call_record_sha256": "9a775ed12352624998c4c03c955fa0b12a3ee34051f0a30343acea9dc24459a4",
+        "tool_result_record_sha256": "2655b7f266e6a62c5b7cb35784294eeb55b1afe916851715eba52f3042a98b6b",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\e7613356-d7d3-43bb-97f2-6ee1bada7a48.jsonl"
+      },
+      "review_id": "production-001"
+    }
+  ],
+  "evidence_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-006",
+  "fixed_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "invalid_reason": "Production DP packet was created before the final Visual Bible and Continuity Ledger edits; the shared input hashes changed after DP, and production READY was routed scene-by-scene instead of closing batch DP_STATE.",
+  "invalidated_at": "2026-07-18T14:59:18.265543+00:00",
+  "owner": "claude-code",
+  "reopen_reason": "Premature pass: production feedback used scene submit, leaving batch DP_STATE and episode RUN_STATE unclosed.",
+  "reopened_at": "2026-07-18T14:57:02.326175+00:00",
+  "run_id": "run-006",
+  "schema_version": 3,
+  "status": "invalid"
+}

@@ -1,0 +1,164 @@
+"""Deterministic source-span registry generator from R1.2 fixtures."""
+import hashlib, json
+from pathlib import Path
+
+_HERE = Path(__file__).resolve().parent
+_FIXTURE_DIR = _HERE.parent
+_OUTPUT = _HERE / "source_spans.json"
+
+PINNED = {
+    "gun_barrel_sb": ("gun_barrel_sb_prompt.json", 1703,
+        "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8"),
+    "gun_barrel_video": ("gun_barrel_video_prompt.json", 2544,
+        "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce"),
+    "audience_sb": ("audience_sb_prompt.json", 2099,
+        "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141"),
+    "audience_video": ("audience_video_prompt.json", 2397,
+        "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787"),
+    "prep_area_sb": ("prep_area_sb_prompt.json", 1600,
+        "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057"),
+    "prep_area_video": ("prep_area_video_prompt.json", 1811,
+        "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c"),
+    "alley_sb": ("alley_sb_prompt.json", 3032,
+        "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb"),
+    "alley_video": ("alley_video_prompt.json", 2932,
+        "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9"),
+}
+
+# All needle terms verified to exist in fixtures (48 terms across 8 fixtures)
+NEEDLES = [
+    ("gun_barrel_sb", "style", "黑白手绘线稿故事板。13格电影分镜·按秒排列。16:9。粗糙铅笔线条，动态未完成感，\n强烈轮廓。纸张纹理。仅黑白——不渲染光影色彩材质。", 0),
+    ("gun_barrel_sb", "frames", "13格电影分镜", 0),
+    ("gun_barrel_sb", "aspect", "16:9", 0),
+    ("gun_barrel_sb", "rico_seated", "Rico背对镜头", 0),
+    ("gun_barrel_sb", "lamp", "台灯", 0),
+    ("gun_barrel_sb", "kelvin", "2800K", 0),
+    ("gun_barrel_sb", "warm_yellow", "暖黄", 0),
+    ("gun_barrel_sb", "handoff", "画面保持", 0),
+    ("gun_barrel_sb", "hard_cut", "嗡声硬切断", 0),
+    ("gun_barrel_video", "live_action", "真人实拍风格，电影级光影，8K分辨率", 0),
+    ("gun_barrel_video", "cinematic", "电影级光影", 0),
+    ("gun_barrel_video", "resolution", "8K分辨率", 0),
+    ("gun_barrel_video", "camera_door", "摄影机在门口", 0),
+    ("gun_barrel_video", "not_vortex", "那不是漩涡", 0),
+    ("audience_sb", "style_long", "黑白手绘线稿故事板。12格电影分镜·按秒排列。16:9。粗糙铅笔线条，\n动态未完成感，强烈轮廓。纸张纹理。仅黑白——不渲染光影色彩材质。", 0),
+    ("audience_sb", "venue", "观众席", 0),
+    ("audience_sb", "frames_au", "12格电影分镜", 0),
+    ("audience_sb", "aspect_au", "16:9", 0),
+    ("audience_sb", "whatsapp", "WhatsApp", 0),
+    ("audience_sb", "isabela", "Isabela", 0),
+    ("audience_video", "venue_v", "观众席", 0),
+    ("audience_video", "cut_b", "切 镜B", 0),
+    ("audience_video", "whatsapp_v", "WhatsApp", 1),
+    ("prep_area_sb", "style_long", "黑白手绘线稿故事板。10格电影分镜·按秒排列。16:9。粗糙铅笔线条，\n动态未完成感，强烈轮廓。纸张纹理。仅黑白——不渲染光影色彩材质。", 0),
+    ("prep_area_sb", "prep_zone", "备赛区", 0),
+    ("prep_area_sb", "frames_pa", "10格电影分镜", 0),
+    ("prep_area_sb", "bw", "黑白", 0),
+    ("prep_area_sb", "rico", "Rico", 0),
+    ("prep_area_sb", "iuri", "Iuri", 0),
+    ("prep_area_sb", "cleaning", "低头擦枪", 0),
+    ("prep_area_sb", "no_look", "没抬头", 0),
+    ("prep_area_video", "prep_zone_v", "备赛区", 1),
+    ("prep_area_video", "iyuri", "伊乌里", 0),
+    ("prep_area_video", "left_enter", "画左", 0),
+    ("prep_area_video", "rico_clean", "Rico低头擦枪", 0),
+    ("prep_area_video", "locked", "视线锁定", 0),
+    ("prep_area_video", "fixed", "固定", 0),
+    ("alley_sb", "style_long", "黑白手绘线稿故事板。13格电影分镜·按秒排列。16:9。粗糙铅笔线条，\n动态未完成感，强烈轮廓。纸张纹理。仅黑白——不渲染光影色彩材质。", 0),
+    ("alley_sb", "alley", "窄巷", 0),
+    ("alley_sb", "bw_al", "黑白", 1),
+    ("alley_sb", "frames_al", "13格", 0),
+    ("alley_sb", "pedro", "Pedro", 0),
+    ("alley_sb", "run_chase", "跑动追球", 0),
+    ("alley_sb", "heli_rl", "直升机画右", 0),
+    ("alley_sb", "left", "画左", 1),
+    ("alley_sb", "car_static", "轿车静止", 0),
+    ("alley_video", "alley_v", "窄巷", 1),
+    ("alley_video", "pedro_v", "Pedro", 1),
+    ("alley_video", "run_chase_v", "跑动追球", 0),
+    ("alley_video", "heli_enter", "直升机从画右", 0),
+    ("alley_video", "car_static_v", "轿车静止", 1),
+    # Exact anchors from gate EXACT_OUTPUT_ANCHORS (must be in registry)
+    ("gun_barrel_sb", "anchor_rico", "Rico背对镜头坐在台灯后", 0),
+    ("gun_barrel_sb", "anchor_panel13", "格13 [12-13s·极特写·135mm·静止]", 0),
+    ("gun_barrel_video", "anchor_door", "摄影机在门口", 0),
+    ("gun_barrel_video", "anchor_vortex", "那不是漩涡不是幻觉", 0),
+    ("audience_sb", "anchor_cut", "格3s→格4s [切]", 0),
+    ("audience_sb", "anchor_wa", "WhatsApp", 0),
+    ("audience_video", "anchor_cutv", "切 镜B-1→B-2", 0),
+    ("audience_video", "anchor_wav", "WhatsApp", 0),
+    ("prep_area_sb", "anchor_p5s", "格5s [5s·MS·35-50mm·固定]", 0),
+    ("prep_area_sb", "anchor_rico", "Rico低头擦枪·没抬头", 0),
+    ("prep_area_video", "anchor_iuri", "格5s [5s] 伊乌里从画左走入备赛区", 0),
+    ("prep_area_video", "anchor_locked", "Rico低头擦枪·视线锁定在手枪上", 0),
+    ("alley_sb", "anchor_chase", "跑动追球", 0),
+    ("alley_sb", "anchor_heli", "直升机画右→画左", 0),
+    ("alley_sb", "anchor_car", "轿车静止", 0),
+    ("alley_video", "anchor_chasev", "跑动追球", 0),
+    ("alley_video", "anchor_heliv", "直升机从画右边缘入画", 0),
+    ("alley_video", "anchor_carv", "轿车静止", 0),
+    ("alley_sb", "pedro_long", "Pedro", 0),
+    # Mechanical values for source binding coverage
+    ("gun_barrel_video", "mm24", "24mm", 0),
+    ("gun_barrel_video", "mm50", "50mm", 0),
+    ("gun_barrel_sb", "mm85", "85mm", 0),
+    ("gun_barrel_sb", "mm135", "135mm", 0),
+    ("gun_barrel_sb", "ws", "WS", 0),
+    ("gun_barrel_sb", "ms", "MS", 0),
+    ("gun_barrel_sb", "mcu", "MCU", 0),
+    ("gun_barrel_sb", "cu", "CU", 0),
+    ("gun_barrel_sb", "ecu", "ECU", 0),
+    ("gun_barrel_sb", "fixed_cam", "固定", 0),
+    ("gun_barrel_sb", "push", "前推", 0),
+    ("gun_barrel_sb", "arc_push", "弧形绕行", 0),
+    ("gun_barrel_sb", "slow_push", "极慢推近", 0),
+    ("alley_sb", "tilt_up", "上摇", 0),
+    ("alley_sb", "tracking", "跟拍", 0),
+    ("alley_sb", "handheld", "手持跟拍", 0),
+    ("alley_sb", "tilt_swing", "仰摇", 0),
+    ("prep_area_sb", "fs", "FS", 0),
+    ("prep_area_sb", "mm35", "35mm", 0),
+    ("audience_sb", "cut_type", "切", 0),
+]
+
+def _sha(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+def generate() -> dict:
+    fixtures: dict = {}
+    for fid, (fname, exp_len, exp_hash) in PINNED.items():
+        data = json.loads((_FIXTURE_DIR / fname).read_text(encoding="utf-8"))
+        txt = data["prompt_text"]
+        if len(txt) != exp_len: raise SystemExit(f"{fid}: len mismatch")
+        if _sha(txt) != exp_hash: raise SystemExit(f"{fid}: hash mismatch")
+        fixtures[fid] = {"fixture_file": fname, "prompt_body_sha256": exp_hash, "fields": []}
+
+    for fid, field_id, needle, occ in NEEDLES:
+        entry = fixtures[fid]
+        txt_data = json.loads((_FIXTURE_DIR / entry["fixture_file"]).read_text(encoding="utf-8"))
+        txt = txt_data["prompt_text"]
+        idx, count = -1, 0
+        while True:
+            idx = txt.find(needle, idx + 1)
+            if idx < 0: break
+            if count == occ: break
+            count += 1
+        if idx < 0:
+            raise SystemExit(f"NOT FOUND: {fid}.{field_id} = '{needle}'")
+        start, end = idx, idx + len(needle)
+        exact = txt[start:end]
+        entry["fields"].append({
+            "fixture_id": fid, "prompt_body_sha256": entry["prompt_body_sha256"],
+            "start": start, "end": end, "exact_text": exact,
+            "exact_text_sha256": _sha(exact), "field_id": f"{fid}.{field_id}",
+        })
+
+    for fid in fixtures:
+        fixtures[fid]["fields"].sort(key=lambda f: f["field_id"])
+    return {"schema_version": "1.0", "fixtures": fixtures}
+
+if __name__ == "__main__":
+    registry = generate()
+    _OUTPUT.write_text(json.dumps(registry, ensure_ascii=False, indent=2), encoding="utf-8")
+    total = sum(len(v["fields"]) for v in registry["fixtures"].values())
+    print(f"Generated {total} fields across {len(registry['fixtures'])} fixtures")

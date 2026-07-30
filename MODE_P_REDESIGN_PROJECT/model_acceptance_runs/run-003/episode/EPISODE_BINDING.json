@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "mode": "standalone",
+  "project_id": "",
+  "project_manifest": "",
+  "project_dir": "",
+  "episode_id": "director_transfer_4scenes",
+  "episode_script": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "episode_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "session_dir": "D:\\tsc\\导演系统_v5\\01_调度器\\mode_p\\sessions\\director_transfer_4scenes\\6cb709ad3329"
+}

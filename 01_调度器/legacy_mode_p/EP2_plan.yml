@@ -1,0 +1,136 @@
+scene:
+  id: "EP2_Act1"
+  name: "Rico工作室门口+室内"
+  type: "悬疑·单人探索·双空间"
+  total_duration_s: 20
+  total_shots: 4
+  axis_side: "A侧(门轴对侧·锁孔侧)"
+  static_shots: 2
+  static_ratio: 0.5
+
+global_anchors:
+  character:
+    伊莎贝拉:
+      - "Female, late 20s-early 30s, lean build, dark casual clothing, dark hair pulled back"
+      - "Core props: 黄铜钥匙(红色标签·老旧·铜绿斑·约5cm)"
+      - "Core: (I1) hand holding brass key at lock level—precise insertion"
+      - "(I2) hand gripping door handle with whitened knuckles—tension"
+      - "(I3) hand trembling after pulling key from lock—fear tremor"
+      - "(I4) face half-lit by warm 2800K + cold 4000K—boundary between two worlds"
+
+  environment:
+    description: "Soviet-style residential corridor, 4:30am. Corridor: ~15m×1.8m×2.8m, plain gray walls, terrazzo floor, circular ceiling fluorescent 4000K. Studio interior: ~5m×4m, industrial hanging lamp 2800K warm yellow, chiaroscuro. Wooden door 0.9m×2.1m with brass lock."
+    spatial_anchor: "Door = boundary between cold corridor(4000K) and warm studio(2800K)"
+
+  lighting:
+    description: "Dual color temperature system. CORRIDOR: L1-ceiling fluorescent 4000K cold white, soft diffused. STUDIO: L2-industrial hanging lamp 2800K warm yellow, hard light, ~45deg cone, outside cone pitch black. DOOR CRACK: L3-warm 2800K seeping through as thin line→widening rectangle when door opens"
+    anchor_sources:
+      - {source: "L1-吸顶荧光灯", kelvin: 4000, direction: "天花板·垂直向下·圆形·声控", ref_grid: "图2格6"}
+      - {source: "L2-工业吊灯", kelvin: 2800, direction: "天花板·垂直向下·光锥~45度·硬光", ref_grid: "图1格1-6"}
+      - {source: "L3-门缝暖光", kelvin: 2800, direction: "门缝·水平漏出→门开时扩展为三角形光柱", ref_grid: "图2格5"}
+
+  style_spine:
+    description: "shot on Arri Alexa 35, cold fluorescent 4000K corridor vs warm industrial 2800K studio, chiaroscuro single-source interior, blue-orange complementary color contrast, suspense single-character POV language, 1.85:1"
+    palette_anchors:
+      - "cold-fluorescent-4000K"
+      - "warm-industrial-2800K"
+      - "dark-void-chiaroscuro"
+      - "brass-key-gold"
+      - "blood-stain-dark-red"
+
+  constraints:
+    - "1000K色温差贯穿全场景"
+    - "伊莎贝拉肤色作为色温计"
+    - "染血毛巾暗红是唯一非工业色"
+    - "黄铜钥匙红色标签——唯一高饱和色点"
+    - "面部比例全程一致"
+    - "无画面文字(P-FAL-08)"
+
+segments_camera:
+  - segment_id: "①"
+    shot_id: "#A1"
+    time_range: [0, 3]
+    duration_s: 3
+    global_sec_start: 0
+    global_sec_end: 2
+    shot_type: "ECU→MCU"
+    focal_length: "85mm→35mm"
+    dof: "浅景深→中景深"
+    angle: "正面微俯5度"
+    camera_type: "ECU锁孔·门轴对侧"
+    camera_position: "楼道侧·门外0.5m·锁孔同高1.2m·门轴对侧·A侧"
+    axis_side: "A侧"
+    camera_fixed: true
+    actor_fixed: true
+    movement: "固定(S0)"
+    movement_speed_tier: "S0"
+    characters_in_frame: ["伊莎贝拉"]
+    kb_rule_ids: ["A-SUS-01", "C-FI-17", "A-SUS-02"]
+    transition_to: "#A2"
+    transition_type: "切"
+
+  - segment_id: "②"
+    shot_id: "#A2"
+    time_range: [3, 8]
+    duration_s: 5
+    global_sec_start: 3
+    global_sec_end: 7
+    shot_type: "全景→MS→CU(POV)"
+    focal_length: "35mm→50mm→85mm"
+    dof: "中景深→浅景深"
+    angle: "眼平1.55m(伊莎贝拉眼高·POV)"
+    camera_type: "POV主观·门框中线"
+    camera_position: "门口内·距门0.3m·伊莎贝拉眼高1.55m·门框中线"
+    axis_side: "A侧"
+    camera_fixed: false
+    actor_fixed: true
+    movement: "间歇摇摄POV·极慢→停顿→慢→落定"
+    movement_speed_tier: "S1"
+    characters_in_frame: []
+    kb_rule_ids: ["C-FI-17", "C-FI-06", "A-SUS-02", "C-KTZ-02"]
+    transition_to: "#A3"
+    transition_type: "切"
+
+  - segment_id: "③"
+    shot_id: "#A3"
+    time_range: [8, 12]
+    duration_s: 4
+    global_sec_start: 8
+    global_sec_end: 11
+    shot_type: "ECU→甩镜→CU"
+    focal_length: "135mm→85mm"
+    dof: "极浅景深→中景深"
+    angle: "门把高1.1m→面部眼平1.55m"
+    camera_type: "ECU手→甩镜→CU面·门把侧"
+    camera_position: "楼道侧·门外0.4m·门把高1.1m→面部眼平"
+    axis_side: "A侧"
+    camera_fixed: false
+    actor_fixed: false
+    movement: "固定(2s)→甩镜(0.5s·约28度/秒)→固定(1.5s)"
+    movement_speed_tier: "S0→S8→S0"
+    characters_in_frame: ["伊莎贝拉"]
+    kb_rule_ids: ["A-SUS-09", "A-SUS-01", "C-FI-06"]
+    transition_to: "#A4"
+    transition_type: "切"
+
+  - segment_id: "④"
+    shot_id: "#A4"
+    time_range: [12, 20]
+    duration_s: 8
+    global_sec_start: 12
+    global_sec_end: 19
+    shot_type: "全景→中景→ECU"
+    focal_length: "24mm→35mm→135mm"
+    dof: "深景深→中景深→极浅景深"
+    angle: "门口分界线→dolly back至1.2m→门把高1.1m"
+    camera_type: "全景走廊→dolly back→ECU锁孔"
+    camera_position: "门口分界线→dolly back至走廊侧1.2m→门把高1.1m"
+    axis_side: "A侧"
+    camera_fixed: false
+    actor_fixed: false
+    movement: "固定(2s)→dolly back(3s·约0.3m/s)→固定(3s)"
+    movement_speed_tier: "S0→S3→S0"
+    characters_in_frame: ["伊莎贝拉"]
+    kb_rule_ids: ["A-SUS-08", "C-FI-06", "C-DEP-01"]
+    transition_to: "END"
+    transition_type: "切"

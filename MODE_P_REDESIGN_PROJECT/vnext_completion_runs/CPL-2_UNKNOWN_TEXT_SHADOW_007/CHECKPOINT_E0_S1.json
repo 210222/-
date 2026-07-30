@@ -1,0 +1,225 @@
+{
+  "checkpoint": "CHECKPOINT_E0_S1.json",
+  "created_at": "2026-07-30T05:41:12.257853+00:00",
+  "episode_direction": {
+    "character_arc": [
+      "Lin Lan: transitions from reliance on Zhao Heng's judgment to claiming her own agency when the blackout exposes that the familiar hierarchy no longer holds — the key in her hand is now hers to use.",
+      "Zhao Heng: the mentor's authority dissolves in the darkness, leaving only a presence that can no longer guide, forcing Lin Lan to confront the silence where instruction used to be."
+    ],
+    "director_id": "director-vnext1-deepseek",
+    "episode_id": "UNK-E01",
+    "information_priorities": [
+      "The emergency exit is a real, consequential threshold — opening it or keeping it shut carries concrete stakes.",
+      "The blackout has changed something fundamental between Lin Lan and Zhao Heng; the old chain of command is broken.",
+      "Lin Lan holds the key; the decision is hers alone now."
+    ],
+    "thematic_axis": "A student's first independent decision under pressure, forced by the sudden collapse of a mentor's authority during a crisis.",
+    "visual_development_goal": "Establish a confined, low-visibility backstage environment where emergency lighting creates isolated pools of harsh visibility against deep shadow, making every illuminated object feel separate and significant. The exit sign and the metal key must read as the two poles of the decision — one fixed and institutional, one held and personal — so that the space itself conveys waiting and suspended consequence without any single element dominating. The darkness should feel inhabited by the weight of an authority that no longer speaks, not by threat or mystery."
+  },
+  "k1_packet_sha256": "c8a45d4a59027fed044e8273bc35c2de4c19a4db4780965d7b1fc6d2ce07e33f",
+  "media_visual_acceptance": false,
+  "model_calls": [
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 36480,
+      "duration_ms": 88188,
+      "input_tokens": 19162,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 2514,
+      "rejection_reason": "$ violates EpisodeDirectionState: visual_development_goal contains camera/edit execution language; Phase A may only diagnose intent",
+      "request_id": "924084b9-6860-4925-a052-027a791e4f82",
+      "request_sha256": "4fe3bdaac070a3e86acf4a4504a0f7045498753f66606acaf92c1133cbe0fd52",
+      "response_sha256": "cc273befc5c4f3fda320b163b9f851ff1e7bc5e289b54f41e308d61014bd82aa",
+      "stage": "E0",
+      "transport_normalization": "",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": true,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 53875,
+      "input_tokens": 17960,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 1831,
+      "rejection_reason": "",
+      "request_id": "46826f56-e67c-4fae-9675-c15277165d8b",
+      "request_sha256": "0dfc340feb3d4e41a283f7e826fe9174b9eb4b863eecee722bab7a996ff9da0a",
+      "response_sha256": "fc79956249533968aecf3a7973ad6fe1c5a4e55c662c88fad2e5166a449c1757",
+      "stage": "E0",
+      "transport_normalization": "",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": true,
+      "attempt": 1,
+      "cache_hit_tokens": 301056,
+      "duration_ms": 229891,
+      "input_tokens": 54021,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 13507,
+      "rejection_reason": "",
+      "request_id": "422b0535-b6a6-4bed-a7e2-446a9b9bf292",
+      "request_sha256": "a46671ce7ed41aae68f77f13797c8de48576f46071c0195eba8ff140884b72aa",
+      "response_sha256": "dc3a90f0737d39e14c6e699edb2cb039a78b1539e3035c95aeb1c01bbd4baeae",
+      "stage": "S1",
+      "transport_normalization": "",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    }
+  ],
+  "phase_a": {
+    "problem_set": {
+      "problems": [
+        {
+          "domain": "blocking and spatial relationship",
+          "priority": "high",
+          "problem_id": "P1_BLOCKING_WITHDRAWAL",
+          "question": "How should the spatial arrangement of Lin Lan, Zhao Heng, the table surface, and the emergency exit door be organized so that Zhao Heng's exit path reads unambiguously as withdrawal (退) — a deliberate, volitional retreat that terminates his authority — rather than as a neutral departure or a step into an adjacent room? The blocking must establish the door as a dramatic threshold whose crossing irreversibly changes who occupies the space and who holds the decision.",
+          "tags": [
+            "blocking",
+            "space",
+            "power",
+            "departure"
+          ]
+        },
+        {
+          "domain": "performance and visible behavior",
+          "priority": "high",
+          "problem_id": "P2_SILENCE_PERFORMANCE",
+          "question": "After Zhao Heng exits, Lin Lan has no dialogue, no interaction partner, and no prop to manipulate. What specific, gradable, observable physical behaviors — beyond general stillness and gaze direction — can differentiate active absorption of sole responsibility from freezing in indecision, hesitating from uncertainty, or waiting passively for Zhao Heng to return? The sequence of breath rhythm, posture alignment, micro-weight-shifts, and the timing of the gaze transition must communicate processing with rising gravity rather than paralysis.",
+          "tags": [
+            "performance",
+            "gaze",
+            "relationship"
+          ]
+        },
+        {
+          "domain": "off-screen sound and spatial pressure",
+          "priority": "high",
+          "problem_id": "P3_OFFSCREEN_KNOCKING",
+          "question": "How should the knocking from the audience seats be characterized — its rhythm pattern, intensity contour, the material quality of the struck surface (wood door, metal panel, hollow partition), and its apparent distance and direction from the backstage — so that it reads as a concrete urgent demand from a specific physical location rather than as abstract ambient tension? The sound must carry spatial information that makes the unseen source legible and its pressure escalating, since the audience cannot see what Lin Lan hears.",
+          "tags": [
+            "sound",
+            "space",
+            "reveal"
+          ]
+        },
+        {
+          "domain": "dramatic object and visual significance",
+          "priority": "high",
+          "problem_id": "P4_KEY_LEGIBILITY",
+          "question": "The emergency key is physically small and the environment is defined by emergency lighting with harsh falloff into deep shadow. What strategies of placement, light interaction, and spatial relationship can ensure the key remains the dramatic center across three critical moments — its placement by Zhao Heng (B1), its silent unclaimed presence while Lin Lan listens to the knocking (B4), and the moment Lin Lan's gaze lands on it (B5) — without the audience losing track of this central dramatic object in the low-visibility environment?",
+          "tags": [
+            "object",
+            "attention",
+            "composition"
+          ]
+        },
+        {
+          "domain": "relationship and gesture semantics",
+          "priority": "normal",
+          "problem_id": "P5_PLACEMENT_SEMANTICS",
+          "question": "The script uses the verb 放 (place, deposit) rather than 给 (give) or 递 (hand over). How should Zhao Heng's physical action of placing the key onto the table surface be differentiated in its gesture quality — speed, terminality, hand withdrawal pattern, absence of eye contact or pause for acknowledgment — from a collaborative handoff? The gesture must communicate unilateral relinquishment: he is depositing the object of authority and withdrawing, not offering it for a shared decision.",
+          "tags": [
+            "relationship",
+            "dialogue",
+            "blocking"
+          ]
+        },
+        {
+          "domain": "pacing and dramatic rhythm",
+          "priority": "normal",
+          "problem_id": "P6_LISTENING_DURATION",
+          "question": "What dramatic logic should govern the duration of Lin Lan's listening (B4) before her gaze transitions to the key (B5)? The script provides the structural markers 没有马上 (not immediately) and 随后 (then, subsequently) but does not specify a duration. If the pause is too brief, the gravity of being left alone with the decision does not register; if too extended, she may read as frozen rather than processing. The duration must communicate that she has genuinely absorbed the situation — heard the knocking, registered Zhao Heng's absence, felt the weight — before her gaze completes the internal turn.",
+          "tags": [
+            "pacing",
+            "performance",
+            "attention"
+          ]
+        }
+      ],
+      "scene_id": "UNK-E01-S03"
+    },
+    "scene_intent": {
+      "attention_trajectory": "The audience's attention follows Lin Lan's dramatic journey through a sequence of anchors that mirrors her cognitive path. It begins with Zhao Heng — his hand placing the key on the table, his face as he speaks the transfer line — establishing him as the locus of authority in the opening moments. His exit pulls attention briefly to the door, the threshold he crosses to leave the space. Once he is gone, attention settles on Lin Lan: her body in the diminished space, the quality of her stillness, the direction of her body and her listening. The sound of knocking momentarily redirects attention toward the unseen audience area, creating spatial awareness of the pressure source beyond the backstage walls — the audience hears what Lin Lan hears and maps the unseen source through sound. The trajectory resolves by following Lin Lan's own gaze downward to the key on the table: from the person she relied on, to the pressure she cannot ignore, to the object that now holds her choice.",
+      "audience_knowledge_delta": "Before this scene, the audience understands the backstage operational hierarchy — Zhao Heng decides under pressure, Lin Lan executes. The blackout has created an emergency, but the expectation is that Zhao Heng will handle it. After this scene, the audience has witnessed the hierarchy dissolve: Zhao Heng has chosen to step aside, remove himself from the space, and leave Lin Lan alone with a consequential choice. The audience now knows what Lin Lan knows — the decision belongs to her alone, and no one is coming back to make it for her. What the audience does not yet know — and what Lin Lan does not yet know — is what she will do. The scene creates knowledge parity between audience and character at the moment of maximum uncertainty.",
+      "avoid_list": [
+        "Do not reveal Lin Lan's decision — whether she will open the emergency exit, keep it closed, call out, or take any action whatsoever. The scene ends with her gaze on the key, not with a choice made. The decision belongs to a later scene, and foreclosing it here would collapse the suspended dramatic weight that is this scene's function.",
+        "Do not insert imagined, remembered, hallucinated, or subjectively visualized imagery — no flashbacks to prior emergencies, no mental images of what lies beyond the exit door, no internal-monologue visual conventions, no dreamlike or distorted perception sequences. All dramatic information must come from the visible physical behavior of the characters and the tangible reality of the backstage space as illuminated by emergency light.",
+        "Do not show Zhao Heng's face, body, silhouette, shadow, reflection, or any trace of his presence after he exits through the door in B3. Once he leaves the backstage space, his dramatic function in this scene is complete — the remainder of the scene belongs to Lin Lan alone, and any lingering trace of him would dilute the solitude that defines her new position."
+      ],
+      "beats": [
+        {
+          "beat_id": "B1_KEY_PLACED",
+          "dramatic_function": "Establishes the key as the concrete physical object of authority transfer. The verb 放 (place) rather than 给 (give) or 递 (hand) signals that this is a unilateral deposit, not a collaborative transfer. The word 唯一 (only) removes any sense of backup — this key is singular, its weight absolute. The placing gesture is the first of three escalating actions that together constitute Zhao Heng's abdication.",
+          "fact_refs": [
+            "Script: 赵衡把唯一的应急门钥匙放在桌面"
+          ]
+        },
+        {
+          "beat_id": "B2_TRANSFER_SPOKEN",
+          "dramatic_function": "The verbal declaration makes the transfer explicit, witnessed, and irreversible. 这次 (this time) acknowledges departure from established precedent — the normal chain of command is being intentionally broken. The line is structurally imperative: it does not ask for Lin Lan's consent, it assigns the decision to her. This is the second escalation — physical severance is now joined by verbal abdication.",
+          "fact_refs": [
+            "Script: 对林岚说：'这次你决定。'"
+          ]
+        },
+        {
+          "beat_id": "B3_ZHAO_EXITS",
+          "dramatic_function": "Zhao Heng's physical departure completes the transfer. The verb 退 (withdraws, retreats) is active and volitional — he chooses to go, he is not pulled away by external events. His body leaving the space is the dramatic event that strands Lin Lan with the decision; the door becomes a threshold whose crossing irreversibly changes who occupies the room and who holds the authority. This is the third and final escalation — physical absence makes consultation impossible.",
+          "fact_refs": [
+            "Script: 他退到门外"
+          ]
+        },
+        {
+          "beat_id": "B4_LINLAN_LISTENS",
+          "dramatic_function": "The external world intrudes through off-screen sound while Lin Lan remains still. The knocking from the audience seats is the pressure that proves the situation has not paused for her processing — it is live, urgent, demanding. The phrase 没有马上 (not immediately) is the scene's critical pacing instruction: she will eventually act, but the pause that separates the transfer from her response is where the dramatic weight lives. Her listening is active absorption, not passive delay — she is registering the full situation before moving toward the object.",
+          "fact_refs": [
+            "Script: 林岚没有马上拿钥匙，只听着观众席传来的敲门声"
+          ]
+        },
+        {
+          "beat_id": "B5_GAZE_TO_KEY",
+          "dramatic_function": "The internal turn completes. 随后 (then, subsequently) marks the transition from external listening to internal recognition. Lin Lan's gaze landing on the key is the moment she accepts that the object — and the choice it represents — now belongs to her. She has not picked it up, not moved toward the exit, not spoken. But she has stopped looking for Zhao Heng and started looking at what he left behind. This is the scene's dramatic destination — the suspended moment between recognition and action.",
+          "fact_refs": [
+            "Script: 随后把视线落向钥匙"
+          ]
+        }
+      ],
+      "character_actions": [
+        "Zhao Heng places the only emergency key onto the table surface with a deliberate, terminal gesture distinct from a handoff — he deposits, he does not offer. He speaks the line assigning the decision to Lin Lan, then exits through the door, physically removing himself from the backstage space and from Lin Lan's sightline. His departure is volitional and complete across three escalating actions: place, speak, exit.",
+        "Lin Lan remains in place after Zhao Heng exits; she does not follow, does not call after him, does not immediately reach for the key. She listens — her body oriented toward the direction of the knocking sounds arriving from the audience seats — absorbing the concrete external pressure that will not pause for her. She then directs her gaze downward to the key resting on the table, the movement of her eyes completing the internal turn from waiting-for-instruction to recognizing-she-is-the-one."
+      ],
+      "character_knowledge_delta": "Lin Lan enters this scene holding the belief that Zhao Heng will make the emergency-exit call as the established pattern dictates — he holds the key and the authority, and she will receive a clear instruction. She leaves knowing that this pattern has been intentionally broken: Zhao Heng has transferred the decision to her, placed the key within her reach, and removed himself from the space. Her knowledge has shifted from 'someone else is responsible' to 'I am responsible.' Zhao Heng's knowledge does not change during this scene — he entered already knowing he would abdicate. His dramatic arc in this scene is not one of discovery but of action: he enacts a decision he has already made.",
+      "dramatic_action": "Zhao Heng abdicates operational authority through three sequential, escalating actions: he places the sole emergency key onto the table surface (physical severance from the object of authority), he speaks the line assigning the decision to Lin Lan (verbal declaration making the transfer explicit and irreversible), and he exits through the door (physical removal making consultation impossible). Lin Lan absorbs the consequences in silence across two beats: she listens to the external pressure of knocking from the audience seats — the situation is live and will not pause — then directs her gaze downward to the key, recognizing without yet acting that the choice is now hers alone.",
+      "dramatic_turn": "Zhao Heng places the only emergency key on the table, verbally transfers the decision to Lin Lan with a single line, and physically exits the backstage space. The dramatic turn is not the removal of the key from his hand but the removal of his presence from the room: Lin Lan entered expecting to receive a familiar command, and by the end of the scene she stands alone as the sole bearer of a consequential choice no one else can make for her.",
+      "entry_state": "The emergency lighting has activated after the blackout, defining the backstage space with limited, high-contrast pools of illumination against surrounding darkness. The emergency exit sign glows as a fixed institutional marker — one pole of the decision. Zhao Heng holds both the physical key and the operational authority; his body language communicates controlled deliberation. Lin Lan is alert, her body oriented toward Zhao Heng, positioned to receive direction — the established pattern is that he decides and she executes. The knocking from the audience seats is already audible, establishing external urgency before the scene's first action.",
+      "exit_state": "Zhao Heng is outside the door, no longer visible to Lin Lan or accessible for consultation. Lin Lan stands alone in the emergency light, the space around her now defined by his absence. The key rests on the table exactly where Zhao Heng placed it — untouched, unclaimed, the only object linking her to the decision. Her gaze has completed its trajectory: from the door where Zhao Heng disappeared, through the direction of the knocking that demands an answer, to rest on the key. She has not picked it up. She has not moved toward the exit. Her attention on the key confirms that she recognizes the decision is now hers alone, but the scene ends before she acts — the choice belongs to what follows.",
+      "information_goal": "By the scene's end the audience must hold three understandings simultaneously: first, that Zhao Heng's withdrawal is deliberate and permanent — this is not a temporary absence, not a test with a hidden correct answer, not a gambit where he expects her to call him back; second, that Lin Lan now carries the full decision burden alone, with no one remaining to confirm, approve, overrule, or share the consequence; third, that the knocking from the audience seats is a concrete, urgent, escalating demand from a specific physical location — it anchors the scene's stakes in the real world beyond the backstage and prevents the moment from becoming purely contemplative.",
+      "must_preserve": [
+        "The key must remain untouched on the table from the moment Zhao Heng places it (B1) until the end of this scene. Lin Lan looks at it in B5 but does not yet pick it up — her decision belongs to a subsequent scene and premature contact would deflate the suspended consequence that is this scene's dramatic outcome.",
+        "Zhao Heng must be fully gone from the backstage space — no longer visible to Lin Lan, no partial presence through a doorway — before Lin Lan's internal turn begins (listening in B4, gaze to key in B5). His physical absence is the dramatic condition that makes her internal turn possible; if he remains visible or accessible, the weight of sole responsibility cannot land.",
+        "The knocking sound must persist as continuous, escalating external urgency across B4 and B5 — it is the pressure that prevents the scene from becoming purely contemplative and anchors Lin Lan's situation in real, immediate stakes that will not defer to her processing time."
+      ],
+      "performance_question": "After Zhao Heng exits through the door, Lin Lan has no dialogue and no interaction partner. Every remaining dramatic beat — listening to the knocking, the internal shift from waiting to recognizing, the gaze landing on the key — must be carried by visible physical behavior alone. What specific, gradable, observable sequence of breath rhythm, stillness versus micro-movement, posture alignment, gaze trajectory, and spatial relationship to the key can communicate 'absorbing the weight of sole responsibility' (processing with rising gravity) as distinct from freezing in indecision, hesitating from uncertainty, or waiting passively for Zhao Heng to return?",
+      "power_curve": "Zhao Heng begins with complete operational authority — the key in his possession, the experience that justifies it, the habit of command, and Lin Lan's expectation that he will decide as always. He surrenders that authority voluntarily and unilaterally through three compounding actions: placing the key severs his physical connection to the object of authority; speaking the transfer line makes the abdication explicit and witnessed; exiting removes his body as the last possible fallback. Lin Lan begins in a deferential position — alert but expectant, oriented toward him as the source of direction. Her power does not rise because she seizes it or demands it; it rises because the space empties of anyone else who could hold it. The curve traces not a struggle but an evacuation: authority is not taken, it is left behind, and its weight lands on the person still standing in the room. The exact apex of the curve is the moment Lin Lan's gaze reaches the key — not the moment she picks it up, which belongs to a later scene, but the moment she stops looking for Zhao Heng and starts looking at what he left.",
+      "relationship_state": "Before: operational hierarchy intact — Zhao Heng holds both the physical key and the decision authority; Lin Lan is alert, oriented toward him, waiting for direction within an established pattern where he decides and she executes. After: the hierarchy has been dissolved not by conflict or promotion but by voluntary evacuation — Zhao Heng has abdicated and removed himself from the space. Lin Lan can no longer defer to anyone, and Zhao Heng has made himself unavailable to reclaim the role. The relationship has shifted from commander-subordinate to absent authority and sole bearer.",
+      "risk_flags": [
+        "The scene contains no dialogue after Zhao Heng exits (B3). All dramatic meaning in beats B4 and B5 must be carried entirely by Lin Lan's silent physical performance — breath rhythm, micro-posture shifts, gaze trajectory, and spatial relationship to the key. If her visible behavior lacks specificity and gradation, the authority transfer will register as a mechanical prop handoff rather than as an emotional and relational event with lasting consequences for the episode.",
+        "The knocking from the audience seats is an exclusively off-screen sound with no visible source. If its spatial character — direction, distance, the material quality of the struck surface, rhythm and intensity pattern — is not clearly established through sound design, the knocking may read as abstract atmosphere rather than as a concrete, urgent demand that prevents Lin Lan from simply waiting indefinitely.",
+        "The key is a physically small object in a low-light environment defined by emergency lighting with sharp falloff into surrounding darkness. If it does not register as visually significant at the two critical moments — when Zhao Heng places it (B1) and when Lin Lan's gaze reaches it (B5) — the audience may miss the dramatic chain connecting placement to recognition, losing the scene's central dramatic object and the arc it carries."
+      ],
+      "scene_id": "UNK-E01-S03",
+      "scene_objective": "To dramatize the transfer of authority not through argument, crisis, negotiation, or persuasion, but through unilateral withdrawal — the precise moment the person you always looked to for the answer steps away before the answer is given, and the silence that follows forces the recognition that the answer must now come from yourself alone.",
+      "scene_priority": "high — this is the irreversible authority-transfer fulcrum of the episode; the thematic axis is enacted in a single dramatic action without argument, crisis, or persuasion"
+    }
+  },
+  "production_entry_changed": false,
+  "schema_version": "director-text-shadow-checkpoint-v1"
+}

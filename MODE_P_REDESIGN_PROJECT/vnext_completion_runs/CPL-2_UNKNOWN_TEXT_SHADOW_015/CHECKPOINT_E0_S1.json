@@ -1,0 +1,269 @@
+{
+  "checkpoint": "CHECKPOINT_E0_S1.json",
+  "created_at": "2026-07-30T06:52:16.924592+00:00",
+  "episode_direction": {
+    "character_arc": [
+      "Lin Lan realizes she must assert her own authority when her mentor Zhao Heng freezes during the blackout crisis.",
+      "Zhao Heng confronts the loss of control he once wielded effortlessly over the theatre and his protégé."
+    ],
+    "director_id": "director-vnext1-deepseek",
+    "episode_id": "UNK-E01",
+    "information_priorities": [
+      "The emergency key as the literal and symbolic object of transferred authority.",
+      "The shifting power dynamic between mentor and protégé revealed through hesitation and decisive action."
+    ],
+    "thematic_axis": "Inherited authority versus earned agency when a crisis strips away the illusion of control.",
+    "visual_development_goal": "A darkened backstage world where emergency lighting carves isolation and the key glints as the sole point of decision."
+  },
+  "k1_packet_sha256": "c8a45d4a59027fed044e8273bc35c2de4c19a4db4780965d7b1fc6d2ce07e33f",
+  "media_visual_acceptance": false,
+  "model_calls": [
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 25250,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 3689,
+      "rejection_reason": "$.character_arc[0] must be a string",
+      "request_id": "",
+      "request_sha256": "d033c1c6b040717989dc51a0b98a5f56e35ed8f57b0747aa911c172d2431cc76",
+      "response_sha256": "114e51c17e2a23614486d69b5d75f936860bddfbf11783f92111e6c3df303380",
+      "schema_chars": 632,
+      "schema_transport": "native_argv",
+      "stage": "E0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": true,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 12860,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 3946,
+      "rejection_reason": "",
+      "request_id": "",
+      "request_sha256": "9f0ec66619d4e787f7af959f700fd84676dd88ee65511759bca48e4e82b467cc",
+      "response_sha256": "26e758a27f0f357670571c64843eb11a64d80d9daca6777ac41f4b0dc0706663",
+      "schema_chars": 632,
+      "schema_transport": "native_argv",
+      "stage": "E0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 32750,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 4493,
+      "rejection_reason": "$.scene_intent contains unknown contract fields: ['audience_information', 'dramatic_event', 'emotional_trajectory', 'power_dynamic_shift']",
+      "request_id": "",
+      "request_sha256": "928d707da2c288093395b2074566b0d8c700c294bc5d21b7a87165656b30642a",
+      "response_sha256": "ecb2a2b4d8835b614f82aaa361905e2d3febd0634411fb51634d732cd7fb7f8b",
+      "schema_chars": 2829,
+      "schema_transport": "native_argv",
+      "stage": "S1",
+      "transport_normalization": "cli_direct_contract_json",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 38921,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 4853,
+      "rejection_reason": "$.scene_intent contains unknown contract fields: ['change', 'character_knowledge', 'scene_function']",
+      "request_id": "",
+      "request_sha256": "d1a1c28148e68ffdebf6296594e6b4046ac19f8ea5a6d5714cdc49c11e2bacaf",
+      "response_sha256": "e241da35b28edf51e4260ecb7f7217cc05ba5cfe42355842ea558e33a2c929ae",
+      "schema_chars": 2829,
+      "schema_transport": "native_argv",
+      "stage": "S1",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 53813,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 5541,
+      "rejection_reason": "$.problem_set.problems[3] violates DirectorProblem: DirectorProblem priority must be normal or high",
+      "request_id": "",
+      "request_sha256": "86897a1fc7ea891303bccbd051864007be35fd38283a07c023a6c986cfffbd9c",
+      "response_sha256": "243a8139305e1ce8f191b64a2c65851c0ce5b5addc8065ebd05f808f6cbc51ab",
+      "schema_chars": 2829,
+      "schema_transport": "native_argv",
+      "stage": "S1",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": true,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 61719,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 5862,
+      "rejection_reason": "",
+      "request_id": "",
+      "request_sha256": "0f91a35e9da3171673a53f660a2884e60dc8a138a58bb9465367248335616d41",
+      "response_sha256": "d0753c87bcabed44923e3ff6d3b66f1856b0b8f39b6e73a7d56c548f9efd9e0b",
+      "schema_chars": 2829,
+      "schema_transport": "native_argv",
+      "stage": "S1",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    }
+  ],
+  "phase_a": {
+    "problem_set": {
+      "problems": [
+        {
+          "domain": "performance",
+          "priority": "high",
+          "problem_id": "PROB-001",
+          "question": "How does Lin Lan convey internal conflict through stillness when audience knocking creates mounting pressure to act?",
+          "tags": [
+            "performance",
+            "subtext",
+            "hesitation",
+            "character"
+          ]
+        },
+        {
+          "domain": "lighting",
+          "priority": "high",
+          "problem_id": "PROB-002",
+          "question": "How does the emergency lighting carve isolation around Lin Lan while making the key the sole point of visual decision?",
+          "tags": [
+            "lighting",
+            "isolation",
+            "key",
+            "visual_development"
+          ]
+        },
+        {
+          "domain": "blocking",
+          "priority": "normal",
+          "problem_id": "PROB-003",
+          "question": "How does Zhao Heng's retreat tempo read as abdication rather than abandonment, preserving the mentor bond's unresolved tension?",
+          "tags": [
+            "blocking",
+            "departure",
+            "mentor",
+            "relationship"
+          ]
+        },
+        {
+          "domain": "mise-en-scene",
+          "priority": "normal",
+          "problem_id": "PROB-004",
+          "question": "How does the composition suspend power between the untouched key, the empty doorway, and Lin Lan's fixed gaze?",
+          "tags": [
+            "power",
+            "composition",
+            "gaze",
+            "mise-en-scene"
+          ]
+        }
+      ],
+      "scene_id": "UNK-E01-S03"
+    },
+    "scene_intent": {
+      "attention_trajectory": "From the key on the desk, to Zhao Heng's retreating figure, to Lin Lan's listening face, back to the key under emergency light.",
+      "audience_knowledge_delta": "The audience learns Zhao Heng is abdicating authority and Lin Lan is not yet ready to claim it.",
+      "avoid_list": [
+        "Lin Lan picking up the key immediately upon Zhao Heng's exit.",
+        "Zhao Heng lingering in the doorway or offering reassurance."
+      ],
+      "beats": [
+        {
+          "beat_id": "B01",
+          "dramatic_function": "Zhao Heng establishes the transfer of authority by placing the key and naming Lin Lan decision-maker.",
+          "fact_refs": [
+            "Zhao Heng places key",
+            "says this time you decide"
+          ]
+        },
+        {
+          "beat_id": "B02",
+          "dramatic_function": "Zhao Heng physically exits the space, confirming his abdication and leaving Lin Lan alone.",
+          "fact_refs": [
+            "Zhao Heng retreats beyond doorframe"
+          ]
+        },
+        {
+          "beat_id": "B03",
+          "dramatic_function": "Lin Lan registers external pressure from the audience knocking but does not act, remaining still.",
+          "fact_refs": [
+            "Lin Lan listens to knocking"
+          ]
+        },
+        {
+          "beat_id": "B04",
+          "dramatic_function": "Lin Lan internalizes the weight of the choice by fixing her gaze on the key without picking it up.",
+          "fact_refs": [
+            "Lin Lan looks at key"
+          ]
+        }
+      ],
+      "character_actions": [
+        "Zhao Heng places the emergency key on the desk and declares Lin Lan must decide.",
+        "Zhao Heng retreats beyond the doorframe, ceding the backstage to his protégé.",
+        "Lin Lan listens to the audience knocking from the house, then lowers her gaze to the key without touching it."
+      ],
+      "character_knowledge_delta": "Lin Lan discovers her mentor will not rescue her from this decision; Zhao Heng confirms his protégé is now alone.",
+      "dramatic_action": "Zhao Heng places the key and verbally transfers responsibility before physically withdrawing from the backstage space.",
+      "dramatic_turn": "Lin Lan does not grasp the key immediately; her hesitation transforms the handover into a test she must pass alone.",
+      "entry_state": "Zhao Heng holds the emergency key and authority; Lin Lan awaits instruction.",
+      "exit_state": "Zhao Heng departs; Lin Lan faces the key alone, absorbing the weight of decision.",
+      "information_goal": "Establish that authority has been transferred but not yet accepted, leaving the decision suspended in the emergency-lit silence.",
+      "must_preserve": [
+        "The key remaining untouched on the desk until the scene concludes.",
+        "Zhao Heng exiting without further words after placing the key."
+      ],
+      "performance_question": "What does Lin Lan's hesitation reveal about her readiness to lead — fear, calculation, or the birth of resolve?",
+      "power_curve": "Power transfers from Zhao Heng to the key itself, then hangs suspended before Lin Lan accepts or refuses it.",
+      "relationship_state": "Mentor-protégé hierarchy dissolves as Zhao Heng abdicates authority and Lin Lan must claim her own agency.",
+      "risk_flags": [
+        "Hesitation without visible subtext may read as passivity rather than internal struggle.",
+        "The key symbol could feel heavy-handed if over-emphasized in the mise-en-scene."
+      ],
+      "scene_id": "UNK-E01-S03",
+      "scene_objective": "Transfer authority from mentor to protégé through the physical handover and delayed acceptance of the emergency key.",
+      "scene_priority": "high"
+    }
+  },
+  "production_entry_changed": false,
+  "schema_version": "director-text-shadow-checkpoint-v1"
+}

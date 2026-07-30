@@ -1,0 +1,5 @@
+FAIL sd2_preflight
+unresolved_branch: Shot scene_003-2 contains unresolved branch term '可能'. Director must choose one executable result.
+unresolved_branch: Shot scene_003-2 contains '或'. Director must replace alternatives with one decision.
+negative_language: Shot scene_003-3 contains negative instruction '不要'. Rewrite as a positive visible instruction.
+unresolved_branch: Shot scene_003-3 contains '或'. Director must replace alternatives with one decision.

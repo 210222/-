@@ -1,0 +1,40 @@
+{
+  "task_id": "R2.1",
+  "record_id": "R2.1_REVALIDATION_002",
+  "created_date": "2026-07-29",
+  "purpose": "User-authorized dependency-chain revalidation. No implementation artifact was rewritten.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/atomic_commit.py",
+    "01_调度器/mode_p_vnext/concurrency_lock.py",
+    "01_调度器/mode_p_vnext/tests/test_v6_2_atomic_commit.py",
+    "01_调度器/mode_p_vnext/tests/test_v6_7_concurrency_lock.py"
+  ],
+  "predecessor_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R2.1.json",
+  "checks": [
+    {
+      "name": "real_staging",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "atomic_replace",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "multiprocess_collision",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "crash_recovery",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    }
+  ],
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

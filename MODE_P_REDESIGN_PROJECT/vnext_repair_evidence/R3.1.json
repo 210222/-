@@ -1,0 +1,76 @@
+{
+  "task_id": "R3.1",
+  "title": "Implement rollback, kill switch and operating documentation",
+  "owner": "codex-director-runtime-20260729",
+  "evidence_created_at": "2026-07-29T05:55:53.4331433Z",
+  "schema_version": "1.0",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/feature_gate.py",
+    "01_调度器/mode_p_vnext/rollback.py",
+    "01_调度器/mode_p_vnext/README.md",
+    "01_调度器/mode_p_vnext/tests/test_v10_3_feature_gate.py",
+    "01_调度器/mode_p_vnext/tests/test_v10_4_rollback.py",
+    "01_调度器/mode_p_vnext/tests/test_v10_5_kill_switch.py",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_OPERATIONS.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_OPTIMIZATION_CHANGE_REQUEST_001.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.1.json"
+  ],
+  "checks": [
+    {
+      "name": "rebuild_cannot_enable_any_gate",
+      "exit_code": 0,
+      "result": "FeatureGate is rebuild-only and fail-closed. Shadow, Pilot, Canary, Production, unknown gate names, and external submission are all rejected. Missing, corrupt, or even synthetically valid future release control records resolve to current in Rebuild."
+    },
+    {
+      "name": "rollback_manifest",
+      "exit_code": 0,
+      "result": "RollbackManifest binds only pre-existing read-only archive files, their SHA-256/size, retained vNext release evidence, retained commit IDs, and an explicit episode/scene scope. Path traversal, symlink traversal, duplicates, missing files, manifest tamper, archive drift, and evidence drift fail closed; source archive/evidence are not copied, deleted, or rewritten."
+    },
+    {
+      "name": "kill_switch",
+      "exit_code": 0,
+      "result": "A single atomic vNext control-record replacement records current routing and the incident latch together. Kill switch requests are idempotent only for the same request ID; a different request cannot overwrite the original incident. There is no R3.1 clear or re-enable API, and v4 archive/vNext evidence remain unchanged."
+    },
+    {
+      "name": "operations_complete",
+      "exit_code": 0,
+      "result": "The operations runbook states the rebuild-only scope, the unchanged real /mode-p-pilot entry, manual phase approvals, shadow isolation, rollback/kill-switch drill, forbidden manual edits, verification command, text/structural authority ceiling, and the separate Director-decision optimization boundary."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "r3_1_release_safety_suite",
+      "exit_code": 0,
+      "result": "24 passed in 0.25s; 10 subtests passed. One environment-only pytest cache permission warning was emitted; no assertion failed."
+    }
+  ],
+  "artifact_hashes": {
+    "01_调度器/mode_p_vnext/feature_gate.py": "e31e9c5d0d7e43d630e2416b2a36998aace2204c7e9c14174200c6033a5ee6a0",
+    "01_调度器/mode_p_vnext/rollback.py": "7c3dad5ddf692bb1fa9dc63fa49891b6bdbdfce2e1d2886f83783ff5fc2d1214",
+    "01_调度器/mode_p_vnext/README.md": "cc7f604de10b77039830769de5026405ad92bfdaefa377b644da459c184e80ce",
+    "01_调度器/mode_p_vnext/tests/test_v10_3_feature_gate.py": "43e08fb51298e32d937af370a18e27bbe772011f0516bb905fafa2a5fc66ef2c",
+    "01_调度器/mode_p_vnext/tests/test_v10_4_rollback.py": "4714d1b8ba016838aa4feb415877e72b74a446ec0338189086737e89a4273158",
+    "01_调度器/mode_p_vnext/tests/test_v10_5_kill_switch.py": "55ca9fe5e2a4d4eccc99e0266257ca90b376752cff0e707967770afb3393c6cc",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_OPERATIONS.md": "c7b04f2554983f5eaedacec3da891df8cb752e37567994964b757e53546ca305",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_OPTIMIZATION_CHANGE_REQUEST_001.md": "55fa953fbf81306d4984304c87cb9ea5ff89f7a59b0f48a54d2d4a7a5c696b6f"
+  },
+  "construction_baseline": {
+    "plan_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md",
+    "plan_sha256": "37e444e3c25e1e05d0c3f43fa5340631d159c4c69062aa3ca98cb20e5e00b2bc",
+    "goal_lock_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_REFACTOR_GOAL_LOCK.json",
+    "goal_lock_sha256": "71edcc7152e9268886a99723e00b707caa892fb5ef9feac0df750f965dcd1272",
+    "status": "FROZEN_PRECONSTRUCTION_BASELINE"
+  },
+  "director_decision_optimization": {
+    "status": "PROPOSED_NOT_FROZEN",
+    "evidence_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_OPTIMIZATION_CHANGE_REQUEST_001.md",
+    "statement": "The user-identified gap is documented as G-08 / INV-DIR-01 through INV-DIR-07. R3.1 does not claim to implement it; formal synchronization to the frozen construction plan and goal lock remains a subsequent controlled change after the R0-R3 repair queue."
+  },
+  "compatibility": {
+    "v4_production_entry": "unchanged; the real /mode-p-pilot entry was not edited",
+    "v4_sessions_and_deliveries": "not read, copied, deleted, or modified by R3.1 rollback/kill-switch drill code",
+    "external_model_or_generation_submission": "not invoked and actively rejected by the rebuild gate",
+    "media_acceptance_claim": "not made; R3.1 is textual/structural/file-integrity safety only",
+    "director_creative_semantics": "not implemented in R3.1; Director decision optimization remains a separately proposed vNext.1 work package"
+  }
+}

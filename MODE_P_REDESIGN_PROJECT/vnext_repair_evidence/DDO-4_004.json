@@ -1,0 +1,15 @@
+{
+  "task_id": "DDO-4",
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-4_004.json"
+  ],
+  "checks": [
+    {"name": "two_review_modes", "exit_code": 0},
+    {"name": "text_validated_ceiling", "exit_code": 0},
+    {"name": "no_shot_takeover", "exit_code": 0},
+    {"name": "bounded_revision", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_4_editorial", "exit_code": 0}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "status": "committed",
+  "packet_sha256": "f8008f009fd6230f9607fe78442e781888754031932fe0863c9cf5fa17f06a4f",
+  "feedback_sha256": "3705f015c6eb9adfd6e7a26ff135ce2df2e530cd55dfc0f8f9efbd4331a9e914",
+  "affected_scenes": [],
+  "committed_scenes": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "ledger_commit_sha256": "a38f1492474be8f3ee669c3fe27a73b72b21849dd5150065feed06b7290c223b"
+}

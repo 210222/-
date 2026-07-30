@@ -1,0 +1,31 @@
+{
+  "created_at": "2026-07-18T17:40:24.783262+00:00",
+  "director_agent": "mode-p-director",
+  "director_bound_at": "2026-07-18T17:42:43.417943+00:00",
+  "director_call_id": "a142cb167a5179db7",
+  "director_model": "deepseek-v4-pro",
+  "director_provenance": {
+    "agent_call_id": "a142cb167a5179db7",
+    "agent_tool_use_id": "call_02_svXbVewf44vzlsgsxid04376",
+    "agent_type": "mode-p-director",
+    "portable_transcript_path": "provenance/director-a142cb167a5179db7.jsonl",
+    "portable_transcript_sha256": "cdec85f80bf0005bbc218f94d0e7b0f636086aea0a222b199bb4815ce28e0e66",
+    "prompt_sha256": "2afe01697a932e2f40be0bd570fdcb498e290418b41236c03008b26e8008ba41",
+    "resolved_model": "deepseek-v4-pro",
+    "tool_call_record_sha256": "cf333f5da6b8c3ec4fd13c401201f532885f4253b825c1f7c342be5b370438c6",
+    "tool_result_record_sha256": "63cc23d0bcad623dfce945e01f5d8ca18b9f71c199b8c490d05c491b7f6deb3c",
+    "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\c6790300-0e0e-4f07-9208-5c8c82c149ec.jsonl"
+  },
+  "dp_adversarial_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\dp_adversarial_packet.md",
+  "dp_adversarial_sha256": "ca8aeb2e8f2ee59485090e11258ed2fad97ad65684f700ba6503b299be718a14",
+  "dp_agents": [],
+  "evidence_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-010",
+  "fixed_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "invalid_reason": "Claude Code background isolation blocked the Director first Write because the non-Git project could not create a worktree; the Director phase was interrupted before any accepted creative artifact.",
+  "invalidated_at": "2026-07-18T17:54:53.011245+00:00",
+  "owner": "claude-code",
+  "run_id": "run-010",
+  "schema_version": 3,
+  "status": "invalid"
+}

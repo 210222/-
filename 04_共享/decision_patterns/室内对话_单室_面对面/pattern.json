@@ -1,0 +1,95 @@
+{
+  "_meta": {
+    "scene_type": "室内对话_单室_面对面",
+    "canonical_reference": "EP14_案情室",
+    "date_extracted": "2026-07-07",
+    "total_shots": 7,
+    "total_duration_sec": 31,
+    "characters": 2,
+    "pipeline": "旧管道C-Level·S-Level候选(单室·2人·4句对白·86%固定)",
+    "key_principle": "两个角色面对面对话·标准三角形机位·极简运镜·冷白主光"
+  },
+
+  "spatial_layout": {
+    "room_shape": "矩形·~6m纵深×~4m宽×~3m高·全封闭无窗",
+    "key_elements": [
+      "白板(北墙居中·2.4m×1.2m)",
+      "格栅灯(天花板·5000K冷白·无影灯效果)",
+      "会议桌(房间中央·纵深排列)",
+      "水泥地面"
+    ],
+    "placement_areas": [
+      "白板前方(站姿·1人·主讲者位置)",
+      "会议桌前(坐姿·1人·聆听者位置)",
+      "中央走廊(宽~2.5m·站姿·至多2人)"
+    ],
+    "forbidden_areas": ["白板后方(墙面)", "天花板上方"]
+  },
+
+  "verified_camera_setups": {
+    "establishing": {
+      "function": "建立空间·两人位置关系",
+      "shot_type": "全景",
+      "focal_length": "24mm",
+      "angle": "眼平",
+      "dof": "深景深f/8",
+      "kb_rules": ["D-TRI-05(外反拍)", "COV-ACT-01"],
+      "position_hint": "房间中央·距白板~3m·两人均在画面中"
+    },
+    "dialogue_master": {
+      "function": "双人对话·中轴机位",
+      "shot_type": "中景",
+      "focal_length": "35mm",
+      "angle": "眼平",
+      "dof": "中景深f/5.6",
+      "kb_rules": ["D-TRI-09(大三角形组合)", "D-DUO-01(面对面)"],
+      "position_hint": "180度线一侧·三角形顶端"
+    },
+    "single_react": {
+      "function": "单人反应·对白接球",
+      "shot_type": "中近景",
+      "focal_length": "50mm",
+      "angle": "眼平·微侧",
+      "dof": "浅景深f/2.8",
+      "kb_rules": ["D-TRI-06(内反拍)"],
+      "position_hint": "180度线底边·靠近关系线·单人画面"
+    }
+  },
+
+  "verified_lighting": {
+    "primary": {
+      "source": "天花格栅LED平板灯·四块一组",
+      "color_temp": 5000,
+      "character": "冷白·无影·制度空间",
+      "anchor": "场景九宫格"
+    },
+    "style": "均匀照明·低对比度·制度/专业氛围·无暖色锚点",
+    "contrast_ratio": "低·<1EV·无影灯效果"
+  },
+
+  "verified_movement": {
+    "static_ratio": 0.86,
+    "only_movement": {
+      "shot": "镜#A6",
+      "type": "推近",
+      "speed": 0.05,
+      "duration_sec": 3,
+      "kb_rule": "M-MOT-04"
+    },
+    "design_principle": "几乎全固定·面对面坐着说话·没有运镜的叙事理由"
+  },
+
+  "design_lesson": {
+    "what_went_right": [
+      "S-Level候选·单室自动满足空间连续性",
+      "静态快速通道(R-SFAST-01~06)完美适用",
+      "50mm中近景=对话场景的甜区焦距"
+    ],
+    "what_was_wasteful": [
+      "Movement Designer 978行论证'6个固定镜头合理'——有效信息密度0.1%",
+      "SDA 1,040行·零阻断·10项警告中5-6项正则可检测",
+      "旧管道C-Level·7 Agent·875K tokens——应该是S-Level·2 Agent·~80K tokens"
+    ],
+    "takeaway": "单室面对面对话≈最简场景·S-Level管道完全足够·不需要三Agent设计链"
+  }
+}

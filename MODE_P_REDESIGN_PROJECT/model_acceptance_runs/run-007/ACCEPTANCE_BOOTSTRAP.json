@@ -1,0 +1,31 @@
+{
+  "created_at": "2026-07-18T15:01:15.310001+00:00",
+  "director_agent": "mode-p-director",
+  "director_bound_at": "2026-07-18T15:07:32.476751+00:00",
+  "director_call_id": "a951d65aceb455c45",
+  "director_model": "deepseek-v4-pro",
+  "director_provenance": {
+    "agent_call_id": "a951d65aceb455c45",
+    "agent_tool_use_id": "call_00_6nShZhF7o37VJONPmLA22065",
+    "agent_type": "mode-p-director",
+    "portable_transcript_path": "provenance/director-a951d65aceb455c45.jsonl",
+    "portable_transcript_sha256": "c860ffddbb3f009771e0c1e113cbc7d1383a999a824b879bf0675e8d1613c831",
+    "prompt_sha256": "e6810805b53ebf08dffba0b5eb8af54f6df189915495e8a12e929093c80fd1a1",
+    "resolved_model": "deepseek-v4-pro",
+    "tool_call_record_sha256": "8448fad2aa9b71b5c8c98a2bb2488c5954f79e5ef279db4b03f72bbedb500807",
+    "tool_result_record_sha256": "f4234ed293d816394091f56c25ca6a518c92d0e4d0c31179a6e5748eecafdcf9",
+    "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\0dac45cd-d380-4178-a5a9-8fcdd824848c.jsonl"
+  },
+  "dp_adversarial_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\dp_adversarial_packet.md",
+  "dp_adversarial_sha256": "ca8aeb2e8f2ee59485090e11258ed2fad97ad65684f700ba6503b299be718a14",
+  "dp_agents": [],
+  "evidence_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-007",
+  "fixed_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "invalid_reason": "Claude print-mode reached its 600-second background wait ceiling and terminated the only Director immediately after its fourth Master write, before the Agent returned a completion result.",
+  "invalidated_at": "2026-07-18T15:27:40.596351+00:00",
+  "owner": "claude-code",
+  "run_id": "run-007",
+  "schema_version": 3,
+  "status": "invalid"
+}

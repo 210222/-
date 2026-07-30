@@ -1,0 +1,16 @@
+{
+  "task_id": "DDO-6",
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-6_004.json"
+  ],
+  "checks": [
+    {"name": "holdout_separate", "exit_code": 0},
+    {"name": "render_record", "exit_code": 0},
+    {"name": "ffmpeg_frame_plan", "exit_code": 0},
+    {"name": "approval_required", "exit_code": 0},
+    {"name": "no_production_switch", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_6_evidence", "exit_code": 0}
+  ]
+}

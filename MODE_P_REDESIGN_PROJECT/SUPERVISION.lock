@@ -1,0 +1,9 @@
+owner: Codex supervision
+status: released
+started_at: 2026-07-17T09:00:00+08:00
+reason: completed MODE:P v3.0 attention-convergence rebuild and audited Claude Code/DeepSeek V4 Pro Loop readiness
+created: 2026-07-16T02:20:00+08:00
+release_condition: all current implementation tasks, active-entry tests, legacy scan, full regression, and Loop documentation audit pass
+released_at: 2026-07-17T12:00:00+08:00
+last_audited_at: 2026-07-18T00:00:00+08:00
+final_status: LOCAL_REBUILD_READY; portable hooks and active paths verified; 658 tests and 8 subtests pass; run-005 historical semantic acceptance imported; compact output contract requires a new explicit /mode-p-accept run; real Jimeng render validation remains external

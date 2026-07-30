@@ -1,0 +1,60 @@
+{
+  "schema_name": "mode_p_vnext_v4_baseline_cohort_reconciliation",
+  "schema_version": "1.0.0",
+  "status": "CURRENT_COLLECTION_RECONCILED_HISTORICAL_EXACT_SET_UNAVAILABLE",
+  "created_at": "2026-07-29T00:00:00+08:00",
+  "purpose": "Explain the 686-to-781 collection delta without mutating the frozen V0.1 manifest or claiming an unverifiable historical test-id set.",
+  "frozen_manifest": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_FREEZE_MANIFEST.json",
+    "sha256": "c9cd6fbe73e8200e77e326729e746f032ec25ff4a97d9fc78fa0cac2629448fd",
+    "declared_test_count": 686,
+    "declared_command": "python -m unittest discover -q",
+    "declared_result": "686 passed, 0 failed",
+    "historical_exact_collection_ids_available": false
+  },
+  "current_collection": {
+    "command": ["{python}", "-m", "pytest", "--co", "-q", "-p", "no:cacheprovider"],
+    "cwd": "01_调度器/mode_p",
+    "count": 781,
+    "sorted_test_ids_sha256": "bc0d974bddac2bab1a414085d01e0d65ce38afbf0f4d41a96971d8d1981de40f"
+  },
+  "cohorts": {
+    "reconstructed_generic_candidate": {
+      "classification": "RECONSTRUCTED_CANDIDATE_COHORT",
+      "selection": ["--ignore=test_ep35_s1_pipeline.py"],
+      "count": 686,
+      "sorted_test_ids_sha256": "f9f5f057f40ab3d87f3c6812ac54c96f1083e48dbe49f4d4386fc2ce1ffb29ab",
+      "may_be_described_as_exact_2026_07_22_frozen_id_set": false,
+      "meaning": "The current generic collection remaining after the known post-freeze EP35 suite is excluded. It numerically matches the frozen count but does not replace the frozen historical record."
+    },
+    "legacy_ep35_s1_post_freeze": {
+      "classification": "POST_FREEZE_EXTERNAL_SCENARIO_REGRESSION",
+      "source_path": "01_调度器/mode_p/test_ep35_s1_pipeline.py",
+      "source_sha256": "c87578dbe981677bf8c68f7963664640dc144b47471573b97bed2f1cd615131b",
+      "selection": ["test_ep35_s1_pipeline.py"],
+      "count": 95,
+      "sorted_test_ids_sha256": "008764957adfb6c00f342398ded6f458b6b674823d1668112c7bac50453093e6",
+      "introduced_after_freeze": true,
+      "design_source_for_vnext": false,
+      "legacy_contracts_not_permitted_in_vnext": [
+        "master_continuity_board",
+        "fixed_picture_slots",
+        "pixel_identical_previous_video_first_frame"
+      ]
+    }
+  },
+  "set_relation": {
+    "legacy_intersects_reconstructed_generic": 0,
+    "legacy_union_reconstructed_generic_count": 781,
+    "current_collection_equals_registered_union": true,
+    "unexplained_delta_count": 0
+  },
+  "acceptance_contract": {
+    "frozen_manifest_is_mutated": false,
+    "known_post_freeze_suite_is_deleted_or_moved": false,
+    "any_future_unregistered_collection_delta_is_failure": true,
+    "current_total_may_be_called_historical_v0_1_baseline": false,
+    "current_generic_candidate_may_be_called_historical_v0_1_exact_ids": false,
+    "legacy_suite_may_be_used_as_vnext_director_design_authority": false
+  }
+}

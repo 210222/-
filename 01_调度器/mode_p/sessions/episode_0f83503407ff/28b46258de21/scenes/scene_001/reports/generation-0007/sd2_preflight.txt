@@ -1,0 +1,7 @@
+FAIL sd2_preflight
+negative_language: Shot scene_001-4 contains negative action '不改变'. State the visible positive condition.
+unresolved_branch: Shot scene_001-5 contains unresolved branch term '可能'. Director must choose one executable result.
+unresolved_branch: Shot scene_001-5 contains '或'. Director must replace alternatives with one decision.
+non_visible_language: Shot scene_001-5 contains non-visible expression '仿佛'. Translate it into observable action or image state.
+unresolved_branch: Scene context contains '或'. Director must replace alternatives with one decision.
+non_visible_language: Scene context contains non-visible expression '内心'. Translate it into observable action or image state.

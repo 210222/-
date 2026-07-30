@@ -1,0 +1,285 @@
+{
+  "manifest_version": "1.1",
+  "scene_id": "scene_3",
+  "master_version": "scene_3/v1.0",
+  "master_content_hash": "b5d3ea1afaa57b4049833528ff80f531b76ce289d42c5d5f0bfb106bc0523f24",
+  "compiler_version": "1.6.0",
+  "shots": [
+    {
+      "shot_id": "scene_3-1",
+      "duration": 9.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "顾言与证人米娅隔着窄桌坐着。列车经过隧道，窗外的城市灯光短暂消失。顾言要求米娅交出存储卡并下一站下车。",
+        "source_scene_id": "scene_3",
+        "source_line_start": 30,
+        "source_line_end": 32
+      },
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "table_left|0|-0.3",
+            "facing": "toward_mia",
+            "screen_direction": "right_to_left",
+            "posture": "seated_forward_lean"
+          },
+          {
+            "entity_id": "mia",
+            "position": "table_right|0|0.3",
+            "facing": "toward_gu_yan",
+            "screen_direction": "left_to_right",
+            "posture": "seated_reclined"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mia",
+            "location": "mia_hand_or_pocket|0|0"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "gu_yan_pocket|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "from_window_and_overhead",
+          "color_temp_k": 3700,
+          "ratio": "1:2"
+        },
+        "action_phase": "static",
+        "environment": "night_train_moving"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "table_left|0|-0.3",
+            "facing": "toward_mia",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          },
+          {
+            "entity_id": "mia",
+            "position": "table_right|0|0.3",
+            "facing": "toward_gu_yan",
+            "screen_direction": "static",
+            "posture": "seated_reclined"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mia",
+            "location": "mia_hand_or_pocket|0|0"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "gu_yan_pocket|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_compartment",
+          "color_temp_k": 2700,
+          "ratio": "1:5"
+        },
+        "action_phase": "static",
+        "environment": "night_train_in_tunnel"
+      },
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production",
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "entry_boundary_id": "SCENE_ENTRY",
+      "exit_boundary_id": "scene_3-2"
+    },
+    {
+      "shot_id": "scene_3-2",
+      "duration": 7.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "米娅把存储卡夹在两指之间，却没有递出。米娅说：先把我的名字从证人名单里删掉。",
+        "source_scene_id": "scene_3",
+        "source_line_start": 34,
+        "source_line_end": 36
+      },
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "mia",
+            "position": "table_right|0|0.3",
+            "facing": "toward_gu_yan",
+            "screen_direction": "static",
+            "posture": "seated_reclined"
+          },
+          {
+            "entity_id": "gu_yan",
+            "position": "table_left|0|-0.3",
+            "facing": "toward_mia",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mia",
+            "location": "mia_hand_or_pocket|0|0"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "gu_yan_pocket|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_compartment",
+          "color_temp_k": 2700,
+          "ratio": "1:5"
+        },
+        "action_phase": "static",
+        "environment": "night_train_in_tunnel"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "mia",
+            "position": "table_right|0|0.2",
+            "facing": "toward_gu_yan",
+            "screen_direction": "static",
+            "posture": "seated_slight_forward"
+          },
+          {
+            "entity_id": "gu_yan",
+            "position": "table_left|0|-0.3",
+            "facing": "toward_mia",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mia",
+            "location": "mia_right_hand_between_fingers|0|0.1"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "gu_yan_pocket|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_compartment",
+          "color_temp_k": 2700,
+          "ratio": "1:5"
+        },
+        "action_phase": "static",
+        "environment": "night_train_in_tunnel"
+      },
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production",
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "entry_boundary_id": "scene_3-1",
+      "exit_boundary_id": "scene_3-3"
+    },
+    {
+      "shot_id": "scene_3-3",
+      "duration": 10.0,
+      "scene_expression": "investigation_object",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "列车驶出隧道。顾言把自己的工作证翻面扣在桌上，米娅才把存储卡放到桌面中央。",
+        "source_scene_id": "scene_3",
+        "source_line_start": 38,
+        "source_line_end": 38
+      },
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "table_left|0|-0.3",
+            "facing": "toward_mia",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          },
+          {
+            "entity_id": "mia",
+            "position": "table_right|0|0.2",
+            "facing": "toward_gu_yan",
+            "screen_direction": "static",
+            "posture": "seated_slight_forward"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mia",
+            "location": "mia_right_hand_between_fingers|0|0.1"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "gu_yan_pocket|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_compartment",
+          "color_temp_k": 2700,
+          "ratio": "1:5"
+        },
+        "action_phase": "static",
+        "environment": "night_train_in_tunnel"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "table_left|0|-0.4",
+            "facing": "toward_mia",
+            "screen_direction": "static",
+            "posture": "seated_upright"
+          },
+          {
+            "entity_id": "mia",
+            "position": "table_right|0|0.3",
+            "facing": "toward_gu_yan",
+            "screen_direction": "static",
+            "posture": "seated_neutral"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "table_center|0|0"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "table_center|-0.05|0"
+          }
+        ],
+        "light_main": {
+          "direction": "from_window_and_overhead",
+          "color_temp_k": 3700,
+          "ratio": "1:2"
+        },
+        "action_phase": "recover",
+        "environment": "night_train_moving"
+      },
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production",
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "entry_boundary_id": "scene_3-2",
+      "exit_boundary_id": "SCENE_EXIT"
+    }
+  ]
+}

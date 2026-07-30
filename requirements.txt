@@ -1,0 +1,5 @@
+# MODE:P deterministic runtime
+jsonschema>=4.18,<5
+
+# Local verification suite
+pytest>=8,<10

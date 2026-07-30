@@ -1,0 +1,546 @@
+{
+  "blocking_commit": {
+    "beats": [
+      {
+        "action_paths": [
+          "Zhao Heng: transfers authority -> steps toward desk and places key on surface -> key rests on desk between mentor and protégé",
+          "Lin Lan: receives instruction -> remains still, gaze fixed on Zhao Heng -> subordinate posture maintained"
+        ],
+        "beat_id": "B01",
+        "character_states": [
+          {
+            "body_facing": "toward Lin Lan",
+            "character_id": "ZHAO_HENG",
+            "gaze_target": "Lin Lan",
+            "head_facing": "toward Lin Lan",
+            "movement_vector": "toward desk",
+            "screen_position": "screen_left",
+            "visible_body_parts": [
+              "head",
+              "torso",
+              "arms",
+              "hands"
+            ],
+            "wardrobe_state_id": "WD-ZH-01",
+            "world_position": "near desk, facing Lin Lan"
+          },
+          {
+            "body_facing": "toward Zhao Heng",
+            "character_id": "LIN_LAN",
+            "gaze_target": "Zhao Heng",
+            "head_facing": "toward Zhao Heng",
+            "movement_vector": "static",
+            "screen_position": "screen_right",
+            "visible_body_parts": [
+              "head",
+              "torso",
+              "arms"
+            ],
+            "wardrobe_state_id": "WD-LL-01",
+            "world_position": "near desk, opposite Zhao Heng"
+          }
+        ],
+        "constraint_refs": [
+          "Zhao Heng places key",
+          "says this time you decide"
+        ],
+        "dramatic_function": "Zhao Heng establishes the transfer of authority by placing the key and naming Lin Lan decision-maker.",
+        "dramatic_reason": "The physical placement of the key makes the power transfer visible and irreversible.",
+        "entry_state_id": "ENTRY-B01-UNK-E01-S03",
+        "exit_state_id": "EXIT-B01-UNK-E01-S03",
+        "prop_states": [
+          {
+            "continuity_owner": "ZHAO_HENG",
+            "front_vector": "toward desk surface",
+            "grip": "pinch",
+            "holder_character_id": "ZHAO_HENG",
+            "holder_hand": "right",
+            "open_closed_state": "closed",
+            "prop_id": "EMERGENCY_KEY",
+            "prop_state_id": "PS-KEY-B01",
+            "screen_plane_normal": "facing camera",
+            "target_facing": "Lin Lan",
+            "visible_surface": "top"
+          }
+        ],
+        "space_control": "shared"
+      },
+      {
+        "action_paths": [
+          "Zhao Heng: abdicates remaining presence -> steps backward through doorframe and exits -> Zhao Heng offscreen, space vacated",
+          "Lin Lan: watches departure -> body still, gaze tracks Zhao Heng to door -> attention shifts to empty doorway"
+        ],
+        "beat_id": "B02",
+        "character_states": [
+          {
+            "body_facing": "away from Lin Lan",
+            "character_id": "ZHAO_HENG",
+            "gaze_target": "exit",
+            "head_facing": "toward exit",
+            "movement_vector": "away from camera",
+            "screen_position": "offscreen",
+            "visible_body_parts": [
+              "head",
+              "torso",
+              "back"
+            ],
+            "wardrobe_state_id": "WD-ZH-01",
+            "world_position": "beyond doorframe"
+          },
+          {
+            "body_facing": "toward door",
+            "character_id": "LIN_LAN",
+            "gaze_target": "Zhao Heng",
+            "head_facing": "toward door",
+            "movement_vector": "static",
+            "screen_position": "screen_center",
+            "visible_body_parts": [
+              "head",
+              "torso",
+              "arms"
+            ],
+            "wardrobe_state_id": "WD-LL-01",
+            "world_position": "near desk, facing door"
+          }
+        ],
+        "constraint_refs": [
+          "Zhao Heng retreats beyond doorframe"
+        ],
+        "dramatic_function": "Zhao Heng physically exits the space, confirming his abdication and leaving Lin Lan alone.",
+        "dramatic_reason": "The mentor's physical departure forces the protégé to confront the choice without further guidance.",
+        "entry_state_id": "ENTRY-B02-UNK-E01-S03",
+        "exit_state_id": "EXIT-B02-UNK-E01-S03",
+        "prop_states": [
+          {
+            "continuity_owner": "LIN_LAN",
+            "front_vector": "toward ceiling",
+            "grip": "none",
+            "holder_character_id": "none",
+            "holder_hand": "none",
+            "open_closed_state": "closed",
+            "prop_id": "EMERGENCY_KEY",
+            "prop_state_id": "PS-KEY-B02",
+            "screen_plane_normal": "facing camera",
+            "target_facing": "none",
+            "visible_surface": "top"
+          }
+        ],
+        "space_control": "Lin Lan"
+      },
+      {
+        "action_paths": [
+          "Lin Lan: hears audience knocking -> turns head toward house direction -> body remains still, gaze toward sound source"
+        ],
+        "beat_id": "B03",
+        "character_states": [
+          {
+            "body_facing": "toward door",
+            "character_id": "LIN_LAN",
+            "gaze_target": "house",
+            "head_facing": "toward house",
+            "movement_vector": "static",
+            "screen_position": "screen_center",
+            "visible_body_parts": [
+              "head",
+              "torso",
+              "arms",
+              "hands"
+            ],
+            "wardrobe_state_id": "WD-LL-01",
+            "world_position": "near desk"
+          }
+        ],
+        "constraint_refs": [
+          "Lin Lan listens to knocking"
+        ],
+        "dramatic_function": "Lin Lan registers external pressure from the audience knocking but does not act, remaining still.",
+        "dramatic_reason": "The knocking introduces urgency and external stakes while Lin Lan's stillness communicates internal conflict.",
+        "entry_state_id": "ENTRY-B03-UNK-E01-S03",
+        "exit_state_id": "EXIT-B03-UNK-E01-S03",
+        "prop_states": [
+          {
+            "continuity_owner": "LIN_LAN",
+            "front_vector": "toward ceiling",
+            "grip": "none",
+            "holder_character_id": "none",
+            "holder_hand": "none",
+            "open_closed_state": "closed",
+            "prop_id": "EMERGENCY_KEY",
+            "prop_state_id": "PS-KEY-B03",
+            "screen_plane_normal": "facing camera",
+            "target_facing": "none",
+            "visible_surface": "top"
+          }
+        ],
+        "space_control": "Lin Lan"
+      },
+      {
+        "action_paths": [
+          "Lin Lan: absorbs weight of decision -> lowers gaze from house to key on desk -> gaze fixed on key, body motionless"
+        ],
+        "beat_id": "B04",
+        "character_states": [
+          {
+            "body_facing": "toward door",
+            "character_id": "LIN_LAN",
+            "gaze_target": "key",
+            "head_facing": "down toward desk",
+            "movement_vector": "static",
+            "screen_position": "screen_center",
+            "visible_body_parts": [
+              "head",
+              "torso",
+              "arms",
+              "hands"
+            ],
+            "wardrobe_state_id": "WD-LL-01",
+            "world_position": "near desk"
+          }
+        ],
+        "constraint_refs": [
+          "Lin Lan looks at key"
+        ],
+        "dramatic_function": "Lin Lan internalizes the weight of the choice by fixing her gaze on the key without picking it up.",
+        "dramatic_reason": "The downward gaze to the key externalizes Lin Lan's internal acceptance of the burden.",
+        "entry_state_id": "ENTRY-B04-UNK-E01-S03",
+        "exit_state_id": "EXIT-B04-UNK-E01-S03",
+        "prop_states": [
+          {
+            "continuity_owner": "LIN_LAN",
+            "front_vector": "toward ceiling",
+            "grip": "none",
+            "holder_character_id": "none",
+            "holder_hand": "none",
+            "open_closed_state": "closed",
+            "prop_id": "EMERGENCY_KEY",
+            "prop_state_id": "PS-KEY-B04",
+            "screen_plane_normal": "facing camera",
+            "target_facing": "none",
+            "visible_surface": "top"
+          }
+        ],
+        "space_control": "Lin Lan"
+      }
+    ],
+    "commit_id": "B0-UNK-E01-S03-001",
+    "constraint_refs": [
+      "Zhao Heng holds the emergency key and authority",
+      "Lin Lan awaits instruction",
+      "Zhao Heng places key",
+      "says this time you decide",
+      "Zhao Heng retreats beyond doorframe",
+      "Lin Lan listens to knocking",
+      "Lin Lan looks at key",
+      "The key remaining untouched on the desk until the scene concludes",
+      "Zhao Heng exiting without further words after placing the key"
+    ],
+    "dramatic_reason": "Zhao Heng transfers authority by placing the key and exiting, forcing Lin Lan to absorb the weight of decision alone.",
+    "entry_state_id": "ENTRY-UNK-E01-S03",
+    "exit_state_id": "EXIT-UNK-E01-S03",
+    "phase_a_fingerprint": "fb8d0239f2ebbd2ea0953180110610338030f6270849ea99864bdb2cb02bb3d9",
+    "scene_id": "UNK-E01-S03"
+  },
+  "blocking_commit_sha256": "8ef0fe4c3155d8c8e6332541954343e1bf9c12755e8428eddd26db3297c94235",
+  "checkpoint": "CHECKPOINT_B0_K2.json",
+  "created_at": "2026-07-30T07:19:16.754890+00:00",
+  "k2_packet_sha256": "ff4aafece9a5c78557c85fab0f06ef86b26d42fefdd629aa26f6c9495836a479",
+  "media_visual_acceptance": false,
+  "model_calls": [
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 25250,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 3689,
+      "rejection_reason": "$.character_arc[0] must be a string",
+      "request_id": "",
+      "request_sha256": "d033c1c6b040717989dc51a0b98a5f56e35ed8f57b0747aa911c172d2431cc76",
+      "response_sha256": "114e51c17e2a23614486d69b5d75f936860bddfbf11783f92111e6c3df303380",
+      "schema_chars": 632,
+      "schema_transport": "native_argv",
+      "stage": "E0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": true,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 12860,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 3946,
+      "rejection_reason": "",
+      "request_id": "",
+      "request_sha256": "9f0ec66619d4e787f7af959f700fd84676dd88ee65511759bca48e4e82b467cc",
+      "response_sha256": "26e758a27f0f357670571c64843eb11a64d80d9daca6777ac41f4b0dc0706663",
+      "schema_chars": 632,
+      "schema_transport": "native_argv",
+      "stage": "E0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 32750,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 4493,
+      "rejection_reason": "$.scene_intent contains unknown contract fields: ['audience_information', 'dramatic_event', 'emotional_trajectory', 'power_dynamic_shift']",
+      "request_id": "",
+      "request_sha256": "928d707da2c288093395b2074566b0d8c700c294bc5d21b7a87165656b30642a",
+      "response_sha256": "ecb2a2b4d8835b614f82aaa361905e2d3febd0634411fb51634d732cd7fb7f8b",
+      "schema_chars": 2829,
+      "schema_transport": "native_argv",
+      "stage": "S1",
+      "transport_normalization": "cli_direct_contract_json",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 38921,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 4853,
+      "rejection_reason": "$.scene_intent contains unknown contract fields: ['change', 'character_knowledge', 'scene_function']",
+      "request_id": "",
+      "request_sha256": "d1a1c28148e68ffdebf6296594e6b4046ac19f8ea5a6d5714cdc49c11e2bacaf",
+      "response_sha256": "e241da35b28edf51e4260ecb7f7217cc05ba5cfe42355842ea558e33a2c929ae",
+      "schema_chars": 2829,
+      "schema_transport": "native_argv",
+      "stage": "S1",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 53813,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 5541,
+      "rejection_reason": "$.problem_set.problems[3] violates DirectorProblem: DirectorProblem priority must be normal or high",
+      "request_id": "",
+      "request_sha256": "86897a1fc7ea891303bccbd051864007be35fd38283a07c023a6c986cfffbd9c",
+      "response_sha256": "243a8139305e1ce8f191b64a2c65851c0ce5b5addc8065ebd05f808f6cbc51ab",
+      "schema_chars": 2829,
+      "schema_transport": "native_argv",
+      "stage": "S1",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": true,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 61719,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 5862,
+      "rejection_reason": "",
+      "request_id": "",
+      "request_sha256": "0f91a35e9da3171673a53f660a2884e60dc8a138a58bb9465367248335616d41",
+      "response_sha256": "d0753c87bcabed44923e3ff6d3b66f1856b0b8f39b6e73a7d56c548f9efd9e0b",
+      "schema_chars": 2829,
+      "schema_transport": "native_argv",
+      "stage": "S1",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 135672,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 10494,
+      "rejection_reason": "$.beats[0].character_states[0] violates CharacterBlockingState: character screen_position is invalid",
+      "request_id": "",
+      "request_sha256": "7d4624307c612b5dd12a605795f2b81c620941243f5456ed2510bdaa5470bcbe",
+      "response_sha256": "3593e33198c4915532c3a540b07a0affb50b1a1a46a25295c450017dbf66c77a",
+      "schema_chars": 3566,
+      "schema_transport": "native_argv",
+      "stage": "B0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 175375,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 11025,
+      "rejection_reason": "$.beats[0].character_states[0] violates CharacterBlockingState: character screen_position is invalid",
+      "request_id": "",
+      "request_sha256": "9e025f94c520796dd8cd0c93efce02411aae6eba29e9b422ff9f78df63493187",
+      "response_sha256": "ba5417b986bbb65cd6453852fda72baec42c8b94614dc49db076a9c5d49ec8aa",
+      "schema_chars": 3566,
+      "schema_transport": "native_argv",
+      "stage": "B0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 106157,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 10875,
+      "rejection_reason": "$.beats[1].character_states[0] violates CharacterBlockingState: character visible_body_parts is required",
+      "request_id": "",
+      "request_sha256": "0387feb4fb22e3fa30e5543664abbe0c12847e7ea70a29190a0ca508b2f61775",
+      "response_sha256": "ba169cbb959532b008b5762136388580c56e130b2873a16a0f61419280a9d2ec",
+      "schema_chars": 3566,
+      "schema_transport": "native_argv",
+      "stage": "B0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 88390,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 11410,
+      "rejection_reason": "$.beats[1].prop_states[0] violates PropBlockingState: holder_character_id is required",
+      "request_id": "",
+      "request_sha256": "af680ee53498bc7f2f73587c9d8da1ac9042b61b573902154306479425e46ef6",
+      "response_sha256": "6621c163378c010fc9a8fc9eb9e401a6bcc0d3892e0b2a6eac9ba43ccf271357",
+      "schema_chars": 3566,
+      "schema_transport": "native_argv",
+      "stage": "B0",
+      "transport_normalization": "cli_direct_contract_json",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 295328,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 11416,
+      "rejection_reason": "$.beats[0].prop_states[0] violates PropBlockingState: holder_character_id is required",
+      "request_id": "",
+      "request_sha256": "e61c2d50098ef4668613d9cec97109d68abf27fee9a67f0aa2756386aa6ffbae",
+      "response_sha256": "2992cc771890d3ef5cd2b0cf002007c096ba25ee7d41446b5616079b75dd4c40",
+      "schema_chars": 3566,
+      "schema_transport": "native_argv",
+      "stage": "B0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 177297,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 11932,
+      "rejection_reason": "$.beats[0].prop_states[0] violates PropBlockingState: holder_character_id is required",
+      "request_id": "",
+      "request_sha256": "5dcbbbd4c4eed5c05fc7ed0f89a58f87c0beeb16901872abd341c36af32d6207",
+      "response_sha256": "14ca179afb42aaee308a5844a9a2e19374b409dc7e52031250e072dc13432d62",
+      "schema_chars": 3566,
+      "schema_transport": "native_argv",
+      "stage": "B0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": false,
+      "attempt": 1,
+      "cache_hit_tokens": 0,
+      "duration_ms": 141578,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 11932,
+      "rejection_reason": "$.beats[1].character_states[0] violates CharacterBlockingState: character visible_body_parts is required",
+      "request_id": "",
+      "request_sha256": "7adb5bb9b22d703b63831e82fb38582a46e0671d72b24a5e1a5005c0c6d00d60",
+      "response_sha256": "db5f71ceb64df186dd8fc87d0585e2f57cbeeddb5033f4e1f0621997aab2997e",
+      "schema_chars": 3566,
+      "schema_transport": "native_argv",
+      "stage": "B0",
+      "transport_normalization": "cli_direct_contract_json+cli_standalone_json_fence",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": true,
+      "attempt": 2,
+      "cache_hit_tokens": 0,
+      "duration_ms": 88797,
+      "input_tokens": 0,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 0,
+      "prompt_chars": 12467,
+      "rejection_reason": "",
+      "request_id": "",
+      "request_sha256": "88d1f4e32ddfc42315074dda816d5838de9c6212f7206d6e89b402a54dace3f5",
+      "response_sha256": "8ef0fe4c3155d8c8e6332541954343e1bf9c12755e8428eddd26db3297c94235",
+      "schema_chars": 3566,
+      "schema_transport": "native_argv",
+      "stage": "B0",
+      "transport_normalization": "cli_direct_contract_json",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    }
+  ],
+  "production_entry_changed": false,
+  "schema_version": "director-text-shadow-checkpoint-v1"
+}

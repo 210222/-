@@ -1,0 +1,9 @@
+{
+  "task_id": "R0.2",
+  "changed_paths": ["MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R0.2.json"],
+  "checks": [
+    {"name": "entrypoint_contract", "exit_code": 0},
+    {"name": "no_direct_markdown_completion", "exit_code": 0},
+    {"name": "production_unchanged", "exit_code": 0}
+  ]
+}

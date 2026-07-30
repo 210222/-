@@ -1,0 +1,174 @@
+{
+  "schema_version": "1.0",
+  "batch_index": 1,
+  "total_batches": 1,
+  "script_source_hash": "fdd908e19b70449b3c52fbb37e8654a129f1951840564988b236babc679e8ada",
+  "batch_manifest": {
+    "label": "batch manifest",
+    "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\BATCH_MANIFEST.json",
+    "sha256": "2b030bc08b24dee82d7e2f06a13a2af7cec4c0340f742b2b9ee572a0ce7623d2"
+  },
+  "shared_dependencies": [
+    {
+      "label": "SCRIPT_STRUCTURE.json",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\SCRIPT_STRUCTURE.json",
+      "sha256": "c99b46f8048250e2a8c538d2811738d87ac10b6f1916f69265269bda55f64746"
+    },
+    {
+      "label": "SCRIPT_FACTS.md",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\SCRIPT_FACTS.md",
+      "sha256": "3ac7d33413b37dc9ec262d105f1b044a8c3beadac8d2d39ffbf8f1358f6a0a28"
+    },
+    {
+      "label": "EPISODE_VISUAL_BIBLE.md",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\EPISODE_VISUAL_BIBLE.md",
+      "sha256": "7cd1a31bfbef2e6b85ca02adf53fde4621f0fe849749cecf4c3a6718ba47ebd5"
+    },
+    {
+      "label": "EPISODE_CONTINUITY_LEDGER.md",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\EPISODE_CONTINUITY_LEDGER.md",
+      "sha256": "6bf5cd375ed5ceb3ef1a43cf5012fbf8bf3f0b82c1ebf0702359c83b8727cd24"
+    }
+  ],
+  "runtime_dependencies": [
+    {
+      "label": "SD2 capability profile",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sd2_capability_profile.json",
+      "sha256": "8d4232333e16d97464503b19a1bf6b3b834e00d1ff21a558327a925ccfdf12c3"
+    },
+    {
+      "label": "asset index",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\ASSET_INDEX.json",
+      "sha256": "3b428ae11c7704fc793123eb304fbd2c3151ede99926499b960b05dfd12603e4"
+    },
+    {
+      "label": "text asset-card index",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\ASSET_CARD_INDEX.json",
+      "sha256": "e7068cd013e3aaa79bbb020c089d86e54d4f925b0599e810bc8abfd25faefc4d"
+    },
+    {
+      "label": "knowledge index",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\knowledge\\knowledge_index.json",
+      "sha256": "b5fe30538fad6a40e71f3796e07eeef8a837cc905058d68d90679713718388c7"
+    },
+    {
+      "label": "Claude DP agent contract",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\.claude\\agents\\mode-p-dp.md",
+      "sha256": "489801ba94a3d1e1f595a19ed430ede36e641c123cbff747291bddbff99f926c"
+    },
+    {
+      "label": "canonical DP contract",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\02_Agent\\dp_agent.md",
+      "sha256": "5a6892382f7465f528e9b2bba32ffeebe7c3b7302abfd82d8a33806fd65f349e"
+    },
+    {
+      "label": "DP parser contract",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\dp_contract.py",
+      "sha256": "85bbd40b948c29cf5c96411421f3d09ad4cd6bae93f3811a51c30066e56893e8"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_index": 1,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_001",
+      "artifact_generation": 1,
+      "shot_ids": [
+        "scene_001-1",
+        "scene_001-2",
+        "scene_001-3",
+        "scene_001-4",
+        "scene_001-5"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 1 Master",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_001\\DIRECTOR_MASTER.md",
+          "sha256": "fc3f9d48bcccc911fab03ab5d9e5a6a04ce5b42151decac13503df05945aeda1"
+        },
+        "manifest": {
+          "label": "scene 1 Manifest",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_001\\working\\SHOT_MANIFEST.json",
+          "sha256": "86f747157ee19bdb52d21f3d9a4fc3114a8055e101fcab89eddd23094e967530"
+        },
+        "storyboard": {
+          "label": "scene 1 Storyboard",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_001\\working\\STORYBOARD.md",
+          "sha256": "245af7630a457e5a087053e148506171d40b5f0ea1add8dbb455a3e8f8ad7f79"
+        },
+        "video_prompt": {
+          "label": "scene 1 Video Prompt",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_001\\working\\VIDEO_PROMPT.md",
+          "sha256": "cf47a57fad15f5af0163fde588eb4fe756e48fb57cdf3a5c9f6bb3267e19b550"
+        },
+        "scene_context": {
+          "label": "scene 1 context",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_001\\SCENE_CONTEXT.md",
+          "sha256": "5a211a90cfb3cacb783f0e8d0a9d1fe6cb00c4cb72c9f9ad3a75adbe806e7e5b"
+        },
+        "dp_evidence": {
+          "label": "scene 1 episode evidence",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\dp_review\\DP_EVIDENCE_SCENE_001.md",
+          "sha256": "b83f5791854f2f90899b519d24f63dc5210ab5e4260a1ccdb49a7f3fe8607361"
+        }
+      }
+    },
+    {
+      "scene_index": 2,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_002",
+      "artifact_generation": 1,
+      "shot_ids": [
+        "scene_002-1",
+        "scene_002-2",
+        "scene_002-3",
+        "scene_002-4"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 2 Master",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_002\\DIRECTOR_MASTER.md",
+          "sha256": "8bb9efa0222ce0723d0c07b09860a023845a0f192f07bfa2e92cf2050bb27f5e"
+        },
+        "manifest": {
+          "label": "scene 2 Manifest",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_002\\working\\SHOT_MANIFEST.json",
+          "sha256": "dc78a579d3ffa8ff27c2842e0595d1e4a817c2937e777eb342ff7feeaaeb0383"
+        },
+        "storyboard": {
+          "label": "scene 2 Storyboard",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_002\\working\\STORYBOARD.md",
+          "sha256": "4516745241a7e4d40cb62cbb236823f1aa350c234bd38c56ef2e31f0b25ac119"
+        },
+        "video_prompt": {
+          "label": "scene 2 Video Prompt",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_002\\working\\VIDEO_PROMPT.md",
+          "sha256": "a64111bc4bc85cd37314a3b7d6ff9b57638c5de7b2f02b3adcd7fc3af37dd5cb"
+        },
+        "scene_context": {
+          "label": "scene 2 context",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_002\\SCENE_CONTEXT.md",
+          "sha256": "182281c8ad6ce3318e32eeba9229bea9115aec8555ae3d4402052ec57320797c"
+        },
+        "dp_evidence": {
+          "label": "scene 2 episode evidence",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\dp_review\\DP_EVIDENCE_SCENE_002.md",
+          "sha256": "af1ab4e1c5830036dd2a9b7221b8d4caf0a6e6b92d54ca05f667eec34bf24b5d"
+        }
+      }
+    }
+  ],
+  "shot_ids": [
+    "scene_001-1",
+    "scene_001-2",
+    "scene_001-3",
+    "scene_001-4",
+    "scene_001-5",
+    "scene_002-1",
+    "scene_002-2",
+    "scene_002-3",
+    "scene_002-4"
+  ],
+  "dp_model": "inherit",
+  "review_content_sha256": "4d5f772e77aea166d0b216c2d46d48a2e89dba200a76d64d6bf346b471f109ec",
+  "cache_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\runtime_cache\\dp",
+  "packet_sha256": "1c79753a8a866ac40694981cc17ea65a5bd8077f4040d48721ef3645d6596e18"
+}

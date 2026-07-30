@@ -1,0 +1,1058 @@
+{
+    "manifest_version":  "1.2",
+    "scene_id":  "scene_004",
+    "master_version":  "scene_004/v1.0",
+    "master_content_hash":  "a6da6cbd63f935fef7c68d556902c16a54ad7e463199acb2047930a123360362",
+    "compiler_version":  "2.0.0",
+    "shots":  [
+                  {
+                      "shot_id":  "scene_004-1",
+                      "duration":  7.0,
+                      "scene_expression":  "action_chase",
+                      "timing_mode":  "second_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "快递员阿泽抱着文件袋沿坡道向上跑；两名追赶者从下一层冲上来（L42）。",
+                                             "source_scene_id":  "scene_004",
+                                             "source_line_start":  42,
+                                             "source_line_end":  42
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "上行坡道下段",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "奔跑双臂抱文件袋",
+                                                                        "wardrobe":  "荧光黄快递雨衣全身湿透"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "下一层坡道口",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "成组奔跑",
+                                                                        "wardrobe":  "深色湿雨夹克深色长裤"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "阿泽",
+                                                                   "location":  "双臂怀中"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "坡道顶灯逐池向下",
+                                                                    "color_temp_k":  2200,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "travel",
+                                                 "story_time":  "雨夜",
+                                                 "weather":  "雨持续",
+                                                 "environment":  "多层停车楼外景"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "上行坡道中上段",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "奔跑双臂抱文件袋"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "上行坡道中段",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "阿泽",
+                                                                   "location":  "双臂怀中"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "坡道顶灯逐池向下",
+                                                                    "color_temp_k":  2200,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "travel"
+                                             },
+                      "entry_boundary_id":  "SCENE_ENTRY",
+                      "exit_boundary_id":  "scene_004-B1",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "scene_004-2",
+                      "duration":  6.0,
+                      "scene_expression":  "action_chase",
+                      "timing_mode":  "second_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "阿泽跨过排水沟（L44 前半），坡道尽头转角处停着货车（L44）。",
+                                             "source_scene_id":  "scene_004",
+                                             "source_line_start":  42,
+                                             "source_line_end":  44
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "上行坡道中上段",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "奔跑双臂抱文件袋"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "上行坡道中段",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "阿泽",
+                                                                   "location":  "双臂怀中"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "坡道顶灯逐池向下",
+                                                                    "color_temp_k":  2200,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "travel"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "转角平台入口",
+                                                                        "facing":  "转角内侧",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "压低重心冲近抱袋"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "上行坡道下段画外",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "阿泽",
+                                                                   "location":  "双臂怀中放低"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "转角平台顶部荧光灯",
+                                                                    "color_temp_k":  4500,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "travel"
+                                             },
+                      "entry_boundary_id":  "scene_004-B1",
+                      "exit_boundary_id":  "scene_004-B2",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "scene_004-3",
+                      "duration":  4.0,
+                      "scene_expression":  "suspense_reveal",
+                      "timing_mode":  "half_second_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "阿泽在转角处把文件袋滑进停着的货车底部，自己继续向顶层跑（L44）。",
+                                             "source_scene_id":  "scene_004",
+                                             "source_line_start":  44,
+                                             "source_line_end":  44
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "转角平台入口",
+                                                                        "facing":  "转角内侧",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "压低重心冲近抱袋"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "上行坡道下段画外",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "阿泽",
+                                                                   "location":  "双臂怀中放低"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "转角平台顶部荧光灯",
+                                                                    "color_temp_k":  4500,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "travel"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "转角上方上行坡道",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "奔跑双手空"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "来向坡道上段画外",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "none",
+                                                                   "location":  "货车底盘阴影内"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "转角平台顶部荧光灯",
+                                                                    "color_temp_k":  4500,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "travel"
+                                             },
+                      "entry_boundary_id":  "scene_004-B2",
+                      "exit_boundary_id":  "scene_004-B3",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "scene_004-4",
+                      "duration":  6.0,
+                      "scene_expression":  "action_chase",
+                      "timing_mode":  "second_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "追赶者只看见他的背影，越过货车追了上去（L45）。",
+                                             "source_scene_id":  "scene_004",
+                                             "source_line_start":  45,
+                                             "source_line_end":  45
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "转角上方上行坡道",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "奔跑双手空"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "来向坡道上段画外",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "none",
+                                                                   "location":  "货车底盘阴影内"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "转角平台顶部荧光灯",
+                                                                    "color_temp_k":  4500,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "travel"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "顶层入口坡道段画外",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "奔跑双手空"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "转角上方上行坡道",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "none",
+                                                                   "location":  "货车底盘阴影内"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "转角平台顶部荧光灯",
+                                                                    "color_temp_k":  4500,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "travel"
+                                             },
+                      "entry_boundary_id":  "scene_004-B3",
+                      "exit_boundary_id":  "scene_004-B4",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "scene_004-5",
+                      "duration":  6.0,
+                      "scene_expression":  "action_chase",
+                      "timing_mode":  "second_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "阿泽到达顶层，向边缘跑去并停下（L47 前半）。",
+                                             "source_scene_id":  "scene_004",
+                                             "source_line_start":  47,
+                                             "source_line_end":  47
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "顶层入口坡道段画外",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "奔跑双手空"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "转角上方上行坡道",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "none",
+                                                                   "location":  "货车底盘阴影内"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "转角平台顶部荧光灯",
+                                                                    "color_temp_k":  4500,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "travel"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "顶层边缘矮护墙旁",
+                                                                        "facing":  "护墙外下方",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "立姿双手撑墙沿胸口起伏"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "下层坡道画外",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "none",
+                                                                   "location":  "货车底盘阴影内"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "顶层天空环境光",
+                                                                    "color_temp_k":  6500,
+                                                                    "ratio":  "1:4"
+                                                                },
+                                                 "action_phase":  "recover"
+                                             },
+                      "entry_boundary_id":  "scene_004-B4",
+                      "exit_boundary_id":  "scene_004-B5",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "scene_004-6",
+                      "duration":  8.0,
+                      "scene_expression":  "suspense_reveal",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "阿泽到达顶层边缘后停下，听见下方传来货车发动的声音（L47）。",
+                                             "source_scene_id":  "scene_004",
+                                             "source_line_start":  47,
+                                             "source_line_end":  47
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "顶层边缘矮护墙旁",
+                                                                        "facing":  "护墙外下方",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "立姿双手撑墙沿胸口起伏"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "下层坡道画外",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "none",
+                                                                   "location":  "货车底盘阴影内"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "转角平台停放"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "顶层天空环境光",
+                                                                    "color_temp_k":  6500,
+                                                                    "ratio":  "1:4"
+                                                                },
+                                                 "action_phase":  "recover"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "阿泽",
+                                                                        "position":  "顶层边缘矮护墙旁",
+                                                                        "facing":  "护墙外下方",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "前倾俯视双手空"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "追赶者二人",
+                                                                        "position":  "下层画外",
+                                                                        "facing":  "坡道上方",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "成组追跑"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "文件袋",
+                                                                   "held_by":  "none",
+                                                                   "location":  "画外货车底"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "货车",
+                                                                   "held_by":  "none",
+                                                                   "location":  "画外下层发动中"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "顶层天空环境光",
+                                                                    "color_temp_k":  6500,
+                                                                    "ratio":  "1:4"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "weather":  "雨持续"
+                                             },
+                      "entry_boundary_id":  "scene_004-B5",
+                      "exit_boundary_id":  "SCENE_EXIT",
+                      "boundary_continuity":  "scene_exit",
+                      "transition_execution":  "post_production"
+                  }
+              ],
+    "boundaries":  [
+                       {
+                           "boundary_id":  "scene_004-B0",
+                           "from_ref":  "SCENE_ENTRY",
+                           "to_ref":  "scene_004-1",
+                           "relation":  "scene_entry",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  null,
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "上行坡道下段",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "奔跑双臂抱文件袋",
+                                                                              "wardrobe":  "荧光黄快递雨衣全身湿透"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "下一层坡道口",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "成组奔跑",
+                                                                              "wardrobe":  "深色湿雨夹克深色长裤"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "阿泽",
+                                                                         "location":  "双臂怀中"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "坡道顶灯逐池向下",
+                                                                          "color_temp_k":  2200,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "travel",
+                                                       "story_time":  "雨夜",
+                                                       "weather":  "雨持续",
+                                                       "environment":  "多层停车楼外景"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_004-B1",
+                           "from_ref":  "scene_004-1",
+                           "to_ref":  "scene_004-2",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "上行坡道中上段",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "奔跑双臂抱文件袋"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "上行坡道中段",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "阿泽",
+                                                                         "location":  "双臂怀中"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "坡道顶灯逐池向下",
+                                                                          "color_temp_k":  2200,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "travel"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "上行坡道中上段",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "奔跑双臂抱文件袋"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "上行坡道中段",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "阿泽",
+                                                                         "location":  "双臂怀中"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "坡道顶灯逐池向下",
+                                                                          "color_temp_k":  2200,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "travel"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_004-B2",
+                           "from_ref":  "scene_004-2",
+                           "to_ref":  "scene_004-3",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "转角平台入口",
+                                                                              "facing":  "转角内侧",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "压低重心冲近抱袋"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "上行坡道下段画外",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "阿泽",
+                                                                         "location":  "双臂怀中放低"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "转角平台顶部荧光灯",
+                                                                          "color_temp_k":  4500,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "travel"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "转角平台入口",
+                                                                              "facing":  "转角内侧",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "压低重心冲近抱袋"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "上行坡道下段画外",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "阿泽",
+                                                                         "location":  "双臂怀中放低"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "转角平台顶部荧光灯",
+                                                                          "color_temp_k":  4500,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "travel"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_004-B3",
+                           "from_ref":  "scene_004-3",
+                           "to_ref":  "scene_004-4",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "转角上方上行坡道",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "奔跑双手空"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "来向坡道上段画外",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "none",
+                                                                         "location":  "货车底盘阴影内"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "转角平台顶部荧光灯",
+                                                                          "color_temp_k":  4500,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "travel"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "转角上方上行坡道",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "奔跑双手空"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "来向坡道上段画外",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "none",
+                                                                         "location":  "货车底盘阴影内"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "转角平台顶部荧光灯",
+                                                                          "color_temp_k":  4500,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "travel"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_004-B4",
+                           "from_ref":  "scene_004-4",
+                           "to_ref":  "scene_004-5",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "顶层入口坡道段画外",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "奔跑双手空"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "转角上方上行坡道",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "none",
+                                                                         "location":  "货车底盘阴影内"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "转角平台顶部荧光灯",
+                                                                          "color_temp_k":  4500,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "travel"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "顶层入口坡道段画外",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "奔跑双手空"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "转角上方上行坡道",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "none",
+                                                                         "location":  "货车底盘阴影内"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "转角平台顶部荧光灯",
+                                                                          "color_temp_k":  4500,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "travel"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_004-B5",
+                           "from_ref":  "scene_004-5",
+                           "to_ref":  "scene_004-6",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "顶层边缘矮护墙旁",
+                                                                              "facing":  "护墙外下方",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "立姿双手撑墙沿胸口起伏"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "下层坡道画外",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "none",
+                                                                         "location":  "货车底盘阴影内"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "顶层天空环境光",
+                                                                          "color_temp_k":  6500,
+                                                                          "ratio":  "1:4"
+                                                                      },
+                                                       "action_phase":  "recover"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "顶层边缘矮护墙旁",
+                                                                              "facing":  "护墙外下方",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "立姿双手撑墙沿胸口起伏"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "下层坡道画外",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "none",
+                                                                         "location":  "货车底盘阴影内"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "转角平台停放"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "顶层天空环境光",
+                                                                          "color_temp_k":  6500,
+                                                                          "ratio":  "1:4"
+                                                                      },
+                                                       "action_phase":  "recover"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_004-B6",
+                           "from_ref":  "scene_004-6",
+                           "to_ref":  "SCENE_EXIT",
+                           "relation":  "scene_exit",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "阿泽",
+                                                                              "position":  "顶层边缘矮护墙旁",
+                                                                              "facing":  "护墙外下方",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "前倾俯视双手空"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "追赶者二人",
+                                                                              "position":  "下层画外",
+                                                                              "facing":  "坡道上方",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "成组追跑"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "文件袋",
+                                                                         "held_by":  "none",
+                                                                         "location":  "画外货车底"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "货车",
+                                                                         "held_by":  "none",
+                                                                         "location":  "画外下层发动中"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "顶层天空环境光",
+                                                                          "color_temp_k":  6500,
+                                                                          "ratio":  "1:4"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "weather":  "雨持续"
+                                                   },
+                           "incoming_state_keys":  null
+                       }
+                   ]
+}

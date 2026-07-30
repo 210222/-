@@ -1,0 +1,52 @@
+{
+  "created_at": "2026-07-18T20:20:04.327406+00:00",
+  "director_agent": "mode-p-director",
+  "director_bound_at": "2026-07-18T20:22:31.275941+00:00",
+  "director_call_id": "a7124cf1fc1341b4b",
+  "director_model": "deepseek-v4-pro",
+  "director_provenance": {
+    "agent_call_id": "a7124cf1fc1341b4b",
+    "agent_tool_use_id": "call_00_TkG8eTrasBNfWlomXsa90372",
+    "agent_type": "mode-p-director",
+    "portable_transcript_path": "provenance/director-a7124cf1fc1341b4b.jsonl",
+    "portable_transcript_sha256": "36a5946427a96096b73868db20ffae911bd88bbdd1bb2fabdd03c1b613c01f3e",
+    "prompt_sha256": "25ff8d83bc82890129d520350376f9230090cadd085f639734a65852975f0ead",
+    "resolved_model": "deepseek-v4-pro",
+    "tool_call_record_sha256": "462665678e5966782d84e1b84c8d0678e2ac302b40aa77ee1bf02e086cf00220",
+    "tool_result_record_sha256": "fdbdaab9408f71495a120ad1c73c7f67b775ba407c644ecceb6e3459f30cc8e8",
+    "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\5cbb6fa8-5bc7-483b-a210-a227483f46d7.jsonl"
+  },
+  "dp_adversarial_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\dp_adversarial_packet.md",
+  "dp_adversarial_sha256": "ca8aeb2e8f2ee59485090e11258ed2fad97ad65684f700ba6503b299be718a14",
+  "dp_agents": [
+    {
+      "agent_call_id": "a8b708a3897197080",
+      "bound_at": "2026-07-18T21:11:24.653098+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a8b708a3897197080",
+        "agent_tool_use_id": "call_00_2RFNeX4W0QmKTq123fd67421",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-adversarial-1-a8b708a3897197080.jsonl",
+        "portable_transcript_sha256": "3a04398a7e30498fcc0fbac51c654c6ba32e7ffae64c5dbead00f904cc27909d",
+        "prompt_sha256": "357ac0a02936566d6df2474d0cf489b1f0f680a4e4e66fe6580d3a315459f0fc",
+        "resolved_model": "deepseek-v4-pro",
+        "response_sha256": "8f1b39daff9ee5d0d58e8a704b03a70e43202e2cc6098d3c61a4872c2c5e6630",
+        "tool_call_record_sha256": "1340c51f9ef1818a26f5919d567c8db2f9c7837ba7e73a038b00593482612e36",
+        "tool_result_record_sha256": "731172d50725ee512f55ce17e450b5b3cba5f2bf7010b852abe8f47bb84ae567",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\5cbb6fa8-5bc7-483b-a210-a227483f46d7.jsonl"
+      },
+      "response_sha256": "8f1b39daff9ee5d0d58e8a704b03a70e43202e2cc6098d3c61a4872c2c5e6630",
+      "review_id": "adversarial-1"
+    }
+  ],
+  "evidence_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-012",
+  "fixed_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "invalid_reason": "abandoned: old session Director cannot be resumed, restarting with run-013",
+  "invalidated_at": "2026-07-19T12:09:15.451283+00:00",
+  "owner": "claude-code",
+  "run_id": "run-012",
+  "schema_version": 3,
+  "status": "invalid"
+}

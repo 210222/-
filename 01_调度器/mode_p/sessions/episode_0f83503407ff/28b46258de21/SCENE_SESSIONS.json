@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "script_source_hash": "fdd908e19b70449b3c52fbb37e8654a129f1951840564988b236babc679e8ada",
+  "scenes": [
+    {
+      "scene_index": 1,
+      "batch_index": 1,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_001",
+      "context_sha256": "5a211a90cfb3cacb783f0e8d0a9d1fe6cb00c4cb72c9f9ad3a75adbe806e7e5b"
+    },
+    {
+      "scene_index": 2,
+      "batch_index": 1,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_002",
+      "context_sha256": "182281c8ad6ce3318e32eeba9229bea9115aec8555ae3d4402052ec57320797c"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "task_id": "DDO-0",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/test_ddo_0_control.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-0_001.json"
+  ],
+  "checks": [
+    {"name": "goal_lock_current", "exit_code": 0},
+    {"name": "controlled_queue", "exit_code": 0},
+    {"name": "holdout_frozen", "exit_code": 0},
+    {"name": "no_runtime_activation", "exit_code": 0}
+  ],
+  "scope": {
+    "v4_runtime_changed": false,
+    "production_entry_changed": false,
+    "external_generation_invoked": false,
+    "media_visual_acceptance_claimed": false
+  },
+  "authority": {
+    "construction_plan": "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md",
+    "goal_lock": "DIRECTOR_REFACTOR_GOAL_LOCK_V1.1.json"
+  }
+}

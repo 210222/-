@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "queue_id": "mode_p_vnext_director_v1_1_2026_07_30",
+  "status_after_all": "DIRECTOR_TEXT_PIPELINE_IMPLEMENTED",
+  "terminal_claim_ceiling": "PLANNED_PREVIEW",
+  "tasks": [
+    {
+      "task_id": "DDO-0",
+      "title": "Freeze Director vNext.1 construction controls and acceptance fixtures",
+      "depends_on": [],
+      "spec_refs": ["DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §13 WP-0", "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §11.2"],
+      "allowed_paths": ["01_调度器/mode_p_vnext/rebuild_control.py", "01_调度器/mode_p_vnext/director_vnext1/control.py", "01_调度器/mode_p_vnext/director_vnext1/__init__.py", "01_调度器/mode_p_vnext/tests/test_ddo_0_control.py", "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_DIRECTOR_V1_1_TASKS.json", "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_DIRECTOR_V1_1_STATE.json", "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/**"],
+      "required_checks": ["goal_lock_current", "controlled_queue", "holdout_frozen", "no_runtime_activation"],
+      "verification_commands": [{"name": "ddo_0_control", "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_ddo_0_control.py", "-q", "-p", "no:cacheprovider"], "cwd": "01_调度器", "timeout_seconds": 180}]
+    },
+    {
+      "task_id": "DDO-1",
+      "title": "Implement audited knowledge capsules and two-stage retrieval",
+      "depends_on": ["DDO-0"],
+      "spec_refs": ["DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §6", "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §6"],
+      "allowed_paths": ["01_调度器/mode_p_vnext/director_vnext1/capsules.py", "01_调度器/mode_p_vnext/director_vnext1/contracts.py", "01_调度器/mode_p_vnext/tests/test_ddo_1_capsules.py", "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/**"],
+      "required_checks": ["provenance", "confidence", "contraindication", "k1_k2_separation", "no_template_fallback"],
+      "verification_commands": [{"name": "ddo_1_capsules", "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_ddo_1_capsules.py", "-q", "-p", "no:cacheprovider"], "cwd": "01_调度器", "timeout_seconds": 180}]
+    },
+    {
+      "task_id": "DDO-2",
+      "title": "Implement persistent Director E0/S1/K1 contracts and cache",
+      "depends_on": ["DDO-1"],
+      "spec_refs": ["DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §5", "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §4"],
+      "allowed_paths": ["01_调度器/mode_p_vnext/director_vnext1/contracts.py", "01_调度器/mode_p_vnext/director_vnext1/agent.py", "01_调度器/mode_p_vnext/director_vnext1/cache.py", "01_调度器/mode_p_vnext/tests/test_ddo_2_agent_phase_a.py", "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/**"],
+      "required_checks": ["persistent_director", "phase_a_no_camera_answer", "k1_packet", "content_addressed_cache"],
+      "verification_commands": [{"name": "ddo_2_phase_a", "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_ddo_2_agent_phase_a.py", "-q", "-p", "no:cacheprovider"], "cwd": "01_调度器", "timeout_seconds": 180}]
+    },
+    {
+      "task_id": "DDO-3",
+      "title": "Implement blocking-first Phase B, decisions, and VisualExecutionContract",
+      "depends_on": ["DDO-2"],
+      "spec_refs": ["DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §7", "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §5"],
+      "allowed_paths": ["01_调度器/mode_p_vnext/director_vnext1/contracts.py", "01_调度器/mode_p_vnext/director_vnext1/agent.py", "01_调度器/mode_p_vnext/tests/test_ddo_3_vec.py", "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/**"],
+      "required_checks": ["blocking_before_camera", "candidate_record", "decision_provenance", "vec_fail_closed"],
+      "verification_commands": [{"name": "ddo_3_vec", "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_ddo_3_vec.py", "-q", "-p", "no:cacheprovider"], "cwd": "01_调度器", "timeout_seconds": 180}]
+    },
+    {
+      "task_id": "DDO-4",
+      "title": "Implement editorial review and bounded targeted revision",
+      "depends_on": ["DDO-3"],
+      "spec_refs": ["DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §9, §16", "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §9"],
+      "allowed_paths": ["01_调度器/mode_p_vnext/director_vnext1/editorial.py", "01_调度器/mode_p_vnext/director_vnext1/revision.py", "01_调度器/mode_p_vnext/tests/test_ddo_4_editorial.py", "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/**"],
+      "required_checks": ["two_review_modes", "text_validated_ceiling", "no_shot_takeover", "bounded_revision"],
+      "verification_commands": [{"name": "ddo_4_editorial", "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_ddo_4_editorial.py", "-q", "-p", "no:cacheprovider"], "cwd": "01_调度器", "timeout_seconds": 180}]
+    },
+    {
+      "task_id": "DDO-5",
+      "title": "Compile VEC to storyboard/video and validate homology, leakage, and local invalidation",
+      "depends_on": ["DDO-4"],
+      "spec_refs": ["DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §8, §12, §14", "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §7, §10"],
+      "allowed_paths": ["01_调度器/mode_p_vnext/director_vnext1/projection.py", "01_调度器/mode_p_vnext/director_vnext1/validation.py", "01_调度器/mode_p_vnext/director_vnext1/cache.py", "01_调度器/mode_p_vnext/tests/test_ddo_5_projection.py", "01_调度器/mode_p_vnext/tests/test_ddo_5_regressions.py", "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/**"],
+      "required_checks": ["field_homology", "voice_reference_binding", "prompt_purity", "historical_regressions", "local_invalidation", "performance"],
+      "verification_commands": [{"name": "ddo_5_projection", "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_ddo_5_projection.py", "mode_p_vnext/tests/test_ddo_5_regressions.py", "-q", "-p", "no:cacheprovider"], "cwd": "01_调度器", "timeout_seconds": 300}]
+    },
+    {
+      "task_id": "DDO-6",
+      "title": "Prepare isolated Shadow, holdout, render evidence, and owner approval gates",
+      "depends_on": ["DDO-5"],
+      "spec_refs": ["DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §9, §15", "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §11.2, §12"],
+      "allowed_paths": ["01_调度器/mode_p_vnext/director_vnext1/render_evidence.py", "01_调度器/mode_p_vnext/director_vnext1/holdout.py", "01_调度器/mode_p_vnext/tests/test_ddo_6_evidence.py", "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/**"],
+      "required_checks": ["holdout_separate", "render_record", "ffmpeg_frame_plan", "approval_required", "no_production_switch"],
+      "verification_commands": [{"name": "ddo_6_evidence", "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_ddo_6_evidence.py", "-q", "-p", "no:cacheprovider"], "cwd": "01_调度器", "timeout_seconds": 180}]
+    }
+  ]
+}

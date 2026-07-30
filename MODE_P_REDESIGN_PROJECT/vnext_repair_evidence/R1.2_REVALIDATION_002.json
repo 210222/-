@@ -1,0 +1,45 @@
+{
+  "task_id": "R1.2",
+  "record_id": "R1.2_REVALIDATION_002",
+  "created_date": "2026-07-29",
+  "purpose": "User-authorized revalidation after the R1.1 baseline restoration. No R1.2 implementation artifact was rewritten.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/fixtures/gun_barrel_sb_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/gun_barrel_video_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/audience_sb_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/audience_video_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/prep_area_sb_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/prep_area_video_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/alley_sb_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/alley_video_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/prompt_fixture_manifest.json",
+    "01_调度器/mode_p_vnext/golden_fixture_registry.py",
+    "01_调度器/mode_p_vnext/golden_registration.py",
+    "01_调度器/mode_p_vnext/tests/test_v0_5_golden_fixtures.py",
+    "01_调度器/mode_p_vnext/tests/test_v8_1_golden_registration.py"
+  ],
+  "predecessor_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R1.2.json",
+  "checks": [
+    {
+      "name": "four_exact_prompt_pairs",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered R1.2 command."
+    },
+    {
+      "name": "prep_area_no_cut_fact",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered R1.2 command."
+    },
+    {
+      "name": "user_vs_inference_separated",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered R1.2 command."
+    }
+  ],
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "golden_media_reinterpreted": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

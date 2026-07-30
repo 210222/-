@@ -1,0 +1,214 @@
+{
+  "schema_version": "1.0",
+  "script_source_hash": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "mode": "single_batch",
+  "authoritative": false,
+  "provisional_reasons": [
+    "missing shared input: EPISODE_VISUAL_BIBLE.md",
+    "missing shared input: EPISODE_CONTINUITY_LEDGER.md"
+  ],
+  "total_scenes": 4,
+  "selected_scenes": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "total_batches": 1,
+  "budget_profile": {
+    "schema_version": "1.0",
+    "profile_id": "claude-code-director-user-1m-v1",
+    "source": "user_config",
+    "context_window_tokens": 1000000,
+    "reserved_system_tool_tokens": 80000,
+    "reserved_output_tokens": 64000,
+    "max_output_tokens_per_call": 64000,
+    "safety_margin_ratio": 0.15,
+    "missing_document_reserve_tokens": 16000,
+    "token_estimator_version": "unicode_conservative_v1",
+    "safety_margin_tokens": 150000,
+    "detected_input_budget": 706000,
+    "detected_output_budget": 64000
+  },
+  "estimator_version": "unicode_conservative_v1",
+  "shared_measurements": [
+    {
+      "label": "SCRIPT_STRUCTURE.json",
+      "character_count": 1602,
+      "estimated_tokens": 529,
+      "content_sha256": "770f88c66723b48fa9e476f07d6e114a4e56d142fb3a16087f8009c9d73b3e3b",
+      "source": "../../MODE_P_REDESIGN_PROJECT/model_acceptance_runs/run-003/episode/SCRIPT_STRUCTURE.json"
+    },
+    {
+      "label": "SCRIPT_FACTS.md",
+      "character_count": 1939,
+      "estimated_tokens": 1268,
+      "content_sha256": "0760e1424b6d003817d9447df7a96305541d69fbb552c5f8c4b73fac61230100",
+      "source": "D:/tsc/导演系统_v5/MODE_P_REDESIGN_PROJECT/model_acceptance_runs/run-003/episode/SCRIPT_FACTS.md"
+    },
+    {
+      "label": "EPISODE_VISUAL_BIBLE.md",
+      "character_count": 48000,
+      "estimated_tokens": 15008,
+      "content_sha256": "9898503aa3415160572cb4a96b67db1c358268fd6db48b1dbe11288a883de56c",
+      "source": "provisional_missing_document_reserve"
+    },
+    {
+      "label": "EPISODE_CONTINUITY_LEDGER.md",
+      "character_count": 48000,
+      "estimated_tokens": 15008,
+      "content_sha256": "9898503aa3415160572cb4a96b67db1c358268fd6db48b1dbe11288a883de56c",
+      "source": "provisional_missing_document_reserve"
+    },
+    {
+      "label": "director_core.md",
+      "character_count": 1517,
+      "estimated_tokens": 1880,
+      "content_sha256": "c5ec56aa59675e702ee61fed6252933b1735d326f71ffc1ee8c845404b647be5",
+      "source": "D:/tsc/导演系统_v5/01_调度器/mode_p/knowledge/core/director_core.md"
+    },
+    {
+      "label": "editing_transition.md",
+      "character_count": 904,
+      "estimated_tokens": 1092,
+      "content_sha256": "84eac446041fe44310c80609e03e72ffa732b85be7bd644c8f72291967c09437",
+      "source": "D:/tsc/导演系统_v5/01_调度器/mode_p/knowledge/core/editing_transition.md"
+    },
+    {
+      "label": "performance.md",
+      "character_count": 856,
+      "estimated_tokens": 1044,
+      "content_sha256": "26e54571f1319f96092c58fe722c0a2586c22eb49148401974c4589076a31dbb",
+      "source": "D:/tsc/导演系统_v5/01_调度器/mode_p/knowledge/core/performance.md"
+    },
+    {
+      "label": "sd2.md",
+      "character_count": 750,
+      "estimated_tokens": 776,
+      "content_sha256": "f32d2483b5a8e810a7a2499c6c9571e538e084ba3378bfe07d69cd0605bcd6d7",
+      "source": "D:/tsc/导演系统_v5/01_调度器/mode_p/knowledge/core/sd2.md"
+    },
+    {
+      "label": "CLAUDE.md",
+      "character_count": 4416,
+      "estimated_tokens": 1350,
+      "content_sha256": "fc2bb1ec87ca810f3d7d8eded3d0cf3cc6e5f470e70704de1cc70fa15e9a79ea",
+      "source": "D:/tsc/导演系统_v5/CLAUDE.md"
+    },
+    {
+      "label": "mode-p-director.md",
+      "character_count": 2154,
+      "estimated_tokens": 642,
+      "content_sha256": "ae5a440e17e7f8b446ffec2b2106b2080a43decda7e790973d569b134727e6b4",
+      "source": "D:/tsc/导演系统_v5/.claude/agents/mode-p-director.md"
+    },
+    {
+      "label": "director_agent.md",
+      "character_count": 4181,
+      "estimated_tokens": 3820,
+      "content_sha256": "32e780577247dd75fdab33547ecc1616bcdf62349c6286562f768d01cbd0ad0f",
+      "source": "D:/tsc/导演系统_v5/02_Agent/director_agent.md"
+    },
+    {
+      "label": "director_master_template.md",
+      "character_count": 5414,
+      "estimated_tokens": 3811,
+      "content_sha256": "0a05049f3282a3dd69f240b9b6206595b351740e8236b6d8cbd465280629024e",
+      "source": "D:/tsc/导演系统_v5/01_调度器/mode_p/director_master_template.md"
+    },
+    {
+      "label": "USER_VISUAL_CONSTRAINTS",
+      "character_count": 0,
+      "estimated_tokens": 8,
+      "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "caller_input"
+    }
+  ],
+  "scene_measurements": [
+    {
+      "scene_index": 1,
+      "source_characters": 140,
+      "source_tokens": 163,
+      "estimated_shots": 2,
+      "shot_estimate_basis": "nonempty_line_capacity_estimate_v1",
+      "estimated_output_tokens": 2348,
+      "capsules": [],
+      "capsule_characters": 0,
+      "capsule_tokens": 0,
+      "source_measurement": "script_content"
+    },
+    {
+      "scene_index": 2,
+      "source_characters": 159,
+      "source_tokens": 187,
+      "estimated_shots": 3,
+      "shot_estimate_basis": "nonempty_line_capacity_estimate_v1",
+      "estimated_output_tokens": 2928,
+      "capsules": [],
+      "capsule_characters": 0,
+      "capsule_tokens": 0,
+      "source_measurement": "script_content"
+    },
+    {
+      "scene_index": 3,
+      "source_characters": 157,
+      "source_tokens": 185,
+      "estimated_shots": 2,
+      "shot_estimate_basis": "nonempty_line_capacity_estimate_v1",
+      "estimated_output_tokens": 2403,
+      "capsules": [],
+      "capsule_characters": 0,
+      "capsule_tokens": 0,
+      "source_measurement": "script_content"
+    },
+    {
+      "scene_index": 4,
+      "source_characters": 143,
+      "source_tokens": 171,
+      "estimated_shots": 2,
+      "shot_estimate_basis": "nonempty_line_capacity_estimate_v1",
+      "estimated_output_tokens": 2368,
+      "capsules": [],
+      "capsule_characters": 0,
+      "capsule_tokens": 0,
+      "source_measurement": "script_content"
+    }
+  ],
+  "batches": [
+    {
+      "batch_index": 1,
+      "label": "Scenes 1-4",
+      "scene_indices": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "shared_input_characters": 119733,
+      "scene_input_characters": 599,
+      "capsule_input_characters": 0,
+      "estimated_input_tokens": 46942,
+      "estimated_output_tokens": 10047,
+      "input_headroom_tokens": 659058,
+      "output_headroom_tokens": 53953,
+      "estimated_shots": 9,
+      "loaded_capsules": [],
+      "shared_documents": [
+        "SCRIPT_STRUCTURE.json",
+        "SCRIPT_FACTS.md",
+        "EPISODE_VISUAL_BIBLE.md",
+        "EPISODE_CONTINUITY_LEDGER.md"
+      ],
+      "prior_committed_ledger_required": false,
+      "fresh_dp_required": true
+    }
+  ],
+  "shared_documents": [
+    "SCRIPT_STRUCTURE.json",
+    "SCRIPT_FACTS.md",
+    "EPISODE_VISUAL_BIBLE.md",
+    "EPISODE_CONTINUITY_LEDGER.md"
+  ],
+  "split_reasons": [],
+  "warning": "PROVISIONAL: missing inputs use explicit reserves; do not call Director"
+}

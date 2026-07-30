@@ -1,0 +1,142 @@
+{
+  "schema_version": "2.1",
+  "description": "由旧 MODE:P 设计输出提取的条件化历史案例。它们没有真实渲染与用户观察证据，不进入运行时上下文。",
+  "patterns": [
+    {
+      "case_id": "two_person_indoor_dialogue_face_to_face",
+      "reference_ep": "EP14 案情室",
+      "status": "historical_unvalidated",
+      "runtime_eligible": false,
+      "applicability": {
+        "scene_types": ["dialogue"],
+        "drama_intents": ["power_dynamic", "information_exchange"],
+        "space_conditions": ["indoor", "enclosed", "single_room", "face_to_face"],
+        "character_count_range": {"min": 2, "max": 2},
+        "motion_complexity": "low"
+      },
+      "non_applicability": [
+        "动作或追逐承担主要戏剧变化",
+        "三人以上同时争夺注意力",
+        "人物移动持续重建关系线",
+        "全能参考承担关键身份或动作连续性"
+      ],
+      "evidence": {
+        "evidence_level": "design_output_only",
+        "source_files": [
+          {
+            "path": "02_Agent/legacy_mode_p/output/EP14_S1_导演台本.md",
+            "content_sha256": "12d8b3a4ff19302417520f8f474c5e3b8ae4b63ea7bf6ba4f656f86f68e4b8d8"
+          }
+        ],
+        "render_evidence": [],
+        "user_observations": [],
+        "extracted_observation": "旧设计以稳定机位、空间建立和发言者/反应者交接组织双人对话；尚未证明这种选择比其他导演方案更有效。"
+      },
+      "invariants": [
+        "剧本事实、对白归属和人物连续状态不变",
+        "人物视线与空间关系必须可理解",
+        "每次切镜都承担信息、权力或反应交接"
+      ],
+      "variables": [
+        "演员调度、关系线与是否越轴重建",
+        "机位距离、焦段、景别和镜头数量",
+        "运镜、构图、光影、色彩和剪辑节奏",
+        "生成模式与参考素材职责"
+      ]
+    },
+    {
+      "case_id": "two_person_indoor_dialogue_workbench",
+      "reference_ep": "EP15 Rico工作室",
+      "status": "historical_unvalidated",
+      "runtime_eligible": false,
+      "applicability": {
+        "scene_types": ["dialogue", "object_work"],
+        "drama_intents": ["concentration", "craftsmanship", "intimate_conversation"],
+        "space_conditions": ["indoor", "enclosed", "workbench", "localized_light"],
+        "character_count_range": {"min": 1, "max": 2},
+        "motion_complexity": "minimal"
+      },
+      "non_applicability": [
+        "大空间关系是主要叙事信息",
+        "三人以上群体调度",
+        "快速运动或动作冲突",
+        "工作台和手部行为与剧情无关"
+      ],
+      "evidence": {
+        "evidence_level": "design_output_only",
+        "source_files": [
+          {
+            "path": "02_Agent/legacy_mode_p/output/EP15_S1_导演台本.md",
+            "content_sha256": "188cb07a65e6057e1fe2b5e82d449eb143d703bd0de1e7e4f8cb9e290596ab7f"
+          }
+        ],
+        "render_evidence": [],
+        "user_observations": [],
+        "extracted_observation": "旧设计让局部光源、手部工作和物体状态承担叙事注意力；尚无真实生成结果证明具体灯光或镜头方案稳定。"
+      },
+      "invariants": [
+        "人物与物体的接触阶段跨镜连续",
+        "主光源在空间中有可追溯位置",
+        "关键物体变化和人物反应都能被观众注册"
+      ],
+      "variables": [
+        "工作灯位置、色温、光比与环境层次",
+        "手部、人物和空间之间的景别分配",
+        "固定、跟随或焦点转移的摄影策略",
+        "参考素材和生成模式"
+      ]
+    },
+    {
+      "case_id": "indoor_investigation_laboratory",
+      "reference_ep": "EP13 鉴证科实验室",
+      "status": "historical_unvalidated",
+      "runtime_eligible": false,
+      "applicability": {
+        "scene_types": ["investigation", "forensic"],
+        "drama_intents": ["discovery", "evidence_analysis", "professional_procedure"],
+        "space_conditions": ["indoor", "laboratory", "equipment_dense"],
+        "character_count_range": {"min": 1, "max": 3},
+        "motion_complexity": "medium"
+      },
+      "non_applicability": [
+        "室外现场或追逐抓捕",
+        "没有证据物或程序动作",
+        "剧情信息必须依赖生成的可读屏幕文字",
+        "复杂设备只是装饰而不参与叙事"
+      ],
+      "evidence": {
+        "evidence_level": "design_output_only",
+        "source_files": [
+          {
+            "path": "02_Agent/legacy_mode_p/output/EP13_S1_SCENE_DESIGNER_v2.md",
+            "content_sha256": "9d7bcf592c2cff4115ff95541421cc89d6d2607f482ce1faaae170952913af6a"
+          }
+        ],
+        "render_evidence": [],
+        "user_observations": [],
+        "extracted_observation": "旧设计使用证据特写、人物反应与设备环境层次组织调查信息；具体多色温和焦点方案仍只是待验证假设。"
+      },
+      "invariants": [
+        "证据状态、发现顺序和原文事实不变",
+        "手、眼、物和设备之间的空间关系可读",
+        "关键叙事信息不只依赖生成文字"
+      ],
+      "variables": [
+        "证据揭示顺序和镜头数量",
+        "光源、色温、焦段、景深与摄影机运动",
+        "人物和设备在画面中的注意力权重",
+        "生成模式与参考素材职责"
+      ]
+    }
+  ],
+  "no_match_policy": {
+    "action": "load_core_only",
+    "description": "无匹配时只使用当前剧本事实和核心知识；历史案例不会进入运行时检索。",
+    "forbidden_behaviors": [
+      "回退到通用室内对话模式",
+      "根据关键词自动套用历史案例",
+      "把 design_output_only 当作真实渲染证据",
+      "在人工晋升前把历史案例标记为 runtime_eligible"
+    ]
+  }
+}

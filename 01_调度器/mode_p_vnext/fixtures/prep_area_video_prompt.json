@@ -1,0 +1,12 @@
+{
+  "integrity_note": "Verbatim user-submitted prompt text extracted from Codex JSONL line 425. Body SHA-256: 36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c. Character count (code points): 1811. Extraction rule: first input_text content block after '## My request for Codex:\\n' separator.",
+  "prompt_text": "故事板线稿箭头含义: 红色箭头=身体运动方向和路径·蓝色箭头=相机运动方向和路径·绿色标记=构图笔记·橙色标记=光线方向·黑色文本=时间+景别+运镜。实线箭头=确定的运动·虚线箭头=计划的路径。\n以 @图片1\n\nSTORYBOARD_LINEART_场景C1.png 为构图和机位参考。\n  @备赛区\n\n九宫格 格1(备赛区入口·门框切割光线·明暗交界)\n                格5(核心·备赛区中央·低照度琥珀光·灰色环氧树脂地面·中央金属长桌·微尘悬浮)\n                格2(备赛区纵深全景·长方形空间·琥珀安全灯·纵深12m·远端靶场暖光·两侧枪架器材柜·中央通道)\n                格9(远端靶场开口·矩形光区投灰色地面·光区边缘锐利·工位编号\"5\"\"6\")\n  @Rico-巅峰\n\n人物/Rico.txt(面部·棱角分明·高颧骨·深眼窝·胡茬·黑色工装衬衫·腕表)\n  @伊乌里\n\n人物/伊乌里.txt(面部·瘦削·颧骨突出·深棕卷发·深藏青夹克·黑色运动鞋)\n  @圣保罗IPSC射击俱乐部\n\nIPSC射击俱乐部_空间地图.txt §2.2选手通道·§2.3备赛区·§3.3机位约束\n  @图片1\n\nSTORYBOARD_LINEART_场景C1.png(黑白线稿故事板·镜C1-1(7格)+C1-2(10格)·构图+机位参考)\n@竞赛手枪\n\n \n\n\n────────────────────────\n① [0-10s] MS·35-50mm·固定·备赛区中央通道旁·面朝中央金属长桌·高1.3m\n────────────────────────\n\n\n格0s [0s] 固定机位·中景。备赛区中央——低照度琥珀色安全灯(2200K·灯罩金属网格·低瓦数)·灰色环氧树脂地面·微尘悬浮·压抑静默。中央金属长桌(冷轧钢质感)画面偏右。Rico坐长桌旁折叠椅上——黑色工装衬衫·低头擦枪·右手握竞赛手枪·左手持擦枪布·布沿套筒卷草雕花纹路移动。远端——备赛区北端靶场开口·暖黄LED~3500K渗入·矩形光区投在灰色地面·光区边缘锐利·明暗交界线·工位编号\"5\"\"6\"隐约可见。\n格1s [1s] 画面同格0s。Rico擦枪——擦枪布沿套筒左右往复·虎口射击茧可见。微尘悬浮。\n格2s [2s] 画面同格1s。Rico继续擦枪。\n格3s [3s] 画面同格2s。\n格4s [4s] 画面同格3s。远端口靶场暖黄灯光·工位编号\"5\"\"6\"隐约可见。\n格5s [5s] 伊乌里从画左走入备赛区——走过中央通道。\n格6s [6s] 伊乌里经过Rico身边——两人擦肩。伊乌里视线保持向前·越过Rico看向靶场方向。Rico低头擦枪·视线锁定在手枪上。擦肩距离≤0.5m。\n格7s [7s] 伊乌里嘴角动了一下——不是笑·是某种确认·嘴角微向上提0.5秒。Rico手指在枪管上停了一瞬——擦枪布静止·手指停在枪管表面·静止约1秒。\n格8s [8s] Rico手指从枪管上移开·继续擦枪。伊乌里继续走向靶场亮处——背影·深藏青夹克·凌乱卷发。\n格9s [9s] 伊乌里走向靶场——接近矩形光区·逆光剪影逐渐形成。Rico留在暗处·继续擦枪。一个走向亮处·一个留在暗处。\n\n\n@音轨:\n0-4s: <extremely quiet — cleaning cloth sliding across metal gun body, faint dry friction sound — distant hum of warm yellow range lights (extremely low, offscreen)>\n5-7s: <Iuri's sneakers on the epoxy floor — faint footsteps approaching, passing beside, receding>\n8-9s: <silence — footsteps fading away>\n\n\n@禁止:Rico面部偏离角色图·伊乌里看Rico(剧本:\"伊乌里没有看Rico\")·Rico抬头(剧本:\"没抬头\")·擦肩距离>1m·嘴角动被解读为微笑(剧本:\"不是笑\")·手指停顿超过1.5秒或短于0.8秒·备赛区亮度超过空间地图描述·远端靶场光区形状偏离(矩形·边缘锐利)\n\n\n\n",
+  "prompt_type": "video",
+  "scene_id": "prep_area_ep6",
+  "source_body_length": 1811,
+  "source_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+  "source_fidelity": "verbatim",
+  "source_jsonl_line": 425,
+  "source_kind": "codex_user_message",
+  "source_section": "GOLDEN_SET_EVIDENCE_REPORT.md §9.4"
+}

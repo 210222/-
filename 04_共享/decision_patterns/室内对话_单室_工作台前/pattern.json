@@ -1,0 +1,114 @@
+{
+  "_meta": {
+    "scene_type": "室内对话_单室_工作台前",
+    "canonical_reference": "EP15_Rico工作室",
+    "date_extracted": "2026-07-07",
+    "total_shots": 21,
+    "total_duration_sec": 100,
+    "characters": 2,
+    "pipeline": "旧管道C-Level·审核通过",
+    "key_principle": "单光源chiaroscuro·2800K暖黄·大面积暗部·极简运镜"
+  },
+
+  "spatial_layout": {
+    "room_shape": "矩形·~5m纵深×~4m宽×~3m高",
+    "key_elements": [
+      "工作台(居中偏右·厚重木质·台面散落零件)",
+      "洞洞板工具墙(后墙·挂满工具/枪管)",
+      "工业吊灯(天花板·唯一强光源·~2800K)",
+      "灰色保险柜(右前景)",
+      "门口(后景·深棕木门)"
+    ],
+    "placement_areas": [
+      "工作台前(坐姿·1人·Rico位置)",
+      "门口(站姿·1人·到访者位置)",
+      "保险柜旁(站姿·1人·需弯腰操作)"
+    ],
+    "forbidden_areas": ["台面上方(道具区)", "工具墙前方(障碍物)"]
+  },
+
+  "verified_camera_setups": {
+    "opening_shot": {
+      "function": "开场建立·物件特写·冷开场",
+      "shot_type": "ECU",
+      "focal_length": "100mm",
+      "angle": "俯角60°",
+      "position": "工作台正上方",
+      "dof": "极浅f/1.4",
+      "kb_rules": ["D-TRI-06(插入变体)", "C-KTZ-01", "C-FI2-NS-16"],
+      "narrative": "不是产品摄影的清亮·这是一个发现"
+    },
+    "workspace_setup": {
+      "function": "Rico在工作台前操作的建立镜头",
+      "shot_type": "全景→中景",
+      "focal_length": "24mm",
+      "angle": "眼平",
+      "position": "房间中央·距工作台~3m",
+      "dof": "深景深f/8",
+      "kb_rules": ["D-TRI-05(外反拍)", "COV-ACT-01"]
+    },
+    "character_closeup": {
+      "function": "Rico操作特写·手部+面部",
+      "shot_type": ["中近景", "近景", "特写"],
+      "focal_length": ["35mm", "50mm", "85mm"],
+      "angle": "眼平→低角度(~20cm高)",
+      "position": "工作台右侧·距Rico~1.5m",
+      "dof": "浅景深f/2.8",
+      "kb_rules": ["D-TRI-06(内反拍)", "C-FI-02"]
+    },
+    "visitor_entrance": {
+      "function": "到访者(Miguel)进场·门口→室内过渡",
+      "shot_type": "全景",
+      "focal_length": "24mm",
+      "angle": "眼平·门口方向",
+      "position": "工作台后方·看向门口",
+      "dof": "深景深f/8",
+      "kb_rules": ["D-TRI-05", "C-AJS-01"]
+    },
+    "transition_to_meeting": {
+      "function": "从Rico独白到双人对话过渡",
+      "shot_type": "中景·双人同框",
+      "focal_length": "35mm",
+      "angle": "眼平",
+      "position": "房间侧面·两人居中",
+      "dof": "中景深f/5.6",
+      "kb_rules": ["D-TRI-09(大三角形组合)", "D-DUO-01"]
+    }
+  },
+
+  "verified_lighting": {
+    "primary": {
+      "source": "工业吊灯·天花板·居中偏右",
+      "color_temp": 2800,
+      "character": "暖黄·单一强光源",
+      "anchor": "场景九宫格格5(中中★核心)·格1(左上)"
+    },
+    "secondary": {
+      "source": "门外楼道冷白灯",
+      "color_temp": 4000,
+      "character": "冷白·渗入门缝",
+      "anchor": "楼道九宫格·格4(左中·正面对门)"
+    },
+    "style": "chiaroscuro·单灯·大面积暗部(>60%画面)·光锥外全黑",
+    "contrast_ratio": "工作台面:暗角 ≈ +2EV",
+    "color_palette": "暖棕/焦糖色基调·金属油渍反光·木台磨损·灰泥斑驳"
+  },
+
+  "verified_movement": {
+    "static_ratio": 0.86,
+    "only_movement": {
+      "shot": "镜#A6",
+      "type": "极慢推近",
+      "speed": 0.05,
+      "duration_sec": 3,
+      "kb_rule": "M-MOT-04"
+    },
+    "design_principle": "静态=默认·运镜=有意选择的例外·不为固定镜头写论证"
+  },
+
+  "color_temperature_system": {
+    "indoor": {"value": 2800, "character": "暖黄·Rico的世界"},
+    "corridor": {"value": 4000, "character": "冷白·外部世界"},
+    "transition": "门半开·暖光涌出·冷暖交界线在门框·二元对立"
+  }
+}

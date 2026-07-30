@@ -1,0 +1,68 @@
+{
+  "record_type": "mode_p_director_decision_optimization_activation",
+  "record_version": "1.0",
+  "created_at": "2026-07-29T00:00:00+08:00",
+  "status": "FROZEN_PRECONSTRUCTION_SCOPE_ONLY",
+  "authorization_basis": "User required the construction plan to incorporate director-decision optimization before implementation continues.",
+  "authorization_scope": [
+    "freeze design goals and testable acceptance criteria",
+    "prepare preconstruction reconciliation artifacts",
+    "do not switch production",
+    "do not delete legacy files",
+    "do not claim visual media acceptance"
+  ],
+  "predecessors": {
+    "plan_v1_0": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md",
+      "sha256": "37e444e3c25e1e05d0c3f43fa5340631d159c4c69062aa3ca98cb20e5e00b2bc"
+    },
+    "goal_lock_v1_0": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_REFACTOR_GOAL_LOCK.json",
+      "sha256": "71edcc7152e9268886a99723e00b707caa892fb5ef9feac0df750f965dcd1272"
+    },
+    "proposal": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_OPTIMIZATION_CHANGE_REQUEST_001.md",
+      "status": "PROPOSED_NOT_YET_FROZEN"
+    }
+  },
+  "frozen_v1_1": {
+    "construction_plan": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md",
+      "sha256": "6309b31867d74065f4297f57f7a2fb5cee41f933aec0e149a9127466ef8338ce"
+    },
+    "goal_lock": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_REFACTOR_GOAL_LOCK_V1.1.json",
+      "sha256": "0bd185474534d83366058fe1b3a2acc10ff347db8370246b7d9765ea57a281dc"
+    },
+    "added_goal": "G-08",
+    "added_invariants": [
+      "INV-DIR-01",
+      "INV-DIR-02",
+      "INV-DIR-03",
+      "INV-DIR-04",
+      "INV-DIR-05",
+      "INV-DIR-06",
+      "INV-DIR-07"
+    ]
+  },
+  "unaffected_historical_scope": {
+    "v4_runtime": "unchanged",
+    "production_entry": "v4_unchanged",
+    "r0_to_r3_completed_evidence": "retained_as_historical_evidence",
+    "legacy_master_and_fixed_image_rules": "not_reactivated"
+  },
+  "runtime_activation_preconditions": [
+    "R3.2 baseline cohort reconciliation is truthful and verified",
+    "R3.2 all-70 evidence reconciliation is truthful and verified",
+    "R3.2 local terminal-state contract is truthful and verified",
+    "a separate strictly valid DDO task registry is created after R3.2"
+  ],
+  "claims_not_granted": [
+    "DDO-0 through DDO-6 implemented",
+    "Shadow approved",
+    "Pilot approved",
+    "Canary approved",
+    "Production approved",
+    "Storyboard or video visually accepted"
+  ]
+}

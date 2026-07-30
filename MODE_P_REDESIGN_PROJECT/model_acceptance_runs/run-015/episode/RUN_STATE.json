@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.1",
+  "episode_id": "director_transfer_4scenes",
+  "stage": "delivery",
+  "scene_states": [
+    {
+      "scene_index": 1,
+      "stage": "batch_commit"
+    },
+    {
+      "scene_index": 2,
+      "stage": "batch_commit"
+    },
+    {
+      "scene_index": 3,
+      "stage": "batch_commit"
+    },
+    {
+      "scene_index": 4,
+      "stage": "batch_commit"
+    }
+  ],
+  "delivery_sha256": "05cbc69f503863db6dcf669cb0be87f00abd03499f8fea4806e811826dc4e205",
+  "episode_review": "PASS",
+  "updated_at": "2026-07-19T14:47:06.693717+00:00",
+  "state_sha256": "7a904cfcab47bda16561bb890fb177ac10583e6c793b26eb0739dd9ccb7cf487"
+}

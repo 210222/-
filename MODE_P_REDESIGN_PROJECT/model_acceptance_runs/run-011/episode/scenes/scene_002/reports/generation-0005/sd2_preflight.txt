@@ -1,0 +1,2 @@
+FAIL sd2_preflight
+unresolved_branch: Shot scene_002-4 contains unresolved branch term '二选一'. Director must choose one executable result.

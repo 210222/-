@@ -1,0 +1,2 @@
+FAIL view_deriver
+Deriver error: Master lacks scene-level Director source fields: blueprint, sound_baseline

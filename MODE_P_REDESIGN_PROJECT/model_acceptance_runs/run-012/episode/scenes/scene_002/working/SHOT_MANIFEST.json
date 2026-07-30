@@ -1,0 +1,973 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_002",
+  "master_version": "scene_002/v1.0",
+  "master_content_hash": "4f9674e1d392c71b66a1e2cdf50e20ef185da3153068514f23bc5db99c5e7d42",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_002-1",
+      "duration": 12.0,
+      "scene_expression": "contemplative_silence",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L17——周岚站在水槽旁，父亲周成坐在小餐桌前；桌上放着一封已经拆开的信。",
+        "source_scene_id": "scene_002",
+        "source_line_start": 17,
+        "source_line_end": 17
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "standing_hands_on_sink_edge",
+            "wardrobe": "light_jacket_casual"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down",
+            "wardrobe": "old_cardigan_sweater"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_steaming"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static",
+        "story_time": "early_morning",
+        "environment": "old_kitchen_steam_in_window_light"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_head_turned_toward_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_steaming"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_002-B0",
+      "exit_boundary_id": "scene_002-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-2",
+      "duration": 8.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L19——周岚：「你早就知道她还活着。」",
+        "source_scene_id": "scene_002",
+        "source_line_start": 19,
+        "source_line_end": 19
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_head_turned_toward_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_steaming"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_gaze_on_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_near_boiling"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_002-B1",
+      "exit_boundary_id": "scene_002-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-3",
+      "duration": 13.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L21——周成看着水壶冒出的蒸汽，没有回答；水壶鸣叫后，他关掉火。",
+        "source_scene_id": "scene_002",
+        "source_line_start": 21,
+        "source_line_end": 21
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_gaze_on_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_near_boiling"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_gaze_on_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_fist_on_table_west_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "inside_right_fist_on_table_west_edge"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      },
+      "entry_boundary_id": "scene_002-B2",
+      "exit_boundary_id": "scene_002-B3",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-4",
+      "duration": 10.0,
+      "scene_expression": "investigation_object",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L21-L22——他把一把储物柜钥匙推向周岚；L24——周成：「信里没有地址。钥匙会带你找到她留下的东西。」",
+        "source_scene_id": "scene_002",
+        "source_line_start": 21,
+        "source_line_end": 24
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_gaze_on_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_fist_on_table_west_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "inside_right_fist_on_table_west_edge"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|table_east_end|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_fingertips_above_key"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "none",
+            "location": "table_east_area_beside_letter"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_002-B3",
+      "exit_boundary_id": "scene_002-B4",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-5",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L26——周岚拿起钥匙，仍把信留在桌上。",
+        "source_scene_id": "scene_002",
+        "source_line_start": 26,
+        "source_line_end": 26
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|table_east_end|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_fingertips_above_key"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "none",
+            "location": "table_east_area_beside_letter"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|table_east_end|standing",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "standing_key_in_closed_fist_at_side"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_hands_folded_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_lan",
+            "location": "inside_closed_fist_at_side"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_002-B4",
+      "exit_boundary_id": "scene_002-B5",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_002-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_002-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "standing_hands_on_sink_edge",
+            "wardrobe": "light_jacket_casual"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down",
+            "wardrobe": "old_cardigan_sweater"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_steaming"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static",
+        "story_time": "early_morning",
+        "environment": "old_kitchen_steam_in_window_light"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B1",
+      "from_ref": "scene_002-1",
+      "to_ref": "scene_002-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_head_turned_toward_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_steaming"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_head_turned_toward_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_steaming"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B2",
+      "from_ref": "scene_002-2",
+      "to_ref": "scene_002-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_gaze_on_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_near_boiling"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_gaze_on_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "cardigan_pocket"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_near_boiling"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B3",
+      "from_ref": "scene_002-3",
+      "to_ref": "scene_002-4",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_gaze_on_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_fist_on_table_west_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "inside_right_fist_on_table_west_edge"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|sink_east_window|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_gaze_on_father"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_fist_on_table_west_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_cheng",
+            "location": "inside_right_fist_on_table_west_edge"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B4",
+      "from_ref": "scene_002-4",
+      "to_ref": "scene_002-5",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|table_east_end|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_fingertips_above_key"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "none",
+            "location": "table_east_area_beside_letter"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|table_east_end|standing",
+            "facing": "west",
+            "screen_direction": "static",
+            "posture": "standing_fingertips_above_key"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_hands_folded_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "none",
+            "location": "table_east_area_beside_letter"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B5",
+      "from_ref": "scene_002-5",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "kitchen|table_east_end|standing",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "standing_key_in_closed_fist_at_side"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "kitchen|table_west_seat|seated",
+            "facing": "east",
+            "screen_direction": "static",
+            "posture": "seated_hands_folded_eyes_down"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "opened_letter",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "locker_key",
+            "held_by": "zhou_lan",
+            "location": "inside_closed_fist_at_side"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove_north_burner_off_silent"
+          }
+        ],
+        "light_main": {
+          "direction": "east_window_low_dawn",
+          "color_temp_k": 3000,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

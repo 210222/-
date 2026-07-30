@@ -1,0 +1,132 @@
+{
+  "created_at": "2026-07-18T17:57:50.732673+00:00",
+  "director_agent": "mode-p-director",
+  "director_bound_at": "2026-07-18T18:00:16.754919+00:00",
+  "director_call_id": "a739c082f03368fa6",
+  "director_model": "deepseek-v4-pro",
+  "director_provenance": {
+    "agent_call_id": "a739c082f03368fa6",
+    "agent_tool_use_id": "call_00_MExf3MdqHKHZATL3e7TA5123",
+    "agent_type": "mode-p-director",
+    "portable_transcript_path": "provenance/director-a739c082f03368fa6.jsonl",
+    "portable_transcript_sha256": "fa04a8d4e7c80fbd9b6f9583ec045c55bc07d51566432478af006bf70aa02f67",
+    "prompt_sha256": "a8017a2fd4567bae99b73f22860ce8cda946559259263e766b7e97ad7f1e8338",
+    "resolved_model": "deepseek-v4-pro",
+    "tool_call_record_sha256": "f0fcb7ae64174bfa208babec846104e7b6f42f870de4c90bcb509730be8377b9",
+    "tool_result_record_sha256": "05ad148fc8264e87e0e76121deadae39ed1b0f618066c29bb0da64b3608d1ab3",
+    "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\4345bb76-1439-4ddf-bd48-f82859f85cf1.jsonl"
+  },
+  "dp_adversarial_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\dp_adversarial_packet.md",
+  "dp_adversarial_sha256": "ca8aeb2e8f2ee59485090e11258ed2fad97ad65684f700ba6503b299be718a14",
+  "dp_agents": [
+    {
+      "agent_call_id": "a34fa1e496a212f89",
+      "bound_at": "2026-07-18T19:11:54.830382+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a34fa1e496a212f89",
+        "agent_tool_use_id": "call_00_SfjJLfsNr50V73xHoUZ29011",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-adversarial-2-a34fa1e496a212f89.jsonl",
+        "portable_transcript_sha256": "e8b822f99ff8297bd84acfb717dd1cce3eb0955d040db6423c8c1a1dfe3a546c",
+        "prompt_sha256": "35bbb032297131e94bd3c6bb259106b9bef089e453a435ad2eeab313a188f935",
+        "resolved_model": "deepseek-v4-pro",
+        "response_sha256": "b546d02264de77f01eae1bcc49a2f8afe1e38e121c52bd0606fb9e1441781ad6",
+        "tool_call_record_sha256": "8be1b71460a074867af2cd3572cd48a6fc177f1699f774caac6135320976c80b",
+        "tool_result_record_sha256": "526c3df40a0532d24240a79a2207c23bfb036563f111a1bfe773f74721471cae",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\4345bb76-1439-4ddf-bd48-f82859f85cf1.jsonl"
+      },
+      "response_sha256": "b546d02264de77f01eae1bcc49a2f8afe1e38e121c52bd0606fb9e1441781ad6",
+      "review_id": "adversarial-2"
+    },
+    {
+      "agent_call_id": "a63af9db13b4c3f09",
+      "bound_at": "2026-07-18T19:19:16.109449+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a63af9db13b4c3f09",
+        "agent_tool_use_id": "call_00_eKbL1Wt3YCT19OooQcJe8429",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-adversarial-3-a63af9db13b4c3f09.jsonl",
+        "portable_transcript_sha256": "ea07820006f4a062f96305ae2ce09a9b9cd9afb3bae6911ae5d36c2b61ceb5a6",
+        "prompt_sha256": "29370e1f1b9f792b7ff7da5ccc9f732b7017ddfc0ef0f6d6139a0783ae442cee",
+        "resolved_model": "deepseek-v4-pro",
+        "response_sha256": "5aded4d31b9afb07f23c1693d13df8128f45c9c860ba758c4665c0d99bf9d983",
+        "tool_call_record_sha256": "a6f8a703993945f0a3faed1d7ee3eb68263d101703d4600f7a155abac16bb81b",
+        "tool_result_record_sha256": "f593a60e108edf9b5a32afd10740abf6743e06ec0eded4c309fe88f930072685",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\4345bb76-1439-4ddf-bd48-f82859f85cf1.jsonl"
+      },
+      "response_sha256": "5aded4d31b9afb07f23c1693d13df8128f45c9c860ba758c4665c0d99bf9d983",
+      "review_id": "adversarial-3"
+    },
+    {
+      "agent_call_id": "a89ab2eb8444409e5",
+      "bound_at": "2026-07-18T19:23:11.238181+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a89ab2eb8444409e5",
+        "agent_tool_use_id": "call_00_ET_5lJGbyoU9mBDX4fURJ2D2393",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-adversarial-4-a89ab2eb8444409e5.jsonl",
+        "portable_transcript_sha256": "aeb609aa8ba15960cb77b644f3b334446887cf89141b452306c737eccabb1f8a",
+        "prompt_sha256": "4bf6108c1658a5e938229a424b1b6d5e922c110bf343927287e1d61d764f5eb3",
+        "resolved_model": "deepseek-v4-pro",
+        "response_sha256": "dadba32defc1b196795844d1e0f125a336945896f288b0a524e47ea837a95e92",
+        "tool_call_record_sha256": "2a8f773bb6fa040baa2c48192a24770254d8ae33583a618102af51a7ca9d1a97",
+        "tool_result_record_sha256": "4e4b1e62cd465a9b6fbb4c3dad9af79cb9df9d53fda64a49a30fdbce67362eac",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\4345bb76-1439-4ddf-bd48-f82859f85cf1.jsonl"
+      },
+      "response_sha256": "dadba32defc1b196795844d1e0f125a336945896f288b0a524e47ea837a95e92",
+      "review_id": "adversarial-4"
+    },
+    {
+      "agent_call_id": "a852118fa714bbea4",
+      "bound_at": "2026-07-18T19:32:19.602841+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a852118fa714bbea4",
+        "agent_tool_use_id": "call_00_Cl4PUfJcnfgPbiu0O1Ua0907",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-production-1-a852118fa714bbea4.jsonl",
+        "portable_transcript_sha256": "1455aafc63ad68f6c264111c8b17e04c568246273db7880f7e59231708e4f57d",
+        "prompt_sha256": "351e17218747c575e34238041960e3e0cb882017614057039e1f50ed2da702c2",
+        "resolved_model": "deepseek-v4-pro",
+        "response_sha256": "3d555c3268da7c4578635b837aef43910747b3f94142523080219b81058306e1",
+        "tool_call_record_sha256": "616126d173ad67b73a82e0fcc1005f1c9229f9e848b7ca528f968ed29517a1e4",
+        "tool_result_record_sha256": "ca59c1397311f7bb6b8945b8173f51ab97bc53359fedce246629e882b0b08400",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\4345bb76-1439-4ddf-bd48-f82859f85cf1.jsonl"
+      },
+      "response_sha256": "3d555c3268da7c4578635b837aef43910747b3f94142523080219b81058306e1",
+      "review_id": "production-1"
+    },
+    {
+      "agent_call_id": "ac1ae304d75d0101a",
+      "bound_at": "2026-07-18T19:41:02.722812+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "ac1ae304d75d0101a",
+        "agent_tool_use_id": "call_00_AbYmgVQHMd3PdC2LxKMV8301",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-production-2-ac1ae304d75d0101a.jsonl",
+        "portable_transcript_sha256": "f0744ca60928e226f5b58e722774421b7ed8156de1a1a64af08957f079fb60b9",
+        "prompt_sha256": "dcb8ecf13c15e804af8ce01ede7b1b4236d2ff13f33a69ac2fc120017bab4e1f",
+        "resolved_model": "deepseek-v4-pro",
+        "response_sha256": "0dcfacfd958898422e2062a683a1bb774c47151843f11e4c09c24a03521b9c8e",
+        "tool_call_record_sha256": "2b2a4ad454163bb79fe10c1b2f2a5b8fbd72106e27cc3b506c88e24f0518a7b6",
+        "tool_result_record_sha256": "0ed0c9eb26523d229586cd4b4a41f2c343777d418e0e1d7c92c68340c05d6a05",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\4345bb76-1439-4ddf-bd48-f82859f85cf1.jsonl"
+      },
+      "response_sha256": "0dcfacfd958898422e2062a683a1bb774c47151843f11e4c09c24a03521b9c8e",
+      "review_id": "production-2"
+    }
+  ],
+  "evidence_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011",
+  "fixed_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "invalid_reason": "episode_review prepare rejects all four committed Masters ('Master lacks a scene-level summary'): the Directors Masters omit the template numbered container headings (## 2. 共享 Boundary etc.); master_compiler and the full structural precheck accepted that layout, but the review excerpt extractor requires the ## 1. section to be terminated by a literal ## 2. heading. The scenes are hash-bound at batch_commit; run_mode_p precheck only accepts director_batch/structural_precheck, no CLI reopens a committed 1-batch scene, and the episode-review REVISE reopen path is unreachable because prepare itself fails. Reaching Episode Review would require bypassing the official state machine, so the run cannot complete. Provenance is intact and preserved: Director and all six fresh DPs resolvedModel deepseek-v4-pro; adversarial gate passed on adversarial-4; production DP production-2 READY committed scenes 1-4. Template/precheck section-layout gap is an engineering finding for /mode-p-rebuild, not repairable inside an acceptance run.",
+  "invalidated_at": "2026-07-18T19:47:02.854141+00:00",
+  "owner": "claude-code",
+  "run_id": "run-011",
+  "schema_version": 3,
+  "status": "invalid"
+}

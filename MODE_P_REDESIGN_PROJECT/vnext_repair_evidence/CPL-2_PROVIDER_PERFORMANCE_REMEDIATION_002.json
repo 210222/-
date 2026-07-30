@@ -1,0 +1,119 @@
+{
+  "schema_version": "cpl2-provider-performance-remediation-v1",
+  "status": "BLOCKED_EXTERNAL_BILLING_OR_CREDIT_REQUIRED",
+  "claim_ceiling": "TEXT_VALIDATED",
+  "production_entry": "v4_unchanged",
+  "external_model_running": false,
+  "scope": "CPL-2 DeepSeek text-only provider performance and transport remediation",
+  "observed_run_metrics": [
+    {
+      "run_id": "CPL-2_UNKNOWN_TEXT_SHADOW_005",
+      "result": "B0 semantic rejection after one JSON-format rejection and one contract repair",
+      "wall_duration_ms": 1031500,
+      "accepted_calls": [
+        {"stage": "E0", "duration_ms": 156890, "input_tokens_reported": 8030, "output_tokens_reported": 3288},
+        {"stage": "S1", "duration_ms": 314844, "input_tokens_reported": 50766, "output_tokens_reported": 20173}
+      ],
+      "rejected_calls": [
+        {"stage": "B0", "duration_ms": 246719, "reason_code": "STRICT_JSON_REJECTED"},
+        {"stage": "B0", "duration_ms": 311516, "reason_code": "EMPTY_ACTION_PATHS"}
+      ]
+    },
+    {
+      "run_id": "CPL-2_UNKNOWN_TEXT_SHADOW_006",
+      "result": "B0 timeout, then B0 accepted; B1 argv schema exceeded Windows command line length",
+      "accepted_calls": [
+        {"stage": "E0", "duration_ms": 141781, "input_tokens_reported": 6098, "output_tokens_reported": 836},
+        {"stage": "S1", "duration_ms": 279750, "input_tokens_reported": 83615, "output_tokens_reported": 19609},
+        {"stage": "B0", "duration_ms": 494735, "input_tokens_reported": 63586, "output_tokens_reported": 30636}
+      ],
+      "transport_failure": "B1 command line too long"
+    },
+    {
+      "run_id": "CPL-2_UNKNOWN_TEXT_SHADOW_007",
+      "result": "E0/S1 checkpoint accepted; B0 stopped before model result; prior text classification labeled it as a permission rejection",
+      "accepted_calls": [
+        {"stage": "E0", "duration_ms": 53875, "input_tokens_reported": 17960, "output_tokens_reported": 1831},
+        {"stage": "S1", "duration_ms": 229891, "input_tokens_reported": 54021, "output_tokens_reported": 13507}
+      ],
+      "transport_failure": "historical_text_classification_permission_rejected"
+    },
+    {
+      "run_id": "CPL-2_TRANSPORT_PROBE_20260730",
+      "result": "Minimal text-only request stopped before inference; no media, files, or production path were used",
+      "accepted_calls": [],
+      "transport_failure": "api_error_status_402",
+      "permission_denial_count": 0,
+      "model_usage_present": false
+    }
+  ],
+  "measurement_interpretation": {
+    "literal_prompt_chars": "Measured locally from messages sent to Claude Code. This is distinct from CLI-reported input_tokens, which include large cache-hit values and must not be interpreted as a direct character-to-token conversion.",
+    "historical_b0_literal_prompt_chars": 24610,
+    "intermediate_b0_literal_prompt_chars": 16534,
+    "current_007_b0_literal_prompt_chars_before_s1_budget": 15645,
+    "b0_prompt_reduction_before_s1_budget_percent": 36.4,
+    "b1_native_schema_chars": 16880,
+    "b0_native_schema_chars": 3566
+  },
+  "root_causes": [
+    {
+      "id": "PERF-01",
+      "cause": "Maximum reasoning effort is requested for every external stage. It may consume extensive private model reasoning even when the accepted JSON is short.",
+      "status": "RETAINED_BY_USER_REQUIREMENT",
+      "control": "Do not lower effort silently; reduce repeated context and externally serialized prose instead."
+    },
+    {
+      "id": "PERF-02",
+      "cause": "S1 had no field-length budget, so its accepted scene-intent strings reached hundreds of characters and were repeated into B0/B1.",
+      "status": "FIX_IMPLEMENTED_PENDING_REAL_RUN",
+      "control": "E0/S1/B0 fields are now bounded to 180 characters and B1 to 240 characters, in prompt, transport schema when available, and local fail-closed decoding."
+    },
+    {
+      "id": "PERF-03",
+      "cause": "B0/B1 received broad dataclass serializations and rich capsule provenance not required for their stage decision.",
+      "status": "FIX_IMPLEMENTED_PENDING_REAL_RUN",
+      "control": "Use deterministic stage-specific Phase-A projections, K1 blocking payloads, K1 lineage-only B1 payloads, and K2 execution payloads. Full source provenance remains offline."
+    },
+    {
+      "id": "PERF-04",
+      "cause": "B1's full JSON Schema was longer than Windows can safely pass as one CLI argument.",
+      "status": "FIX_IMPLEMENTED_PENDING_REAL_RUN",
+      "control": "Use native argv schema only below 12000 characters; larger contracts carry a compact contract shape in stdin and remain locally strict-decoded."
+    },
+    {
+      "id": "PERF-05",
+      "cause": "The adapter classified a human error string containing 'permission' before reading the CLI JSON envelope. The minimal transport probe instead reported api_error_status 402, an empty permission_denials array, zero model usage, and immediate failure before inference.",
+      "status": "FIX_IMPLEMENTED_EXTERNAL_BILLING_BLOCK_CONFIRMED",
+      "control": "Classify envelope API status before human text: 402 is billing_or_credit_required and 403 is authorization_denied. Retain system-prompt replacement, empty tools, safe mode, disabled skills, and no session persistence; do not add broader permission bypasses."
+    },
+    {
+      "id": "PERF-06",
+      "cause": "Early checkpoint variants stored hashes but not enough typed state to resume B1 safely.",
+      "status": "FIX_IMPLEMENTED_PENDING_REAL_RUN",
+      "control": "New E0/S1 checkpoints store typed Phase A; new B0/K2 checkpoints store typed BlockingCommit and deterministic K2 fingerprint. Historic runs remain evidence only and are not reconstructed from hashes."
+    }
+  ],
+  "next_real_run_preconditions": [
+    "Restore the Claude Code DeepSeek route's billing or credit availability; HTTP 402 cannot be solved in the project code or bypassed by local permissions.",
+    "Run all CPL-2 and DDO regression tests after the budget/transport changes.",
+    "Record prompt_chars, schema_chars, and schema_transport on every provider call.",
+    "Start a fresh Shadow run rather than treating historic 005-007 artifacts as valid completion evidence.",
+    "If B1 fails after a new recoverable B0/K2 checkpoint, resume B1 only.",
+    "Keep the claim ceiling TEXT_VALIDATED and do not submit media or switch production."
+  ],
+  "local_verification": {
+    "completed_at": "2026-07-30",
+    "command_scope": "CPL-0, CPL-1, CPL-2, DDO-0 through DDO-6 selected regression suite",
+    "result": "55 passed",
+    "coverage_added": [
+      "E0/S1/B0 length budget fail-closed behavior",
+      "B0 motivated action path schema and repair",
+      "B0 and B1 checkpoint recovery",
+      "large B1 schema stdin fallback",
+      "fast native-schema CLI fallback",
+      "CLI auto mode with empty tool list",
+      "prompt/schema transport metrics"
+    ]
+  }
+}

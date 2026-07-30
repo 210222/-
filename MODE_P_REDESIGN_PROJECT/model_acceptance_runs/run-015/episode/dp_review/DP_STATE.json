@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "status": "committed",
+  "packet_sha256": "d64dc43c1d012f5465431cc7a42c0c2eedd39bc2cb4a9e33936b509a968b52ff",
+  "feedback_sha256": "d41f65cd9207fa86755e504373c75cebbb5281c29cdc9975d9af2889f409afa7",
+  "affected_scenes": [],
+  "cached_response_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\PRODUCTION_DP_RESPONSE.md",
+  "committed_scenes": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "ledger_commit_sha256": "89a0679f0fdb15f5e3a48489805ae3146a265f481f89c84eb819279ba58d9d1e"
+}

@@ -1,0 +1,262 @@
+{
+  "schema_version": "1.0",
+  "batch_index": 1,
+  "total_batches": 1,
+  "script_source_hash": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "batch_manifest": {
+    "label": "batch manifest",
+    "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\BATCH_MANIFEST.json",
+    "sha256": "ca0ab4f9caf6f6bf53831a5a7509c510736b76224f92724a945bc1235410f678"
+  },
+  "shared_dependencies": [
+    {
+      "label": "SCRIPT_STRUCTURE.json",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\SCRIPT_STRUCTURE.json",
+      "sha256": "acf503fc729d2d3478353a2131f6135861833e2adfd9a57810f5b8285041f956"
+    },
+    {
+      "label": "SCRIPT_FACTS.md",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\SCRIPT_FACTS.md",
+      "sha256": "58ea97bf7abf432576a97a14f91d77de87bdd8d52ca6908df929eb16bba23ae1"
+    },
+    {
+      "label": "EPISODE_VISUAL_BIBLE.md",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\EPISODE_VISUAL_BIBLE.md",
+      "sha256": "49bc3297591502d5482bb444b946e4e7bc1882b91089212e17c09004c53332d0"
+    },
+    {
+      "label": "EPISODE_CONTINUITY_LEDGER.md",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\EPISODE_CONTINUITY_LEDGER.md",
+      "sha256": "c580dbcd1caed02d08c50f73fa1dc180047180ab190375328b2f7808d3e48274"
+    }
+  ],
+  "runtime_dependencies": [
+    {
+      "label": "SD2 capability profile",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sd2_capability_profile.json",
+      "sha256": "8d4232333e16d97464503b19a1bf6b3b834e00d1ff21a558327a925ccfdf12c3"
+    },
+    {
+      "label": "asset index",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\ASSET_INDEX.json",
+      "sha256": "3b428ae11c7704fc793123eb304fbd2c3151ede99926499b960b05dfd12603e4"
+    },
+    {
+      "label": "text asset-card index",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\ASSET_CARD_INDEX.json",
+      "sha256": "e7068cd013e3aaa79bbb020c089d86e54d4f925b0599e810bc8abfd25faefc4d"
+    },
+    {
+      "label": "knowledge index",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\knowledge\\knowledge_index.json",
+      "sha256": "b5fe30538fad6a40e71f3796e07eeef8a837cc905058d68d90679713718388c7"
+    },
+    {
+      "label": "Claude DP agent contract",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\.claude\\agents\\mode-p-dp.md",
+      "sha256": "489801ba94a3d1e1f595a19ed430ede36e641c123cbff747291bddbff99f926c"
+    },
+    {
+      "label": "canonical DP contract",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\02_Agent\\dp_agent.md",
+      "sha256": "5a6892382f7465f528e9b2bba32ffeebe7c3b7302abfd82d8a33806fd65f349e"
+    },
+    {
+      "label": "DP parser contract",
+      "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\dp_contract.py",
+      "sha256": "75d5dfc2377eff44e898d17b2019d1bccbbe0502d707ad16eac0957c6045bbcf"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_index": 1,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_001",
+      "artifact_generation": 5,
+      "shot_ids": [
+        "scene_001-1",
+        "scene_001-2",
+        "scene_001-3"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 1 Master",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_001\\DIRECTOR_MASTER.md",
+          "sha256": "25e264a85776d826ec202ed3c238a873f58d7d5c3d99c945ca34991020f70f65"
+        },
+        "manifest": {
+          "label": "scene 1 Manifest",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_001\\working\\SHOT_MANIFEST.json",
+          "sha256": "2cf7f731a0d8a90f0b542d384c225bac974e45d20ca91c07a2b9cd2770dcc722"
+        },
+        "storyboard": {
+          "label": "scene 1 Storyboard",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_001\\working\\STORYBOARD.md",
+          "sha256": "54b0e35d6f9449d6a1c168c62230706e51e0df0467887ca55f0ba3123d114ae8"
+        },
+        "video_prompt": {
+          "label": "scene 1 Video Prompt",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_001\\working\\VIDEO_PROMPT.md",
+          "sha256": "de649bdcd9239ae2119b778a371164e8d37fea762807878ca7b7583d3392b353"
+        },
+        "scene_context": {
+          "label": "scene 1 context",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_001\\SCENE_CONTEXT.md",
+          "sha256": "2b2bb4982c5685fe01e17e51ee0a9dcd5bdc94a478406f94219d2916a82ea60c"
+        },
+        "dp_evidence": {
+          "label": "scene 1 episode evidence",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\dp_review\\DP_EVIDENCE_SCENE_001.md",
+          "sha256": "82dbe2569e8be47deee6b377b2a6a7578954c8a54c6a69a451abf355ca2460d9"
+        }
+      }
+    },
+    {
+      "scene_index": 2,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_002",
+      "artifact_generation": 9,
+      "shot_ids": [
+        "scene_002-1",
+        "scene_002-2",
+        "scene_002-3",
+        "scene_002-4"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 2 Master",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_002\\DIRECTOR_MASTER.md",
+          "sha256": "59bd426748c2ad3915e4fc67b4bdebcfa3764c9588a9ef5ff12f8c7c4370ad18"
+        },
+        "manifest": {
+          "label": "scene 2 Manifest",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_002\\working\\SHOT_MANIFEST.json",
+          "sha256": "0a3e3f252de5bc62d68adb686f5e168bd9d4eed40fede75fc2935119ac73e815"
+        },
+        "storyboard": {
+          "label": "scene 2 Storyboard",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_002\\working\\STORYBOARD.md",
+          "sha256": "0dc5c5ba6d8087decd01ce9435b264b174f4032cbcdfe26d3fbad87da6603809"
+        },
+        "video_prompt": {
+          "label": "scene 2 Video Prompt",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_002\\working\\VIDEO_PROMPT.md",
+          "sha256": "ed666a941f225ace7f801f6a8a4eb84f3960fdb6001849f0d9cb5ed6ccb113db"
+        },
+        "scene_context": {
+          "label": "scene 2 context",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_002\\SCENE_CONTEXT.md",
+          "sha256": "d4582d82d3bd22b0068c87c4a972e46473ab6b66e1c6ab38f77b929eae12962e"
+        },
+        "dp_evidence": {
+          "label": "scene 2 episode evidence",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\dp_review\\DP_EVIDENCE_SCENE_002.md",
+          "sha256": "bf38ed307a07c6944cce1fcc54ba4c9c3bfb073133a1eb5aee8a987c3a8509c3"
+        }
+      }
+    },
+    {
+      "scene_index": 3,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_003",
+      "artifact_generation": 5,
+      "shot_ids": [
+        "scene_003-1",
+        "scene_003-2",
+        "scene_003-3"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 3 Master",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_003\\DIRECTOR_MASTER.md",
+          "sha256": "a1b8dc90eb174ef15e3c2b9784b053e22bd444cbf526272e147dc66bf9970cbe"
+        },
+        "manifest": {
+          "label": "scene 3 Manifest",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_003\\working\\SHOT_MANIFEST.json",
+          "sha256": "e1ce59160056f35a5432afc757b91d8a3dff641c17bb0b75bee8b224bbf5fff4"
+        },
+        "storyboard": {
+          "label": "scene 3 Storyboard",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_003\\working\\STORYBOARD.md",
+          "sha256": "db737334178aee54e74e3f48d675189fba898ade338b1bb47beda990b141f592"
+        },
+        "video_prompt": {
+          "label": "scene 3 Video Prompt",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_003\\working\\VIDEO_PROMPT.md",
+          "sha256": "1c46cfc8326e965b6bf60cdfad1ed157fc29e4bd9a3dba7f7394c8d0a43fa58f"
+        },
+        "scene_context": {
+          "label": "scene 3 context",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_003\\SCENE_CONTEXT.md",
+          "sha256": "86a9ceb4d6b8009992a2f1b00e31d778bc2bb370035c7cc6d2cdb8bb984f0bc2"
+        },
+        "dp_evidence": {
+          "label": "scene 3 episode evidence",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\dp_review\\DP_EVIDENCE_SCENE_003.md",
+          "sha256": "aa42a0e80f647714e731b0bdaa89f7eb0a7db32f54f082e7a8d3aa51f9027012"
+        }
+      }
+    },
+    {
+      "scene_index": 4,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_004",
+      "artifact_generation": 9,
+      "shot_ids": [
+        "scene_004-1",
+        "scene_004-2",
+        "scene_004-3",
+        "scene_004-4"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 4 Master",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_004\\DIRECTOR_MASTER.md",
+          "sha256": "65bec14173c24735e6a1ae56065d2c57785afe17f83a3dd99f97c94d45fee2a2"
+        },
+        "manifest": {
+          "label": "scene 4 Manifest",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_004\\working\\SHOT_MANIFEST.json",
+          "sha256": "dec9490da1f29313d9c03f24aff330b5e9b466cd09a017300ce75da87259e378"
+        },
+        "storyboard": {
+          "label": "scene 4 Storyboard",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_004\\working\\STORYBOARD.md",
+          "sha256": "699a0cf75b34701f30d6d68049bf30a2118f4ddb52e303df4350dd99e1694b69"
+        },
+        "video_prompt": {
+          "label": "scene 4 Video Prompt",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_004\\working\\VIDEO_PROMPT.md",
+          "sha256": "cbde189754945505ad006e153b18b0091b7afb8e5ddbacdc993e8c062ab1d81e"
+        },
+        "scene_context": {
+          "label": "scene 4 context",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\scenes\\scene_004\\SCENE_CONTEXT.md",
+          "sha256": "7bb3808ed830cb57869459c1d7dbea5ec7c7f9d2b8c151d95e9610ee08e0048d"
+        },
+        "dp_evidence": {
+          "label": "scene 4 episode evidence",
+          "path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-011\\episode\\dp_review\\DP_EVIDENCE_SCENE_004.md",
+          "sha256": "492c448f96e77bb007ecce54ad73cc2639815290a8df4cc67ddd6d2d468f8001"
+        }
+      }
+    }
+  ],
+  "shot_ids": [
+    "scene_001-1",
+    "scene_001-2",
+    "scene_001-3",
+    "scene_002-1",
+    "scene_002-2",
+    "scene_002-3",
+    "scene_002-4",
+    "scene_003-1",
+    "scene_003-2",
+    "scene_003-3",
+    "scene_004-1",
+    "scene_004-2",
+    "scene_004-3",
+    "scene_004-4"
+  ],
+  "dp_model": "inherit",
+  "review_content_sha256": "d06dc3dae5d333ebd679be89b3eef25c2f3d608496e3195c259d83eb9aa7d03f",
+  "cache_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\runtime_cache\\dp",
+  "packet_sha256": "3eb2d227833dfa810f39d933f82a4fc682564d1649998be9999b4b0b33cf4502"
+}

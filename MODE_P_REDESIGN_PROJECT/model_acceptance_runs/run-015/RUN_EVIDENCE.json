@@ -1,0 +1,19 @@
+{
+  "run_id": "run-015",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "dp_adversarial_sha256": "ca8aeb2e8f2ee59485090e11258ed2fad97ad65684f700ba6503b299be718a14",
+  "director_model": "deepseek-v4-pro",
+  "dp_model": "deepseek-v4-pro",
+  "pipeline_stages": {
+    "director_batch": "passed",
+    "master_compile": "passed",
+    "view_derive": "passed",
+    "structural_precheck": "passed",
+    "adversarial_dp": "passed",
+    "production_dp": "passed",
+    "batch_commit": "passed",
+    "episode_review": "passed",
+    "delivery": "passed"
+  },
+  "created_at": "2026-07-19T14:47:06.693717+00:00"
+}

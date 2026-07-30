@@ -1,0 +1,68 @@
+{
+  "created_at": "2026-07-18T15:53:52.430819+00:00",
+  "director_agent": "mode-p-director",
+  "director_bound_at": "2026-07-18T16:09:42.607584+00:00",
+  "director_call_id": "a300036809f6d10bb",
+  "director_model": "deepseek-v4-pro",
+  "director_provenance": {
+    "agent_call_id": "a300036809f6d10bb",
+    "agent_tool_use_id": "call_00_ET_82hYlA2wOcC4GZ0UWtvj0531",
+    "agent_type": "mode-p-director",
+    "portable_transcript_path": "provenance/director-a300036809f6d10bb.jsonl",
+    "portable_transcript_sha256": "f7c1ed1d462ab0d1fd8e994197ed28df4beb05b9a7bb5e0987d34f9e6bacc77f",
+    "prompt_sha256": "2ad73f1262319ee769c505f9f13b44ccf2c071e7c8689f7bc9e8ffb70e9cca7a",
+    "resolved_model": "deepseek-v4-pro",
+    "tool_call_record_sha256": "a554e7454875db8d07856906ed529ed62270bfeeb1685560b03ec4205b349fc7",
+    "tool_result_record_sha256": "b10227fbb654a38f13e0fbd27d8166d10c546bed5ab573f3f5c07db5fe37adfe",
+    "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\dbf7b645-17ed-442c-a080-5e7ff328d7c4.jsonl"
+  },
+  "dp_adversarial_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\dp_adversarial_packet.md",
+  "dp_adversarial_sha256": "ca8aeb2e8f2ee59485090e11258ed2fad97ad65684f700ba6503b299be718a14",
+  "dp_agents": [
+    {
+      "agent_call_id": "ab4867e9895fb6f24",
+      "bound_at": "2026-07-18T17:01:28.572462+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "ab4867e9895fb6f24",
+        "agent_tool_use_id": "call_00_UB63vSsnBuvgU7d8hRUU2065",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-adversarial-2-ab4867e9895fb6f24.jsonl",
+        "portable_transcript_sha256": "39aeebe77f54987cf273eda86250d6c472898b6fd321965f37dea5e413a2ee82",
+        "prompt_sha256": "584914ebdfa687b391ee1cd86b9b6669c44688dd439ed1d03794ef4dde9d6cbf",
+        "resolved_model": "deepseek-v4-pro",
+        "tool_call_record_sha256": "ab138cd76bd618bb369234906ee48799d4dd26dfc65b005cb5fc68dba3e7382f",
+        "tool_result_record_sha256": "741924f46ded425662fbef043bd014471b877d48ecd5b900fdb356b2e6965dcd",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\dbf7b645-17ed-442c-a080-5e7ff328d7c4.jsonl"
+      },
+      "review_id": "adversarial-2"
+    },
+    {
+      "agent_call_id": "a2839f0eb6adc2eea",
+      "bound_at": "2026-07-18T17:06:55.945085+00:00",
+      "model": "deepseek-v4-pro",
+      "provenance": {
+        "agent_call_id": "a2839f0eb6adc2eea",
+        "agent_tool_use_id": "call_00_nzrIp2GHZYo2TsUe49AP6757",
+        "agent_type": "mode-p-dp",
+        "portable_transcript_path": "provenance/dp-production-1-a2839f0eb6adc2eea.jsonl",
+        "portable_transcript_sha256": "946a83e0f2d0eb49d6af4e55ccd6b8e2426e002a034bae6869c2e247d28799dd",
+        "prompt_sha256": "cb5e8ffbcaadc200076261ffb7783c88b22889a880bf3171f8d77bbdf7e9dd4c",
+        "resolved_model": "deepseek-v4-pro",
+        "tool_call_record_sha256": "ae21019f87bbc4208a3056b36b287e74c1e4757154049339fe296a9bd26648eb",
+        "tool_result_record_sha256": "bf251df19d59a83b3e2c4a17315a18dd4a28b8bda6ade5e0f6db8e7771026b15",
+        "transcript_path": "C:\\Users\\21022\\.claude\\projects\\C--Users-21022-Desktop-----------v5\\dbf7b645-17ed-442c-a080-5e7ff328d7c4.jsonl"
+      },
+      "review_id": "production-1"
+    }
+  ],
+  "evidence_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-009",
+  "fixed_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "invalid_reason": "Batch DP submit partially committed four scenes but never closed DP_STATE; the parent then directly edited committed SHOT_MANIFEST files while attempting Episode Review, violating immutable artifacts and parent non-authorship.",
+  "invalidated_at": "2026-07-18T17:13:46.806438+00:00",
+  "owner": "claude-code",
+  "run_id": "run-009",
+  "schema_version": 3,
+  "status": "invalid"
+}

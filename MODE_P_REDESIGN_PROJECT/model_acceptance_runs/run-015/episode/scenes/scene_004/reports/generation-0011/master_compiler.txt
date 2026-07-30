@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Malformed or unknown state-key line in 交出状态键：[M]: '- light_main direction:钠灯 2200K ratio:5:1'

@@ -1,0 +1,2 @@
+PASS master_compiler
+Manifest compiled: 4 shot(s) -> sessions\episode_0f83503407ff\28b46258de21\scenes\scene_002\.build\62ff432777fd4501952583eee22ce8e6\SHOT_MANIFEST.json

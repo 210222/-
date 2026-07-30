@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_003",
+  "stage": "batch_commit",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 5,
+  "master_path": "DIRECTOR_MASTER.md",
+  "master_sha256": "a1b8dc90eb174ef15e3c2b9784b053e22bd444cbf526272e147dc66bf9970cbe",
+  "manifest_path": "working/SHOT_MANIFEST.json",
+  "manifest_sha256": "e1ce59160056f35a5432afc757b91d8a3dff641c17bb0b75bee8b224bbf5fff4",
+  "checks": {
+    "final_master_sync": {
+      "passed": true,
+      "stage": "final_check",
+      "artifact_generation": 5,
+      "master_sha256": "a1b8dc90eb174ef15e3c2b9784b053e22bd444cbf526272e147dc66bf9970cbe",
+      "manifest_sha256": "e1ce59160056f35a5432afc757b91d8a3dff641c17bb0b75bee8b224bbf5fff4",
+      "report_path": "reports/generation-0005/final_master_sync.txt",
+      "report_sha256": "a7a9367e8eae8f73ccc87ab546503332529e2e783ad4b3e556147a1244802fee"
+    }
+  },
+  "dp_review": {
+    "status": "ready",
+    "artifact_generation": 5,
+    "master_sha256": "a1b8dc90eb174ef15e3c2b9784b053e22bd444cbf526272e147dc66bf9970cbe",
+    "manifest_sha256": "e1ce59160056f35a5432afc757b91d8a3dff641c17bb0b75bee8b224bbf5fff4",
+    "review_path": "reviews/dp-0001.md",
+    "review_sha256": "502ad57bb5ed1e640bae55dbc4ddb7e8a0916b476e7cb57afa412d9acf84b831",
+    "issue_fingerprint": null,
+    "stalled": false
+  },
+  "dp_issue_history": [],
+  "episode_review": null,
+  "committed_batches": [
+    {
+      "batch_index": 1,
+      "artifact_generation": 5,
+      "master_sha256": "a1b8dc90eb174ef15e3c2b9784b053e22bd444cbf526272e147dc66bf9970cbe",
+      "manifest_sha256": "e1ce59160056f35a5432afc757b91d8a3dff641c17bb0b75bee8b224bbf5fff4",
+      "commit_path": "commits/delivery-bf81b2ca5c0f49ddac3a64cb60e169c6.json",
+      "commit_sha256": "91f0b3dd492e5095e4884dee99975b70febe41a604d6968a61d5953fa582379e"
+    }
+  ],
+  "dp_attempts": 1,
+  "revision_count": 2,
+  "transition_sequence": 10,
+  "updated_at": "2026-07-18T19:41:06.844338+00:00",
+  "state_sha256": "cae46c73bc11b33b01cbfd467c0cda4032dbeb86e1ecde81521b48da18a1dba4"
+}

@@ -1,0 +1,977 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_001",
+  "master_version": "scene_001/v1.0",
+  "master_content_hash": "fc3f9d48bcccc911fab03ab5d9e5a6a04ce5b42151decac13503df05945aeda1",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_001-1",
+      "duration": 12.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L3-L9：王强从震惊中回神→不信→质疑→被吴石妻子反驳→看向病历表→惊愕确认",
+        "source_scene_id": "scene_001",
+        "source_line_start": 3,
+        "source_line_end": 9
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_center_room",
+            "screen_direction": "static",
+            "posture": "seated_holding_chart"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_center_room",
+            "screen_direction": "static",
+            "posture": "standing_shocked_expression"
+          },
+          {
+            "entity_id": "吴石妻子",
+            "position": "center_room",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "standing_firm"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "right_rear_of_吴石妻子",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "standing_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "王成发",
+            "location": "desk_surface"
+          },
+          {
+            "prop_id": "办公桌",
+            "held_by": "无",
+            "location": "center_rear"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_王成发",
+            "screen_direction": "left_to_right",
+            "posture": "standing_expression_shocked"
+          },
+          {
+            "entity_id": "吴石妻子",
+            "position": "center_room",
+            "facing": "toward_王强",
+            "screen_direction": "right_to_left",
+            "posture": "standing_arms_crossed"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "seated_noticing_王强_gaze"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "right_rear",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "standing_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "王成发",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B0",
+      "exit_boundary_id": "scene_001-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-2",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L10-L13：王成发喝斥王强→安抚吴石妻子→吴石妻子离场→王成发转向周从文",
+        "source_scene_id": "scene_001",
+        "source_line_start": 10,
+        "source_line_end": 13
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_王成发",
+            "screen_direction": "left_to_right",
+            "posture": "standing_expression_shocked"
+          },
+          {
+            "entity_id": "吴石妻子",
+            "position": "center_room",
+            "facing": "toward_王强",
+            "screen_direction": "right_to_left",
+            "posture": "standing_arms_crossed"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "seated_noticing_王强_gaze"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "right_rear",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "standing_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "王成发",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_周从文",
+            "screen_direction": "static",
+            "posture": "seated_elbows_on_desk_expression_stern"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_ground",
+            "screen_direction": "static",
+            "posture": "standing_head_lowered"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "center_room",
+            "facing": "toward_王成发",
+            "screen_direction": "static",
+            "posture": "standing_waiting"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_by_王成发_right_hand"
+          },
+          {
+            "prop_id": "办公桌",
+            "held_by": "无",
+            "location": "center_rear"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B1",
+      "exit_boundary_id": "scene_001-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-3",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L14-L16：王成发训话→周从文打断→冷笑搬出省城教授→王成发噎住",
+        "source_scene_id": "scene_001",
+        "source_line_start": 14,
+        "source_line_end": 16
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_周从文",
+            "screen_direction": "static",
+            "posture": "seated_elbows_on_desk_expression_stern"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_ground",
+            "screen_direction": "static",
+            "posture": "standing_head_lowered"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "center_room",
+            "facing": "toward_王成发",
+            "screen_direction": "static",
+            "posture": "standing_waiting"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_by_王成发_right_hand"
+          },
+          {
+            "prop_id": "办公桌",
+            "held_by": "无",
+            "location": "center_rear"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "center_room",
+            "facing": "toward_王成发",
+            "screen_direction": "left_to_right",
+            "posture": "standing_chest_slightly_heaving_expression_cold_smirk"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "seated_leaning_back_pale"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_王成发",
+            "screen_direction": "static",
+            "posture": "standing_watching_王成发_concerned"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_by_王成发_right_hand"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B2",
+      "exit_boundary_id": "scene_001-B3",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-4",
+      "duration": 11.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L17-L21：周从文指王成发人品问题→王成发大怒→周从文讽刺→王成发气到喘不上气→王强顺气+指责",
+        "source_scene_id": "scene_001",
+        "source_line_start": 17,
+        "source_line_end": 21
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "center_room",
+            "facing": "toward_王成发",
+            "screen_direction": "left_to_right",
+            "posture": "standing_chest_slightly_heaving_expression_cold_smirk"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "seated_leaning_back_pale"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_王成发",
+            "screen_direction": "static",
+            "posture": "standing_watching_王成发_concerned"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_by_王成发_right_hand"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "near_doorway_center_room",
+            "facing": "toward_door",
+            "screen_direction": "depth_out",
+            "posture": "body_turned_sideways_head_turned_back"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "at_desk",
+            "facing": "toward_desk",
+            "screen_direction": "static",
+            "posture": "leaning_on_desk_gasping"
+          },
+          {
+            "entity_id": "王强",
+            "position": "behind_王成发",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "one_hand_on_王成发_back_glaring"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B3",
+      "exit_boundary_id": "scene_001-B4",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-5",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L22-L23：周从文门口回头→不屑对白→OS独白（医术不行+草菅人命）→眼神变冷OS宣言（王成发退位）",
+        "source_scene_id": "scene_001",
+        "source_line_start": 22,
+        "source_line_end": 23
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "near_doorway_center_room",
+            "facing": "toward_door",
+            "screen_direction": "depth_out",
+            "posture": "body_turned_sideways_head_turned_back"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "at_desk",
+            "facing": "toward_desk",
+            "screen_direction": "static",
+            "posture": "leaning_on_desk_gasping"
+          },
+          {
+            "entity_id": "王强",
+            "position": "behind_王成发",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "one_hand_on_王成发_back_glaring"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "doorway_exiting",
+            "facing": "outward_into_corridor",
+            "screen_direction": "depth_out",
+            "posture": "turning_away_walking_out"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "at_desk",
+            "facing": "toward_desk",
+            "screen_direction": "static",
+            "posture": "hunched_gasping_defeated"
+          },
+          {
+            "entity_id": "王强",
+            "position": "beside_王成发",
+            "facing": "toward_door",
+            "screen_direction": "static",
+            "posture": "supporting_王成发_silent"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      },
+      "entry_boundary_id": "scene_001-B4",
+      "exit_boundary_id": "scene_001-B5",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_001-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_001-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_center_room",
+            "screen_direction": "static",
+            "posture": "seated_holding_chart"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_center_room",
+            "screen_direction": "static",
+            "posture": "standing_shocked_expression"
+          },
+          {
+            "entity_id": "吴石妻子",
+            "position": "center_room",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "standing_firm"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "right_rear_of_吴石妻子",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "standing_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "王成发",
+            "location": "desk_surface"
+          },
+          {
+            "prop_id": "办公桌",
+            "held_by": "无",
+            "location": "center_rear"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B1",
+      "from_ref": "scene_001-1",
+      "to_ref": "scene_001-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_王成发",
+            "screen_direction": "left_to_right",
+            "posture": "standing_expression_shocked"
+          },
+          {
+            "entity_id": "吴石妻子",
+            "position": "center_room",
+            "facing": "toward_王强",
+            "screen_direction": "right_to_left",
+            "posture": "standing_arms_crossed"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "seated_noticing_王强_gaze"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "right_rear",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "standing_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "王成发",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_王成发",
+            "screen_direction": "left_to_right",
+            "posture": "standing_expression_shocked"
+          },
+          {
+            "entity_id": "吴石妻子",
+            "position": "center_room",
+            "facing": "toward_王强",
+            "screen_direction": "right_to_left",
+            "posture": "standing_arms_crossed"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "seated_noticing_王强_gaze"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "right_rear",
+            "facing": "toward_王强",
+            "screen_direction": "static",
+            "posture": "standing_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "王成发",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B2",
+      "from_ref": "scene_001-2",
+      "to_ref": "scene_001-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_周从文",
+            "screen_direction": "static",
+            "posture": "seated_elbows_on_desk_expression_stern"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_ground",
+            "screen_direction": "static",
+            "posture": "standing_head_lowered"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "center_room",
+            "facing": "toward_王成发",
+            "screen_direction": "static",
+            "posture": "standing_waiting"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_by_王成发_right_hand"
+          },
+          {
+            "prop_id": "办公桌",
+            "held_by": "无",
+            "location": "center_rear"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_周从文",
+            "screen_direction": "static",
+            "posture": "seated_elbows_on_desk_expression_stern"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_ground",
+            "screen_direction": "static",
+            "posture": "standing_head_lowered"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "center_room",
+            "facing": "toward_王成发",
+            "screen_direction": "static",
+            "posture": "standing_waiting"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_by_王成发_right_hand"
+          },
+          {
+            "prop_id": "办公桌",
+            "held_by": "无",
+            "location": "center_rear"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B3",
+      "from_ref": "scene_001-3",
+      "to_ref": "scene_001-4",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "center_room",
+            "facing": "toward_王成发",
+            "screen_direction": "left_to_right",
+            "posture": "standing_chest_slightly_heaving_expression_cold_smirk"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "seated_leaning_back_pale"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_王成发",
+            "screen_direction": "static",
+            "posture": "standing_watching_王成发_concerned"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_by_王成发_right_hand"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "center_room",
+            "facing": "toward_王成发",
+            "screen_direction": "left_to_right",
+            "posture": "standing_chest_slightly_heaving_expression_cold_smirk"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "behind_desk",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "seated_leaning_back_pale"
+          },
+          {
+            "entity_id": "王强",
+            "position": "left_of_desk",
+            "facing": "toward_王成发",
+            "screen_direction": "static",
+            "posture": "standing_watching_王成发_concerned"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_by_王成发_right_hand"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B4",
+      "from_ref": "scene_001-4",
+      "to_ref": "scene_001-5",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "near_doorway_center_room",
+            "facing": "toward_door",
+            "screen_direction": "depth_out",
+            "posture": "body_turned_sideways_head_turned_back"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "at_desk",
+            "facing": "toward_desk",
+            "screen_direction": "static",
+            "posture": "leaning_on_desk_gasping"
+          },
+          {
+            "entity_id": "王强",
+            "position": "behind_王成发",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "one_hand_on_王成发_back_glaring"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "near_doorway_center_room",
+            "facing": "toward_door",
+            "screen_direction": "depth_out",
+            "posture": "body_turned_sideways_head_turned_back"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "at_desk",
+            "facing": "toward_desk",
+            "screen_direction": "static",
+            "posture": "leaning_on_desk_gasping"
+          },
+          {
+            "entity_id": "王强",
+            "position": "behind_王成发",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "one_hand_on_王成发_back_glaring"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B5",
+      "from_ref": "scene_001-5",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "doorway_exiting",
+            "facing": "outward_into_corridor",
+            "screen_direction": "depth_out",
+            "posture": "turning_away_walking_out"
+          },
+          {
+            "entity_id": "王成发",
+            "position": "at_desk",
+            "facing": "toward_desk",
+            "screen_direction": "static",
+            "posture": "hunched_gasping_defeated"
+          },
+          {
+            "entity_id": "王强",
+            "position": "beside_王成发",
+            "facing": "toward_door",
+            "screen_direction": "static",
+            "posture": "supporting_王成发_silent"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "病历表",
+            "held_by": "无",
+            "location": "desk_surface"
+          }
+        ],
+        "light_main": {
+          "direction": "from_ceiling_fluorescent",
+          "color_temp_k": 5500,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

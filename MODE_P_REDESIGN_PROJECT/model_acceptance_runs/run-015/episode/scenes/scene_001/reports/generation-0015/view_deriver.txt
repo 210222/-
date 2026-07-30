@@ -1,0 +1,2 @@
+FAIL view_deriver
+Deriver error: Master scene_001-1 lacks required Director source fields: ['camera', 'composition', 'lighting', 'performance', 'ref_priority', 'ref_responsibility', 'sound_design']; repair Master before deriving views

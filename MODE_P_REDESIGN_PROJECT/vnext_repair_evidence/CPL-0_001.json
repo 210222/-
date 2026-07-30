@@ -1,0 +1,48 @@
+{
+  "schema_version": "completion-evidence-v1",
+  "task_id": "CPL-0",
+  "run_id": "CPL-0_001",
+  "status": "COMPLETION_AUDIT_FROZEN",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/completion_control.py",
+    "01_调度器/mode_p_vnext/tests/test_cpl_0_completion_control.py",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_COMPLETION_TASKS.json",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_COMPLETION_STATE.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_COMPLETION_MATRIX_002.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/CPL-0_001.json"
+  ],
+  "checks": [
+    {
+      "name": "completion_matrix_current",
+      "exit_code": 0
+    },
+    {
+      "name": "successor_queue_independent",
+      "exit_code": 0
+    },
+    {
+      "name": "planned_preview_ceiling",
+      "exit_code": 0
+    },
+    {
+      "name": "production_unchanged",
+      "exit_code": 0
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "cpl_0_control",
+      "exit_code": 0,
+      "summary": "3 passed in 0.05s"
+    }
+  ],
+  "scope": {
+    "deepseek_visual_validation_claimed": false,
+    "external_generation_invoked": false,
+    "director_runtime_started": false,
+    "media_visual_acceptance_claimed": false,
+    "owner_production_approval_recorded": false,
+    "production_entry_changed": false
+  }
+}

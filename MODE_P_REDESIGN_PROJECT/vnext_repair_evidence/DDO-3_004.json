@@ -1,0 +1,16 @@
+{
+  "task_id": "DDO-3",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-3_004.json"
+  ],
+  "checks": [
+    {"name": "blocking_before_camera", "exit_code": 0},
+    {"name": "candidate_record", "exit_code": 0},
+    {"name": "decision_provenance", "exit_code": 0},
+    {"name": "vec_fail_closed", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_3_vec", "exit_code": 0}
+  ]
+}

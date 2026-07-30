@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0",
+  "record_id": "R3.2_AUDIT_FAILURE_003",
+  "task_id": "R3.2",
+  "created_date": "2026-07-29",
+  "status": "NOT_COMPLETE",
+  "purpose": "Truthful post-R1.1-to-R3.1-revalidation audit. This record is failure evidence only and must not be used as a completion, readiness, production, or media-acceptance certificate.",
+  "revalidated_dependency_chain": {
+    "controller_audit_after_revalidation": "PASS",
+    "tasks": ["R1.1", "R1.2", "R1.3", "R1.4", "R2.1", "R2.2", "R2.3", "R2.4", "R3.1"],
+    "r1_1_baseline_contract": {
+      "frozen_manifest_sha256": "c9cd6fbe73e8200e77e326729e746f032ec25ff4a97d9fc78fa0cac2629448fd",
+      "supplemental_current_collection_reconciliation_sha256": "c5d63a390b5ed80bf81fd2bb0b581cd1849309fca7e3f94187e921b82fc5608c",
+      "historical_686_manifest_mutated": false,
+      "current_781_collection_registered_as": "686 reconstructed generic candidate plus 95 post-freeze legacy EP35 tests",
+      "historical_exact_686_id_set_claimed": false
+    }
+  },
+  "test_runs": [
+    {
+      "name": "vnext_full",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "PASS",
+      "summary": "728 passed, 416 subtests passed in 22.95s",
+      "stdout_sha256": "cafeca6bcb7f4642d4ecc3ca9e423da1c8cebe23ca691bc790cd8a70577db1b4"
+    },
+    {
+      "name": "r3_2_truth_reconciliation_subset",
+      "command": "python -m pytest mode_p_vnext/tests/test_r3_2_baseline_cohort_reconciliation.py mode_p_vnext/tests/test_r3_2_task_evidence_reconciliation.py mode_p_vnext/tests/test_r3_2_terminal_state_contract.py -q -p no:cacheprovider",
+      "result": "PASS",
+      "summary": "9 passed in 13.48s",
+      "stdout_sha256": "6c633212ec43ae6051b78e6d7bb76fea26a99de043ae737c000bb9f020eeb971"
+    },
+    {
+      "name": "v4_full_compatibility",
+      "command": "python -m pytest mode_p -q -p no:cacheprovider",
+      "result": "FAIL",
+      "summary": "1 failed, 780 passed, 8 subtests passed in 106.10s",
+      "stdout_sha256": "02c4357686815145e85de0c02295388a0ec9a81507eb7267816749bc7e79264b",
+      "failure": {
+        "test": "mode_p/test_active_entrypoints.py::ActiveCommandTests::test_machine_local_permissions_are_not_packaged",
+        "observed_condition": "D:/tsc/导演系统_v5/.claude/settings.local.json exists while the v4 test requires it to be absent.",
+        "file_sha256": "b7d3791edcaa52cbab4a51393d42fcffc33afdacfec214d4baec339b19132e3b",
+        "user_direction": "Preserve settings.local.json; do not delete, move, or rewrite it."
+      }
+    }
+  ],
+  "unmet_required_checks": [
+    {
+      "check": "all_70_evidenced",
+      "actual": false,
+      "ledger_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/task_evidence_ledger_v2.json",
+      "ledger_sha256": "cac6ad99549f69dcc92c431767756d0e510b9f52c684a02444974550d24d437f",
+      "verified_count": 62,
+      "unresolved_task_ids": ["V3.7", "V9.5", "V10.1", "V10.2", "V10.3", "V10.4", "V10.5", "V10.6"]
+    },
+    {
+      "check": "v4_full_green",
+      "actual": false,
+      "reason": "The user-directed preserved local permissions file makes the immutable v4 entrypoint regression fail."
+    },
+    {
+      "check": "local_ready_machine_generated",
+      "actual": false,
+      "terminal_contract_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.2_TERMINAL_STATE_CONTRACT_001.json",
+      "terminal_contract_sha256": "9d07ac1ad05d9135ac6c46dd9d12b58307ab11f608c23b5a27eef9639d209c48",
+      "reason": "The task registry ends at V_TASK_REVALIDATION_REQUIRED while R3.2 requires a different local-ready machine state that the controller does not implement."
+    }
+  ],
+  "proven_but_insufficient": {
+    "vnext_full_green": true,
+    "baseline_collection_has_no_unregistered_delta": true,
+    "golden_structural_regressions_revalidated": true,
+    "textual_validation_is_not_visual_media_acceptance": true
+  },
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "external_generation_invoked": false,
+    "media_visual_acceptance_claimed": false,
+    "director_runtime_implemented": false
+  },
+  "required_follow_up": [
+    "Obtain explicit authorization for an acceptance-contract rebase or controller implementation that can produce the authoritative local-ready terminal state.",
+    "Implement and evidence V3.7, then its dependent V9.5 and V10.1 through V10.5; historically revalidate V10.6.",
+    "If v4 full green is required, obtain separate owner authorization to isolate or remove the preserved local permissions file; otherwise retain this exact environment failure.",
+    "Only then create and activate the Director Decision Optimization implementation queue, Shadow operation, and actual visual media acceptance."
+  ],
+  "prohibited_claims": ["R3.2_COMPLETE", "LOCAL_VNEXT_READY", "PRODUCTION_READY", "STORYBOARD_VIDEO_VISUAL_ACCEPTANCE"]
+}

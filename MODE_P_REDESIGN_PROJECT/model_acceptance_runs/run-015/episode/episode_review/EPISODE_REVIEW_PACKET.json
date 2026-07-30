@@ -1,0 +1,325 @@
+{
+  "schema_version": "1.0",
+  "script_source_hash": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "batch_manifest_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\BATCH_MANIFEST.json",
+  "batch_manifest_sha256": "0be19e4c02dc9965770b76f620752c8350d61b778d471c0c5fe5cdf5791abbe6",
+  "visual_bible_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\EPISODE_VISUAL_BIBLE.md",
+  "visual_bible_sha256": "d42aeb0cd14fcb505f2585ab9099e77a1dd3a92bcb36237fe852be8374c91e03",
+  "continuity_ledger_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\EPISODE_CONTINUITY_LEDGER.md",
+  "continuity_ledger_sha256": "8a696f943fb96303b9ef5bf7ca17dfa9cb41eb1f5ac3d8495a61502a6b428de4",
+  "scenes": [
+    {
+      "scene_index": 1,
+      "scene_id": "scene_001",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_001",
+      "master_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_001\\DIRECTOR_MASTER.md",
+      "master_content_hash": "a043f15ec9fb5d2ef16f279d6c2eaa06dc49e41ccb11730a01020024cc5ecce3",
+      "manifest_sha256": "a1d3dd801b1612c300d49b75ff17e61e002f2300b7480154131890cc9b844c18",
+      "storyboard_sha256": "0dcae0e51e1d4ebc463c45f4e7c622e43e3e7cc2d928913c04cd82d411e53af2",
+      "video_prompt_sha256": "6699ac2229fbe23f341c6dbea9682a4c8c7c1fa10dde29821be13b235691190d",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "面向许然",
+            "screen_direction": "static",
+            "posture": "前倾"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "lin",
+            "location": "桌面近林警探一侧"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "prepare"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "桌面左侧坐姿",
+            "facing": "视线锁于警徽",
+            "screen_direction": "static",
+            "posture": "微后靠，双手收回身前"
+          },
+          {
+            "entity_id": "xuran",
+            "position": "桌面右侧坐姿",
+            "facing": "面向林警探",
+            "screen_direction": "static",
+            "posture": "直坐，等待"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "桌面中央"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "桌面中央，照片旁"
+          }
+        ],
+        "light_main": {
+          "direction": "天花板垂直向下",
+          "color_temp_k": 4000,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      }
+    },
+    {
+      "scene_index": 2,
+      "scene_id": "scene_002",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_002",
+      "master_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_002\\DIRECTOR_MASTER.md",
+      "master_content_hash": "bd410aff4048dfe2eb37d87d6c9670e10319df3ba6d54d0ae5908fa92d0e24dd",
+      "manifest_sha256": "e8507e19d8147ae89ae0dbf96c29f28f118f41408313f241dfb2090caa5faf04",
+      "storyboard_sha256": "473aa8ea4f1b244fdfbf049259a84da0fa5c8dadc39a7d1a0de8bfd9d56f7326",
+      "video_prompt_sha256": "a94458bc0587f8527d5b278df21de8c5f1e832d1d695b3373fdb9a71c2e1f7d4",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁站立",
+            "facing": "面向周成",
+            "screen_direction": "right_to_left",
+            "posture": "直立"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "小餐桌前坐姿",
+            "facing": "身体朝向窗户",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上，周成前方"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，水槽旁"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗户斜射入室",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "static",
+        "environment": "清晨厨房，蒸汽从水壶升起"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "近桌面",
+            "facing": "身体转向门口方向",
+            "screen_direction": "static",
+            "posture": "站立，钥匙握于手中，不再看信"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "视线落于信",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "zhoulan",
+            "location": "周岚手中"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上，周成前方"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，已静，蒸汽消散"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 5000,
+          "ratio": "1:2"
+        },
+        "action_phase": "recover"
+      }
+    },
+    {
+      "scene_index": 3,
+      "scene_id": "scene_003",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_003",
+      "master_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_003\\DIRECTOR_MASTER.md",
+      "master_content_hash": "4fa74a5236afa58b7d371176cb524e34b6ae50ef847b0dbe085563a0e3e24762",
+      "manifest_sha256": "12503a1edfbef3b4d536104b55953ae9dffc09743ea7e461ac7c5025854a4088",
+      "storyboard_sha256": "6c0ea8b4d7fd8133c26a39cf4d1be2900f3f72c3fa61cd26fa28147cbfa86ddd",
+      "video_prompt_sha256": "07bc5d4d5fbe8e420454d69954d21a28f6c12f8c8e0c51948401b930da9e1bb0",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车运行中，窗外城市夜景移动，持续振动"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "桌面一侧",
+            "facing": "面向下方",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          },
+          {
+            "entity_id": "miya",
+            "position": "桌面另一侧",
+            "facing": "面向上方",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "work_badge",
+            "held_by": "none",
+            "location": "桌面中央，翻面扣放"
+          },
+          {
+            "prop_id": "storage_card",
+            "held_by": "none",
+            "location": "桌面中央，工作证旁"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车行驶中，窗外夜景持续移动"
+      }
+    },
+    {
+      "scene_index": 4,
+      "scene_id": "scene_004",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_004",
+      "master_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_004\\DIRECTOR_MASTER.md",
+      "master_content_hash": "7d1ac64aebeb76ead4ce7ae2c37a58320a4e37f173ca8d746bfde3e0c98709ac",
+      "manifest_sha256": "41a2257a058e0f64c3b34201699c25cd1e07a876dd44442f7ada2a541c2ba31a",
+      "storyboard_sha256": "655dd92c3f39a492e7be1b8778118c12102b013f664d9641f63eb6061b952f32",
+      "video_prompt_sha256": "8b96dc57b62a3c8dcb10e7a237955036a194a44da0b476b4d9cebd22303b05c7",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "坡道中段，向上奔跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑姿态，前倾，双腿交替"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "尚未完全入画",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑姿态"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中/手臂间"
+          }
+        ],
+        "light_main": {
+          "direction": "停车楼钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨",
+        "environment": "多层停车楼，坡道混凝土湿滑，城市夜景在远处模糊"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "停车楼顶层边缘",
+            "facing": "面向下方",
+            "screen_direction": "static",
+            "posture": "站立静止，雨水打在身上"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道下方，引擎已发动"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover",
+        "weather": "雨持续",
+        "story_time": "开放式结局——文件袋去向不明"
+      }
+    }
+  ],
+  "review_input_sha256": "d0bb3700ab244e3fa2e48c043c9c7fd460f1fa5173cd8d5d89472de458de4a72"
+}

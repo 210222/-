@@ -1,0 +1,54 @@
+{
+  "file_path": "C:\\Users\\21022\\Desktop\\剧本12.txt",
+  "encoding": "utf-8",
+  "source_content_hash": "535240582f020fee98eb1ea7592027bbb968ce5b0a72ad27bb8b0a88cf281160",
+  "total_lines": 33,
+  "scene_count": 3,
+  "scenes": [
+    {
+      "index": 1,
+      "start_line": 2,
+      "end_line": 11,
+      "header_line": "12.1 周从文出租屋 日 内",
+      "header_kind": "cn_episode_scene",
+      "scene_number": 1,
+      "location_hint": "周从文出租屋",
+      "time_hint": "day",
+      "status": "resolved",
+      "unresolved_reason": null
+    },
+    {
+      "index": 2,
+      "start_line": 12,
+      "end_line": 24,
+      "header_line": "12.2 出租屋楼下 夜 外",
+      "header_kind": "cn_episode_scene",
+      "scene_number": 2,
+      "location_hint": "出租屋楼下",
+      "time_hint": "night",
+      "status": "resolved",
+      "unresolved_reason": null
+    },
+    {
+      "index": 3,
+      "start_line": 25,
+      "end_line": 33,
+      "header_line": "12.3 路边烧烤摊 夜 外",
+      "header_kind": "cn_episode_scene",
+      "scene_number": 3,
+      "location_hint": "路边烧烤摊",
+      "time_hint": "night",
+      "status": "resolved",
+      "unresolved_reason": null
+    }
+  ],
+  "front_matter_lines": [
+    1,
+    1
+  ],
+  "active_scenes": [
+    1,
+    2,
+    3
+  ]
+}

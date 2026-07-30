@@ -1,0 +1,183 @@
+{
+  "_meta": {
+    "version": "v1.0",
+    "date": "2026-07-07",
+    "design": "规则知识图谱 — v7.0推理架构 Layer 知识图谱",
+    "principle": "规则不是平铺的。它们是网络。触发一条=激活关联的全部。违规一条=追溯到影响链。",
+    "scope": "对话域 (后续扩展: 动作域·光影域·构图域·运镜域)",
+    "total_rules_mapped": "~120 (对话域·§1)"
+  },
+
+  "relationship_types": {
+    "triggers": "规则A激活→规则B必须同时检查 (硬关联·自动激活)",
+    "provides_basis_for": "规则A定义了规则B的前提条件 (依赖关系)",
+    "commonly_paired_with": "规则A和B通常一起使用 (软关联·建议激活)",
+    "conflicts_with": "规则A和B给出矛盾建议时→查冲突矩阵 (冲突关系)",
+    "alternative_to": "规则B是规则A的替代方案 (选择关系)"
+  },
+
+  "nodes": {
+    "D-TRI-01": {
+      "name": "关系线定义",
+      "priority": "P0",
+      "triggers": ["D-TRI-02", "D-TRI-03", "D-TRI-05", "D-TRI-06", "D-TRI-07", "D-DUO-13"],
+      "trigger_reason": "定义了关系线=必须检查跳轴/机位/视线匹配",
+      "provides_basis_for": ["E-MTC-03"],
+      "basis_reason": "视线匹配以关系线为基准"
+    },
+    "D-TRI-02": {
+      "name": "180度线·不跳轴",
+      "priority": "P0",
+      "triggers": ["D-TRI-05", "D-TRI-06", "D-TRI-07", "D-TRI-08"],
+      "trigger_reason": "跳轴检查触发了所有机位类型的合规验证",
+      "conflicts_with": [],
+      "violation_impact": ["D-TRI-05", "D-TRI-06", "D-DUO-01", "D-DUO-13"]
+    },
+    "D-TRI-03": {
+      "name": "关系线穿过中心人物头部",
+      "priority": "P0",
+      "provides_basis_for": ["D-TRI-05", "D-TRI-06"],
+      "basis_reason": "机位选择以关系线位置为基准"
+    },
+    "D-TRI-04": {
+      "name": "三角形七个可选机位",
+      "priority": "P1",
+      "triggers": ["D-TRI-05", "D-TRI-06", "D-TRI-07", "D-TRI-08", "D-TRI-09"],
+      "trigger_reason": "七个机位=七个具体的实现方式"
+    },
+    "D-TRI-05": {
+      "name": "外反拍角度",
+      "priority": "P0",
+      "commonly_paired_with": ["D-TRI-06", "D-DUO-01"],
+      "pairing_reason": "外反拍+内反拍=标准对话覆盖",
+      "conflicts_with": ["D-TRI-07"],
+      "conflict_reason": "外反拍在演员背后·主观视点在关系线上·位置矛盾",
+      "conflict_resolution": "选一个做主·另一个做补充·标注设计师意图"
+    },
+    "D-TRI-06": {
+      "name": "内反拍角度",
+      "priority": "P0",
+      "commonly_paired_with": ["D-TRI-05", "D-DUO-01"],
+      "alternative_to": ["D-TRI-08"],
+      "alternative_reason": "内反拍和平行位置都是单人近景的选项"
+    },
+    "D-TRI-07": {
+      "name": "主观视点角度",
+      "priority": "P1",
+      "conflicts_with": ["D-TRI-05"],
+      "triggers": ["E-MTC-03"],
+      "trigger_reason": "POV镜头需要视线匹配验证"
+    },
+    "D-TRI-08": {
+      "name": "平行位置",
+      "priority": "P1",
+      "alternative_to": ["D-TRI-06"]
+    },
+    "D-TRI-09": {
+      "name": "大三角形组合",
+      "priority": "P1",
+      "triggers": ["D-TRI-05", "D-TRI-06", "D-TRI-07", "D-TRI-08", "COV-ACT-01"],
+      "trigger_reason": "大三角形=全部七机位的组合·覆盖策略的数学基础"
+    },
+    "D-DUO-01": {
+      "name": "面对面·基本对话构型",
+      "priority": "P0",
+      "triggers": ["D-TRI-01", "D-TRI-05", "D-TRI-06", "D-TRI-13"],
+      "trigger_reason": "面对面=最经典对话场景·自动激活标准三角形机位套件"
+    },
+    "D-DUO-05": {
+      "name": "数量对比·外反拍+内反拍组合",
+      "priority": "P1",
+      "commonly_paired_with": ["D-TRI-05", "D-TRI-06"]
+    },
+    "D-DUO-06": {
+      "name": "肩并肩",
+      "priority": "P1",
+      "triggers": ["D-TRI-01"],
+      "trigger_reason": "肩并肩=关系线沿身体侧面·不同于面对面·需重新定义"
+    },
+    "D-DUO-13": {
+      "name": "跨越界线",
+      "priority": "P1",
+      "triggers": ["D-TRI-02"],
+      "trigger_reason": "跨线=跳轴的特殊情况·需要过波镜验证",
+      "requires": ["D-TRI-01"],
+      "require_reason": "必须先定义关系线才能检查跨线"
+    },
+    "E-MTC-03": {
+      "name": "视线匹配",
+      "priority": "P0",
+      "requires": ["D-TRI-01"],
+      "require_reason": "视线匹配以关系线为基准",
+      "triggers": ["D-TRI-05", "D-TRI-06"],
+      "trigger_reason": "外反拍/内反拍需要验证视线方向在相邻镜中连贯"
+    },
+    "C-KTZ-01": {
+      "name": "景别单位·标准术语",
+      "priority": "P1",
+      "triggers": ["D-TRI-04", "C-FI-06"],
+      "trigger_reason": "景别术语标准化=机位选择的前提·与景别递进联动"
+    },
+    "C-FI-06": {
+      "name": "景别递进",
+      "priority": "P1",
+      "triggers": ["D-TRI-09"],
+      "trigger_reason": "景别递进=三角形机位组合的自然结果"
+    },
+    "COV-ACT-01": {
+      "name": "动作场景覆盖策略",
+      "priority": "P1",
+      "triggers": ["D-TRI-09"],
+      "trigger_reason": "覆盖策略=三角形机位的数量配置"
+    }
+  },
+
+  "scene_activation": {
+    "双人对话": {
+      "seed_rules": ["D-TRI-01", "D-DUO-01"],
+      "activation_reason": "双人对话=定义关系线+面对面构型",
+      "auto_activated_by_graph": [
+        "D-TRI-02", "D-TRI-03", "D-TRI-04", "D-TRI-05", "D-TRI-06",
+        "D-TRI-07", "D-TRI-08", "D-TRI-09", "D-TRI-13", "D-DUO-05",
+        "D-DUO-13", "E-MTC-03", "C-KTZ-01", "C-FI-06", "COV-ACT-01"
+      ],
+      "total_activated": 17,
+      "note": "17条规则从2条种子通过关系网络自动激活·Agent不需要手动'定位到相关章节'"
+    },
+    "三人对话": {
+      "seed_rules": ["D-TRI-01"],
+      "auto_activated_by_graph": [
+        "D-TRI-02", "D-TRI-03", "D-TRI-04", "D-TRI-09",
+        "E-MTC-03", "C-KTZ-01"
+      ],
+      "total_activated": 7,
+      "note": "三人对话=更复杂的三角形·但基础激活集更精简(具体三人规则在§1.4)"
+    },
+    "打斗": {
+      "seed_rules": ["COV-ACT-01"],
+      "auto_activated_by_graph": [
+        "D-TRI-09"
+      ],
+      "total_activated": 2,
+      "note": "动作域规则关系网络尚未完整映射·此处仅展示跨域连接"
+    }
+  },
+
+  "impact_tracing": {
+    "description": "当规则X被违反时·追溯所有受影响的关联规则",
+    "example": {
+      "violated_rule": "D-TRI-02 (180度线跳轴)",
+      "impacted_rules": [
+        "D-TRI-05 (外反拍·机位可能在错误一侧)",
+        "D-TRI-06 (内反拍·同上)",
+        "D-TRI-07 (POV·主观视点方向错误)",
+        "D-TRI-08 (平行位置·朝向错误)",
+        "D-DUO-01 (面对面·关系线定义崩溃)",
+        "D-DUO-13 (跨越界线·跳轴触发)",
+        "E-MTC-03 (视线匹配·视线方向反转)"
+      ],
+      "impact_count": 7,
+      "severity": "级联阻断·修复D-TRI-02后所有影响规则自动恢复"
+    }
+  }
+}

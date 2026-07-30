@@ -1,0 +1,547 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_003",
+  "master_version": "scene_003/v1.0",
+  "master_content_hash": "a1b8dc90eb174ef15e3c2b9784b053e22bd444cbf526272e147dc66bf9970cbe",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_003-1",
+      "duration": 12.0,
+      "scene_expression": "suspense_reveal",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "顾言与证人米娅隔着窄桌坐着；列车经过隧道，窗外的城市灯光短暂消失；顾言说「存储卡给我，你下一站下车。」。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 30,
+        "source_line_end": 32
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，双手交叠搭在桌沿",
+            "wardrobe": "深灰大衣白衬衫扣至领口"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "背靠椅背，双臂收拢近身",
+            "wardrobe": "军绿连帽外套拉链拉至领口"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "外套右侧口袋不可见"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "story_time": "夜",
+        "environment": "列车行进中车体持续微晃，窗外城市光点自右向左掠过"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，双手搭桌沿，视线钉在米娅脸上"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "背靠椅背，右手移至外套右口袋口"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "外套右侧口袋内"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:6"
+        },
+        "action_phase": "launch",
+        "environment": "隧道段窗外全黑，车体持续微晃"
+      },
+      "entry_boundary_id": "scene_003-B0",
+      "exit_boundary_id": "scene_003-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-2",
+      "duration": 13.0,
+      "scene_expression": "suspense_reveal",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "米娅把存储卡夹在两指之间，却没有递出；说「先把我的名字从证人名单里删掉。」。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 34,
+        "source_line_end": 36
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，双手搭桌沿，视线钉在米娅脸上"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "背靠椅背，右手移至外套右口袋口"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "外套右侧口袋内"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:6"
+        },
+        "action_phase": "launch",
+        "environment": "隧道段窗外全黑，车体持续微晃"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，右手离开桌沿移向大衣襟口"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "端坐，右手两指夹存储卡贴近身侧"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "右手食指中指之间"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:6"
+        },
+        "action_phase": "launch",
+        "environment": "隧道段窗外全黑，车体持续微晃"
+      },
+      "entry_boundary_id": "scene_003-B1",
+      "exit_boundary_id": "scene_003-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-3",
+      "duration": 14.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "列车驶出隧道；顾言把自己的工作证翻面扣在桌上，米娅才把存储卡放到桌面中央。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 38,
+        "source_line_end": 38
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，右手离开桌沿移向大衣襟口"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "端坐，右手两指夹存储卡贴近身侧"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "右手食指中指之间"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:6"
+        },
+        "action_phase": "launch",
+        "environment": "隧道段窗外全黑，车体持续微晃"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，双手收回桌沿，视线在米娅脸上"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "端坐，双手收回身前，视线在顾言脸上"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "桌面正中央工作证旁"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "桌心偏左正面朝下"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "story_time": "夜",
+        "environment": "已出隧道，窗外城市光点自右向左掠过，车体持续微晃"
+      },
+      "entry_boundary_id": "scene_003-B2",
+      "exit_boundary_id": "scene_003-B3",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_003-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_003-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，双手交叠搭在桌沿",
+            "wardrobe": "深灰大衣白衬衫扣至领口"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "背靠椅背，双臂收拢近身",
+            "wardrobe": "军绿连帽外套拉链拉至领口"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "外套右侧口袋不可见"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "story_time": "夜",
+        "environment": "列车行进中车体持续微晃，窗外城市光点自右向左掠过"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B1",
+      "from_ref": "scene_003-1",
+      "to_ref": "scene_003-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，双手搭桌沿，视线钉在米娅脸上"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "背靠椅背，右手移至外套右口袋口"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "外套右侧口袋内"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:6"
+        },
+        "action_phase": "launch",
+        "environment": "隧道段窗外全黑，车体持续微晃"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，双手搭桌沿，视线钉在米娅脸上"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "背靠椅背，右手移至外套右口袋口"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "外套右侧口袋内"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:6"
+        },
+        "action_phase": "launch",
+        "environment": "隧道段窗外全黑，车体持续微晃"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B2",
+      "from_ref": "scene_003-2",
+      "to_ref": "scene_003-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，右手离开桌沿移向大衣襟口"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "端坐，右手两指夹存储卡贴近身侧"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "右手食指中指之间"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:6"
+        },
+        "action_phase": "launch",
+        "environment": "隧道段窗外全黑，车体持续微晃"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，右手离开桌沿移向大衣襟口"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "端坐，右手两指夹存储卡贴近身侧"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "右手食指中指之间"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "大衣内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:6"
+        },
+        "action_phase": "launch",
+        "environment": "隧道段窗外全黑，车体持续微晃"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B3",
+      "from_ref": "scene_003-3",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "窄桌车头侧座椅",
+            "facing": "车尾",
+            "screen_direction": "static",
+            "posture": "端坐，双手收回桌沿，视线在米娅脸上"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "窄桌车尾侧座椅",
+            "facing": "车头",
+            "screen_direction": "static",
+            "posture": "端坐，双手收回身前，视线在顾言脸上"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "桌面正中央工作证旁"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "桌心偏左正面朝下"
+          }
+        ],
+        "light_main": {
+          "direction": "包厢顶灯自上方偏门侧",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "story_time": "夜",
+        "environment": "已出隧道，窗外城市光点自右向左掠过，车体持续微晃"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

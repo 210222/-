@@ -1,0 +1,16 @@
+{
+  "task_id": "DDO-2",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-2_004.json"
+  ],
+  "checks": [
+    {"name": "persistent_director", "exit_code": 0},
+    {"name": "phase_a_no_camera_answer", "exit_code": 0},
+    {"name": "k1_packet", "exit_code": 0},
+    {"name": "content_addressed_cache", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_2_phase_a", "exit_code": 0}
+  ]
+}

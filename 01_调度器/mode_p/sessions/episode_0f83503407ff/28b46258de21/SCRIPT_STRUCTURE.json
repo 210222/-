@@ -1,0 +1,38 @@
+{
+  "file_path": "C:\\Users\\21022\\Desktop\\剧本.txt",
+  "encoding": "utf-8",
+  "source_content_hash": "fdd908e19b70449b3c52fbb37e8654a129f1951840564988b236babc679e8ada",
+  "total_lines": 38,
+  "scene_count": 2,
+  "scenes": [
+    {
+      "index": 1,
+      "start_line": 1,
+      "end_line": 23,
+      "header_line": "11.1 江海人民三院-胸外科办公室 日 内",
+      "header_kind": "cn_episode_scene",
+      "scene_number": 1,
+      "location_hint": "江海人民三院-胸外科办公室",
+      "time_hint": "day",
+      "status": "resolved",
+      "unresolved_reason": null
+    },
+    {
+      "index": 2,
+      "start_line": 24,
+      "end_line": 38,
+      "header_line": "11.2 出租屋楼下 日 外",
+      "header_kind": "cn_episode_scene",
+      "scene_number": 2,
+      "location_hint": "出租屋楼下",
+      "time_hint": "day",
+      "status": "resolved",
+      "unresolved_reason": null
+    }
+  ],
+  "front_matter_lines": null,
+  "active_scenes": [
+    1,
+    2
+  ]
+}

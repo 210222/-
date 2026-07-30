@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Malformed or unknown state-key line in 交出状态键：[M]: '- character:guyan position:窄桌一侧坐姿 facing:面向米娅 posture:直坐，刚说完对白'

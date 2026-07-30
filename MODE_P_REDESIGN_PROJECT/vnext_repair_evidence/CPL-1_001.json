@@ -1,0 +1,52 @@
+{
+  "schema_version": "completion-evidence-v1",
+  "task_id": "CPL-1",
+  "run_id": "CPL-1_001",
+  "status": "KNOWLEDGE_PROVENANCE_AND_CONFLICT_CONTROL_IMPLEMENTED",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "01_调度器/mode_p_vnext/director_vnext1/capsules.py",
+    "01_调度器/mode_p_vnext/director_vnext1/knowledge_catalog.py",
+    "01_调度器/mode_p_vnext/tests/test_cpl_1_knowledge.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/CPL-1_001.json"
+  ],
+  "checks": [
+    {
+      "name": "field_provenance",
+      "exit_code": 0
+    },
+    {
+      "name": "unknown_field_downgrade",
+      "exit_code": 0
+    },
+    {
+      "name": "conflict_decision",
+      "exit_code": 0
+    },
+    {
+      "name": "actual_catalog_snapshot",
+      "exit_code": 0
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "cpl_1_knowledge",
+      "exit_code": 0,
+      "summary": "4 passed"
+    }
+  ],
+  "knowledge_snapshot": {
+    "source_count": 4,
+    "capsule_count": 7,
+    "snapshot_sha256": "9de1e67864121756289c28dfbf18bcbb6f51759e7a0a37a67f22922c32bc79f2",
+    "runtime_full_sources_loaded": false
+  },
+  "scope": {
+    "deepseek_visual_validation_claimed": false,
+    "knowledge_effectiveness_claimed": false,
+    "external_generation_invoked": false,
+    "media_visual_acceptance_claimed": false,
+    "production_entry_changed": false
+  }
+}

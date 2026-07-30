@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_002",
+  "stage": "batch_commit",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 1,
+  "master_path": "DIRECTOR_MASTER.md",
+  "master_sha256": "a41904050ce0762dde87a1034c8dde77aee3a673ded6113b1a8d49f1a6be317c",
+  "manifest_path": "working/SHOT_MANIFEST.json",
+  "manifest_sha256": "743424774c715774f3c6f665c267b8a9671f91e4e4584f85c1f9bbfd13c5736a",
+  "checks": {
+    "final_master_sync": {
+      "passed": true,
+      "stage": "final_check",
+      "artifact_generation": 1,
+      "master_sha256": "a41904050ce0762dde87a1034c8dde77aee3a673ded6113b1a8d49f1a6be317c",
+      "manifest_sha256": "743424774c715774f3c6f665c267b8a9671f91e4e4584f85c1f9bbfd13c5736a",
+      "report_path": "reports/generation-0001/final_master_sync.txt",
+      "report_sha256": "f5a2a800a181e1ef4c41ce88e3b151fa84aae5cb0031620575282bb36f7cd61e"
+    }
+  },
+  "dp_review": {
+    "status": "ready",
+    "artifact_generation": 1,
+    "master_sha256": "a41904050ce0762dde87a1034c8dde77aee3a673ded6113b1a8d49f1a6be317c",
+    "manifest_sha256": "743424774c715774f3c6f665c267b8a9671f91e4e4584f85c1f9bbfd13c5736a",
+    "review_path": "reviews/dp-0001.md",
+    "review_sha256": "162a6f73c6dd477d0d0c2fdff5f2c91c49994ec0ea90d16d79c30a1766fafdb0",
+    "issue_fingerprint": null,
+    "stalled": false
+  },
+  "dp_issue_history": [],
+  "episode_review": null,
+  "committed_batches": [
+    {
+      "batch_index": 1,
+      "artifact_generation": 1,
+      "master_sha256": "a41904050ce0762dde87a1034c8dde77aee3a673ded6113b1a8d49f1a6be317c",
+      "manifest_sha256": "743424774c715774f3c6f665c267b8a9671f91e4e4584f85c1f9bbfd13c5736a",
+      "commit_path": "commits/delivery-d6996915d3514b68b728c1f2023ea455.json",
+      "commit_sha256": "ec276ff8c26d586ace7ea0ecc94c700a2285c0e52b2556772bfaabcd95a19de7"
+    }
+  ],
+  "dp_attempts": 1,
+  "revision_count": 0,
+  "transition_sequence": 6,
+  "updated_at": "2026-07-20T00:07:34.207109+00:00",
+  "state_sha256": "c03640d7217e09f5ebf7f77d82be235393d364da4eaf326cea027a49cd70cb94"
+}

@@ -1,0 +1,700 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_002",
+  "master_version": "scene_002/v1.0",
+  "master_content_hash": "bd410aff4048dfe2eb37d87d6c9670e10319df3ba6d54d0ae5908fa92d0e24dd",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_002-1",
+      "duration": 9.0,
+      "scene_expression": "contemplative_silence",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "周岚站在水槽旁，周成坐在小餐桌前，桌上放着一封已拆开的信（L17）；周岚质问父亲（L19）。",
+        "source_scene_id": "scene_002",
+        "source_line_start": 17,
+        "source_line_end": 19
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁站立",
+            "facing": "面向周成",
+            "screen_direction": "right_to_left",
+            "posture": "直立"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "小餐桌前坐姿",
+            "facing": "身体朝向窗户",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上，周成前方"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，水槽旁"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗户斜射入室",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "static",
+        "environment": "清晨厨房，蒸汽从水壶升起"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁站立",
+            "facing": "面向周成",
+            "screen_direction": "static",
+            "posture": "站姿"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "身体朝向蒸汽方向",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，蒸汽上升，即将鸣叫"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_002-B0",
+      "exit_boundary_id": "scene_002-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-2",
+      "duration": 8.0,
+      "scene_expression": "contemplative_silence",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "周成看着水壶冒出的蒸汽，没有回答。水壶鸣叫后，他关掉火（L21）。后接取钥匙动作（L22 在本镜）。",
+        "source_scene_id": "scene_002",
+        "source_line_start": 21,
+        "source_line_end": 22
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁站立",
+            "facing": "面向周成",
+            "screen_direction": "static",
+            "posture": "站姿"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "身体朝向蒸汽方向",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，蒸汽上升，即将鸣叫"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "身体转向桌面",
+            "screen_direction": "static",
+            "posture": "右手正伸向桌面钥匙"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "none",
+            "location": "桌面近周成一侧"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，已关火，蒸汽渐散"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      },
+      "entry_boundary_id": "scene_002-B1",
+      "exit_boundary_id": "scene_002-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-3",
+      "duration": 6.0,
+      "scene_expression": "suspense_reveal",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "周成把一把储物柜钥匙推向周岚（L22）；周成说对白（L24）。",
+        "source_scene_id": "scene_002",
+        "source_line_start": 22,
+        "source_line_end": 24
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "身体转向桌面",
+            "screen_direction": "static",
+            "posture": "右手正伸向桌面钥匙"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "none",
+            "location": "桌面近周成一侧"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，已关火，蒸汽渐散"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "面向周岚",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          },
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁",
+            "facing": "视线落于钥匙",
+            "screen_direction": "static",
+            "posture": "站立"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "none",
+            "location": "桌面近周岚一侧"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上（周成前方）"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "impact"
+      },
+      "entry_boundary_id": "scene_002-B2",
+      "exit_boundary_id": "scene_002-B3",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-4",
+      "duration": 7.0,
+      "scene_expression": "contemplative_silence",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "周岚拿起钥匙，仍把信留在桌上（L26）。",
+        "source_scene_id": "scene_002",
+        "source_line_start": 26,
+        "source_line_end": 26
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "面向周岚",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          },
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁",
+            "facing": "视线落于钥匙",
+            "screen_direction": "static",
+            "posture": "站立"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "none",
+            "location": "桌面近周岚一侧"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上（周成前方）"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "impact"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "近桌面",
+            "facing": "身体转向门口方向",
+            "screen_direction": "static",
+            "posture": "站立，钥匙握于手中，不再看信"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "视线落于信",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "zhoulan",
+            "location": "周岚手中"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上，周成前方"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，已静，蒸汽消散"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 5000,
+          "ratio": "1:2"
+        },
+        "action_phase": "recover"
+      },
+      "entry_boundary_id": "scene_002-B3",
+      "exit_boundary_id": "scene_002-B4",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_002-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_002-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁站立",
+            "facing": "面向周成",
+            "screen_direction": "right_to_left",
+            "posture": "直立"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "小餐桌前坐姿",
+            "facing": "身体朝向窗户",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上，周成前方"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，水槽旁"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗户斜射入室",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "static",
+        "environment": "清晨厨房，蒸汽从水壶升起"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B1",
+      "from_ref": "scene_002-1",
+      "to_ref": "scene_002-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁站立",
+            "facing": "面向周成",
+            "screen_direction": "static",
+            "posture": "站姿"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "身体朝向蒸汽方向",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，蒸汽上升，即将鸣叫"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁站立",
+            "facing": "面向周成",
+            "screen_direction": "static",
+            "posture": "站姿"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "身体朝向蒸汽方向",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，蒸汽上升，即将鸣叫"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B2",
+      "from_ref": "scene_002-2",
+      "to_ref": "scene_002-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "身体转向桌面",
+            "screen_direction": "static",
+            "posture": "右手正伸向桌面钥匙"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "none",
+            "location": "桌面近周成一侧"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，已关火，蒸汽渐散"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "身体转向桌面",
+            "screen_direction": "static",
+            "posture": "右手正伸向桌面钥匙"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "none",
+            "location": "桌面近周成一侧"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，已关火，蒸汽渐散"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B3",
+      "from_ref": "scene_002-3",
+      "to_ref": "scene_002-4",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "面向周岚",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          },
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁",
+            "facing": "视线落于钥匙",
+            "screen_direction": "static",
+            "posture": "站立"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "none",
+            "location": "桌面近周岚一侧"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上（周成前方）"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "impact"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "面向周岚",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          },
+          {
+            "entity_id": "zhoulan",
+            "position": "水槽旁",
+            "facing": "视线落于钥匙",
+            "screen_direction": "static",
+            "posture": "站立"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "none",
+            "location": "桌面近周岚一侧"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上（周成前方）"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 4800,
+          "ratio": "1:2"
+        },
+        "action_phase": "impact"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B4",
+      "from_ref": "scene_002-4",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhoulan",
+            "position": "近桌面",
+            "facing": "身体转向门口方向",
+            "screen_direction": "static",
+            "posture": "站立，钥匙握于手中，不再看信"
+          },
+          {
+            "entity_id": "zhoucheng",
+            "position": "桌前坐姿",
+            "facing": "视线落于信",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "key",
+            "held_by": "zhoulan",
+            "location": "周岚手中"
+          },
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "桌面上，周成前方"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "炉灶上，已静，蒸汽消散"
+          }
+        ],
+        "light_main": {
+          "direction": "从左侧窗斜入",
+          "color_temp_k": 5000,
+          "ratio": "1:2"
+        },
+        "action_phase": "recover"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+FAIL sd2_preflight
+unresolved_branch: Shot scene_003-4 contains '或'. Director must replace alternatives with one decision.

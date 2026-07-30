@@ -1,0 +1,541 @@
+{
+    "manifest_version":  "1.2",
+    "scene_id":  "S3",
+    "master_version":  "S3/v1.0",
+    "master_content_hash":  "8ea6359007c2040be6ab1678a3b53107eff897498acd33938e57a1e591a043a1",
+    "compiler_version":  "2.0.0",
+    "shots":  [
+                  {
+                      "shot_id":  "S3-1",
+                      "duration":  8.0,
+                      "scene_expression":  "conversation_power",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "顾言与米娅隔窄桌对坐。列车经过隧道，窗外城市灯光消失。顾言说出对白。",
+                                             "source_scene_id":  "S3",
+                                             "source_line_start":  30,
+                                             "source_line_end":  32
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "画左座位",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "坐姿笔挺"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "画右座位",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "seated_hand_near_table"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "mia_hand_or_table"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "guyan_pocket"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "wall_lamp_and_window",
+                                                                    "color_temp_k":  3000,
+                                                                    "ratio":  "1:3"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "story_time":  "夜",
+                                                 "environment":  "train_compartment_entering_tunnel"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "画左座位",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "seated_upright_mouth_closed"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "画右座位",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "seated_holding_card"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "mia_fingers_above_table"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "guyan_pocket"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "wall_lamp",
+                                                                    "color_temp_k":  3000,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "entry_boundary_id":  "SCENE_ENTRY",
+                      "exit_boundary_id":  "S3-B1",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "S3-2",
+                      "duration":  6.0,
+                      "scene_expression":  "investigation_object",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "米娅把存储卡夹在两指之间却没有递出，说出对白。",
+                                             "source_scene_id":  "S3",
+                                             "source_line_start":  34,
+                                             "source_line_end":  36
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "画左座位",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "seated_upright_mouth_closed"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "画右座位",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "seated_holding_card"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "mia_fingers_above_table"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "guyan_pocket"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "wall_lamp",
+                                                                    "color_temp_k":  3000,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "画左座位",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "seated_upright_considering"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "画右座位",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "seated_holding_card_watching"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "mia_fingers"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "guyan_pocket"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "wall_lamp",
+                                                                    "color_temp_k":  3000,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "entry_boundary_id":  "S3-B1",
+                      "exit_boundary_id":  "S3-B2",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "S3-3",
+                      "duration":  8.0,
+                      "scene_expression":  "suspense_reveal",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "列车驶出隧道。顾言将工作证翻面扣在桌上，米娅将存储卡放到桌面中央。",
+                                             "source_scene_id":  "S3",
+                                             "source_line_start":  38,
+                                             "source_line_end":  38
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "画左座位",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "seated_upright_considering"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "画右座位",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "seated_holding_card_watching"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "mia_fingers"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "guyan_pocket"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "wall_lamp",
+                                                                    "color_temp_k":  3000,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "画左座位",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "seated_upright_hands_retracted"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "画右座位",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "seated_hands_retracted"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "none",
+                                                                   "location":  "table_left_flipped"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "wall_lamp_and_window",
+                                                                    "color_temp_k":  3000,
+                                                                    "ratio":  "1:3"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "story_time":  "夜",
+                                                 "environment":  "train_compartment_tunnel_passed"
+                                             },
+                      "entry_boundary_id":  "S3-B2",
+                      "exit_boundary_id":  "SCENE_EXIT",
+                      "boundary_continuity":  "scene_exit",
+                      "transition_execution":  "post_production"
+                  }
+              ],
+    "boundaries":  [
+                       {
+                           "boundary_id":  "S3-B0",
+                           "from_ref":  "SCENE_ENTRY",
+                           "to_ref":  "S3-1",
+                           "relation":  "scene_entry",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  null,
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "画左座位",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "坐姿笔挺"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "画右座位",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "seated_hand_near_table"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "mia_hand_or_table"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "guyan_pocket"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "wall_lamp_and_window",
+                                                                          "color_temp_k":  3000,
+                                                                          "ratio":  "1:3"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "story_time":  "夜",
+                                                       "environment":  "train_compartment_entering_tunnel"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "S3-B1",
+                           "from_ref":  "S3-1",
+                           "to_ref":  "S3-2",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "画左座位",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "seated_upright_mouth_closed"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "画右座位",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "seated_holding_card"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "mia_fingers_above_table"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "guyan_pocket"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "wall_lamp",
+                                                                          "color_temp_k":  3000,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "画左座位",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "seated_upright_mouth_closed"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "画右座位",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "seated_holding_card"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "mia_fingers_above_table"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "guyan_pocket"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "wall_lamp",
+                                                                          "color_temp_k":  3000,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "S3-B2",
+                           "from_ref":  "S3-2",
+                           "to_ref":  "S3-3",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "画左座位",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "seated_upright_considering"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "画右座位",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "seated_holding_card_watching"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "mia_fingers"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "guyan_pocket"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "wall_lamp",
+                                                                          "color_temp_k":  3000,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "画左座位",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "seated_upright_considering"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "画右座位",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "seated_holding_card_watching"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "mia_fingers"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "guyan_pocket"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "wall_lamp",
+                                                                          "color_temp_k":  3000,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "S3-B3",
+                           "from_ref":  "S3-3",
+                           "to_ref":  "SCENE_EXIT",
+                           "relation":  "scene_exit",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "画左座位",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "seated_upright_hands_retracted"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "画右座位",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "seated_hands_retracted"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "none",
+                                                                         "location":  "table_left_flipped"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "wall_lamp_and_window",
+                                                                          "color_temp_k":  3000,
+                                                                          "ratio":  "1:3"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "story_time":  "夜",
+                                                       "environment":  "train_compartment_tunnel_passed"
+                                                   },
+                           "incoming_state_keys":  null
+                       }
+                   ]
+}

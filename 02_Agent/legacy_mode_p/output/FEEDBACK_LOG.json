@@ -1,0 +1,41 @@
+{
+  "_meta": {
+    "version": "v1.0",
+    "date": "2026-07-08",
+    "principle": "LLM成功设计→回写映射器·同策略+同功能可复用"
+  },
+  "successful_designs": [
+    {
+      "ep": "EP13_v7.0",
+      "strategy": "[运动/动作中的揭示]",
+      "narrative_function": "转折",
+      "shot_type": "中景→中全景",
+      "focal_length": "35mm→24mm",
+      "movement": "摇臂升起0.2x"
+    },
+    {
+      "ep": "EP13_v7.0",
+      "strategy": "[运动/动作中的揭示]",
+      "narrative_function": "揭示/收尾",
+      "shot_type": "中景→全景",
+      "focal_length": "35mm→24mm",
+      "movement": "摇臂升起0.2x"
+    },
+    {
+      "ep": "EP13_v7.0",
+      "strategy": "[沉默中的情绪转折]",
+      "narrative_function": "揭示",
+      "shot_type": "近景→特写",
+      "focal_length": "50mm→85mm",
+      "movement": "极慢推近0.03x"
+    },
+    {
+      "ep": "EP15_v7.0",
+      "strategy": "[感官剥夺]",
+      "narrative_function": "建立",
+      "shot_type": "ECU",
+      "focal_length": "100mm",
+      "movement": "固定"
+    }
+  ]
+}

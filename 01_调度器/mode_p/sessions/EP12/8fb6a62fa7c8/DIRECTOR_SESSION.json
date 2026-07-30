@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "episode_session_id": "8fb6a62fa7c8",
+  "director_agent_id": "aebcfa8b6c4682936",
+  "resolved_model": "deepseek-v4-pro",
+  "bound_at": "2026-07-19T23:31:28.707048+00:00",
+  "resume_events": [
+    {
+      "sequence": 1,
+      "event_id": "ep_docs_v1",
+      "recorded_at": "2026-07-19T23:35:45.618318+00:00"
+    },
+    {
+      "sequence": 2,
+      "event_id": "scene_masters_v1",
+      "recorded_at": "2026-07-19T23:43:47.578771+00:00"
+    }
+  ]
+}

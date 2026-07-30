@@ -1,0 +1,238 @@
+{
+  "schema_version": "1.0",
+  "queue_id": "mode_p_vnext_completion_2026_07_30",
+  "status_after_all": "DIRECTOR_REFACTOR_VALIDATED_PENDING_PRODUCTION_SWITCH",
+  "terminal_claim_ceiling": "PLANNED_PREVIEW",
+  "tasks": [
+    {
+      "task_id": "CPL-0",
+      "title": "Freeze current completion audit and successor control queue",
+      "depends_on": [],
+      "spec_refs": [
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §17",
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §12"
+      ],
+      "allowed_paths": [
+        "01_调度器/mode_p_vnext/director_vnext1/completion_control.py",
+        "01_调度器/mode_p_vnext/tests/test_cpl_0_completion_control.py",
+        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_COMPLETION_TASKS.json",
+        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_COMPLETION_STATE.json",
+        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_COMPLETION.lock.json",
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_COMPLETION_MATRIX_002.md",
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/CPL-0*.json"
+      ],
+      "required_checks": [
+        "completion_matrix_current",
+        "successor_queue_independent",
+        "planned_preview_ceiling",
+        "production_unchanged"
+      ],
+      "verification_commands": [
+        {
+          "name": "cpl_0_control",
+          "argv": [
+            "{python}",
+            "-m",
+            "pytest",
+            "mode_p_vnext/tests/test_cpl_0_completion_control.py",
+            "-q",
+            "-p",
+            "no:cacheprovider"
+          ],
+          "cwd": "01_调度器",
+          "timeout_seconds": 180
+        }
+      ]
+    },
+    {
+      "task_id": "CPL-1",
+      "title": "Complete knowledge provenance, applicability, and conflict decisions",
+      "depends_on": ["CPL-0"],
+      "spec_refs": [
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §6",
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §6"
+      ],
+      "allowed_paths": [
+        "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+        "01_调度器/mode_p_vnext/director_vnext1/capsules.py",
+        "01_调度器/mode_p_vnext/director_vnext1/knowledge_catalog.py",
+        "01_调度器/mode_p_vnext/tests/test_cpl_1_knowledge.py",
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/CPL-1*.json"
+      ],
+      "required_checks": [
+        "field_provenance",
+        "unknown_field_downgrade",
+        "conflict_decision",
+        "actual_catalog_snapshot"
+      ],
+      "verification_commands": [
+        {
+          "name": "cpl_1_knowledge",
+          "argv": [
+            "{python}",
+            "-m",
+            "pytest",
+            "mode_p_vnext/tests/test_cpl_1_knowledge.py",
+            "-q",
+            "-p",
+            "no:cacheprovider"
+          ],
+          "cwd": "01_调度器",
+          "timeout_seconds": 180
+        }
+      ]
+    },
+    {
+      "task_id": "CPL-2",
+      "title": "Implement real DeepSeek text Provider and unknown-script Shadow run",
+      "depends_on": ["CPL-1"],
+      "spec_refs": [
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §5, §15.3",
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §4, §12"
+      ],
+      "allowed_paths": [
+        "01_调度器/mode_p_vnext/director_vnext1/provider_deepseek.py",
+        "01_调度器/mode_p_vnext/director_vnext1/provider_prompts.py",
+        "01_调度器/mode_p_vnext/director_vnext1/shadow_run.py",
+        "01_调度器/mode_p_vnext/tests/test_cpl_2_provider.py",
+        "MODE_P_REDESIGN_PROJECT/vnext_completion_runs/**",
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/CPL-2*.json"
+      ],
+      "required_checks": [
+        "real_provider_adapter",
+        "strict_json_contract",
+        "unknown_script_e0_b1",
+        "text_validated_ceiling"
+      ],
+      "verification_commands": [
+        {
+          "name": "cpl_2_provider",
+          "argv": [
+            "{python}",
+            "-m",
+            "pytest",
+            "mode_p_vnext/tests/test_cpl_2_provider.py",
+            "-q",
+            "-p",
+            "no:cacheprovider"
+          ],
+          "cwd": "01_调度器",
+          "timeout_seconds": 240
+        }
+      ]
+    },
+    {
+      "task_id": "CPL-3",
+      "title": "Close REG-01 through REG-18 with fixtures and diagnostic codes",
+      "depends_on": ["CPL-2"],
+      "spec_refs": ["DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §14"],
+      "allowed_paths": [
+        "01_调度器/mode_p_vnext/director_vnext1/regression.py",
+        "01_调度器/mode_p_vnext/tests/test_cpl_3_historical_regressions.py",
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/CPL-3*.json",
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_HISTORICAL_REGRESSION_LEDGER*.json"
+      ],
+      "required_checks": [
+        "all_18_registered",
+        "fixtures_present",
+        "diagnostic_codes_present",
+        "visual_responsibility_explicit"
+      ],
+      "verification_commands": [
+        {
+          "name": "cpl_3_regressions",
+          "argv": [
+            "{python}",
+            "-m",
+            "pytest",
+            "mode_p_vnext/tests/test_cpl_3_historical_regressions.py",
+            "-q",
+            "-p",
+            "no:cacheprovider"
+          ],
+          "cwd": "01_调度器",
+          "timeout_seconds": 240
+        }
+      ]
+    },
+    {
+      "task_id": "CPL-4",
+      "title": "Run Golden, Holdout, ablation, mutation, performance, and recovery",
+      "depends_on": ["CPL-3"],
+      "spec_refs": [
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §12, §15",
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §10, §12"
+      ],
+      "allowed_paths": [
+        "01_调度器/mode_p_vnext/director_vnext1/evaluation.py",
+        "01_调度器/mode_p_vnext/director_vnext1/performance.py",
+        "01_调度器/mode_p_vnext/tests/test_cpl_4_evaluation.py",
+        "MODE_P_REDESIGN_PROJECT/vnext_completion_runs/**",
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/CPL-4*.json"
+      ],
+      "required_checks": [
+        "golden_reverse_replay",
+        "unknown_holdout",
+        "knowledge_ablation",
+        "mutation",
+        "performance_targets",
+        "recovery_concurrency_rollback"
+      ],
+      "verification_commands": [
+        {
+          "name": "cpl_4_evaluation",
+          "argv": [
+            "{python}",
+            "-m",
+            "pytest",
+            "mode_p_vnext/tests/test_cpl_4_evaluation.py",
+            "-q",
+            "-p",
+            "no:cacheprovider"
+          ],
+          "cwd": "01_调度器",
+          "timeout_seconds": 300
+        }
+      ]
+    },
+    {
+      "task_id": "CPL-5",
+      "title": "Validate real storyboard/video media and record owner approval",
+      "depends_on": ["CPL-4"],
+      "spec_refs": [
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md §9, §15.4, §17",
+        "DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md §9, §12"
+      ],
+      "allowed_paths": [
+        "01_调度器/mode_p_vnext/director_vnext1/render_evidence.py",
+        "01_调度器/mode_p_vnext/director_vnext1/media_validation.py",
+        "01_调度器/mode_p_vnext/tests/test_cpl_5_media_gate.py",
+        "MODE_P_REDESIGN_PROJECT/vnext_completion_runs/**",
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/CPL-5*.json"
+      ],
+      "required_checks": [
+        "seven_media_classes",
+        "hard_invariants_100_percent",
+        "preview_thresholds_calibrated",
+        "owner_approval_explicit",
+        "production_switch_separate"
+      ],
+      "verification_commands": [
+        {
+          "name": "cpl_5_media_gate",
+          "argv": [
+            "{python}",
+            "-m",
+            "pytest",
+            "mode_p_vnext/tests/test_cpl_5_media_gate.py",
+            "-q",
+            "-p",
+            "no:cacheprovider"
+          ],
+          "cwd": "01_调度器",
+          "timeout_seconds": 300
+        }
+      ]
+    }
+  ]
+}

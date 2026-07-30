@@ -1,0 +1,34 @@
+{
+  "schema_version": "2.0",
+  "session_id": "scene_002",
+  "transaction_id": "5550e04f27da4ab6b5e80b2360df4ea6",
+  "target": "delivery",
+  "stage": "scene_delivery",
+  "batch_index": 1,
+  "committed_at": "2026-07-18T19:41:05.630081+00:00",
+  "master_generation": 9,
+  "master_sha256": "59bd426748c2ad3915e4fc67b4bdebcfa3764c9588a9ef5ff12f8c7c4370ad18",
+  "state_sha256": "99b6ad486b1b23f9515eadc36ff6ca007ba00ba7535ec696f09063bb8b8617f9",
+  "implementation_fingerprints": {
+    "boundary_check": "414995c29826ce12fb4639b9c97d45082664e848c8aa3b013f1b7b4e31f0b916",
+    "final_master_sync": "17df9a126e6fc01f10437f193dac55d04aedbb3e5da720550fa936ec7944f90d",
+    "master_compiler": "2e0cf09dab992e29ada78957fec0db37e948269e54004a1c578acb7e999a5393",
+    "master_sync_check": "17df9a126e6fc01f10437f193dac55d04aedbb3e5da720550fa936ec7944f90d",
+    "reference_plan_check": "3074959f356e1f042b61da84b4c2562b424b6804925f012d31d312fa08eed217",
+    "sd2_preflight": "5bc1831b2208060eb35992aa206a912cb487608f063d3bc077a37a4426a00790",
+    "view_deriver": "dbd10c92e9b379e2994b599c528f751346b8a1442ba03e107621360af6da910a"
+  },
+  "entries": [
+    {
+      "path": "STORYBOARD.md",
+      "sha256": "0dc5c5ba6d8087decd01ce9435b264b174f4032cbcdfe26d3fbad87da6603809",
+      "size": 7268
+    },
+    {
+      "path": "VIDEO_PROMPT.md",
+      "sha256": "ed666a941f225ace7f801f6a8a4eb84f3960fdb6001849f0d9cb5ed6ccb113db",
+      "size": 9122
+    }
+  ],
+  "manifest_sha256": "5733f245d438ac0de10495a4d810904eb58dbd86147ae1ab9b80fe4a417873f3"
+}

@@ -1,0 +1,541 @@
+{
+    "manifest_version":  "1.2",
+    "scene_id":  "S1",
+    "master_version":  "S1/v1.0",
+    "master_content_hash":  "4125dc26c184542738ce5518c10cb288753421d48ece699f71eb5b0bc8a83a51",
+    "compiler_version":  "2.0.0",
+    "shots":  [
+                  {
+                      "shot_id":  "S1-1",
+                      "duration":  7.0,
+                      "scene_expression":  "conversation_power",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "林警探将停车场照片推至桌面中央并质问许然。许然未回应。",
+                                             "source_scene_id":  "S1",
+                                             "source_line_start":  5,
+                                             "source_line_end":  7
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "林警探",
+                                                                        "position":  "画右桌后",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "前倾坐姿"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "许然",
+                                                                        "position":  "画左桌后",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "后靠坐姿"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "停车场照片",
+                                                                   "held_by":  "林警探",
+                                                                   "location":  "林警探右手旁桌面"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "警徽",
+                                                                   "held_by":  "许然",
+                                                                   "location":  "许然外套内袋(不可见)"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "自上而下",
+                                                                    "color_temp_k":  4700,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "story_time":  "夜",
+                                                 "environment":  "室内审讯室，安静"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "林警探",
+                                                                        "position":  "画右桌后",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "前倾，右臂伸展接近桌面中央"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "许然",
+                                                                        "position":  "画左桌后",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "端坐，双手在身前桌面上"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "停车场照片",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏右"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "警徽",
+                                                                   "held_by":  "许然",
+                                                                   "location":  "许然外套内袋(不可见)"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "自上而下",
+                                                                    "color_temp_k":  4700,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "entry_boundary_id":  "SCENE_ENTRY",
+                      "exit_boundary_id":  "S1-B1",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "S1-2",
+                      "duration":  6.0,
+                      "scene_expression":  "investigation_object",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "许然不碰照片，从外套内袋取出警徽放在照片旁，反问林警探。",
+                                             "source_scene_id":  "S1",
+                                             "source_line_start":  9,
+                                             "source_line_end":  11
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "林警探",
+                                                                        "position":  "画右桌后",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "前倾，右臂伸展接近桌面中央"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "许然",
+                                                                        "position":  "画左桌后",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "端坐，双手在身前桌面上"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "停车场照片",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏右"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "警徽",
+                                                                   "held_by":  "许然",
+                                                                   "location":  "许然外套内袋(不可见)"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "自上而下",
+                                                                    "color_temp_k":  4700,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "林警探",
+                                                                        "position":  "画右桌后",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "前倾，视线锁定桌面警徽"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "许然",
+                                                                        "position":  "画左桌后",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "端坐，手从桌面收回"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "停车场照片",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏右"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "警徽",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏左，紧邻照片"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "自上而下",
+                                                                    "color_temp_k":  4700,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "entry_boundary_id":  "S1-B1",
+                      "exit_boundary_id":  "S1-B2",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "S1-3",
+                      "duration":  5.0,
+                      "scene_expression":  "suspense_reveal",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "林警探停住，收回压在照片上的手。",
+                                             "source_scene_id":  "S1",
+                                             "source_line_start":  13,
+                                             "source_line_end":  13
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "林警探",
+                                                                        "position":  "画右桌后",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "前倾，视线锁定桌面警徽"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "许然",
+                                                                        "position":  "画左桌后",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "端坐，手从桌面收回"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "停车场照片",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏右"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "警徽",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏左，紧邻照片"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "自上而下",
+                                                                    "color_temp_k":  4700,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "林警探",
+                                                                        "position":  "画右桌后",
+                                                                        "facing":  "画左",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "微后倾，右手收回身前"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "许然",
+                                                                        "position":  "画左桌后",
+                                                                        "facing":  "画右",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "端坐，手在身前"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "停车场照片",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏右"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "警徽",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏左"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "自上而下",
+                                                                    "color_temp_k":  4700,
+                                                                    "ratio":  "1:8"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "story_time":  "夜",
+                                                 "environment":  "室内审讯室，安静"
+                                             },
+                      "entry_boundary_id":  "S1-B2",
+                      "exit_boundary_id":  "SCENE_EXIT",
+                      "boundary_continuity":  "scene_exit",
+                      "transition_execution":  "post_production"
+                  }
+              ],
+    "boundaries":  [
+                       {
+                           "boundary_id":  "S1-B0",
+                           "from_ref":  "SCENE_ENTRY",
+                           "to_ref":  "S1-1",
+                           "relation":  "scene_entry",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  null,
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "林警探",
+                                                                              "position":  "画右桌后",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "前倾坐姿"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "许然",
+                                                                              "position":  "画左桌后",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "后靠坐姿"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "停车场照片",
+                                                                         "held_by":  "林警探",
+                                                                         "location":  "林警探右手旁桌面"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "警徽",
+                                                                         "held_by":  "许然",
+                                                                         "location":  "许然外套内袋(不可见)"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "自上而下",
+                                                                          "color_temp_k":  4700,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "story_time":  "夜",
+                                                       "environment":  "室内审讯室，安静"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "S1-B1",
+                           "from_ref":  "S1-1",
+                           "to_ref":  "S1-2",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "林警探",
+                                                                              "position":  "画右桌后",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "前倾，右臂伸展接近桌面中央"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "许然",
+                                                                              "position":  "画左桌后",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "端坐，双手在身前桌面上"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "停车场照片",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏右"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "警徽",
+                                                                         "held_by":  "许然",
+                                                                         "location":  "许然外套内袋(不可见)"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "自上而下",
+                                                                          "color_temp_k":  4700,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "林警探",
+                                                                              "position":  "画右桌后",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "前倾，右臂伸展接近桌面中央"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "许然",
+                                                                              "position":  "画左桌后",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "端坐，双手在身前桌面上"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "停车场照片",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏右"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "警徽",
+                                                                         "held_by":  "许然",
+                                                                         "location":  "许然外套内袋(不可见)"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "自上而下",
+                                                                          "color_temp_k":  4700,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "S1-B2",
+                           "from_ref":  "S1-2",
+                           "to_ref":  "S1-3",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "林警探",
+                                                                              "position":  "画右桌后",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "前倾，视线锁定桌面警徽"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "许然",
+                                                                              "position":  "画左桌后",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "端坐，手从桌面收回"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "停车场照片",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏右"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "警徽",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏左，紧邻照片"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "自上而下",
+                                                                          "color_temp_k":  4700,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "林警探",
+                                                                              "position":  "画右桌后",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "前倾，视线锁定桌面警徽"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "许然",
+                                                                              "position":  "画左桌后",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "端坐，手从桌面收回"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "停车场照片",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏右"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "警徽",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏左，紧邻照片"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "自上而下",
+                                                                          "color_temp_k":  4700,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "S1-B3",
+                           "from_ref":  "S1-3",
+                           "to_ref":  "SCENE_EXIT",
+                           "relation":  "scene_exit",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "林警探",
+                                                                              "position":  "画右桌后",
+                                                                              "facing":  "画左",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "微后倾，右手收回身前"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "许然",
+                                                                              "position":  "画左桌后",
+                                                                              "facing":  "画右",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "端坐，手在身前"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "停车场照片",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏右"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "警徽",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏左"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "自上而下",
+                                                                          "color_temp_k":  4700,
+                                                                          "ratio":  "1:8"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "story_time":  "夜",
+                                                       "environment":  "室内审讯室，安静"
+                                                   },
+                           "incoming_state_keys":  null
+                       }
+                   ]
+}

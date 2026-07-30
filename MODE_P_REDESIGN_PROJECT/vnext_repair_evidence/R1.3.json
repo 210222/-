@@ -1,0 +1,95 @@
+{
+  "task_id": "R1.3",
+  "title": "Repair storyboard and video output format",
+  "completed_at": "2026-07-24T07:41:20.5682704Z",
+  "owner": "ds-r13-semantic-20260723",
+  "locked_gate": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_acceptance/test_r1_3_external_acceptance.py",
+    "sha256": "de251e5dd97cc7b03b3ae27619f01e2587ce69efe23971a803e61d07fccc47cd",
+    "status": "UNCHANGED",
+    "result": "27 passed"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/storyboard_projection.py",
+    "01_调度器/mode_p_vnext/storyboard_renderer.py",
+    "01_调度器/mode_p_vnext/video_projection.py",
+    "01_调度器/mode_p_vnext/video_renderer.py",
+    "01_调度器/mode_p_vnext/fixtures/r1_3/source_spans.json",
+    "01_调度器/mode_p_vnext/fixtures/r1_3/golden_cases.py",
+    "01_调度器/mode_p_vnext/fixtures/r1_3/generate_registry.py",
+    "01_调度器/mode_p_vnext/fixtures/r1_3/structural_signature.json",
+    "01_调度器/mode_p_vnext/tests/test_v5_1_storyboard_projection.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_2_storyboard_renderer.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_3_video_projection.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_4_video_renderer.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_5_capability_adapter.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_6_payload_compiler.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_7_payload_manifest.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_8_dual_output_sync.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R1.3.json"
+  ],
+  "root_cause": {
+    "primary": "The old registry generator depended on build_golden_deliveries(), while the Golden builder required every new value to be present in that registry first. This circular dependency encouraged unrelated generic SourceSpan substitutions.",
+    "secondary": "Several top-level creative fields were hand-authored summaries or were bound to unrelated short needles even when exact authoritative prompt sections existed.",
+    "regression_found": "The video renderer did not emit canonical segment duration, so a 12-second segment whose final state is 11s lost the explicit 12s fact."
+  },
+  "repair": {
+    "registry_generation": "generate_registry.py now verifies all eight pinned R1.2 prompt bodies, resolves new exact spans directly from immutable fixture text, regenerates offsets and hashes, indexes the full emitted semantic surface, and verifies canonical byte-for-byte reproducibility.",
+    "semantic_binding": "Golden top-level anchors, numbering, arrow semantics, storyboard priority, lighting, audio, prohibitions, handoff and transition now use exact contiguous prompt sections. Reference IDs, duties, phases and node fields use exact fixture text.",
+    "golden_facts": "The prep-area shared contract preserves both storyboard and video success anchors, including Iuri entering at 5s and Rico's locked gaze while cleaning the gun.",
+    "rendering": "The video renderer emits duration derived mechanically from canonical contract bounds; no new creative fact is invented."
+  },
+  "source_span_audit": {
+    "pinned_fixtures": 8,
+    "registry_fields": 166,
+    "shared_contracts": 4,
+    "deliveries": 8,
+    "semantic_value_counts": {
+      "gun_barrel": 106,
+      "audience": 96,
+      "prep_area": 74,
+      "alley": 103
+    },
+    "exact_text_mismatches": 0,
+    "duplicate_semantic_source_paths": 0,
+    "orphan_semantic_source_paths": 0,
+    "registry_reproducible": true
+  },
+  "checks": [
+    {
+      "name": "storyboard_full_template",
+      "exit_code": 0,
+      "output": "All four storyboard archetypes render fail-closed from the shared immutable contract, preserve complete per-second state timelines and retain exact Golden success anchors."
+    },
+    {
+      "name": "video_full_template",
+      "exit_code": 0,
+      "output": "All four video archetypes render fail-closed with references, one-to-one duties, canonical duration, numbering, arrow semantics, priority, style, lighting, timeline, audio, prohibitions and transition."
+    },
+    {
+      "name": "golden_structure_match",
+      "exit_code": 0,
+      "output": "Locked external acceptance gate passed 27/27. Scene pairs share one immutable contract; audience and alley boundary instants, gun 13/14 state topology and all exact output anchors are preserved."
+    },
+    {
+      "name": "no_semantic_rewrite",
+      "exit_code": 0,
+      "output": "Every emitted semantic value has a registry-backed SourceSpan whose exact_text equals the emitted value. Independent audit found zero mismatches; fixture, text, offset and hash tampering fail closed."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "r1_3_dual_output_suite",
+      "command": "python -m pytest -q mode_p_vnext/tests/test_v5_1_storyboard_projection.py mode_p_vnext/tests/test_v5_2_storyboard_renderer.py mode_p_vnext/tests/test_v5_3_video_projection.py mode_p_vnext/tests/test_v5_4_video_renderer.py mode_p_vnext/tests/test_v5_5_capability_adapter.py mode_p_vnext/tests/test_v5_6_payload_compiler.py mode_p_vnext/tests/test_v5_7_payload_manifest.py mode_p_vnext/tests/test_v5_8_dual_output_sync.py",
+      "exit_code": 0,
+      "result": "70 passed"
+    }
+  ],
+  "postconditions": {
+    "acceptance_review": "READY",
+    "r1_2_prompt_fixtures": "UNCHANGED",
+    "production_entry": "v4_unchanged",
+    "settings_local_json": "ABSENT",
+    "claim_completion_policy": "Controller must rerun the authoritative R1.3 verification command before state transition."
+  }
+}

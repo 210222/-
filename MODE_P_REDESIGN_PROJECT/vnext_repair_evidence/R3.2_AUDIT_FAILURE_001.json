@@ -1,0 +1,69 @@
+{
+  "task_id": "R3.2",
+  "status": "NOT_COMPLETE",
+  "evidence_created_at": "2026-07-29T06:10:00Z",
+  "purpose": "Truthful local-completion audit failure record. This file is not completion evidence and must not be read as LOCAL_VNEXT_READY or production readiness.",
+  "safe_repair_completed": {
+    "path": "01_调度器/mode_p_vnext/tests/test_v0_2_skeleton.py",
+    "result": "The import-isolation assertion now runs in a child interpreter instead of deleting mode_p_vnext modules from the parent pytest process. The isolated V0.2 + affected storyboard/concurrency suite passed 52 tests."
+  },
+  "observed_results": [
+    {
+      "name": "vnext_full_after_isolation_repair",
+      "command": "python -m pytest mode_p_vnext/tests -q",
+      "result": "2 failed, 717 passed, 416 subtests passed in 7.57s",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "remaining_failures": [
+        "test_v0_1_baseline.py::V4RegressionFreshnessTests::test_v4_test_count_matches_baseline",
+        "test_v9_4_v4_compatibility.py::V4CompatibilityTests::test_v4_test_count_unchanged"
+      ]
+    },
+    {
+      "name": "v4_full_elevated_regression",
+      "command": "python -m pytest mode_p -q",
+      "result": "781 passed, 8 subtests passed in 153.90s",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "execution_note": "The same suite under restricted sandbox permissions failed only while opening mode_p/runtime_cache/dp/SESSION.lock. The elevated run passed without modifying v4 source or delivery files."
+    },
+    {
+      "name": "golden_format_and_contamination_subset",
+      "command": "python -m pytest mode_p_vnext/tests/test_v0_4_contamination.py mode_p_vnext/tests/test_v0_5_golden_fixtures.py mode_p_vnext/tests/test_v8_1_golden_registration.py mode_p_vnext/tests/test_v8_3_structural_runner.py -q",
+      "result": "128 passed, 160 subtests passed in 3.80s",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit"
+    }
+  ],
+  "blocking_conditions": [
+    {
+      "id": "BASELINE_COUNT_DRIFT",
+      "evidence": "The frozen V0.1 manifest and two vNext compatibility tests require 686 collected v4 tests; current collection is 781. The two remaining vNext full-suite failures are this same mismatch.",
+      "why_not_silently_repaired": "Changing the frozen V0.1 baseline or its completed-test contracts would alter R1.1 hashed artifacts and requires a controlled user-approved baseline reconciliation. R3.2 must report, not hide, this drift.",
+      "required_action": "User-approved baseline review that establishes the provenance of the additional 95 collected v4 tests, updates the frozen baseline and dependent evidence through a new controlled task, or rejects them as out-of-baseline work."
+    },
+    {
+      "id": "ALL_70_EVIDENCED_NOT_PROVEN",
+      "evidence": "R0.3 reconciliation classifies 70 historical items but does not supply repair evidence for all of them; the ledger includes 59 items with both evidence kinds false. No current machine check proves all 70 are evidenced.",
+      "why_not_silently_repaired": "A check named all_70_evidenced cannot be declared green from historical checkboxes or a summary count.",
+      "required_action": "Create a controlled evidence-reconciliation task with per-item proof/waiver semantics before re-attempting R3.2."
+    },
+    {
+      "id": "LOCAL_READY_MACHINE_CONTRADICTION",
+      "evidence": "The R3.2 task table names local_ready_machine_generated, while the controller's configured final status is V_TASK_REVALIDATION_REQUIRED and it has no implementation that emits LOCAL_VNEXT_READY.",
+      "why_not_silently_repaired": "The task cannot truthfully assert a machine-generated readiness result that its controller cannot produce.",
+      "required_action": "A controlled acceptance-contract correction must define the authoritative terminal state and the exact machine-generated artifact required for local readiness."
+    }
+  ],
+  "attempted_safe_repairs": [
+    "Repaired only the vNext test-process isolation defect; it removed two false full-suite failures without touching production code.",
+    "Ran v4 regression in an elevated test context to distinguish cache-lock permissions from code correctness; v4 passed 781 tests there.",
+    "Did not delete or edit runtime cache locks, v4 code, v4 sessions, deliveries, the frozen V0.1 manifest, controller state, or completed evidence."
+  ],
+  "director_decision_optimization": {
+    "status": "PROPOSED_NOT_FROZEN",
+    "proposal": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_OPTIMIZATION_CHANGE_REQUEST_001.md",
+    "truthful_scope": "The proposed G-08 / INV-DIR-01 through INV-DIR-07 chain is a design change, not an R0-R3 implemented capability. It must not be activated or claimed as complete through this failed R3.2 audit."
+  },
+  "resume_from": "R3.2 after controlled baseline/acceptance reconciliation. Once R0-R3 can conclude truthfully, synchronize the approved director-decision v1.1 proposal into the frozen construction plan and goal lock before creating the vNext.1 Director implementation queue.",
+  "production_entry": "v4_unchanged",
+  "external_generation": "not invoked",
+  "media_acceptance": "not claimed"
+}

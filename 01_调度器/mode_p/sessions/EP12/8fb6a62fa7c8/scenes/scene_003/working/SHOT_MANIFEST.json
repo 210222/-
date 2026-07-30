@@ -1,0 +1,675 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_003",
+  "master_version": "scene_003/v1.0",
+  "master_content_hash": "cca71a57c32dc1191ba9f5fa32d80859afacf3ef47931499fd837fec00733a2f",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_003-1",
+      "duration": 10.0,
+      "scene_expression": "crowd_attention",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L27-L28：柳小别拿着菜单跟老板点单→周从文和房东大婶在一旁坐着→百无聊赖下，他看向邻桌，一个男生要用牙咬开可乐瓶盖",
+        "source_scene_id": "scene_003",
+        "source_line_start": 27,
+        "source_line_end": 28
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_table",
+            "facing": "toward_bbq_stall",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "seated_at_table_near_周从文",
+            "facing": "toward_bbq_stall",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "standing_at_bbq_stall",
+            "facing": "toward_stall_owner",
+            "screen_direction": "static",
+            "posture": "standing_holding_menu_ordering"
+          },
+          {
+            "entity_id": "烧烤摊老板",
+            "position": "behind_bbq_stall",
+            "facing": "toward_柳小别",
+            "screen_direction": "static",
+            "posture": "standing_grilling_taking_order"
+          },
+          {
+            "entity_id": "情侣男",
+            "position": "seated_at_neighboring_table",
+            "facing": "toward_partner_or_table",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "seated_at_neighboring_table_near_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "菜单",
+            "held_by": "柳小别",
+            "location": "in_hands"
+          },
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_neighboring_table_in_front_of_情侣男"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "情侣男",
+            "position": "seated_at_neighboring_table",
+            "facing": "forward_or_down",
+            "screen_direction": "static",
+            "posture": "biting_bottle_cap_with_teeth"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_main_table",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "leaning_slightly_forward_frowning"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "seated_near_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "seated_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "情侣男",
+            "location": "at_mouth_bottle_cap_between_teeth"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      },
+      "entry_boundary_id": "scene_003-B0",
+      "exit_boundary_id": "scene_003-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-2",
+      "duration": 8.0,
+      "scene_expression": "suspense_reveal",
+      "timing_mode": "second_nodes",
+      "story_fact_ref": {
+        "text_start": "L28-L30：男生用后槽牙咬住带锯齿金属瓶盖→猛地一扯→气体爆喷→瓶盖瞬间冲入嘴巴→脸色涨得紫红→捂住脖子疯狂干呕→痛苦倒地",
+        "source_scene_id": "scene_003",
+        "source_line_start": 28,
+        "source_line_end": 30
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "情侣男",
+            "position": "seated_at_neighboring_table",
+            "facing": "forward_or_down",
+            "screen_direction": "static",
+            "posture": "biting_bottle_cap_with_teeth"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_main_table",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "leaning_slightly_forward_frowning"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "seated_near_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "seated_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "情侣男",
+            "location": "at_mouth_bottle_cap_between_teeth"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "情侣男",
+            "position": "on_ground_side_laying",
+            "facing": "up_or_side",
+            "screen_direction": "static",
+            "posture": "choking_hands_on_throat_face_purple"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "beside_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "kneeling_panicked"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_main_table",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "standing_or_seated_frowning_watching"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_ground_tipped_liquid_spilling"
+          },
+          {
+            "prop_id": "瓶盖",
+            "held_by": "无",
+            "location": "inside_情侣男_throat_not_visible"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "impact"
+      },
+      "entry_boundary_id": "scene_003-B1",
+      "exit_boundary_id": "scene_003-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-3",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L31-L33：周从文皱眉拿出电话拨打120→房东大婶惊呼询问→周从文摇头拒绝急救判断更稳妥送医院",
+        "source_scene_id": "scene_003",
+        "source_line_start": 31,
+        "source_line_end": 33
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "情侣男",
+            "position": "on_ground_side_laying",
+            "facing": "up_or_side",
+            "screen_direction": "static",
+            "posture": "choking_hands_on_throat_face_purple"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "beside_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "kneeling_panicked"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_main_table",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "standing_or_seated_frowning_watching"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_ground_tipped_liquid_spilling"
+          },
+          {
+            "prop_id": "瓶盖",
+            "held_by": "无",
+            "location": "inside_情侣男_throat_not_visible"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "impact"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "at_or_near_main_table",
+            "facing": "toward_情侣男_on_ground",
+            "screen_direction": "static",
+            "posture": "standing_or_seated_phone_in_hand_monitoring_calm"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "at_main_table",
+            "facing": "toward_情侣男_or_周从文",
+            "screen_direction": "static",
+            "posture": "seated_or_standing_worried_but_calmer"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "near_bbq_stall",
+            "facing": "toward_accident_scene",
+            "screen_direction": "static",
+            "posture": "standing_watching"
+          },
+          {
+            "entity_id": "情侣男",
+            "position": "on_ground_side_laying",
+            "facing": "up_or_side",
+            "screen_direction": "static",
+            "posture": "choking_on_ground_face_purple"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "beside_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "kneeling_comforting_or_panicked"
+          },
+          {
+            "entity_id": "烧烤摊老板",
+            "position": "near_bbq_stall_or_moved_toward_scene",
+            "facing": "toward_scene",
+            "screen_direction": "static",
+            "posture": "standing_watching_or_approaching"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "手机",
+            "held_by": "周从文",
+            "location": "in_hand_at_ear_or_lowered"
+          },
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_ground_tipped"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "recover"
+      },
+      "entry_boundary_id": "scene_003-B2",
+      "exit_boundary_id": "scene_003-B3",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_003-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_003-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_table",
+            "facing": "toward_bbq_stall",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "seated_at_table_near_周从文",
+            "facing": "toward_bbq_stall",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "standing_at_bbq_stall",
+            "facing": "toward_stall_owner",
+            "screen_direction": "static",
+            "posture": "standing_holding_menu_ordering"
+          },
+          {
+            "entity_id": "烧烤摊老板",
+            "position": "behind_bbq_stall",
+            "facing": "toward_柳小别",
+            "screen_direction": "static",
+            "posture": "standing_grilling_taking_order"
+          },
+          {
+            "entity_id": "情侣男",
+            "position": "seated_at_neighboring_table",
+            "facing": "toward_partner_or_table",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "seated_at_neighboring_table_near_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "菜单",
+            "held_by": "柳小别",
+            "location": "in_hands"
+          },
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_neighboring_table_in_front_of_情侣男"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B1",
+      "from_ref": "scene_003-1",
+      "to_ref": "scene_003-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "情侣男",
+            "position": "seated_at_neighboring_table",
+            "facing": "forward_or_down",
+            "screen_direction": "static",
+            "posture": "biting_bottle_cap_with_teeth"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_main_table",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "leaning_slightly_forward_frowning"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "seated_near_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "seated_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "情侣男",
+            "location": "at_mouth_bottle_cap_between_teeth"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "情侣男",
+            "position": "seated_at_neighboring_table",
+            "facing": "forward_or_down",
+            "screen_direction": "static",
+            "posture": "biting_bottle_cap_with_teeth"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_main_table",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "leaning_slightly_forward_frowning"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "seated_near_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "seated_observing"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "情侣男",
+            "location": "at_mouth_bottle_cap_between_teeth"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "prepare"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B2",
+      "from_ref": "scene_003-2",
+      "to_ref": "scene_003-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "情侣男",
+            "position": "on_ground_side_laying",
+            "facing": "up_or_side",
+            "screen_direction": "static",
+            "posture": "choking_hands_on_throat_face_purple"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "beside_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "kneeling_panicked"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_main_table",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "standing_or_seated_frowning_watching"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_ground_tipped_liquid_spilling"
+          },
+          {
+            "prop_id": "瓶盖",
+            "held_by": "无",
+            "location": "inside_情侣男_throat_not_visible"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "impact"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "情侣男",
+            "position": "on_ground_side_laying",
+            "facing": "up_or_side",
+            "screen_direction": "static",
+            "posture": "choking_hands_on_throat_face_purple"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "beside_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "kneeling_panicked"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_main_table",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "standing_or_seated_frowning_watching"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_ground_tipped_liquid_spilling"
+          },
+          {
+            "prop_id": "瓶盖",
+            "held_by": "无",
+            "location": "inside_情侣男_throat_not_visible"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "impact"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B3",
+      "from_ref": "scene_003-3",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "at_or_near_main_table",
+            "facing": "toward_情侣男_on_ground",
+            "screen_direction": "static",
+            "posture": "standing_or_seated_phone_in_hand_monitoring_calm"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "at_main_table",
+            "facing": "toward_情侣男_or_周从文",
+            "screen_direction": "static",
+            "posture": "seated_or_standing_worried_but_calmer"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "near_bbq_stall",
+            "facing": "toward_accident_scene",
+            "screen_direction": "static",
+            "posture": "standing_watching"
+          },
+          {
+            "entity_id": "情侣男",
+            "position": "on_ground_side_laying",
+            "facing": "up_or_side",
+            "screen_direction": "static",
+            "posture": "choking_on_ground_face_purple"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "beside_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "kneeling_comforting_or_panicked"
+          },
+          {
+            "entity_id": "烧烤摊老板",
+            "position": "near_bbq_stall_or_moved_toward_scene",
+            "facing": "toward_scene",
+            "screen_direction": "static",
+            "posture": "standing_watching_or_approaching"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "手机",
+            "held_by": "周从文",
+            "location": "in_hand_at_ear_or_lowered"
+          },
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_ground_tipped"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "recover"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

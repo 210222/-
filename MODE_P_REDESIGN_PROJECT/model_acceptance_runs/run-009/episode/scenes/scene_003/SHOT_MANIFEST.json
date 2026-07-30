@@ -1,0 +1,889 @@
+{
+    "manifest_version":  "1.2",
+    "scene_id":  "scene_003",
+    "master_version":  "scene_003/v1.0",
+    "master_content_hash":  "c026f14f175bac5a6ee357c0ca6b33ca1ae6214920a5f8d06c69b21685367964",
+    "compiler_version":  "2.0.0",
+    "shots":  [
+                  {
+                      "shot_id":  "scene_003-1",
+                      "duration":  10.0,
+                      "scene_expression":  "suspense_reveal",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "顾言与证人米娅隔窄桌坐着；列车经过隧道，窗外城市灯光短暂消失（L30）。",
+                                             "source_scene_id":  "scene_003",
+                                             "source_line_start":  30,
+                                             "source_line_end":  30
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐双手交叠桌沿内侧",
+                                                                        "wardrobe":  "深色大衣内正装衬衫"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐双手收在桌沿内侧",
+                                                                        "wardrobe":  "浅米色风衣配深色围巾"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "风衣口袋"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "大衣内袋"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:3"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "story_time":  "夜",
+                                                 "environment":  "列车行进中窗外城市光流"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐直视米娅"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐直视顾言"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "风衣口袋"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "大衣内袋"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "environment":  "隧道中窗面纯黑"
+                                             },
+                      "entry_boundary_id":  "SCENE_ENTRY",
+                      "exit_boundary_id":  "scene_003-B1",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "scene_003-2",
+                      "duration":  6.0,
+                      "scene_expression":  "conversation_power",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "顾言要求交出存储卡并让米娅下一站下车（L32）。",
+                                             "source_scene_id":  "scene_003",
+                                             "source_line_start":  32,
+                                             "source_line_end":  32
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐直视米娅"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐直视顾言"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "风衣口袋"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "大衣内袋"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "environment":  "隧道中窗面纯黑"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "靠背注视米娅"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐右手举于桌面上方指间夹卡"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "右手食指与中指之间"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "大衣内袋"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "entry_boundary_id":  "scene_003-B1",
+                      "exit_boundary_id":  "scene_003-B2",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "scene_003-3",
+                      "duration":  5.0,
+                      "scene_expression":  "suspense_reveal",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "米娅把存储卡夹在两指之间，却没有递出（L34）。",
+                                             "source_scene_id":  "scene_003",
+                                             "source_line_start":  34,
+                                             "source_line_end":  34
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "靠背注视米娅"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐右手举于桌面上方指间夹卡"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "右手食指与中指之间"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "大衣内袋"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "靠背注视米娅"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐右手举卡于桌面上方"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "右手食指与中指之间"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "大衣内袋"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "entry_boundary_id":  "scene_003-B2",
+                      "exit_boundary_id":  "scene_003-B3",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "scene_003-4",
+                      "duration":  5.0,
+                      "scene_expression":  "conversation_power",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "米娅要求先把名字从证人名单里删掉（L36）。",
+                                             "source_scene_id":  "scene_003",
+                                             "source_line_start":  36,
+                                             "source_line_end":  36
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "靠背注视米娅"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐右手举卡于桌面上方"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "右手食指与中指之间"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "大衣内袋"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "靠背注视米娅"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐右手举卡于桌面上方"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "右手食指与中指之间"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "大衣内袋"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "entry_boundary_id":  "scene_003-B3",
+                      "exit_boundary_id":  "scene_003-B4",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "scene_003-5",
+                      "duration":  12.0,
+                      "scene_expression":  "suspense_reveal",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "列车驶出隧道；顾言把工作证翻面扣在桌上，米娅才把存储卡放到桌面中央（L38，先扣证后交卡）。",
+                                             "source_scene_id":  "scene_003",
+                                             "source_line_start":  38,
+                                             "source_line_end":  38
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "靠背注视米娅"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐右手举卡于桌面上方"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "米娅",
+                                                                   "location":  "右手食指与中指之间"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "顾言",
+                                                                   "location":  "大衣内袋"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "顾言",
+                                                                        "position":  "包厢窄桌车头侧座",
+                                                                        "facing":  "车尾方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐双手收回"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "米娅",
+                                                                        "position":  "包厢窄桌车尾侧座",
+                                                                        "facing":  "车头方向",
+                                                                        "screen_direction":  "static",
+                                                                        "posture":  "对坐双手收回"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "存储卡",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "工作证",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面顾言侧背面朝上"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "窗端上方阅读灯斜下",
+                                                                    "color_temp_k":  3200,
+                                                                    "ratio":  "1:3"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "environment":  "窗外城市光流恢复"
+                                             },
+                      "entry_boundary_id":  "scene_003-B4",
+                      "exit_boundary_id":  "SCENE_EXIT",
+                      "boundary_continuity":  "scene_exit",
+                      "transition_execution":  "post_production"
+                  }
+              ],
+    "boundaries":  [
+                       {
+                           "boundary_id":  "scene_003-B0",
+                           "from_ref":  "SCENE_ENTRY",
+                           "to_ref":  "scene_003-1",
+                           "relation":  "scene_entry",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  null,
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐双手交叠桌沿内侧",
+                                                                              "wardrobe":  "深色大衣内正装衬衫"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐双手收在桌沿内侧",
+                                                                              "wardrobe":  "浅米色风衣配深色围巾"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "风衣口袋"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "大衣内袋"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:3"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "story_time":  "夜",
+                                                       "environment":  "列车行进中窗外城市光流"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_003-B1",
+                           "from_ref":  "scene_003-1",
+                           "to_ref":  "scene_003-2",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐直视米娅"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐直视顾言"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "风衣口袋"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "大衣内袋"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "environment":  "隧道中窗面纯黑"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐直视米娅"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐直视顾言"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "风衣口袋"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "大衣内袋"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "environment":  "隧道中窗面纯黑"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_003-B2",
+                           "from_ref":  "scene_003-2",
+                           "to_ref":  "scene_003-3",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "靠背注视米娅"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐右手举于桌面上方指间夹卡"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "右手食指与中指之间"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "大衣内袋"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "靠背注视米娅"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐右手举于桌面上方指间夹卡"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "右手食指与中指之间"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "大衣内袋"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_003-B3",
+                           "from_ref":  "scene_003-3",
+                           "to_ref":  "scene_003-4",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "靠背注视米娅"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐右手举卡于桌面上方"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "右手食指与中指之间"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "大衣内袋"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "靠背注视米娅"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐右手举卡于桌面上方"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "右手食指与中指之间"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "大衣内袋"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_003-B4",
+                           "from_ref":  "scene_003-4",
+                           "to_ref":  "scene_003-5",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "靠背注视米娅"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐右手举卡于桌面上方"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "右手食指与中指之间"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "大衣内袋"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "靠背注视米娅"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐右手举卡于桌面上方"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "米娅",
+                                                                         "location":  "右手食指与中指之间"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "顾言",
+                                                                         "location":  "大衣内袋"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "scene_003-B5",
+                           "from_ref":  "scene_003-5",
+                           "to_ref":  "SCENE_EXIT",
+                           "relation":  "scene_exit",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "顾言",
+                                                                              "position":  "包厢窄桌车头侧座",
+                                                                              "facing":  "车尾方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐双手收回"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "米娅",
+                                                                              "position":  "包厢窄桌车尾侧座",
+                                                                              "facing":  "车头方向",
+                                                                              "screen_direction":  "static",
+                                                                              "posture":  "对坐双手收回"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "存储卡",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "工作证",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面顾言侧背面朝上"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "窗端上方阅读灯斜下",
+                                                                          "color_temp_k":  3200,
+                                                                          "ratio":  "1:3"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "environment":  "窗外城市光流恢复"
+                                                   },
+                           "incoming_state_keys":  null
+                       }
+                   ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "ddo-evidence-v1",
+  "task_id": "DDO-5",
+  "run_id": "DDO-5_002",
+  "reason": "Projection bindings now prove they satisfy VEC-owned reference requirements rather than applying independent projection-layer defaults.",
+  "status": "VERIFIED_TEXT_ONLY",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/projection.py",
+    "01_调度器/mode_p_vnext/director_vnext1/validation.py",
+    "01_调度器/mode_p_vnext/director_vnext1/cache.py",
+    "01_调度器/mode_p_vnext/tests/test_ddo_5_projection.py",
+    "01_调度器/mode_p_vnext/tests/test_ddo_5_regressions.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-5_002.json"
+  ],
+  "checks": [
+    {"name": "field_homology", "exit_code": 0},
+    {"name": "voice_reference_binding", "exit_code": 0},
+    {"name": "prompt_purity", "exit_code": 0},
+    {"name": "historical_regressions", "exit_code": 0},
+    {"name": "local_invalidation", "exit_code": 0},
+    {"name": "performance", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_5_projection", "exit_code": 0, "summary": "11 passed in 0.17s"}
+  ],
+  "scope": {
+    "external_generation_invoked": false,
+    "production_entry_changed": false,
+    "storyboard_or_video_visual_acceptance_claimed": false,
+    "prompt_body_contains_manifest_metadata": false
+  }
+}

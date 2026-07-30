@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Malformed or unknown state-key line in 接入状态键：[M]: '- light_main direction:坡道顶部灯管自上方间隔分布 color_temp:4500K偏绿 ratio:1:5'

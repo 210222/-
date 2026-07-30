@@ -1,0 +1,30 @@
+{
+  "schema_version": "ddo-evidence-v1",
+  "task_id": "DDO-2",
+  "run_id": "DDO-2_002",
+  "reason": "Revalidation after dependency DDO-1 was refreshed against the current shared contract.",
+  "status": "VERIFIED_TEXT_ONLY",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "01_调度器/mode_p_vnext/director_vnext1/cache.py",
+    "01_调度器/mode_p_vnext/director_vnext1/agent.py",
+    "01_调度器/mode_p_vnext/tests/test_ddo_2_agent_phase_a.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-2_002.json"
+  ],
+  "checks": [
+    {"name": "persistent_director", "exit_code": 0},
+    {"name": "phase_a_no_camera_answer", "exit_code": 0},
+    {"name": "k1_packet", "exit_code": 0},
+    {"name": "content_addressed_cache", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_2_phase_a", "exit_code": 0, "summary": "3 passed in 0.04s"}
+  ],
+  "scope": {
+    "external_generation_invoked": false,
+    "production_entry_changed": false,
+    "blocking_or_execution_contract_added": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

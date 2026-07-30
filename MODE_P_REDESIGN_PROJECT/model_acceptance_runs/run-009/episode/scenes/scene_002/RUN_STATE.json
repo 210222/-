@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_002",
+  "stage": "batch_commit",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 3,
+  "master_path": "DIRECTOR_MASTER.md",
+  "master_sha256": "66d8add37bee2579686b8cac0c6415fac962992bb4b70645ed7456389309c254",
+  "manifest_path": "working/SHOT_MANIFEST.json",
+  "manifest_sha256": "aed158783e9d535397c79627169500f22c4bfbf8cd57bb734f828f4d1683155b",
+  "checks": {
+    "final_master_sync": {
+      "passed": true,
+      "stage": "final_check",
+      "artifact_generation": 3,
+      "master_sha256": "66d8add37bee2579686b8cac0c6415fac962992bb4b70645ed7456389309c254",
+      "manifest_sha256": "aed158783e9d535397c79627169500f22c4bfbf8cd57bb734f828f4d1683155b",
+      "report_path": "reports/generation-0003/final_master_sync.txt",
+      "report_sha256": "a7a9367e8eae8f73ccc87ab546503332529e2e783ad4b3e556147a1244802fee"
+    }
+  },
+  "dp_review": {
+    "status": "ready",
+    "artifact_generation": 3,
+    "master_sha256": "66d8add37bee2579686b8cac0c6415fac962992bb4b70645ed7456389309c254",
+    "manifest_sha256": "aed158783e9d535397c79627169500f22c4bfbf8cd57bb734f828f4d1683155b",
+    "review_path": "reviews/dp-0001.md",
+    "review_sha256": "1d8453ba50ddbbc2b611f745cac9d627823f898f90eb5e96691884c3c2f8d253",
+    "issue_fingerprint": null,
+    "stalled": false
+  },
+  "dp_issue_history": [],
+  "episode_review": null,
+  "committed_batches": [
+    {
+      "batch_index": 1,
+      "artifact_generation": 3,
+      "master_sha256": "66d8add37bee2579686b8cac0c6415fac962992bb4b70645ed7456389309c254",
+      "manifest_sha256": "aed158783e9d535397c79627169500f22c4bfbf8cd57bb734f828f4d1683155b",
+      "commit_path": "commits/delivery-d9ab5ff2df7349bebad14ba15e9410ad.json",
+      "commit_sha256": "344c15cf82a5aee720e1ac6450ca4adbc59e08adcdf11cc9ad079a2091c9e9fa"
+    }
+  ],
+  "dp_attempts": 1,
+  "revision_count": 1,
+  "transition_sequence": 8,
+  "updated_at": "2026-07-18T17:10:27.282693+00:00",
+  "state_sha256": "459550421d088002edb2c07a0d938b02b9474e2cfed4a8ea3739c6691ec70434"
+}

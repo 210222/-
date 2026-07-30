@@ -1,0 +1,39 @@
+{
+  "schema_version": "2.0",
+  "session_id": "scene_001",
+  "transaction_id": "bc4281b83ef6416fba4bba8a917c1a34",
+  "target": "working",
+  "stage": "structural_precheck",
+  "batch_index": 1,
+  "committed_at": "2026-07-19T15:30:18.044614+00:00",
+  "master_generation": 11,
+  "master_sha256": "145fe44e74abdebd909a2ac615be5e077f567572b51461c6858eccbcf5c4dcbd",
+  "state_sha256": "9a3d4776498830d71837e21ac36bf8e5f3080d58d2006c3c7bef6a5cf8081af5",
+  "implementation_fingerprints": {
+    "boundary_check": "414995c29826ce12fb4639b9c97d45082664e848c8aa3b013f1b7b4e31f0b916",
+    "final_master_sync": "17df9a126e6fc01f10437f193dac55d04aedbb3e5da720550fa936ec7944f90d",
+    "master_compiler": "8471f26f2c85ac02c4b24bf15214b6d9382a09407a047a7a74966ffdf2f7f7e1",
+    "master_sync_check": "17df9a126e6fc01f10437f193dac55d04aedbb3e5da720550fa936ec7944f90d",
+    "reference_plan_check": "3074959f356e1f042b61da84b4c2562b424b6804925f012d31d312fa08eed217",
+    "sd2_preflight": "5bc1831b2208060eb35992aa206a912cb487608f063d3bc077a37a4426a00790",
+    "view_deriver": "dbd10c92e9b379e2994b599c528f751346b8a1442ba03e107621360af6da910a"
+  },
+  "entries": [
+    {
+      "path": "SHOT_MANIFEST.json",
+      "sha256": "c7f02a38253810d7a3a52cb0c42552a62f6de267497a799c62c7125b8d2d1bf1",
+      "size": 30864
+    },
+    {
+      "path": "STORYBOARD.md",
+      "sha256": "245af7630a457e5a087053e148506171d40b5f0ea1add8dbb455a3e8f8ad7f79",
+      "size": 15506
+    },
+    {
+      "path": "VIDEO_PROMPT.md",
+      "sha256": "cf47a57fad15f5af0163fde588eb4fe756e48fb57cdf3a5c9f6bb3267e19b550",
+      "size": 19357
+    }
+  ],
+  "manifest_sha256": "f1d4cdf8a6015f36aab54cb0413f9b42b11769b421bbdadf4b2c29e2f36d6634"
+}

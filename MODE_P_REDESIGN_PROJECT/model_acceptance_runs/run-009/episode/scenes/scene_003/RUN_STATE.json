@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_003",
+  "stage": "batch_commit",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 3,
+  "master_path": "DIRECTOR_MASTER.md",
+  "master_sha256": "89ec9a93a3313f3bb1cf96362cbc8ea864afebbd37a7fe1e71afa28a20b1ef4e",
+  "manifest_path": "working/SHOT_MANIFEST.json",
+  "manifest_sha256": "7277df88165848270201c818891c339dc33d4fd64a71d42b462025203cd3e3ad",
+  "checks": {
+    "final_master_sync": {
+      "passed": true,
+      "stage": "final_check",
+      "artifact_generation": 3,
+      "master_sha256": "89ec9a93a3313f3bb1cf96362cbc8ea864afebbd37a7fe1e71afa28a20b1ef4e",
+      "manifest_sha256": "7277df88165848270201c818891c339dc33d4fd64a71d42b462025203cd3e3ad",
+      "report_path": "reports/generation-0003/final_master_sync.txt",
+      "report_sha256": "a7a9367e8eae8f73ccc87ab546503332529e2e783ad4b3e556147a1244802fee"
+    }
+  },
+  "dp_review": {
+    "status": "ready",
+    "artifact_generation": 3,
+    "master_sha256": "89ec9a93a3313f3bb1cf96362cbc8ea864afebbd37a7fe1e71afa28a20b1ef4e",
+    "manifest_sha256": "7277df88165848270201c818891c339dc33d4fd64a71d42b462025203cd3e3ad",
+    "review_path": "reviews/dp-0001.md",
+    "review_sha256": "098545aed9aa97b15b7a70c37acadfdf2d8930dc2547dedfb4721b8519ca42ad",
+    "issue_fingerprint": null,
+    "stalled": false
+  },
+  "dp_issue_history": [],
+  "episode_review": null,
+  "committed_batches": [
+    {
+      "batch_index": 1,
+      "artifact_generation": 3,
+      "master_sha256": "89ec9a93a3313f3bb1cf96362cbc8ea864afebbd37a7fe1e71afa28a20b1ef4e",
+      "manifest_sha256": "7277df88165848270201c818891c339dc33d4fd64a71d42b462025203cd3e3ad",
+      "commit_path": "commits/delivery-a070711560504b49aa677f049c8ecd32.json",
+      "commit_sha256": "20df9f7926f119a3e3a85b940f68e54b14e5c0d788483b70945e2715cd0e7265"
+    }
+  ],
+  "dp_attempts": 1,
+  "revision_count": 1,
+  "transition_sequence": 8,
+  "updated_at": "2026-07-18T17:10:28.374863+00:00",
+  "state_sha256": "b4b1bb7ae916cc8e47b8d08fe4be2723f23671e1c74fa9a971dfffed544d4bc7"
+}

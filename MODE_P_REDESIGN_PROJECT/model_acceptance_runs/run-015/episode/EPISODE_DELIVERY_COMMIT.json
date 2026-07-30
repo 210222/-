@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "status": "committed",
+  "review_session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\episode_review",
+  "review_input_sha256": "d0bb3700ab244e3fa2e48c043c9c7fd460f1fa5173cd8d5d89472de458de4a72",
+  "scenes": [
+    {
+      "scene_index": 1,
+      "scene_id": "scene_001",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_001",
+      "master_content_hash": "a043f15ec9fb5d2ef16f279d6c2eaa06dc49e41ccb11730a01020024cc5ecce3",
+      "storyboard_sha256": "0dcae0e51e1d4ebc463c45f4e7c622e43e3e7cc2d928913c04cd82d411e53af2",
+      "video_prompt_sha256": "6699ac2229fbe23f341c6dbea9682a4c8c7c1fa10dde29821be13b235691190d"
+    },
+    {
+      "scene_index": 2,
+      "scene_id": "scene_002",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_002",
+      "master_content_hash": "bd410aff4048dfe2eb37d87d6c9670e10319df3ba6d54d0ae5908fa92d0e24dd",
+      "storyboard_sha256": "473aa8ea4f1b244fdfbf049259a84da0fa5c8dadc39a7d1a0de8bfd9d56f7326",
+      "video_prompt_sha256": "a94458bc0587f8527d5b278df21de8c5f1e832d1d695b3373fdb9a71c2e1f7d4"
+    },
+    {
+      "scene_index": 3,
+      "scene_id": "scene_003",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_003",
+      "master_content_hash": "4fa74a5236afa58b7d371176cb524e34b6ae50ef847b0dbe085563a0e3e24762",
+      "storyboard_sha256": "6c0ea8b4d7fd8133c26a39cf4d1be2900f3f72c3fa61cd26fa28147cbfa86ddd",
+      "video_prompt_sha256": "07bc5d4d5fbe8e420454d69954d21a28f6c12f8c8e0c51948401b930da9e1bb0"
+    },
+    {
+      "scene_index": 4,
+      "scene_id": "scene_004",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-015\\episode\\scenes\\scene_004",
+      "master_content_hash": "7d1ac64aebeb76ead4ce7ae2c37a58320a4e37f173ca8d746bfde3e0c98709ac",
+      "storyboard_sha256": "655dd92c3f39a492e7be1b8778118c12102b013f664d9641f63eb6061b952f32",
+      "video_prompt_sha256": "8b96dc57b62a3c8dcb10e7a237955036a194a44da0b476b4d9cebd22303b05c7"
+    }
+  ],
+  "files": {
+    "STORYBOARD.md": "cca1bbad39cde6dbdf3f0cf8e58df28b65238415d2d70f2802aa0461913900be",
+    "VIDEO_PROMPT.md": "28405638d3520a8519dcdbddc3be4228ddc04cdab840ecd5396829cb15b28155"
+  },
+  "commit_sha256": "05cbc69f503863db6dcf669cb0be87f00abd03499f8fea4806e811826dc4e205"
+}

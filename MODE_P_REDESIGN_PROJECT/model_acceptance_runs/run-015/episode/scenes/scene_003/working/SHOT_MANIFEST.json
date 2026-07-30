@@ -1,0 +1,650 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_003",
+  "master_version": "scene_003/v1.0",
+  "master_content_hash": "4fa74a5236afa58b7d371176cb524e34b6ae50ef847b0dbe085563a0e3e24762",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_003-1",
+      "duration": 8.0,
+      "scene_expression": "suspense_reveal",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "顾言与米娅隔窄桌坐着；列车经过隧道，窗外城市灯光短暂消失（L30-L31）；顾言要求存储卡并下车（L32）。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 30,
+        "source_line_end": 32
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车运行中，窗外城市夜景移动，持续振动"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "storage_card",
+            "held_by": "miya",
+            "location": "米娅两指间，悬于桌面上方"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车进入隧道，窗外渐黑"
+      },
+      "entry_boundary_id": "scene_003-B0",
+      "exit_boundary_id": "scene_003-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-2",
+      "duration": 6.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "米娅把存储卡夹在两指之间，却没有递出（L34）；米娅要求删掉证人名单中的名字（L36）。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 34,
+        "source_line_end": 36
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "storage_card",
+            "held_by": "miya",
+            "location": "米娅两指间，悬于桌面上方"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车进入隧道，窗外渐黑"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "miya",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "guyan",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "右手正在移动"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "storage_card",
+            "held_by": "miya",
+            "location": "米娅两指间，悬于桌面"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "launch",
+        "environment": "列车驶出隧道，窗外光恢复中"
+      },
+      "entry_boundary_id": "scene_003-B1",
+      "exit_boundary_id": "scene_003-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-3",
+      "duration": 7.0,
+      "scene_expression": "suspense_reveal",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "列车驶出隧道；顾言把工作证翻面扣在桌上，米娅把存储卡放到桌面中央（L38）。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 38,
+        "source_line_end": 38
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "miya",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "guyan",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "右手正在移动"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "storage_card",
+            "held_by": "miya",
+            "location": "米娅两指间，悬于桌面"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "launch",
+        "environment": "列车驶出隧道，窗外光恢复中"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "work_badge",
+            "held_by": "none",
+            "location": "桌面中央，翻面扣放"
+          },
+          {
+            "prop_id": "storage_card",
+            "held_by": "none",
+            "location": "桌面中央，工作证旁"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "recover",
+        "environment": "列车行驶中，城市夜景恢复于窗外"
+      },
+      "entry_boundary_id": "scene_003-B2",
+      "exit_boundary_id": "scene_003-B3",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-4",
+      "duration": 5.0,
+      "scene_expression": "contemplative_silence",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "（本镜为反应/结果镜——基于 L38 事件之后的无剧本静默。物件在桌面为事实。）",
+        "source_scene_id": "scene_003",
+        "source_line_start": 38,
+        "source_line_end": 38
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "work_badge",
+            "held_by": "none",
+            "location": "桌面中央，翻面扣放"
+          },
+          {
+            "prop_id": "storage_card",
+            "held_by": "none",
+            "location": "桌面中央，工作证旁"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "recover",
+        "environment": "列车行驶中，城市夜景恢复于窗外"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "桌面一侧",
+            "facing": "面向下方",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          },
+          {
+            "entity_id": "miya",
+            "position": "桌面另一侧",
+            "facing": "面向上方",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "work_badge",
+            "held_by": "none",
+            "location": "桌面中央，翻面扣放"
+          },
+          {
+            "prop_id": "storage_card",
+            "held_by": "none",
+            "location": "桌面中央，工作证旁"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车行驶中，窗外夜景持续移动"
+      },
+      "entry_boundary_id": "scene_003-B3",
+      "exit_boundary_id": "scene_003-B4",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_003-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_003-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车运行中，窗外城市夜景移动，持续振动"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B1",
+      "from_ref": "scene_003-1",
+      "to_ref": "scene_003-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "storage_card",
+            "held_by": "miya",
+            "location": "米娅两指间，悬于桌面上方"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车进入隧道，窗外渐黑"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "storage_card",
+            "held_by": "miya",
+            "location": "米娅两指间，悬于桌面上方"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车进入隧道，窗外渐黑"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B2",
+      "from_ref": "scene_003-2",
+      "to_ref": "scene_003-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "miya",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "guyan",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "右手正在移动"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "storage_card",
+            "held_by": "miya",
+            "location": "米娅两指间，悬于桌面"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "launch",
+        "environment": "列车驶出隧道，窗外光恢复中"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "miya",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "guyan",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "右手正在移动"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "storage_card",
+            "held_by": "miya",
+            "location": "米娅两指间，悬于桌面"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "launch",
+        "environment": "列车驶出隧道，窗外光恢复中"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B3",
+      "from_ref": "scene_003-3",
+      "to_ref": "scene_003-4",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "work_badge",
+            "held_by": "none",
+            "location": "桌面中央，翻面扣放"
+          },
+          {
+            "prop_id": "storage_card",
+            "held_by": "none",
+            "location": "桌面中央，工作证旁"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "recover",
+        "environment": "列车行驶中，城市夜景恢复于窗外"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "窄桌一侧坐姿",
+            "facing": "面向米娅",
+            "screen_direction": "static",
+            "posture": "直坐"
+          },
+          {
+            "entity_id": "miya",
+            "position": "窄桌另一侧坐姿",
+            "facing": "面向顾言",
+            "screen_direction": "static",
+            "posture": "直坐"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "work_badge",
+            "held_by": "none",
+            "location": "桌面中央，翻面扣放"
+          },
+          {
+            "prop_id": "storage_card",
+            "held_by": "none",
+            "location": "桌面中央，工作证旁"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "recover",
+        "environment": "列车行驶中，城市夜景恢复于窗外"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B4",
+      "from_ref": "scene_003-4",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "guyan",
+            "position": "桌面一侧",
+            "facing": "面向下方",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          },
+          {
+            "entity_id": "miya",
+            "position": "桌面另一侧",
+            "facing": "面向上方",
+            "screen_direction": "static",
+            "posture": "坐姿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "work_badge",
+            "held_by": "none",
+            "location": "桌面中央，翻面扣放"
+          },
+          {
+            "prop_id": "storage_card",
+            "held_by": "none",
+            "location": "桌面中央，工作证旁"
+          }
+        ],
+        "light_main": {
+          "direction": "车内顶灯",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "environment": "列车行驶中，窗外夜景持续移动"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

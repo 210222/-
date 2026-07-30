@@ -1,0 +1,3 @@
+PASS view_deriver
+Storyboard -> C:\Users\21022\Desktop\导演系统\导演系统_v5\MODE_P_REDESIGN_PROJECT\model_acceptance_runs\run-011\episode\scenes\scene_004\.build\79d418571cee4c10ae04094c081ed6ce\STORYBOARD.md
+Video Prompt -> C:\Users\21022\Desktop\导演系统\导演系统_v5\MODE_P_REDESIGN_PROJECT\model_acceptance_runs\run-011\episode\scenes\scene_004\.build\79d418571cee4c10ae04094c081ed6ce\VIDEO_PROMPT.md

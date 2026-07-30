@@ -1,0 +1,26 @@
+{
+  "schema_version": "ddo-evidence-v1",
+  "task_id": "DDO-3",
+  "run_id": "DDO-3_003",
+  "reason": "Dependency revalidation against the CPL-1 extended shared contracts.",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-3_003.json"
+  ],
+  "checks": [
+    {"name": "blocking_before_camera", "exit_code": 0},
+    {"name": "candidate_record", "exit_code": 0},
+    {"name": "decision_provenance", "exit_code": 0},
+    {"name": "vec_fail_closed", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_3_vec", "exit_code": 0, "summary": "5 passed"}
+  ],
+  "scope": {
+    "external_generation_invoked": false,
+    "deepseek_visual_validation_claimed": false,
+    "media_visual_acceptance_claimed": false,
+    "production_entry_changed": false
+  }
+}

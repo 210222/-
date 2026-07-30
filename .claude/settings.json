@@ -1,0 +1,26 @@
+{
+    "worktree": {
+        "bgIsolation": "none"
+    },
+    "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Write|Edit",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$d=(Get-Location).Path; while ($true) { $p=Join-Path $d '.claude\\hooks\\kb-guard.ps1'; if (Test-Path -LiteralPath $p -PathType Leaf) { & $p; exit $LASTEXITCODE }; $parent=Split-Path -Parent $d; if ([string]::IsNullOrEmpty($parent) -or $parent -eq $d) { break }; $d=$parent }; throw 'kb-guard.ps1 not found above working directory'\"",
+                        "timeout": 10
+                    }
+                ]
+            }
+        ]
+    },
+    "permissions": {
+      "allow": [
+          "Bash(*)",
+          "Agent(*)"
+      ],
+      "deny": []
+  }
+}

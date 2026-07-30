@@ -1,0 +1,56 @@
+{
+  "created_at": "2026-07-17T02:56:44.064177+00:00",
+  "director_agent": "mode-p-director",
+  "director_bound_at": "2026-07-17T03:00:04.871546+00:00",
+  "director_call_id": "aee80b90bb0f25729",
+  "director_model": "deepseek-v4-pro[1m]",
+  "director_provenance": {
+    "agent_call_id": "aee80b90bb0f25729",
+    "agent_tool_use_id": "call_00_AtD4V8MOi1uE5ry66bSJ5784",
+    "agent_type": "mode-p-director",
+    "prompt_sha256": "ebce2effe2294b5b87d2bc5abaa5f67aeea724a50782c29c90a4f79f4632ab87",
+    "resolved_model": "deepseek-v4-pro[1m]",
+    "tool_call_record_sha256": "3528fe7b41f81e361253e79da9740dbf6443441d4d07e56591d3ca5dde2e2b71",
+    "tool_result_record_sha256": "b2f719b64b04423c7e551a216786e69ba4bf0d6d82646c0f048759950f574002",
+    "transcript_path": "C:\\Users\\JT\\.claude\\projects\\D--tsc------v5\\acc06ecc-af24-4e35-924c-716ebf6947c0.jsonl"
+  },
+  "dp_agents": [
+    {
+      "agent_call_id": "a459a1c2ec9013b0b",
+      "bound_at": "2026-07-17T04:00:14.732778+00:00",
+      "model": "deepseek-v4-pro[1m]",
+      "provenance": {
+        "agent_call_id": "a459a1c2ec9013b0b",
+        "agent_tool_use_id": "call_00_uYiFnQ9oKivqjHFfKJKD3150",
+        "agent_type": "mode-p-dp",
+        "prompt_sha256": "3f48e84d79e61f74101b3192bf33054f4eb6cf6c2bca9df2581344ab4cf32621",
+        "resolved_model": "deepseek-v4-pro[1m]",
+        "tool_call_record_sha256": "2d18e35266f408306dae588f7d9818fb6ac62788d0e572ec94491828b874f3a8",
+        "tool_result_record_sha256": "add7fa56a6b1a09c1b418fd233058526ef7cfbdf2d49cb45066d5c81c61db49d",
+        "transcript_path": "C:\\Users\\JT\\.claude\\projects\\D--tsc------v5\\acc06ecc-af24-4e35-924c-716ebf6947c0.jsonl"
+      },
+      "review_id": "round-1"
+    }
+  ],
+  "evidence_dir": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005",
+  "fixed_input": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "owner": "claude-code",
+  "run_id": "run-005",
+  "schema_version": 2,
+  "status": "MODEL_ACCEPTANCE_PASSED",
+  "completed_at": "2026-07-17T04:05:00+00:00",
+  "delivery": {
+    "storyboard_sha256": "ba9ad986ec15ed426a7fd89ec8c9ecfa00f1966df4ee094f1b77b7eab92d5711",
+    "video_prompt_sha256": "4f0f0b5b4d773e398f1f1553de3e8746c92a19126a18adcaa043b735248e6dc3"
+  },
+  "gates": {
+    "B1_dramatic_understanding": "PASS",
+    "B2_shot_necessity": "PASS",
+    "B3_cross_domain_unity": "PASS",
+    "B4_full_episode_arc": "PASS",
+    "B5_mise_en_scene": "PASS",
+    "D4_knowledge_migration": "PASS",
+    "J12_model_provenance": "PASS"
+  }
+}

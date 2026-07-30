@@ -1,0 +1,2 @@
+FAIL view_deriver
+Deriver error: Boundary scene_004-B0 requires one Director-authored handoff and cut trigger

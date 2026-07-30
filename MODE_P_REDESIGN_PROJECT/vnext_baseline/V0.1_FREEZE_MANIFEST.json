@@ -1,0 +1,237 @@
+{
+  "manifest_version": "V0.1",
+  "frozen_at": "2026-07-22T00:00:00+08:00",
+  "description": "MODE:P vNext V0.1 baseline freeze: v4 entry/output contracts, 686-test black-box regression, 24 knowledge candidate files, and four Golden scene text/media paths with content hashes. v4 implementation details are NOT recorded here as design sources for vNext.",
+
+  "v4_entry_contract": {
+    "primary_entry": "/mode-p-pilot",
+    "entry_module": "01_调度器/mode_p/mode_p_pilot.py",
+    "entry_function": "run_pilot",
+    "cli_command": "python -m mode_p_pilot <script_path> [--session-dir <dir>] [--max-scenes-per-batch <n>]",
+    "cli_entry": "main()",
+    "runtime_roles": {
+      "orchestrator": "Claude Code task (current process)",
+      "persistent_director": "mode-p-director subagent (02_Agent/director_agent.md)",
+      "dp_reviewer": "fresh mode-p-dp subagent per review (02_Agent/dp_agent.md)"
+    },
+    "deterministic_runtime": "01_调度器/mode_p/ (local Python package)",
+    "notes": "v4 entry is READ-ONLY for vNext. Do not import, extend, or patch."
+  },
+
+  "v4_output_products": [
+    {"name": "SCRIPT_STRUCTURE.json", "path": "<session_dir>/SCRIPT_STRUCTURE.json", "role": "structured script parse"},
+    {"name": "SCRIPT_FACTS.md", "path": "<session_dir>/SCRIPT_FACTS.md", "role": "extracted narrative facts"},
+    {"name": "EPISODE_VISUAL_BIBLE.md", "path": "<session_dir>/EPISODE_VISUAL_BIBLE.md", "role": "visual bible for episode"},
+    {"name": "EPISODE_CONTINUITY_LEDGER.md", "path": "<session_dir>/EPISODE_CONTINUITY_LEDGER.md", "role": "continuity tracking"},
+    {"name": "BATCH_MANIFEST.json", "path": "<session_dir>/BATCH_MANIFEST.json", "role": "batch scheduling manifest"},
+    {"name": "SCENE_SESSIONS.json", "path": "<session_dir>/SCENE_SESSIONS.json", "role": "per-scene session registry"},
+    {"name": "RUN_STATE.json", "path": "<session_dir>/RUN_STATE.json", "role": "pipeline state machine"},
+    {"name": "EPISODE_BINDING.json", "path": "<session_dir>/EPISODE_BINDING.json", "role": "project-to-episode binding"},
+    {"name": "STORYBOARD.md", "path": "<delivery_dir>/STORYBOARD.md", "role": "final storyboard prompt file"},
+    {"name": "VIDEO_PROMPT.md", "path": "<delivery_dir>/VIDEO_PROMPT.md", "role": "final video prompt file"},
+    {"name": "DELIVERY_MANIFEST.json", "path": "<delivery_dir>/DELIVERY_MANIFEST.json", "role": "delivery integrity manifest"}
+  ],
+
+  "v4_regression_baseline": {
+    "test_count": 686,
+    "test_directory": "01_调度器/mode_p/",
+    "test_command": "python -m unittest discover -q",
+    "test_framework": "unittest (via pytest runner)",
+    "last_verified": "2026-07-22",
+    "last_result": "686 passed, 0 failed",
+    "note": "This is a black-box regression baseline. vNext must not reduce this count."
+  },
+
+  "knowledge_files": [
+    {"path": "03_知识库/03_导演知识库_v4.0.md", "sha256": "74c7ece77d6859cba021b6f1dc96a0f2f84537fefa7cab3373474fff62611239", "bytes": 42661, "source_group": "offline_archive", "disposition": "archived; forbidden for independent retrieval"},
+    {"path": "03_知识库/03_导演知识库_v5.0.md", "sha256": "6e507a7d63c185a05f4dd8609745b0b1442691434baf856dbe130747cc26576b", "bytes": 167622, "source_group": "offline_source", "disposition": "largest director rule source; extraction candidate only"},
+    {"path": "03_知识库/04_编剧知识库_v1.1.md", "sha256": "9b33017259f361c6a57b0ae9ed0fe18ca590c1e9643c82d2189d027396a0fbcc", "bytes": 39596, "source_group": "offline_source", "disposition": "diagnosis source; script-rewriting sections isolated"},
+    {"path": "03_知识库/04_构图思维_导演用.md", "sha256": "fe5b6c9b526fd1e842077329bf3bb27264ca334f0a4fb52e0c0b63ac7d09a952", "bytes": 27644, "source_group": "offline_source", "disposition": "composition candidate; intent-to-technique mapping must be softened"},
+    {"path": "03_知识库/运镜思维_导演可用运动思维.md", "sha256": "ef42f79e93ef67398b512fd4d1fc0e5f8ff3fe9568f062139f7d2e6ed85361dd", "bytes": 31180, "source_group": "offline_source", "disposition": "camera movement candidate; must not output direct shot answers"},
+    {"path": "03_知识库/导演手册_视觉叙事决策框架.md", "sha256": "24cf80f1a42b3c9f1286ee729ce0390aa0b42c14b019462ba6514f2999bd9b9c", "bytes": 12663, "source_group": "offline_source", "disposition": "diagnosis workflow candidate"},
+    {"path": "03_知识库/PERFORMANCE_KB.md", "sha256": "4c95aa7f36c9df459f7d527bd3e60c64568dafcde8c6f8d2f6411951e5f0b49e", "bytes": 12647, "source_group": "offline_source", "disposition": "performance visibility candidate; fixed psych mappings isolated"},
+    {"path": "03_知识库/sd2_model_capability.md", "sha256": "035789b9efd90eb2a4262e77fdb81c0c4e19f11ba7c19b9ca16f11a9e6c6f822", "bytes": 7207, "source_group": "offline_source", "disposition": "historical capability claim; NOT current permanent fact"},
+    {"path": "03_知识库/sd2_storyboard_prompt_quality_standard.md", "sha256": "060de62e310a31c7236470d7796063ecaf3bb30e5daa71c218a01fd05f134eae", "bytes": 37907, "source_group": "offline_source", "disposition": "storyboard/video prompt quality candidate"},
+    {"path": "03_知识库/distillation_engine_v1.0.md", "sha256": "9d597ba75a162fdd51f595cccf82b3950ce78c3d140f0e44b6c9de6ce0928dda", "bytes": 8929, "source_group": "offline_source", "disposition": "legacy distillation reference; do not restore old thresholds"},
+    {"path": "01_调度器/mode_p/knowledge/core/director_core.md", "sha256": "c5ec56aa59675e702ee61fed6252933b1735d326f71ffc1ee8c845404b647be5", "bytes": 4427, "source_group": "runtime_core", "disposition": "K1 candidate baseline"},
+    {"path": "01_调度器/mode_p/knowledge/core/editing_transition.md", "sha256": "84eac446041fe44310c80609e03e72ffa732b85be7bd644c8f72291967c09437", "bytes": 2574, "source_group": "runtime_core", "disposition": "K1/K2 split candidate"},
+    {"path": "01_调度器/mode_p/knowledge/core/performance.md", "sha256": "26e54571f1319f96092c58fe722c0a2586c22eb49148401974c4589076a31dbb", "bytes": 2452, "source_group": "runtime_core", "disposition": "K1 visibility + K2 shot-scale strategy"},
+    {"path": "01_调度器/mode_p/knowledge/core/sd2.md", "sha256": "f32d2483b5a8e810a7a2499c6c9571e538e084ba3378bfe07d69cd0605bcd6d7", "bytes": 1862, "source_group": "runtime_core", "disposition": "K1 capability interface; do not store fixed limits"},
+    {"path": "01_调度器/mode_p/knowledge/capsules/action_chase.md", "sha256": "fa675e1614889b81c6c70921836ac891e34d89a398f41d73510c32e01386c3c9", "bytes": 936, "source_group": "runtime_capsule", "disposition": "K2 migration candidate"},
+    {"path": "01_调度器/mode_p/knowledge/capsules/contemplative_silence.md", "sha256": "d3f715319b1a60697f658acd95df34790f0342a84e05d77770d34d65dd5df6d9", "bytes": 601, "source_group": "runtime_capsule", "disposition": "K2 migration candidate"},
+    {"path": "01_调度器/mode_p/knowledge/capsules/cross_space_transition.md", "sha256": "e556ebbcc60c6a2fd12062462b4d2a528684f5c8754a128c1da198f3704b22b7", "bytes": 2403, "source_group": "runtime_capsule", "disposition": "K2 migration candidate"},
+    {"path": "01_调度器/mode_p/knowledge/capsules/crowd_attention.md", "sha256": "0235b532792bcff191a239b225786738790dc6265eab9723a89d80376923f043", "bytes": 2235, "source_group": "runtime_capsule", "disposition": "K2 migration candidate"},
+    {"path": "01_调度器/mode_p/knowledge/capsules/dialogue_power.md", "sha256": "87bae44403cd708cc5ff5119285d157a22509473c901b251419794b389149bc2", "bytes": 1171, "source_group": "runtime_capsule", "disposition": "K2 migration candidate"},
+    {"path": "01_调度器/mode_p/knowledge/capsules/investigation_object.md", "sha256": "1c24275557e049b5016bdf719ed0b2aad53329968bdec832f796378dfa057627", "bytes": 2176, "source_group": "runtime_capsule", "disposition": "K2 migration candidate"},
+    {"path": "01_调度器/mode_p/knowledge/capsules/montage.md", "sha256": "ed95f34cde7ce6aaccbb15ae15fc1bb09bcb54a6946f147e9edd13faa544c7a9", "bytes": 2205, "source_group": "runtime_capsule", "disposition": "K2 migration candidate"},
+    {"path": "01_调度器/mode_p/knowledge/capsules/omni_reference.md", "sha256": "99a7175d7b64f316ef990ccb874abf1ba435ff48189b1dfe80879393d9911e3d", "bytes": 3051, "source_group": "runtime_capsule", "disposition": "K2 reference responsibility candidate"},
+    {"path": "01_调度器/mode_p/knowledge/capsules/suspense_reveal.md", "sha256": "7d28694a1e9a42ee83aede0aae92ddcc3cb5d478444edb1449f552b4c55b0ac4", "bytes": 876, "source_group": "runtime_capsule", "disposition": "K2 migration candidate"},
+    {"path": "01_调度器/mode_p/knowledge/knowledge_index.json", "sha256": "b5fe30538fad6a40e71f3796e07eeef8a837cc905058d68d90679713718388c7", "bytes": 9448, "source_group": "runtime_index", "disposition": "tooling metadata; rebuild index"}
+  ],
+
+  "golden_media": [
+    {
+      "key": "gun_barrel_sb",
+      "scene": "第八集枪管",
+      "episode": "EP8",
+      "media_type": "storyboard_image",
+      "path": "C:\\Users\\JT\\Downloads\\第八集-图片.png",
+      "sha256": "d995353f808a26cdaa360ea174baeaed0f84c6390c26314f6915e7f255c3ac1b",
+      "bytes": 8085345,
+      "width": 2560,
+      "height": 1440,
+      "format": "PNG",
+      "status": "available",
+      "role": "continuous attention contraction into barrel interior landing frame"
+    },
+    {
+      "key": "gun_barrel_video",
+      "scene": "第八集枪管",
+      "episode": "EP8",
+      "media_type": "video",
+      "path": "C:\\Users\\JT\\Downloads\\第八集-视频.mp4",
+      "sha256": "3b405440ea1723c32081568fe6f99e8275550be081f007af90b0689e5ea336c9",
+      "bytes": 7144650,
+      "width": 734,
+      "height": 1280,
+      "format": "HEVC, 24fps",
+      "duration_s": 13.041667,
+      "status": "available",
+      "role": "single continuous attention path; barrel interior not rendered as magical vortex"
+    },
+    {
+      "key": "audience_sb",
+      "scene": "第六集观众席",
+      "episode": "EP6",
+      "media_type": "storyboard_image",
+      "path": "C:\\Users\\JT\\Downloads\\第6集：比赛日-图片 (4).png",
+      "sha256": "59595027cd4a75c09727431f33a40ac615a9c7c44b45c58696367fbd7b0bbe1d",
+      "bytes": 8569481,
+      "width": 2560,
+      "height": 1440,
+      "format": "PNG",
+      "status": "available",
+      "role": "three internal cuts within one generation segment"
+    },
+    {
+      "key": "audience_video",
+      "scene": "第六集观众席",
+      "episode": "EP6",
+      "media_type": "video",
+      "path": "C:\\Users\\JT\\Downloads\\第6集：比赛日-视频 (6).mp4",
+      "sha256": "8fee5725cb1d4289133f2a11c5d1e59881a01bc60302daf29e4e9dcc9e420459",
+      "bytes": 5773903,
+      "width": 734,
+      "height": 1280,
+      "format": "HEVC, 24fps",
+      "duration_s": 12.041667,
+      "status": "available",
+      "role": "two real hard cuts executed by video model within one video"
+    },
+    {
+      "key": "prep_area_sb",
+      "scene": "第六集备赛区擦肩",
+      "episode": "EP6",
+      "media_type": "storyboard_image",
+      "path": "C:\\Users\\JT\\Downloads\\第6集：比赛日-图片 (5).png",
+      "sha256": "96487289a5f5c6b226737b70b6d90026fac62544c0ddc99c4391c005b2678bd6",
+      "bytes": 8403972,
+      "width": 2560,
+      "height": 1440,
+      "format": "PNG",
+      "status": "available",
+      "role": "composition success; timing and character behavior deviation diagnostic sample"
+    },
+    {
+      "key": "prep_area_video",
+      "scene": "第六集备赛区擦肩",
+      "episode": "EP6",
+      "media_type": "video",
+      "path": "C:\\Users\\JT\\Downloads\\第6集：比赛日-视频 (7).mp4",
+      "sha256": "4108f6dcf0c51d88c42f134054705e8296cd5926c61d80dce7c32e022ec9401a",
+      "bytes": 3458311,
+      "width": 734,
+      "height": 1280,
+      "format": "HEVC, 24fps",
+      "duration_s": 9.041667,
+      "status": "available",
+      "role": "merged into single uncut video; actual duration 9.04s"
+    },
+    {
+      "key": "alley_sb",
+      "scene": "第六集贫民窟窄巷",
+      "episode": "EP6",
+      "media_type": "storyboard_image",
+      "path": "C:\\Users\\JT\\Downloads\\第6集：比赛日-图片 (6).png",
+      "sha256": "e749c64c5536e4b279c539f2444079d10a0225497606bba69bb2d6d557412839",
+      "bytes": 8400334,
+      "width": 2560,
+      "height": 1440,
+      "format": "PNG",
+      "status": "available",
+      "role": "faithful to narrative topology; optimized connection method"
+    },
+    {
+      "key": "alley_video",
+      "scene": "第六集贫民窟窄巷",
+      "episode": "EP6",
+      "media_type": "video",
+      "path": "C:\\Users\\JT\\Downloads\\第6集：比赛日-视频 (8).mp4",
+      "sha256": "0df347a25f69175ba50d79d3e48a26978db73ec1c0cd59ef30ca2c56dcd372ce",
+      "bytes": 9197175,
+      "width": 734,
+      "height": 1280,
+      "format": "HEVC, 24fps",
+      "duration_s": 13.041667,
+      "status": "available",
+      "role": "user explicitly rated camera movement highly"
+    }
+  ],
+
+  "golden_scene_user_evaluations": {
+    "gun_barrel_ep8": "continuous attention contraction into barrel landing frame — successful single-attention-path execution",
+    "audience_ep6": "three internal cuts within one generation segment — video model executes real hard cuts",
+    "alley_ep6": "narrow alley — user explicitly rated camera movement highly; faithful to narrative topology",
+    "prep_area_ep6": "prep area shoulder-brush — composition success; timing/character behavior deviation noted"
+  },
+
+  "common_media_facts": {
+    "storyboard": "all four storyboard images are 2560×1440 landscape 16:9 PNG",
+    "video": "all four videos are 734×1280 portrait HEVC at 24fps",
+    "implication": "storyboard is NOT a pixel template for video; it conveys composition, staging, attention path, and landing frame",
+    "availability_summary": {
+      "available": 8,
+      "missing": 0,
+      "last_verified": "2026-07-23",
+      "note": "Each entry carries its own status field (available|missing). This summary is derived and non-authoritative."
+    }
+  },
+
+  "forbidden_for_vnext_design_source": [
+    "v4 module internals (01_调度器/mode_p/*.py)",
+    "v4 knowledge index structure",
+    "v4 cache contents",
+    "v4 Session data",
+    "v4 delivery formats as authoritative schema",
+    "legacy_mode_p/ contents",
+    "old YAML agent protocols",
+    "fixed revision-round limits",
+    "rule-ID audit systems"
+  ],
+
+  "authority_files": [
+    {"path": "02_Agent/director_agent.md", "role": "canonical Director agent definition", "sha256": "315941ca1c9c4e7f94f8e50a6280c1bd29fffb8c7fd0c819a44485a2deac18a3"},
+    {"path": "02_Agent/dp_agent.md", "role": "canonical DP agent definition", "sha256": "5a6892382f7465f528e9b2bba32ffeebe7c3b7302abfd82d8a33806fd65f349e"},
+    {"path": ".claude/agents/mode-p-director.md", "role": "Claude Code custom agent frontmatter", "sha256": "3bf27f8ad7ac8fa4d892cc03fc0791f0260fba83c960f214b89c1ad4eb76c58d"},
+    {"path": ".claude/agents/mode-p-dp.md", "role": "Claude Code custom agent frontmatter", "sha256": "489801ba94a3d1e1f595a19ed430ede36e641c123cbff747291bddbff99f926c"},
+    {"path": ".claude/commands/mode-p-pilot.md", "role": "Claude Code execution contract", "sha256": "407df11ea7a7a2571ae2f61c30809bec07f17468b8963feb5df83f765701bcc2"},
+    {"path": "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_LOOP_SPEC.md", "role": "vNext runtime authority", "sha256": "fcf70defffcc76e6d8700a77cf0ad8128681527264dd110338eee881f7548993"},
+    {"path": "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REBUILD_LOOP.md", "role": "vNext rebuild protocol", "sha256": "94551d5c53b881f6f7bdb66c16816e9df2a3085244df5510d6fe8d50e575a04d"},
+    {"path": "MODE_P_REDESIGN_PROJECT/GOLDEN_SET_EVIDENCE_REPORT.md", "role": "Golden evidence report", "sha256": "eeccf346c51af3349e039284beb041ddb984f017e5eac1c9427cdca5a00f8ee2"},
+    {"path": "MODE_P_REDESIGN_PROJECT/KNOWLEDGE_BASE_AUDIT.md", "role": "knowledge base audit", "sha256": "a1d646beba54a29400ff48940de1931b46fc0c6df074d21226c6113f3936e574"},
+    {"path": "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_OMISSION_AUDIT.md", "role": "omission audit", "sha256": "3afe1ae5c12682f9583a7e481e181d33532052f65c67e3c87782181a14f1be1b"},
+    {"path": "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_PRODUCTION_AUDIT.md", "role": "production audit", "sha256": "ab2e158bcdc7715ff9a43e866b834ac61442fa8d451067cdd46404e2af2cf3d6"},
+    {"path": "ASSET_INDEX.json", "role": "asset index", "sha256": "3b428ae11c7704fc793123eb304fbd2c3151ede99926499b960b05dfd12603e4"},
+    {"path": "ASSET_CARD_INDEX.json", "role": "asset card index", "sha256": "e7068cd013e3aaa79bbb020c089d86e54d4f925b0599e810bc8abfd25faefc4d"}
+  ]
+}

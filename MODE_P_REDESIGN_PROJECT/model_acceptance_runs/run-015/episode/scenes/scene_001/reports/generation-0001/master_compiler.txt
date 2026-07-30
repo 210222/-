@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: No Shot headers found in Master. Expected format: '## Shot <scene_id>-<N> | <duration>s'

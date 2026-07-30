@@ -1,0 +1,535 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_001",
+  "master_version": "scene_001/v1.0",
+  "master_content_hash": "25e264a85776d826ec202ed3c238a873f58d7d5c3d99c945ca34991020f70f65",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_001-1",
+      "duration": 11.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "林警探与许然隔桌相对；林警探把一张模糊的停车场照片推到桌中央并压住；说出指控「你说九点前就离开了。」。",
+        "source_scene_id": "scene_001",
+        "source_line_start": 5,
+        "source_line_end": 7
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手搭在西侧桌面照片上",
+            "wardrobe": "深灰衬衫卷袖深色西裤"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐挺直，双手搭在桌沿",
+            "wardrobe": "炭黑立领夹克内搭深灰圆领衫"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面西侧林警探手下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "夹克左胸内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static",
+        "story_time": "夜",
+        "environment": "密闭审讯室，罩灯恒定"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手压桌心照片"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，右手抬至左胸衣襟"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央林警探掌下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "夹克左胸内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "launch"
+      },
+      "entry_boundary_id": "scene_001-B0",
+      "exit_boundary_id": "scene_001-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-2",
+      "duration": 8.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "许然没有碰照片；他从外套内袋取出一枚警徽，放在照片旁。",
+        "source_scene_id": "scene_001",
+        "source_line_start": 9,
+        "source_line_end": 9
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手压桌心照片"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，右手抬至左胸衣襟"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央林警探掌下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "夹克左胸内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "launch"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手压桌心照片"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，双手回搭桌沿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央林警探掌下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "桌心照片东侧紧邻"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      },
+      "entry_boundary_id": "scene_001-B1",
+      "exit_boundary_id": "scene_001-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_001-3",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "许然的质问「先问问这枚警徽昨晚为什么在你的车里。」（画外）；林警探停住，收回压在照片上的手。",
+        "source_scene_id": "scene_001",
+        "source_line_start": 11,
+        "source_line_end": 13
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手压桌心照片"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，双手回搭桌沿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央林警探掌下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "桌心照片东侧紧邻"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐直，双手收回身前停住"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，视线在林警探身上"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "桌心照片东侧紧邻"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_001-B2",
+      "exit_boundary_id": "scene_001-B3",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_001-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_001-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手搭在西侧桌面照片上",
+            "wardrobe": "深灰衬衫卷袖深色西裤"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐挺直，双手搭在桌沿",
+            "wardrobe": "炭黑立领夹克内搭深灰圆领衫"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面西侧林警探手下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "夹克左胸内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static",
+        "story_time": "夜",
+        "environment": "密闭审讯室，罩灯恒定"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B1",
+      "from_ref": "scene_001-1",
+      "to_ref": "scene_001-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手压桌心照片"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，右手抬至左胸衣襟"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央林警探掌下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "夹克左胸内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "launch"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手压桌心照片"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，右手抬至左胸衣襟"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央林警探掌下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "xu_ran",
+            "location": "夹克左胸内袋不可见"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "launch"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B2",
+      "from_ref": "scene_001-2",
+      "to_ref": "scene_001-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手压桌心照片"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，双手回搭桌沿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央林警探掌下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "桌心照片东侧紧邻"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐姿前倾，右手压桌心照片"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，双手回搭桌沿"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央林警探掌下"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "桌心照片东侧紧邻"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      }
+    },
+    {
+      "boundary_id": "scene_001-B3",
+      "from_ref": "scene_001-3",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin_jingtan",
+            "position": "审讯桌西侧椅",
+            "facing": "东",
+            "screen_direction": "static",
+            "posture": "坐直，双手收回身前停住"
+          },
+          {
+            "entity_id": "xu_ran",
+            "position": "审讯桌东侧椅",
+            "facing": "西",
+            "screen_direction": "static",
+            "posture": "端坐，视线在林警探身上"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "parking_photo",
+            "held_by": "none",
+            "location": "桌面正中央"
+          },
+          {
+            "prop_id": "police_badge",
+            "held_by": "none",
+            "location": "桌心照片东侧紧邻"
+          }
+        ],
+        "light_main": {
+          "direction": "正上方罩灯垂直向下",
+          "color_temp_k": 4500,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

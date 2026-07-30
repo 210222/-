@@ -1,0 +1,32 @@
+{
+  "schema_version": "ddo-evidence-v1",
+  "task_id": "DDO-4",
+  "run_id": "DDO-4_001",
+  "status": "VERIFIED_TEXT_ONLY",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/editorial.py",
+    "01_调度器/mode_p_vnext/director_vnext1/revision.py",
+    "01_调度器/mode_p_vnext/tests/test_ddo_4_editorial.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-4_001.json"
+  ],
+  "checks": [
+    {"name": "two_review_modes", "exit_code": 0},
+    {"name": "text_validated_ceiling", "exit_code": 0},
+    {"name": "no_shot_takeover", "exit_code": 0},
+    {"name": "bounded_revision", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_4_editorial", "exit_code": 0, "summary": "3 passed in 0.07s"}
+  ],
+  "scope": {
+    "external_generation_invoked": false,
+    "production_entry_changed": false,
+    "vec_mutated_by_editorial": false,
+    "media_visual_acceptance_claimed": false
+  },
+  "non_claims": [
+    "Editorial review is a text-contract diagnosis only.",
+    "A revision request is scoped for the Director; it does not select a new shot or perform a render."
+  ]
+}

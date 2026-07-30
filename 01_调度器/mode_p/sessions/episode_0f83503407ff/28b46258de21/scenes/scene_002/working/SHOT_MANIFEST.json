@@ -1,0 +1,678 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_002",
+  "master_version": "scene_002/v1.0",
+  "master_content_hash": "8bb9efa0222ce0723d0c07b09860a023845a0f192f07bfa2e92cf2050bb27f5e",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_002-1",
+      "duration": 12.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L26-L28：周从文拎五花肉走到楼下→系统面板浮现→雪花消散少许、流光转动→OS确认能量不足",
+        "source_scene_id": "scene_002",
+        "source_line_start": 26,
+        "source_line_end": 28
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "street_far_left",
+            "facing": "toward_building",
+            "screen_direction": "left_to_right",
+            "posture": "walking_carrying_pork_right_hand"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "出租楼",
+            "held_by": "无",
+            "location": "right_side_of_frame"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "travel"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_building",
+            "facing": "toward_building_door",
+            "screen_direction": "depth_in",
+            "posture": "standing_carrying_pork_relaxed"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "出租楼门框",
+            "held_by": "无",
+            "location": "background_right"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_002-B0",
+      "exit_boundary_id": "scene_002-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-2",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L29-L32：房东大婶看到周从文→挥手→热情邀饭→周从文微笑婉拒",
+        "source_scene_id": "scene_002",
+        "source_line_start": 29,
+        "source_line_end": 32
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_building",
+            "facing": "toward_building_door",
+            "screen_direction": "depth_in",
+            "posture": "standing_carrying_pork_relaxed"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "出租楼门框",
+            "held_by": "无",
+            "location": "background_right"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_building",
+            "facing": "toward_left_about_to_turn",
+            "screen_direction": "left_to_right",
+            "posture": "body_turned_slightly_head_still_facing_door"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "doorway",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "standing_hands_down_satisfied_expression"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "right_side"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_002-B1",
+      "exit_boundary_id": "scene_002-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-3",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L33-L35：周从文转身离去→柳小别拿黄瓜咬了一口从门内走出→房东大婶眼神示意问评价→柳小别漫不经心看背影冷淡回应",
+        "source_scene_id": "scene_002",
+        "source_line_start": 33,
+        "source_line_end": 35
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_building",
+            "facing": "toward_left_about_to_turn",
+            "screen_direction": "left_to_right",
+            "posture": "body_turned_slightly_head_still_facing_door"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "doorway",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "standing_hands_down_satisfied_expression"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "right_side"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "柳小别",
+            "position": "doorway_center",
+            "facing": "toward_left_vaguely",
+            "screen_direction": "static",
+            "posture": "standing_relaxed_chewing_cucumber"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "doorway_right",
+            "facing": "toward_柳小别",
+            "screen_direction": "left_to_right",
+            "posture": "standing_side_glance_酝酿劝说"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "黄瓜",
+            "held_by": "柳小别",
+            "location": "right_hand_near_mouth"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "center_frame"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_002-B2",
+      "exit_boundary_id": "scene_002-B3",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_002-4",
+      "duration": 12.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L36-L38：房东大婶瞪眼斥责→推介周从文→柳小别转身入屋拒绝→房东大婶追骂",
+        "source_scene_id": "scene_002",
+        "source_line_start": 36,
+        "source_line_end": 38
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "柳小别",
+            "position": "doorway_center",
+            "facing": "toward_left_vaguely",
+            "screen_direction": "static",
+            "posture": "standing_relaxed_chewing_cucumber"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "doorway_right",
+            "facing": "toward_柳小别",
+            "screen_direction": "left_to_right",
+            "posture": "standing_side_glance_酝酿劝说"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "黄瓜",
+            "held_by": "柳小别",
+            "location": "right_hand_near_mouth"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "center_frame"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "房东大婶",
+            "position": "inside_building_not_visible",
+            "facing": "unknown",
+            "screen_direction": "depth_in",
+            "posture": "chasing_柳小别_inside"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "inside_building_not_visible",
+            "facing": "unknown",
+            "screen_direction": "depth_in",
+            "posture": "retreated_inside"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "upstairs",
+            "facing": "none",
+            "screen_direction": "depth_in",
+            "posture": "departed_not_visible"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "黄瓜",
+            "held_by": "柳小别",
+            "location": "inside_building"
+          },
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "upstairs"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "center_empty"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "recover"
+      },
+      "entry_boundary_id": "scene_002-B3",
+      "exit_boundary_id": "scene_002-B4",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_002-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_002-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "street_far_left",
+            "facing": "toward_building",
+            "screen_direction": "left_to_right",
+            "posture": "walking_carrying_pork_right_hand"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "出租楼",
+            "held_by": "无",
+            "location": "right_side_of_frame"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "travel"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B1",
+      "from_ref": "scene_002-1",
+      "to_ref": "scene_002-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_building",
+            "facing": "toward_building_door",
+            "screen_direction": "depth_in",
+            "posture": "standing_carrying_pork_relaxed"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "出租楼门框",
+            "held_by": "无",
+            "location": "background_right"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_building",
+            "facing": "toward_building_door",
+            "screen_direction": "depth_in",
+            "posture": "standing_carrying_pork_relaxed"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "出租楼门框",
+            "held_by": "无",
+            "location": "background_right"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B2",
+      "from_ref": "scene_002-2",
+      "to_ref": "scene_002-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_building",
+            "facing": "toward_left_about_to_turn",
+            "screen_direction": "left_to_right",
+            "posture": "body_turned_slightly_head_still_facing_door"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "doorway",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "standing_hands_down_satisfied_expression"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "right_side"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_building",
+            "facing": "toward_left_about_to_turn",
+            "screen_direction": "left_to_right",
+            "posture": "body_turned_slightly_head_still_facing_door"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "doorway",
+            "facing": "toward_周从文",
+            "screen_direction": "right_to_left",
+            "posture": "standing_hands_down_satisfied_expression"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "right_hand"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "right_side"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B3",
+      "from_ref": "scene_002-3",
+      "to_ref": "scene_002-4",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "柳小别",
+            "position": "doorway_center",
+            "facing": "toward_left_vaguely",
+            "screen_direction": "static",
+            "posture": "standing_relaxed_chewing_cucumber"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "doorway_right",
+            "facing": "toward_柳小别",
+            "screen_direction": "left_to_right",
+            "posture": "standing_side_glance_酝酿劝说"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "黄瓜",
+            "held_by": "柳小别",
+            "location": "right_hand_near_mouth"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "center_frame"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "柳小别",
+            "position": "doorway_center",
+            "facing": "toward_left_vaguely",
+            "screen_direction": "static",
+            "posture": "standing_relaxed_chewing_cucumber"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "doorway_right",
+            "facing": "toward_柳小别",
+            "screen_direction": "left_to_right",
+            "posture": "standing_side_glance_酝酿劝说"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "黄瓜",
+            "held_by": "柳小别",
+            "location": "right_hand_near_mouth"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "center_frame"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      }
+    },
+    {
+      "boundary_id": "scene_002-B4",
+      "from_ref": "scene_002-4",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "房东大婶",
+            "position": "inside_building_not_visible",
+            "facing": "unknown",
+            "screen_direction": "depth_in",
+            "posture": "chasing_柳小别_inside"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "inside_building_not_visible",
+            "facing": "unknown",
+            "screen_direction": "depth_in",
+            "posture": "retreated_inside"
+          },
+          {
+            "entity_id": "周从文",
+            "position": "upstairs",
+            "facing": "none",
+            "screen_direction": "depth_in",
+            "posture": "departed_not_visible"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "黄瓜",
+            "held_by": "柳小别",
+            "location": "inside_building"
+          },
+          {
+            "prop_id": "五花肉",
+            "held_by": "周从文",
+            "location": "upstairs"
+          },
+          {
+            "prop_id": "门框",
+            "held_by": "无",
+            "location": "center_empty"
+          }
+        ],
+        "light_main": {
+          "direction": "from_upper_left_afternoon_sun",
+          "color_temp_k": 4200,
+          "ratio": "1:3"
+        },
+        "action_phase": "recover"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

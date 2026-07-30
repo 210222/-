@@ -1,0 +1,218 @@
+{
+  "schema_name": "mode_p_director_refactor_goal_lock",
+  "schema_version": "1.1.0",
+  "status": "FROZEN_PRECONSTRUCTION_V1_1",
+  "created_at": "2026-07-29T00:00:00+08:00",
+  "project_root": "D:\\tsc\\导演系统_v5",
+  "authorization_scope": "user-approved construction-plan correction and preconstruction design only",
+  "predecessor": {
+    "construction_plan": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md",
+      "sha256": "37e444e3c25e1e05d0c3f43fa5340631d159c4c69062aa3ca98cb20e5e00b2bc"
+    },
+    "goal_lock": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_REFACTOR_GOAL_LOCK.json",
+      "sha256": "71edcc7152e9268886a99723e00b707caa892fb5ef9feac0df750f965dcd1272"
+    },
+    "change_request": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_OPTIMIZATION_CHANGE_REQUEST_001.md",
+      "status_before_this_lock": "PROPOSED_NOT_YET_FROZEN"
+    }
+  },
+  "construction_plan": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md",
+    "sha256": "6309b31867d74065f4297f57f7a2fb5cee41f933aec0e149a9127466ef8338ce",
+    "change_requires_user_approval": true
+  },
+  "production_policy": {
+    "current_entry": "v4_unchanged",
+    "this_lock_authorizes_production_switch": false,
+    "this_lock_authorizes_legacy_deletion": false,
+    "user_approval_required_for_switch": true,
+    "text_only_review_may_grant_visual_acceptance": false
+  },
+  "activation_guard": {
+    "director_vnext_runtime_may_start_before_r3_2": false,
+    "ddo_queue_may_be_created_before_r3_2": false,
+    "r3_2_must_truthfully_resolve": [
+      "baseline_cohort_reconciliation",
+      "all_70_evidence_reconciliation",
+      "local_terminal_state_contract"
+    ],
+    "r0_to_r3_repair_evidence_must_not_be_rewritten": true
+  },
+  "goals": [
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-04",
+    "G-05",
+    "G-06",
+    "G-07",
+    "G-08"
+  ],
+  "non_negotiable_invariants": [
+    "INV-SOURCE-01",
+    "INV-SOURCE-02",
+    "INV-SOURCE-03",
+    "INV-SOURCE-04",
+    "INV-NOMASTER-01",
+    "INV-NOMASTER-02",
+    "INV-NOMASTER-03",
+    "INV-NOMASTER-04",
+    "INV-TIME-01",
+    "INV-TIME-02",
+    "INV-TIME-03",
+    "INV-TIME-04",
+    "INV-SPACE-01",
+    "INV-SPACE-02",
+    "INV-SPACE-03",
+    "INV-PROP-01",
+    "INV-PROP-02",
+    "INV-GAZE-01",
+    "INV-REF-01",
+    "INV-REF-02",
+    "INV-REF-03",
+    "INV-REF-04",
+    "INV-AUDIO-01",
+    "INV-LEAK-01",
+    "INV-LEAK-02",
+    "INV-LEAK-03",
+    "INV-LEAK-04",
+    "INV-LEAK-05",
+    "INV-DIALOGUE-01",
+    "INV-DIALOGUE-02",
+    "INV-DIALOGUE-03",
+    "INV-DIR-01",
+    "INV-DIR-02",
+    "INV-DIR-03",
+    "INV-DIR-04",
+    "INV-DIR-05",
+    "INV-DIR-06",
+    "INV-DIR-07"
+  ],
+  "single_creative_source": {
+    "artifact": "VisualExecutionContract",
+    "machine_readable": true,
+    "immutable_after_commit": true,
+    "storyboard_is_projection": true,
+    "video_prompt_is_projection": true,
+    "storyboard_may_derive_video": false,
+    "video_may_derive_storyboard": false,
+    "old_director_master_is_runtime_authority": false,
+    "vec_must_reference_blocking_commit": true,
+    "vec_must_reference_director_decision_records": true
+  },
+  "removed_legacy_dependencies": {
+    "master_continuity_board": true,
+    "master_storyboard": true,
+    "fixed_image_2_first_panel": true,
+    "fixed_image_3_last_panel": true,
+    "fixed_image_4_previous_video_last_frame": true,
+    "previous_video_frame_forces_next_opening": false,
+    "global_episode_time_in_segment_prompt": false
+  },
+  "director_agent": {
+    "identity_scope": "one_persistent_director_per_episode",
+    "logical_stages": ["E0", "S1", "K1", "B0", "K2", "B1", "R1"],
+    "episode_direction_state_required": true,
+    "scene_intent_may_output_final_shot_answer": false,
+    "blocking_commit_required_before_camera_edit_or_transition": true,
+    "candidate_or_constraint_lock_required_before_vec_freeze": true,
+    "phase_b_outputs_single_executable_choice": true,
+    "private_chain_of_thought_is_required_artifact": false,
+    "structured_decision_record_required": true,
+    "selected_capsules_and_rejected_alternatives_required": true,
+    "director_must_not_be_replaced_by_dp_or_scoring": true
+  },
+  "knowledge_runtime": {
+    "full_books_loaded_at_runtime": false,
+    "offline_normalization_required": true,
+    "two_stage_retrieval_required": true,
+    "k1_before_blocking_commit": true,
+    "k2_after_blocking_commit": true,
+    "primary_card_budget": 3,
+    "conflict_card_budget": 1,
+    "anti_pattern_card_budget": 1,
+    "primary_type_required": true,
+    "field_provenance_required": true,
+    "trigger_and_contraindication_required": true,
+    "confidence_and_allowed_use_required": true,
+    "low_confidence_card_may_independently_decide_high_impact_choice": false,
+    "no_match_falls_back_to_generic_shot_template": false,
+    "conflicts_are_exposed_not_auto_resolved": true,
+    "capsule_applicability_record_required": true
+  },
+  "transition_policy": {
+    "explicit_boundary_transition_required": true,
+    "allowed_modes": ["hard_cut", "continuous", "match_cut", "dissolve"],
+    "hard_cut_is_valid": true,
+    "hard_cut_ratio_is_governed": false,
+    "continuous_ratio_is_governed": false,
+    "default_mode_permitted": false,
+    "reason_and_decision_reference_required": true
+  },
+  "editorial_review_policy": {
+    "modes": ["MUTE_VISUAL_LOGIC", "DIALOGUE_REDUNDANCY"],
+    "may_issue_directed_question": true,
+    "may_prescribe_shot_solution": false,
+    "maximum_verdict": "TEXT_VALIDATED"
+  },
+  "outcome_attribution_policy": {
+    "required_for_media_failure": true,
+    "allowed_causes": [
+      "fact",
+      "episode_intent",
+      "scene_intent",
+      "blocking",
+      "decision",
+      "VEC_field",
+      "reference",
+      "adapter",
+      "generation_variance"
+    ],
+    "automatic_unscoped_regeneration_permitted": false,
+    "single_generation_variance_promotes_knowledge": false
+  },
+  "reference_policy": {
+    "authority": "asset_id_content_sha256_role",
+    "platform_image_number_is_authority": false,
+    "storyboard_and_video_share_role_bindings": true,
+    "whole_storyboard_default_video_reference": false,
+    "whole_storyboard_reference_requires_target_model_ab_test": true,
+    "voice_binding_required_for_character_dialogue": true
+  },
+  "timeline_policy": {
+    "machine_time": "integer_tick",
+    "interval_semantics": "[start,end)",
+    "segment_display_time_origin_seconds": 0,
+    "global_time_manifest_only": true,
+    "storyboard_panel_count_equals_seconds": false,
+    "panel_requires_visual_beat_or_boundary_source": true
+  },
+  "preview_claim_ceiling_without_visual_media_evidence": "PLANNED_PREVIEW",
+  "performance_targets": {
+    "local_schema_p95_seconds": 5,
+    "local_compile_p95_seconds": 5,
+    "episode_strong_model_call_max": 1,
+    "normal_scene_strong_model_call_max": 3,
+    "adapter_only_change_may_invalidate_director": false,
+    "unrelated_scene_may_be_invalidated_by_local_beat_change": false
+  },
+  "completion_requires": [
+    "truthful_r3_2_reconciliation",
+    "real_director_e0_to_b1_on_unseen_script",
+    "blocking_commit_before_camera_edit_and_transition",
+    "candidate_or_constraint_lock_evidence",
+    "problem_driven_knowledge_with_confidence_and_ablation_improvement",
+    "single_visual_execution_contract",
+    "field_level_storyboard_video_homology",
+    "dual_mode_editorial_review_without_shot_takeover",
+    "outcome_attribution_before_regeneration",
+    "all_required_regressions_green",
+    "golden_holdout_and_mutation_green",
+    "actual_storyboard_and_video_media_acceptance",
+    "performance_recovery_concurrency_and_rollback_green",
+    "explicit_user_production_approval"
+  ]
+}

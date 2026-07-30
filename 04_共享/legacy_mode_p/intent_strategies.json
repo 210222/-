@@ -1,0 +1,116 @@
+{
+  "_meta": {
+    "version": "v2.0",
+    "date": "2026-07-08",
+    "design": "21个核心视觉策略 → 默认参数映射。跨场景通用。v2.0新增11个策略覆盖盲区。",
+    "coverage": "95% (基于渐近覆盖模型·10+log(0.05/0.30)/log(0.85)≈21)"
+  },
+  "strategies": {
+    "感官剥夺": {
+      "desc": "极窄景别·浅景深·观众只看到细节·看不到全貌·与角色共享视角局限",
+      "default_params": {"shot_type":"大特写","focal_length":"100mm","dof":"极浅f/1.4-f/2.0","movement":"固定或极慢推近0.1x","angle":"水平或微俯"}
+    },
+    "标准对话三角形": {
+      "desc": "两个角色面对面·标准三角形机位·外反拍+内反拍·观众客观观察",
+      "default_params": {"shot_type":"中景","focal_length":"35mm","dof":"中景深f/5.6","movement":"固定","angle":"眼平"}
+    },
+    "标准单人对白": {
+      "desc": "单个角色面对观众或镜头方向说话·非双人三角形·角色主体·背景虚化",
+      "default_params": {"shot_type":"近景","focal_length":"50mm","dof":"浅f/2.8","movement":"固定","angle":"眼平"}
+    },
+    "POV/主观视角": {
+      "desc": "观众通过角色的眼睛看·视野与角色绑定·模拟人眼视觉",
+      "default_params": {"shot_type":"近景或特写","focal_length":"40-50mm","dof":"中f/4-f/5.6","movement":"手持呼吸感·微晃±2cm","angle":"角色眼平高度"},
+      "llm_required": true
+    },
+    "冷暖色温交界": {
+      "desc": "两个空间/两个世界在门框或交界处碰撞·冷暖光同时可见",
+      "default_params": {"shot_type":"中景","focal_length":"35mm","dof":"中景深f/5.6","movement":"固定","angle":"眼平","lighting":"双色温·暖色在远侧·冷色在近侧"}
+    },
+    "非人化→常化": {
+      "desc": "角色从底光非人化状态过渡到正常眼平状态·视觉上'变回人'",
+      "default_params": {"shot_type":"近景","focal_length":"50mm","dof":"中浅f/2.8-f/4","movement":"固定或呼吸式微位移","angle":"底光过渡到眼平"}
+    },
+    "空间建立": {
+      "desc": "让观众知道'在哪里'·全貌展示·建立空间坐标系",
+      "default_params": {"shot_type":"全景","focal_length":"24mm","dof":"深景深f/8-f/11","movement":"固定","angle":"眼平"}
+    },
+    "极大规模空间": {
+      "desc": "体育场·广场·荒野——空间尺度远超正常·人物在画面中极小",
+      "default_params": {"shot_type":"远景或极远景","focal_length":"12-24mm超广角","dof":"深f/8-f/11","movement":"航拍或极慢摇摄","angle":"俯角或极高角度"}
+    },
+    "证据/屏幕展示": {
+      "desc": "插入镜头·展示关键信息物·观众看到角色正在看的东西",
+      "default_params": {"shot_type":"特写","focal_length":"35mm或85mm","dof":"深f/8(屏幕)或浅f/2.8(物件)","movement":"固定","angle":"正面"}
+    },
+    "沉默中的情绪转折": {
+      "desc": "角色什么都没说·但观众知道有什么变了·需要导演判断",
+      "default_params": {"shot_type":"近景→特写","focal_length":"50mm→85mm","dof":"浅f/2.8","movement":"极慢推近0.03-0.05x","angle":"眼平→微俯或微仰"},
+      "llm_required": true
+    },
+    "运动/动作中的揭示": {
+      "desc": "通过摄影机或角色运动来揭示新信息或空间关系",
+      "default_params": {"shot_type":"中景→中全景","focal_length":"24-35mm","dof":"中f/5.6-f/8","movement":"摇臂升起·跟拍或横移","angle":"动态变化"},
+      "llm_required": true
+    },
+    "动作/动能": {
+      "desc": "打斗·追逐·格斗——高动能·快节奏·摄影机参与运动",
+      "default_params": {"shot_type":"中景或特写快速切换","focal_length":"24-50mm","dof":"中f/5.6","movement":"手持抖动或极稳定长镜头","angle":"动态变化"},
+      "llm_required": true
+    },
+    "悬疑/紧张积累": {
+      "desc": "观众知道有事要发生但还没发生·摄影机充当寻找危险的眼睛",
+      "default_params": {"shot_type":"全景或中景","focal_length":"24-35mm","dof":"深f/8","movement":"极慢推近0.01-0.03x","angle":"眼平或微俯"}
+    },
+    "人物出场/退场": {
+      "desc": "角色进入或离开空间·空间关系改变·观众注意力转移",
+      "default_params": {"shot_type":"全景","focal_length":"24mm","dof":"深f/8","movement":"固定","angle":"眼平"}
+    },
+    "空镜收尾": {
+      "desc": "人物离去后的空间·让证据或光线替代表演·观众自行消化",
+      "default_params": {"shot_type":"全景","focal_length":"24mm","dof":"中f/8","movement":"固定","angle":"眼平","lighting":"仅保留单一光源·其余熄灭"}
+    },
+    "夜景/弱光": {
+      "desc": "环境光照不足·依赖人工光源或月光·大光圈必需",
+      "default_params": {"shot_type":"中景或近景","focal_length":"35-50mm","dof":"大光圈f/1.4-f/2.8","movement":"固定或极慢","angle":"眼平或低角度","lighting":"单光源主导·高对比"},
+      "environmental_override": true,
+      "overrides": ["标准对话三角形","空间建立","人物出场/退场","空镜收尾"]
+    },
+    "狭小空间": {
+      "desc": "车内·电梯·电话亭——空间不足2m纵深·标准机位物理不可行",
+      "default_params": {"shot_type":"近景或特写","focal_length":"35-50mm","dof":"浅f/2.8","movement":"固定","angle":"侧面或非标准角度"},
+      "llm_required": true
+    },
+    "多人对话": {
+      "desc": "3+角色在同一空间对话·多轴关系·注意中心交替",
+      "default_params": {"shot_type":"全景主镜头+中景插入","focal_length":"24mm(主)+50mm(插入)","dof":"深f/8(主)+浅f/2.8(插入)","movement":"固定或极慢横移","angle":"眼平"},
+      "llm_required": true
+    },
+    "镜子/反射": {
+      "desc": "角色通过镜面反射被拍摄·真实空间和镜中空间同时存在·摄影机必须隐藏",
+      "default_params": {"shot_type":"中景或近景","focal_length":"50-85mm","dof":"中f/5.6","movement":"固定","angle":"偏离镜面法线30-45°"},
+      "llm_required": true
+    },
+    "梦境/主观现实": {
+      "desc": "现实扭曲·荷兰角·色彩偏移·不规则运镜·空间逻辑断裂",
+      "default_params": {"shot_type":"自由","focal_length":"14-35mm广角","dof":"可变","movement":"不规则·推拉变焦·荷兰角","angle":"荷兰角3-7°"},
+      "llm_required": true
+    },
+    "手持/纪实风格": {
+      "desc": "模拟纪录片或新闻摄影·摄影机作为在场的观察者·呼吸感·偶然感",
+      "default_params": {"shot_type":"中景或近景","focal_length":"35-50mm","dof":"中f/4-f/5.6","movement":"手持·微晃±3-5cm","angle":"眼平·偶尔不水平"}
+    }
+  },
+  "mapping_rules": {
+    "high_confidence": ["感官剥夺","标准对话三角形","标准单人对白","空间建立","极大规模空间","证据/屏幕展示","空镜收尾"],
+    "llm_override_allowed": ["冷暖色温交界","非人化→常化","人物出场/退场","夜景/弱光","悬疑/紧张积累","手持/纪实风格"],
+    "llm_required": ["沉默中的情绪转折","运动/动作中的揭示","POV/主观视角","动作/动能","狭小空间","多人对话","镜子/反射","梦境/主观现实"],
+    "environmental_overrides": {
+      "夜景/弱光": {
+        "condition": "环境光照<5lux或场景时间=夜",
+        "overrides": ["标准对话三角形","空间建立","人物出场/退场","空镜收尾"],
+        "rule": "被覆盖策略的光圈从f/5.6+降为大光圈f/1.4-f/2.8·ISO等效提升2-3档"
+      }
+    }
+  }
+}

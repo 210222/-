@@ -1,0 +1,33 @@
+{
+  "task_id": "R1.4",
+  "record_id": "R1.4_REVALIDATION_002",
+  "created_date": "2026-07-29",
+  "purpose": "User-authorized dependency-chain revalidation. No implementation artifact was rewritten.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/structural_runner.py",
+    "01_调度器/mode_p_vnext/fixtures/r1_4/golden_expectations.py"
+  ],
+  "predecessor_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R1.4.json",
+  "checks": [
+    {
+      "name": "runner_parses_artifacts",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "runner_computes_results",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "tamper_detection",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    }
+  ],
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

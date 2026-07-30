@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Missing or unparseable '剧本事实：[D]'

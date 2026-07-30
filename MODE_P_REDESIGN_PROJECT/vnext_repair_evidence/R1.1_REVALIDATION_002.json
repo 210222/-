@@ -1,0 +1,57 @@
+{
+  "task_id": "R1.1",
+  "record_id": "R1.1_REVALIDATION_002",
+  "created_date": "2026-07-29",
+  "purpose": "User-authorized revalidation after reversing an out-of-task R3.2 edit. The baseline reconciliation is now owned by R1.1 and does not rewrite the frozen V0.1 manifest.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/test_v0_1_baseline.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R1.1_REVALIDATION_002.json"
+  ],
+  "artifact_hashes_before_controller_completion": {
+    "01_调度器/mode_p_vnext/tests/test_v0_1_baseline.py": "b75f9bc103555927dc60871bf63ab81da6b552a4b82688df2b1072ff3b8fba19",
+    "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json": "c5d63a390b5ed80bf81fd2bb0b581cd1849309fca7e3f94187e921b82fc5608c",
+    "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_FREEZE_MANIFEST.json": "c9cd6fbe73e8200e77e326729e746f032ec25ff4a97d9fc78fa0cac2629448fd"
+  },
+  "checks": [
+    {
+      "name": "no_null_authority_hash",
+      "exit_code": 0,
+      "result": "AuthorityFileHashTests verifies all 13 authority hashes are present and match disk."
+    },
+    {
+      "name": "authority_drift_detected",
+      "exit_code": 0,
+      "result": "AuthorityFileHashTests remains a fail-closed exact hash verifier."
+    },
+    {
+      "name": "missing_media_not_silent",
+      "exit_code": 0,
+      "result": "GoldenMediaHashTests keeps explicit available/missing status and controlled failure cases."
+    },
+    {
+      "name": "baseline_delta_reconciled_without_manifest_rewrite",
+      "exit_code": 0,
+      "result": "686 remains the frozen historical count; current 781 must exactly equal the registered 686 generic candidate plus 95 post-freeze legacy EP35 IDs, with no unregistered delta."
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "manual_r1_1_baseline_suite",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_v0_1_baseline.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "30 passed, 165 subtests passed in 2.26s",
+      "stdout_sha256": "54d442157020549c6a2ef9fbebe806ca9247972183a386618890c2bd3162a595"
+    }
+  ],
+  "baseline_contract": {
+    "frozen_manifest_mutated": false,
+    "historical_exact_686_id_set_claimed": false,
+    "legacy_ep35_used_as_vnext_director_design_authority": false,
+    "future_unregistered_collection_delta_fails": true
+  },
+  "v4_source_changed": false,
+  "production_entry_changed": false,
+  "media_acceptance_claimed": false
+}

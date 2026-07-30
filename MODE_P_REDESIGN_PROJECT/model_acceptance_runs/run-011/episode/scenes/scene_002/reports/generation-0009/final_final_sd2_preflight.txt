@@ -1,0 +1,2 @@
+PASS final_sd2_preflight
+SD2.0 preflight passed.

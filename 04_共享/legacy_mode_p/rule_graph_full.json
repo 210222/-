@@ -1,0 +1,69 @@
+{
+  "_meta": {
+    "version": "v2.0",
+    "date": "2026-07-07",
+    "scope": "全量 9 域 · ~123条P0规则 · 跨域关系网络",
+    "principle": "P0规则覆盖所有安全关键检查点。触发场景类型→自动激活全部关联规则。"
+  },
+
+  "domains": {
+    "§0_通用铁律": {"p0_count": 5, "key_nodes": ["GEN-01","GEN-02","GEN-03","GEN-04","GEN-09"]},
+    "§1_对话场景": {"p0_count": 12, "key_nodes": ["D-TRI-01","D-TRI-02","D-TRI-03","D-TRI-05","D-TRI-06","D-DUO-01","D-DUO-02"]},
+    "§2_动作场景": {"p0_count": 5, "key_nodes": ["A-FGT-01","A-FGT-11","A-GEN-01","A-GEN-02","A-GEN-03"]},
+    "§3_剪辑节奏": {"p0_count": 7, "key_nodes": ["E-MTC-01","E-MTC-03","E-MTC-04","E-MUR-01","E-MUR-02","E-MUR-03","E-PCE-01"]},
+    "§4_构图美学": {"p0_count": 3, "key_nodes": ["C-KTZ-16","C-KTZ-17","C-KTZ-18"]},
+    "§5_运镜运动": {"p0_count": 8, "key_nodes": ["M-MOT-01","M-MOT-03","M-MOT-04","M-MOT-05","M-20R-07","M-20R-00","M-MOV-01","M-MOV-02"]},
+    "§6_光影色彩": {"p0_count": 10, "key_nodes": ["L-3PT-01","L-3PT-02","L-3PT-03","L-CT-02","COL-PRI-01","COL-PRI-02","COL-PRI-03","L-ADV-10","L-ADV-11","CON-01"]},
+    "§7_故事板": {"p0_count": 0},
+    "§8_视觉结构": {"p0_count": 0},
+    "§9_声音设计": {"p0_count": 1, "key_nodes": ["SND-MUR-07"]}
+  },
+
+  "cross_domain_edges": [
+    {"from": "D-TRI-02", "to": "E-MTC-04", "type": "triggers", "reason": "跳轴检查触发视线匹配验证"},
+    {"from": "D-TRI-05", "to": "M-MOT-01", "type": "triggers", "reason": "外反拍机位→运镜必须有叙事动机"},
+    {"from": "D-DUO-01", "to": "D-TRI-01", "type": "requires", "reason": "面对面构型→必须定义关系线"},
+    {"from": "A-GEN-03", "to": "M-20R-10", "type": "triggers", "reason": "动作方向一致→同对象同区域同方向"},
+    {"from": "A-GEN-03", "to": "E-MTC-01", "type": "triggers", "reason": "动作方向→位置匹配检查"},
+    {"from": "A-GEN-01", "to": "M-MOT-01", "type": "triggers", "reason": "三阶段节奏→运镜动机检查"},
+    {"from": "M-MOT-03", "to": "A-FGT-01", "type": "triggers", "reason": "空间可行性→动作场景的空间约束"},
+    {"from": "L-3PT-01", "to": "C-KTZ-01", "type": "associated", "reason": "光影→构图: 伦勃朗光影响主体立体感"},
+    {"from": "COL-PRI-02", "to": "C-KTZ-01", "type": "associated", "reason": "冷暖景深→构图分层"},
+    {"from": "L-CT-02", "to": "CON-01", "type": "triggers", "reason": "混合色温→跨镜统一性检查"},
+    {"from": "E-MUR-02", "to": "M-MOT-01", "type": "triggers", "reason": "情感优先→运镜必须有动机(情感驱动)"},
+    {"from": "M-MOT-05", "to": "M-20R-07", "type": "triggers", "reason": "首帧锁定→三部分运动公式(静→动→静)"},
+    {"from": "SND-MUR-07", "to": "E-MUR-02", "type": "associated", "reason": "对话可懂度→情感优先(51%)"},
+    {"from": "C-KTZ-16", "to": "D-TRI-02", "type": "alternative", "reason": "越轴五种合法手段→不跳轴的例外情况"},
+    {"from": "GEN-01", "to": "ALL", "type": "metarule", "reason": "KB优先于LLM→所有域的所有规则"}
+  ],
+
+  "scene_activation_extended": {
+    "双人对话": {"p0_count": 17, "cross_domain": ["E-MTC-04","M-MOT-01","M-MOT-03"]},
+    "三人对话": {"p0_count": 12, "cross_domain": ["E-MTC-04","C-KTZ-18"]},
+    "多人对话": {"p0_count": 8, "cross_domain": ["D-GRP-01","E-MTC-04"]},
+    "打斗": {"p0_count": 10, "cross_domain": ["A-GEN-01","A-GEN-02","A-GEN-03","M-MOT-03","M-MOT-04","E-MTC-01"]},
+    "追逐": {"p0_count": 7, "cross_domain": ["A-GEN-03","M-MOT-03","M-MOT-04","M-20R-10"]},
+    "悬疑": {"p0_count": 5, "cross_domain": ["L-3PT-01","L-3PT-02","M-MOT-01"]},
+    "静态对话": {"p0_count": 14, "cross_domain": ["D-EDT-01","D-EDT-02","E-MTC-04","L-CT-02","CON-01"]},
+    "证据/调查": {"p0_count": 15, "cross_domain": ["L-3PT-01","COL-PRI-02","C-KTZ-01","D-TRI-01","E-MTC-04"]},
+    "夜景": {"p0_count": 8, "cross_domain": ["L-3PT-01","L-3PT-03","L-CT-02","L-ADV-11","EXP-03"]},
+    "室内": {"p0_count": 12, "cross_domain": ["L-3PT-01","L-3PT-03","EXP-04","M-MOT-03","CON-01"]},
+    "室外": {"p0_count": 6, "cross_domain": ["M-MOT-03","A-GEN-02","L-CT-02"]},
+    "色温混合": {"p0_count": 5, "cross_domain": ["L-CT-02","CON-01","COL-PRI-02"]}
+  },
+
+  "impact_tracing_examples": {
+    "D-TRI-02跳轴": {
+      "impacted_domains": ["§1对话(7规则)","§3剪辑(2规则)","§4构图(1规则)"],
+      "severity": "级联阻断·跨3域"
+    },
+    "M-MOT-03穿墙": {
+      "impacted_domains": ["§5运镜(4规则)","§2动作(3规则)"],
+      "severity": "级联阻断·跨2域"
+    },
+    "L-CT-02色温矛盾": {
+      "impacted_domains": ["§6光影(3规则)","§1对话(色温连续性)"],
+      "severity": "⚠️级联警告"
+    }
+  }
+}

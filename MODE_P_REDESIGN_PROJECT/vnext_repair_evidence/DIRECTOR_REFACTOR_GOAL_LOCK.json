@@ -1,0 +1,217 @@
+{
+  "schema_name": "mode_p_director_refactor_goal_lock",
+  "schema_version": "1.0.0",
+  "status": "FROZEN_PRECONSTRUCTION_BASELINE",
+  "created_at": "2026-07-29T00:00:00+08:00",
+  "project_root": "D:\\tsc\\导演系统_v5",
+  "construction_plan": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md",
+    "sha256": "37e444e3c25e1e05d0c3f43fa5340631d159c4c69062aa3ca98cb20e5e00b2bc",
+    "change_requires_user_approval": true
+  },
+  "production_policy": {
+    "current_entry": "v4_unchanged",
+    "this_lock_authorizes_production_switch": false,
+    "this_lock_authorizes_legacy_deletion": false,
+    "user_approval_required_for_switch": true
+  },
+  "goals": [
+    "G-01",
+    "G-02",
+    "G-03",
+    "G-04",
+    "G-05",
+    "G-06",
+    "G-07"
+  ],
+  "non_negotiable_invariants": [
+    "INV-SOURCE-01",
+    "INV-SOURCE-02",
+    "INV-SOURCE-03",
+    "INV-SOURCE-04",
+    "INV-NOMASTER-01",
+    "INV-NOMASTER-02",
+    "INV-NOMASTER-03",
+    "INV-NOMASTER-04",
+    "INV-TIME-01",
+    "INV-TIME-02",
+    "INV-TIME-03",
+    "INV-TIME-04",
+    "INV-SPACE-01",
+    "INV-SPACE-02",
+    "INV-SPACE-03",
+    "INV-PROP-01",
+    "INV-PROP-02",
+    "INV-GAZE-01",
+    "INV-REF-01",
+    "INV-REF-02",
+    "INV-REF-03",
+    "INV-REF-04",
+    "INV-AUDIO-01",
+    "INV-LEAK-01",
+    "INV-LEAK-02",
+    "INV-LEAK-03",
+    "INV-LEAK-04",
+    "INV-LEAK-05",
+    "INV-DIALOGUE-01",
+    "INV-DIALOGUE-02",
+    "INV-DIALOGUE-03"
+  ],
+  "single_creative_source": {
+    "artifact": "VisualExecutionContract",
+    "machine_readable": true,
+    "immutable_after_commit": true,
+    "storyboard_is_projection": true,
+    "video_prompt_is_projection": true,
+    "storyboard_may_derive_video": false,
+    "video_may_derive_storyboard": false,
+    "old_director_master_is_runtime_authority": false
+  },
+  "removed_legacy_dependencies": {
+    "master_continuity_board": true,
+    "master_storyboard": true,
+    "fixed_image_2_first_panel": true,
+    "fixed_image_3_last_panel": true,
+    "fixed_image_4_previous_video_last_frame": true,
+    "previous_video_frame_forces_next_opening": false,
+    "global_episode_time_in_segment_prompt": false
+  },
+  "director_agent": {
+    "identity_scope": "one_persistent_director_per_episode",
+    "phase_a": "scene_interpretation_and_director_problem_modeling",
+    "phase_b": "blocking_first_then_shot_design",
+    "phase_a_may_output_final_shot_answer": false,
+    "phase_b_outputs_single_executable_choice": true,
+    "private_chain_of_thought_is_required_artifact": false,
+    "structured_decision_record_required": true,
+    "selected_capsules_and_rejected_alternatives_required": true
+  },
+  "knowledge_runtime": {
+    "full_books_loaded_at_runtime": false,
+    "offline_normalization_required": true,
+    "two_stage_retrieval_required": true,
+    "primary_card_budget": 3,
+    "conflict_card_budget": 1,
+    "anti_pattern_card_budget": 1,
+    "no_match_falls_back_to_generic_shot_template": false,
+    "conflicts_are_exposed_not_auto_resolved": true
+  },
+  "reference_policy": {
+    "authority": "asset_id_content_sha256_role",
+    "platform_image_number_is_authority": false,
+    "shared_roles": [
+      "identity",
+      "wardrobe",
+      "blocking_layout",
+      "scene_layout",
+      "prop_geometry",
+      "composition",
+      "motion",
+      "voice"
+    ],
+    "storyboard_and_video_share_role_bindings": true,
+    "whole_storyboard_default_video_reference": false,
+    "whole_storyboard_reference_requires_target_model_ab_test": true,
+    "voice_binding_required_for_character_dialogue": true
+  },
+  "timeline_policy": {
+    "machine_time": "integer_tick",
+    "interval_semantics": "[start,end)",
+    "segment_display_time_origin_seconds": 0,
+    "global_time_manifest_only": true,
+    "storyboard_panel_count_equals_seconds": false,
+    "panel_requires_visual_beat_or_boundary_source": true
+  },
+  "hard_visual_invariants": [
+    "story_fact_and_event_order",
+    "shot_and_boundary_topology",
+    "character_identity_wardrobe_and_count",
+    "axis_screen_order_and_movement_direction",
+    "mirror_flip_forbidden",
+    "gaze_target",
+    "prop_owner_holder_hand_and_orientation",
+    "opening_and_landing_function",
+    "dialogue_deduplication",
+    "voice_identity"
+  ],
+  "prompt_body_policy": {
+    "machine_metadata_in_creative_body": false,
+    "narrative_only_information_in_visible_body": false,
+    "negative_nouns_in_positive_payload_when_token_leakage_risk": false,
+    "literary_or_review_commentary_in_visible_body": false,
+    "forbidden_examples": [
+      "状态摘要SHA256",
+      "global 0s",
+      "本段结束后由下一段连续续播",
+      "戏剧反讽——这个词几分钟前",
+      "眼球内极微反光角度变化"
+    ]
+  },
+  "preview_claim_levels": [
+    "PLANNED_PREVIEW",
+    "STORYBOARD_REALIZED",
+    "VERIFIED_PREDICTIVE_PREVIEW"
+  ],
+  "preview_claim_ceiling_without_visual_media_evidence": "PLANNED_PREVIEW",
+  "visual_acceptance": {
+    "hard_invariant_pass_rate": 1.0,
+    "initial_storyboard_realization_target": 0.9,
+    "initial_video_prediction_target": 0.85,
+    "initial_minimum_soft_dimension": 0.8,
+    "thresholds_must_be_frozen_before_production": true,
+    "text_only_deepseek_may_grant_visual_pass": false
+  },
+  "performance_targets": {
+    "local_schema_p95_seconds": 5,
+    "local_compile_p95_seconds": 5,
+    "normal_scene_model_call_max": 3,
+    "automatic_director_revision_max": 2,
+    "external_model_call_reduction_vs_baseline_min": 0.4,
+    "hot_revision_wall_time_reduction_vs_baseline_min": 0.7,
+    "adapter_only_change_may_invalidate_director": false
+  },
+  "work_packages_in_order": [
+    "WP-0",
+    "WP-1",
+    "WP-2",
+    "WP-3",
+    "WP-4",
+    "WP-5",
+    "WP-6",
+    "WP-7"
+  ],
+  "existing_repair_queue_is_sufficient_for_final_director_goal": false,
+  "vnext_1_director_queue_required_after_infrastructure_repair": true,
+  "required_regressions": [
+    "REG-01",
+    "REG-02",
+    "REG-03",
+    "REG-04",
+    "REG-05",
+    "REG-06",
+    "REG-07",
+    "REG-08",
+    "REG-09",
+    "REG-10",
+    "REG-11",
+    "REG-12",
+    "REG-13",
+    "REG-14",
+    "REG-15",
+    "REG-16",
+    "REG-17",
+    "REG-18"
+  ],
+  "completion_requires": [
+    "real_director_phase_a_and_phase_b_on_unseen_script",
+    "problem_driven_knowledge_with_ablation_improvement",
+    "single_visual_execution_contract",
+    "field_level_storyboard_video_homology",
+    "all_required_regressions_green",
+    "golden_and_frozen_holdout_green",
+    "actual_storyboard_and_video_media_acceptance",
+    "performance_targets_met",
+    "crash_recovery_concurrency_and_rollback_green",
+    "explicit_user_production_approval"
+  ]
+}

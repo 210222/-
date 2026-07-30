@@ -1,0 +1,1 @@
+READY scene_002: scene_002-3 [4.5s] key exits Zhou Cheng's pocket, pushed across table [6.5s]; scene_002-5 [3.5s] Zhou Lan pauses above key then picks it up [5.0s]; letter stays on table per L26; 3400K 1:2.5 warm window light anchors scene. (223)

@@ -1,0 +1,14 @@
+owner: none
+status: released
+task_id: R0.1
+result: REPAIR_REQUIRED
+last_test_evidence: |
+  vNext: 460 passed, 235 subtests
+  v4: 686 passed
+  local permission pollution: removed
+  contamination: 0 v4→vNext imports
+  plan: 65 checked, 5 open, 4 invalid checked dependencies
+  progress: only 10 completion evidence records
+  baseline: 13 authority hashes are null
+  golden: prep-area cut claim is incorrect
+next_task: R0.1

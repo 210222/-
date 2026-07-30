@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_2",
+  "stage": "batch_commit",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 1,
+  "master_path": "DIRECTOR_MASTER.md",
+  "master_sha256": "f19fa614cc6584668e37b9671d4bac0e7e7cbabf6692df3fc2930712720b2cb4",
+  "manifest_path": "working/SHOT_MANIFEST.json",
+  "manifest_sha256": "18a679120db0cb93dd5d438182a0fcb98606d8b9f3fe45083802f2a33eddbbae",
+  "checks": {
+    "final_master_sync": {
+      "passed": true,
+      "stage": "final_check",
+      "artifact_generation": 1,
+      "master_sha256": "f19fa614cc6584668e37b9671d4bac0e7e7cbabf6692df3fc2930712720b2cb4",
+      "manifest_sha256": "18a679120db0cb93dd5d438182a0fcb98606d8b9f3fe45083802f2a33eddbbae",
+      "report_path": "reports/generation-0001/final_master_sync.txt",
+      "report_sha256": "a7a9367e8eae8f73ccc87ab546503332529e2e783ad4b3e556147a1244802fee"
+    }
+  },
+  "dp_review": {
+    "status": "ready",
+    "artifact_generation": 1,
+    "master_sha256": "f19fa614cc6584668e37b9671d4bac0e7e7cbabf6692df3fc2930712720b2cb4",
+    "manifest_sha256": "18a679120db0cb93dd5d438182a0fcb98606d8b9f3fe45083802f2a33eddbbae",
+    "review_path": "reviews/dp-0001.md",
+    "review_sha256": "3705f015c6eb9adfd6e7a26ff135ce2df2e530cd55dfc0f8f9efbd4331a9e914",
+    "issue_fingerprint": null,
+    "stalled": false
+  },
+  "dp_issue_history": [],
+  "episode_review": null,
+  "committed_batches": [
+    {
+      "batch_index": 1,
+      "artifact_generation": 1,
+      "master_sha256": "f19fa614cc6584668e37b9671d4bac0e7e7cbabf6692df3fc2930712720b2cb4",
+      "manifest_sha256": "18a679120db0cb93dd5d438182a0fcb98606d8b9f3fe45083802f2a33eddbbae",
+      "commit_path": "commits/delivery-d60d9ba1c4ed424da513648aee92da97.json",
+      "commit_sha256": "169298116dfa91c8dff17d905c81232cc2f8f964c0e0fbbfcc7591f5d658dab9"
+    }
+  ],
+  "dp_attempts": 1,
+  "revision_count": 0,
+  "transition_sequence": 6,
+  "updated_at": "2026-07-17T04:02:24.259971+00:00",
+  "state_sha256": "f32473bcf6f41180d181eb6952c40f0ea59a16d821b539d49d85c73338d23af2"
+}

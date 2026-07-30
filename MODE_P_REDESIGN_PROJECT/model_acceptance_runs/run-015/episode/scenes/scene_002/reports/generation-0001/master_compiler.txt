@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Duplicate 'Master version' fields (2 found)

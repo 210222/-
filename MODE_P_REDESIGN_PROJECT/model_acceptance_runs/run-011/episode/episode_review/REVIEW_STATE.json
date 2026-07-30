@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "status": "awaiting_review",
+  "cycle": 1,
+  "review_input_sha256": "4773e9b4afb7f2e637b4a688e42c308aea8ca384f7fcac7b1bf11ad3ece331e2",
+  "scene_master_hashes": {
+    "1": "25e264a85776d826ec202ed3c238a873f58d7d5c3d99c945ca34991020f70f65",
+    "2": "59bd426748c2ad3915e4fc67b4bdebcfa3764c9588a9ef5ff12f8c7c4370ad18",
+    "3": "a1b8dc90eb174ef15e3c2b9784b053e22bd444cbf526272e147dc66bf9970cbe",
+    "4": "65bec14173c24735e6a1ae56065d2c57785afe17f83a3dd99f97c94d45fee2a2"
+  },
+  "affected_scenes": [],
+  "block_reason": "",
+  "review_result_sha256": ""
+}

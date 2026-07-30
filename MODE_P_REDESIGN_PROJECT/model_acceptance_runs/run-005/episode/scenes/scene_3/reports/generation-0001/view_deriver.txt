@@ -1,0 +1,3 @@
+PASS view_deriver
+Storyboard -> D:\tsc\导演系统_v5\MODE_P_REDESIGN_PROJECT\model_acceptance_runs\run-005\episode\scenes\scene_3\.build\144ce351d74d4caea1af0dbc3e48f9c9\STORYBOARD.md
+Video Prompt -> D:\tsc\导演系统_v5\MODE_P_REDESIGN_PROJECT\model_acceptance_runs\run-005\episode\scenes\scene_3\.build\144ce351d74d4caea1af0dbc3e48f9c9\VIDEO_PROMPT.md

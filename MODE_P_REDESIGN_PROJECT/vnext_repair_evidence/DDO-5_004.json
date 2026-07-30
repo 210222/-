@@ -1,0 +1,17 @@
+{
+  "task_id": "DDO-5",
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-5_004.json"
+  ],
+  "checks": [
+    {"name": "field_homology", "exit_code": 0},
+    {"name": "voice_reference_binding", "exit_code": 0},
+    {"name": "prompt_purity", "exit_code": 0},
+    {"name": "historical_regressions", "exit_code": 0},
+    {"name": "local_invalidation", "exit_code": 0},
+    {"name": "performance", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_5_projection", "exit_code": 0}
+  ]
+}

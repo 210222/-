@@ -1,0 +1,1 @@
+READY scene_001: scene_001-5 [4.5s] Lin releases photo fingers, hand exits light pool [6.0s]; scene_001-6 [0.0s] catches fingertips leaving frame for action continuous handoff; final [4.0s] photo+badge matches BN state, light 4300K 1:8 overhead. (226)

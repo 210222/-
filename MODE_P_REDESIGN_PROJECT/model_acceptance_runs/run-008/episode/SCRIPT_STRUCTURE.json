@@ -1,0 +1,67 @@
+{
+  "file_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "encoding": "utf-8",
+  "source_content_hash": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "total_lines": 47,
+  "scene_count": 4,
+  "scenes": [
+    {
+      "index": 1,
+      "start_line": 3,
+      "end_line": 14,
+      "header_line": "## Scene 1: 审讯室，夜，室内",
+      "header_kind": "markdown_scene_en",
+      "scene_number": 1,
+      "location_hint": null,
+      "time_hint": null,
+      "status": "resolved",
+      "unresolved_reason": null
+    },
+    {
+      "index": 2,
+      "start_line": 15,
+      "end_line": 27,
+      "header_line": "## Scene 2: 老旧厨房，清晨，室内",
+      "header_kind": "markdown_scene_en",
+      "scene_number": 2,
+      "location_hint": null,
+      "time_hint": null,
+      "status": "resolved",
+      "unresolved_reason": null
+    },
+    {
+      "index": 3,
+      "start_line": 28,
+      "end_line": 39,
+      "header_line": "## Scene 3: 夜行列车包厢，夜，室内",
+      "header_kind": "markdown_scene_en",
+      "scene_number": 3,
+      "location_hint": null,
+      "time_hint": null,
+      "status": "resolved",
+      "unresolved_reason": null
+    },
+    {
+      "index": 4,
+      "start_line": 40,
+      "end_line": 47,
+      "header_line": "## Scene 4: 多层停车楼，雨夜，外景",
+      "header_kind": "markdown_scene_en",
+      "scene_number": 4,
+      "location_hint": null,
+      "time_hint": null,
+      "status": "resolved",
+      "unresolved_reason": null
+    }
+  ],
+  "front_matter_lines": [
+    1,
+    2
+  ],
+  "active_scenes": [
+    1,
+    2,
+    3,
+    4
+  ]
+}

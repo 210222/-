@@ -1,0 +1,26 @@
+{
+  "schema_version": "ddo-evidence-v1",
+  "task_id": "DDO-6",
+  "run_id": "DDO-6_003",
+  "reason": "Dependency revalidation after the knowledge contract extension.",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-6_003.json"
+  ],
+  "checks": [
+    {"name": "holdout_separate", "exit_code": 0},
+    {"name": "render_record", "exit_code": 0},
+    {"name": "ffmpeg_frame_plan", "exit_code": 0},
+    {"name": "approval_required", "exit_code": 0},
+    {"name": "no_production_switch", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_6_evidence", "exit_code": 0, "summary": "5 passed"}
+  ],
+  "scope": {
+    "external_generation_invoked": false,
+    "deepseek_visual_validation_claimed": false,
+    "media_visual_acceptance_claimed": false,
+    "production_entry_changed": false
+  }
+}

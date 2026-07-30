@@ -1,0 +1,46 @@
+{
+  "schema_version": "ddo-evidence-v1",
+  "task_id": "DDO-2",
+  "run_id": "DDO-2_001",
+  "status": "VERIFIED_TEXT_ONLY",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "implementation": {
+    "persistent_director": "DirectorAgent holds one declared director_id and rejects an E0 output that changes it.",
+    "phase_a_no_camera_answer": "EpisodeDirectionState, SceneIntentContract and S1 problems reject camera/edit execution vocabulary before B0/B1.",
+    "k1_packet": "S1 problems feed retrieve_k1 only; K2 and BlockingCommit are absent from this task.",
+    "content_addressed_cache": "E0 and S1 keys derive from canonical approved content only; cache hits bypass the injected provider."
+  },
+  "verification": [
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_ddo_2_agent_phase_a.py -q -p no:cacheprovider",
+      "result": "3 passed in 0.05s"
+    }
+  ],
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "01_调度器/mode_p_vnext/director_vnext1/cache.py",
+    "01_调度器/mode_p_vnext/director_vnext1/agent.py",
+    "01_调度器/mode_p_vnext/tests/test_ddo_2_agent_phase_a.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-2_001.json"
+  ],
+  "checks": [
+    {"name": "persistent_director", "exit_code": 0},
+    {"name": "phase_a_no_camera_answer", "exit_code": 0},
+    {"name": "k1_packet", "exit_code": 0},
+    {"name": "content_addressed_cache", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_2_phase_a", "exit_code": 0, "summary": "3 passed in 0.05s"}
+  ],
+  "scope": {
+    "external_generation_invoked": false,
+    "production_entry_changed": false,
+    "blocking_or_execution_contract_added": false,
+    "media_visual_acceptance_claimed": false
+  },
+  "non_claims": [
+    "No external Director model was called.",
+    "No BlockingCommit, VEC, storyboard projection, video projection, Shadow, pilot, or production capability is enabled.",
+    "This is a deterministic text-contract verification, not visual-media validation."
+  ]
+}

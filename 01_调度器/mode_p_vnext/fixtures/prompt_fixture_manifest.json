@@ -1,0 +1,14 @@
+{
+  "fixture_count": 8,
+  "fixtures": {
+    "alley_sb_prompt.json": "81b9eca3c4d32c3438261607afe766f1501f9ffa01c03303d45dd39c47ea1c47",
+    "alley_video_prompt.json": "1504e523ec0dddd487a7d791677fb5b308f8e64c8fae2620118c38206b40daa1",
+    "audience_sb_prompt.json": "a529cfc688dba2bc3cc2edb6a8e45b1a01f03e94fc707dd4a190a28ed5883a34",
+    "audience_video_prompt.json": "7bc512a01c5cf644a286467db11396536c589ae6a2eacdc83fcd7fdb3e3b0357",
+    "gun_barrel_sb_prompt.json": "74715235da9be4806668f7e97e947dffb9632b54b8b8af252846e0bb91768b76",
+    "gun_barrel_video_prompt.json": "5f6a600d8fae08cccd145a5d2b63f05e87fe0890a88e9c3a2bb89fec93de00dd",
+    "prep_area_sb_prompt.json": "df3c55251b156b0447734d58c8cc4b14e19b356360abffedf36438ab99888969",
+    "prep_area_video_prompt.json": "6bbd458818b1680844dabe2fdb0503aa10c4906eb44566bfabcb4fb0a9fc6fd9"
+  },
+  "schema_version": "1.0"
+}

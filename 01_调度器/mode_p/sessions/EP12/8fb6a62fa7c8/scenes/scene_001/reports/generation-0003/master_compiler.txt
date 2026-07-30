@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Boundary scene_001-B1 continuous requires an outgoing state and '接入状态键：[M] <same>'

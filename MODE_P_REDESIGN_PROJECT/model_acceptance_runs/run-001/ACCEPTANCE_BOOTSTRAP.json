@@ -1,0 +1,16 @@
+{
+  "created_at": "2026-07-16T14:36:13.356042+00:00",
+  "director_agent": "mode-p-director",
+  "director_bound_at": "2026-07-16T14:44:46.603356+00:00",
+  "director_call_id": "ad6a49130d340e27c",
+  "director_model": "deepseek-v4-pro",
+  "evidence_dir": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-001",
+  "fixed_input": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\acceptance_cases\\director_transfer_4scenes.md",
+  "fixed_input_sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "invalid_reason": "Invalid model provenance: Claude Agent metadata resolved the Director as deepseek-v4-flash, while the bootstrap was incorrectly rebound as deepseek-v4-pro; subsequent precheck artifacts are diagnostic only.",
+  "invalidated_at": "2026-07-16T14:55:09.893296+00:00",
+  "owner": "claude-code",
+  "run_id": "run-001",
+  "schema_version": 1,
+  "status": "invalid"
+}

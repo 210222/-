@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Invalid action_phase 'prepare（林警探即将推送照片）' in 接入状态键：[M]; must be one of ['impact', 'launch', 'prepare', 'recover', 'static', 'travel']

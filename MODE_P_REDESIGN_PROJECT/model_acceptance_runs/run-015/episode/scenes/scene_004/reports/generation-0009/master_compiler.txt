@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Malformed or unknown state-key line in 接入状态键：[M]: '- character:pursuers position:尚未完全入画（即将从坡道下层冲上） facing:沿坡道向上 screen_direction:同阿泽运动方向 posture:奔跑姿态'

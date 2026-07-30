@@ -1,0 +1,72 @@
+{
+  "task_id": "R0.3",
+  "completed_at": "2026-07-23T01:21:32Z",
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R0.3_reconciliation_ledger.json",
+    "01_调度器/mode_p_vnext/tests/test_r0_3_reconciliation.py",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_PROGRESS.md"
+  ],
+  "checks": [
+    {
+      "name": "all_70_classified",
+      "exit_code": 0,
+      "output": "All 70 tasks from IMPLEMENTATION_PLAN.md classified with pairwise-disjoint partitioning: 11 PROGRESS_DOCUMENTED (V0.1-V1.6), 44 IMPLEMENTED_UNVERIFIED (V2.1-V8.6, valid deps only), 6 IMPLEMENTED_UNVERIFIED_INVALID_DEPS (V9.2-V9.4, V10.1-V10.3), 8 NOT_STARTED (V3.7, V6.8, V7.6, V9.1, V9.5, V9.6, V10.4, V10.5), 1 HISTORICALLY_PREMATURE_THEN_REVERTED (V10.6). Aggregate sums: 11+44+6+8+1=70. All 34 semantic-repair tests pass."
+    },
+    {
+      "name": "invalid_dependencies_removed",
+      "exit_code": 0,
+      "output": "6 tasks flagged with invalid_dep=true exactly matching expected set: V9.2, V9.3, V9.4 (V9.1 unchecked), V10.1 (V9.1/V9.5/V9.6 unchecked), V10.2 (transitive via V10.1), V10.3 (transitive via V10.1). V10.6 documented as historically premature-then-reverted with no audit trail."
+    },
+    {
+      "name": "evidence_indexed",
+      "exit_code": 0,
+      "output": "Evidence index complete: 2 repair evidence files (R0.1 with 2 invalidations, R0.2 clean), 11 historical progress records (V0.1-V1.6 with changed_paths/test results), 4 discrepancies documented (audit count 65vs61, progress self-report 10vs11, stale header R0.1→removed, V10.6 reversion no trail)."
+    }
+  ],
+  "regression": {
+    "command": "python -m pytest mode_p_vnext/tests/test_r0_3_reconciliation.py -q",
+    "result": "34 passed"
+  },
+  "discrepancies_identified": [
+    "LOOP_REPAIR_PLAN.md claims 65/70 checked; IMPLEMENTATION_PLAN.md shows 61/70 — gap of 4",
+    "PROGRESS.md §5 self-reports 10 records; actual count is 11 — corrected to 11",
+    "PROGRESS.md header contained live current_task/owner that could drift from machine state — replaced with authority delegation to rebuild_control",
+    "V10.6 was historically checked prematurely then unchecked; no machine audit trail",
+    "Original R0.3 classification lists were not pairwise disjoint — IMPLEMENTED_UNVERIFIED overlapped with INVALID_DEPS (6 IDs), NOT_STARTED overlapped with HISTORICALLY_PREMATURE (1 ID) — repaired to 11/44/6/8/1 partition"
+  ],
+  "ledger_summary": {
+    "total_tasks": 70,
+    "checked_count": 61,
+    "unchecked_count": 9,
+    "with_historical_evidence": 11,
+    "with_repair_evidence": 0,
+    "with_zero_evidence": 50,
+    "invalid_dependency_count": 6,
+    "premature_check_reversions": 1,
+    "classification_counts": {
+      "PROGRESS_DOCUMENTED": 11,
+      "IMPLEMENTED_UNVERIFIED": 44,
+      "IMPLEMENTED_UNVERIFIED_INVALID_DEPS": 6,
+      "NOT_STARTED": 8,
+      "HISTORICALLY_PREMATURE_THEN_REVERTED": 1
+    }
+  },
+  "produced_artifacts": [
+    {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R0.3_reconciliation_ledger.json",
+      "role": "canonical machine-readable classification of all 70 tasks with pairwise-disjoint partitioning"
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/tests/test_r0_3_reconciliation.py",
+      "role": "34-test semantic-repair validation suite covering row integrity, partition disjointness, aggregate counts, invalid dep set, evidence consistency, progress integrity, tamper detection, and artifact binding"
+    },
+    {
+      "path": "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_PROGRESS.md",
+      "role": "human-readable progress view; live task/owner authority delegated to rebuild_control and REBUILD_STATE.json"
+    },
+    {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R0.3.json",
+      "role": "R0.3 completion evidence with classification_counts, checks, regression, and artifact hashes"
+    }
+  ]
+}

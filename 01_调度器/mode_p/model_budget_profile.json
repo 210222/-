@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "profile_id": "claude-code-director-user-1m-v1",
+  "source": "user_config",
+  "context_window_tokens": 1000000,
+  "reserved_system_tool_tokens": 80000,
+  "reserved_output_tokens": 64000,
+  "max_output_tokens_per_call": 64000,
+  "safety_margin_ratio": 0.15,
+  "missing_document_reserve_tokens": 16000,
+  "token_estimator_version": "unicode_conservative_v1"
+}

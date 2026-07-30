@@ -1,0 +1,60 @@
+{
+  "task_id": "R2.1",
+  "title": "Implement filesystem transactions and cross-process locks",
+  "owner": "codex-director-plan-20260729",
+  "completed_at": "2026-07-29T02:00:00+00:00",
+  "schema_version": "1.0",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/atomic_commit.py",
+    "01_调度器/mode_p_vnext/concurrency_lock.py",
+    "01_调度器/mode_p_vnext/tests/test_v6_2_atomic_commit.py",
+    "01_调度器/mode_p_vnext/tests/test_v6_7_concurrency_lock.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_REFACTOR_GOAL_LOCK.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R2.1.json"
+  ],
+  "checks": [
+    {
+      "name": "real_staging",
+      "exit_code": 0,
+      "result": "Filesystem-backed transactions write UTF-8/LF artifacts beneath scene/staging/generation_id, reject unsafe paths, hash every artifact, and publish a validated immutable commit manifest."
+    },
+    {
+      "name": "atomic_replace",
+      "exit_code": 0,
+      "result": "Same-volume staging promotion and atomic JSON pointer replacement expose only complete commit and delivery versions; previous versions remain intact and stale parents cannot overwrite current."
+    },
+    {
+      "name": "multiprocess_collision",
+      "exit_code": 0,
+      "result": "Cross-process lock records are atomically published, ownership is token-bound, stale takeover requires an expired lease plus dead PID plus no active commit marker, and a 10-run collision stress test produced exactly one winner per run."
+    },
+    {
+      "name": "crash_recovery",
+      "exit_code": 0,
+      "result": "Recovery promotes only one complete parent-matching candidate, repairs a missing delivery pointer from a valid current commit, marks incomplete staging abandoned, and blocks ambiguous candidates."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "r2_1_filesystem_suite",
+      "exit_code": 0,
+      "result": "25 passed"
+    }
+  ],
+  "construction_baseline": {
+    "plan_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md",
+    "plan_sha256": "37e444e3c25e1e05d0c3f43fa5340631d159c4c69062aa3ca98cb20e5e00b2bc",
+    "goal_lock_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_REFACTOR_GOAL_LOCK.json",
+    "goal_count": 7,
+    "invariant_count": 31,
+    "regression_count": 18,
+    "work_package_count": 8,
+    "status": "FROZEN_PRECONSTRUCTION_BASELINE"
+  },
+  "compatibility": {
+    "legacy_in_memory_transaction_api": "preserved",
+    "legacy_in_memory_lock_api": "preserved",
+    "production_entry": "v4_unchanged"
+  }
+}

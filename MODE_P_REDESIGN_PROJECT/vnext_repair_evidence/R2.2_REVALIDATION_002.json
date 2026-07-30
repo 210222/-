@@ -1,0 +1,42 @@
+{
+  "task_id": "R2.2",
+  "record_id": "R2.2_REVALIDATION_002",
+  "created_date": "2026-07-29",
+  "purpose": "User-authorized dependency-chain revalidation. No implementation artifact was rewritten.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/__main__.py",
+    "01_调度器/mode_p_vnext/cli.py",
+    "01_调度器/mode_p_vnext/session_state.py",
+    "01_调度器/mode_p_vnext/shadow_entry.py",
+    "01_调度器/mode_p_vnext/tests/test_v6_8_engineering_cli.py",
+    "01_调度器/mode_p_vnext/tests/test_v10_1_shadow_entry.py"
+  ],
+  "predecessor_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R2.2.json",
+  "checks": [
+    {
+      "name": "module_help",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "persistent_state",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "isolated_shadow_artifacts",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "manifest_written",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    }
+  ],
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

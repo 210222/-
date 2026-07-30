@@ -1,0 +1,4 @@
+FAIL sd2_preflight
+negative_language: Shot scene_001-2 contains negative instruction '不要'. Rewrite as a positive visible instruction.
+unresolved_branch: Shot scene_001-2 contains '或'. Director must replace alternatives with one decision.
+non_visible_language: Scene context contains non-visible expression '内心'. Translate it into observable action or image state.

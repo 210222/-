@@ -1,0 +1,7 @@
+# Machine-local Claude Code permissions must not travel with the project.
+.claude/settings.local.json
+
+# Local test and interpreter artifacts.
+.pytest_cache/
+__pycache__/
+*.py[cod]

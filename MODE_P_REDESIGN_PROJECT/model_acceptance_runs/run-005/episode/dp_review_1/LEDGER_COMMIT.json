@@ -1,0 +1,425 @@
+{
+  "schema_version": "1.0",
+  "status": "committed",
+  "batch_index": 1,
+  "script_source_hash": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "batch_manifest_sha256": "bcf9c9c21cecea7e03ee016ac21aa5ff187f26e19a2335b75dc94165634e96f3",
+  "episode_ledger_sha256": "ad24bcfbbd7e66299d04ebc13a027da581760c6074ea0d8f8f29ed15e70ef5fd",
+  "scene_states": [
+    {
+      "scene_index": 1,
+      "scene_id": "scene_1",
+      "manifest_sha256": "3fb03d3c321fb614c3d89825a34779a9a08b82fc1aeec6cda5363f80a07fa5cf",
+      "master_content_hash": "0469fbe3e2def2a836b4c1cf5d3d134dc5decaa52cd39edd58015ea7acde76d7",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "table_left|0|0.4",
+            "facing": "toward_xu",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          },
+          {
+            "entity_id": "xu",
+            "position": "table_right|0|-0.4",
+            "facing": "toward_lin",
+            "screen_direction": "static",
+            "posture": "seated_reclined"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "lin",
+            "location": "table_center|0|0.2"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "xu",
+            "location": "xu_jacket_inner|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead",
+          "color_temp_k": 4200,
+          "ratio": "1:7"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "table_left|0|0.7",
+            "facing": "toward_xu",
+            "screen_direction": "static",
+            "posture": "seated_reclined"
+          },
+          {
+            "entity_id": "xu",
+            "position": "table_right|0|-0.2",
+            "facing": "toward_lin",
+            "screen_direction": "static",
+            "posture": "seated_slight_forward"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "table_center|0|0"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "table_center|0.05|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead",
+          "color_temp_k": 4200,
+          "ratio": "1:8"
+        },
+        "action_phase": "recover"
+      },
+      "storyboard_sha256": "f61f2e1e7dde89a7ef6ef45f9e79abb7be6a4f3f4173559e19ca40b4b5dbacff",
+      "video_prompt_sha256": "f9c9ac36a9a26923c835263dd6b7839c614e0ad9bab068ab150d8cb8890a332e"
+    },
+    {
+      "scene_index": 2,
+      "scene_id": "scene_2",
+      "manifest_sha256": "18a679120db0cb93dd5d438182a0fcb98606d8b9f3fe45083802f2a33eddbbae",
+      "master_content_hash": "f19fa614cc6584668e37b9671d4bac0e7e7cbabf6692df3fc2930712720b2cb4",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "sink_area|0.3|1.2",
+            "facing": "toward_table",
+            "screen_direction": "left_to_right",
+            "posture": "standing"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "table_left|0|-0.3",
+            "facing": "toward_stove",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "table_center|0.05|0.3"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove|0.2|0.8"
+          },
+          {
+            "prop_id": "key",
+            "held_by": "zhou_cheng",
+            "location": "zhou_cheng_pocket_or_hand|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "from_window",
+          "color_temp_k": 4800,
+          "ratio": "1:3"
+        },
+        "action_phase": "static",
+        "story_time": "early_morning"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "zhou_lan",
+            "position": "frame_right|0.3|1.0",
+            "facing": "toward_exit",
+            "screen_direction": "static",
+            "posture": "standing_holding_key"
+          },
+          {
+            "entity_id": "zhou_cheng",
+            "position": "table_left|0|-0.3",
+            "facing": "toward_table",
+            "screen_direction": "static",
+            "posture": "seated_upright"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "letter",
+            "held_by": "none",
+            "location": "table_center|0.05|0.3"
+          },
+          {
+            "prop_id": "key",
+            "held_by": "zhou_lan",
+            "location": "zhou_lan_right_hand|0|0"
+          },
+          {
+            "prop_id": "kettle",
+            "held_by": "none",
+            "location": "stove|0.2|0.8"
+          }
+        ],
+        "light_main": {
+          "direction": "from_window",
+          "color_temp_k": 4800,
+          "ratio": "1:3"
+        },
+        "action_phase": "recover",
+        "story_time": "early_morning"
+      },
+      "storyboard_sha256": "2a978e3f6a734295377a9c4dd06f250423a93bf2a422ec83c2f4b204dd46364b",
+      "video_prompt_sha256": "47de61772b8a4dc05e6f4c4f81a92f2fa4ebcc67949d6f1c96b93f556211c6d3"
+    },
+    {
+      "scene_index": 3,
+      "scene_id": "scene_3",
+      "manifest_sha256": "0155625ff00cc9aa33239c909cc4dcd6bbc84dad5fa1d39c35c0ef160640a596",
+      "master_content_hash": "b5d3ea1afaa57b4049833528ff80f531b76ce289d42c5d5f0bfb106bc0523f24",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "table_left|0|-0.3",
+            "facing": "toward_mia",
+            "screen_direction": "right_to_left",
+            "posture": "seated_forward_lean"
+          },
+          {
+            "entity_id": "mia",
+            "position": "table_right|0|0.3",
+            "facing": "toward_gu_yan",
+            "screen_direction": "left_to_right",
+            "posture": "seated_reclined"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mia",
+            "location": "mia_hand_or_pocket|0|0"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "gu_yan_pocket|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "from_window_and_overhead",
+          "color_temp_k": 3700,
+          "ratio": "1:2"
+        },
+        "action_phase": "static",
+        "environment": "night_train_moving"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "table_left|0|-0.4",
+            "facing": "toward_mia",
+            "screen_direction": "static",
+            "posture": "seated_upright"
+          },
+          {
+            "entity_id": "mia",
+            "position": "table_right|0|0.3",
+            "facing": "toward_gu_yan",
+            "screen_direction": "static",
+            "posture": "seated_neutral"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "table_center|0|0"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "table_center|-0.05|0"
+          }
+        ],
+        "light_main": {
+          "direction": "from_window_and_overhead",
+          "color_temp_k": 3700,
+          "ratio": "1:2"
+        },
+        "action_phase": "recover",
+        "environment": "night_train_moving"
+      },
+      "storyboard_sha256": "7d9a5f41018141c20bf4a39fd0d66b7766e273947a3a7198a789be820e5e20d3",
+      "video_prompt_sha256": "49d4e0616b1be93cb9cbb2912667079ed6b6f5ffb950cd1b471f7b60a98e5e26"
+    },
+    {
+      "scene_index": 4,
+      "scene_id": "scene_4",
+      "manifest_sha256": "4c17a361af542086d63888820cf26441d2ff6d000190e20f5652ca4d9e7d13db",
+      "master_content_hash": "19b9df664d73b0cdd34d3f619c71445f195c01587477ed8eb09d5bdf3e6593ad",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "ramp_mid|0|-0.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_1",
+            "position": "ramp_lower|1.5|-2.0",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          },
+          {
+            "entity_id": "pursuer_2",
+            "position": "ramp_lower|2.0|-2.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running_uphill"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "document_bag",
+            "held_by": "aze",
+            "location": "aze_arms|0|0"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "parking_corner|3.0|0"
+          },
+          {
+            "prop_id": "drainage_ditch",
+            "held_by": "none",
+            "location": "ramp_top_crossing|0|1.0"
+          }
+        ],
+        "light_main": {
+          "direction": "mixed_overhead",
+          "color_temp_k": 3100,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "night_rain",
+        "environment": "parking_garage"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "roof_edge|0|4.0",
+            "facing": "toward_edge",
+            "screen_direction": "static",
+            "posture": "standing_catching_breath"
+          },
+          {
+            "entity_id": "pursuer_1",
+            "position": "near_truck|2.5|1.5",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running"
+          },
+          {
+            "entity_id": "pursuer_2",
+            "position": "near_truck|3.0|1.2",
+            "facing": "up_ramp",
+            "screen_direction": "depth_out",
+            "posture": "running"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "document_bag",
+            "held_by": "none",
+            "location": "under_truck|3.0|0.3"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "parking_corner|3.0|0.5"
+          },
+          {
+            "prop_id": "drainage_ditch",
+            "held_by": "none",
+            "location": "ramp_top_crossing|0|1.0"
+          }
+        ],
+        "light_main": {
+          "direction": "mixed_overhead",
+          "color_temp_k": 3100,
+          "ratio": "1:5"
+        },
+        "action_phase": "recover",
+        "weather": "night_rain",
+        "environment": "parking_garage"
+      },
+      "storyboard_sha256": "ce7004216a4f171069a21252b828407f498ff7b996bad47721fd874e31a26160",
+      "video_prompt_sha256": "144eddafbf0feab2d42ddd627d5547b4ecb7502bc3612bd4567fbdc0468569e3"
+    }
+  ],
+  "outgoing_scene_index": 4,
+  "outgoing_scene_id": "scene_4",
+  "outgoing_state": {
+    "characters": [
+      {
+        "entity_id": "aze",
+        "position": "roof_edge|0|4.0",
+        "facing": "toward_edge",
+        "screen_direction": "static",
+        "posture": "standing_catching_breath"
+      },
+      {
+        "entity_id": "pursuer_1",
+        "position": "near_truck|2.5|1.5",
+        "facing": "up_ramp",
+        "screen_direction": "depth_out",
+        "posture": "running"
+      },
+      {
+        "entity_id": "pursuer_2",
+        "position": "near_truck|3.0|1.2",
+        "facing": "up_ramp",
+        "screen_direction": "depth_out",
+        "posture": "running"
+      }
+    ],
+    "props": [
+      {
+        "prop_id": "document_bag",
+        "held_by": "none",
+        "location": "under_truck|3.0|0.3"
+      },
+      {
+        "prop_id": "truck",
+        "held_by": "none",
+        "location": "parking_corner|3.0|0.5"
+      },
+      {
+        "prop_id": "drainage_ditch",
+        "held_by": "none",
+        "location": "ramp_top_crossing|0|1.0"
+      }
+    ],
+    "light_main": {
+      "direction": "mixed_overhead",
+      "color_temp_k": 3100,
+      "ratio": "1:5"
+    },
+    "action_phase": "recover",
+    "weather": "night_rain",
+    "environment": "parking_garage"
+  },
+  "commit_sha256": "c9fa3b8298235bcabe22c0186af7571880b669f526eac29af6467a94d75621f3"
+}

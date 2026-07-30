@@ -1,0 +1,42 @@
+{
+  "record_type": "mode_p_vnext_r3_2_terminal_state_contract_audit",
+  "record_version": "1.0",
+  "created_at": "2026-07-29T00:00:00+08:00",
+  "status": "CONTRACT_MISMATCH_CONFIRMED_NOT_RESOLVED",
+  "task_registry": {
+    "path": "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REPAIR_TASKS.json",
+    "sha256": "de3c4a7324b2f24dbc92b80ecc977826b3d594c0f44b679997b3755557daf638",
+    "status_after_all": "V_TASK_REVALIDATION_REQUIRED"
+  },
+  "r3_2_requirement": {
+    "task_id": "R3.2",
+    "required_check": "local_ready_machine_generated"
+  },
+  "controller_fact": {
+    "controller_path": "01_调度器/mode_p_vnext/rebuild_control.py",
+    "controller_emits_LOCAL_VNEXT_READY": false,
+    "controller_terminal_state_after_all": "V_TASK_REVALIDATION_REQUIRED"
+  },
+  "truthful_interpretation": {
+    "may_claim_local_vnext_ready_now": false,
+    "may_complete_r3_2_now": false,
+    "why": "The configured terminal state and the required readiness label are different contracts; no controller implementation creates the requested LOCAL_VNEXT_READY machine artifact."
+  },
+  "controlled_resolution_options": [
+    {
+      "id": "ACC-01A",
+      "action": "Rebase the repair task registry through a new controller generation and define V_TASK_REVALIDATION_REQUIRED as the only machine terminal state.",
+      "requires": ["explicit approval", "R0.1 evidence revalidation", "new task-registry hash", "new acceptance evidence"]
+    },
+    {
+      "id": "ACC-01B",
+      "action": "Implement a distinct LOCAL_VNEXT_READY state and an auditable machine-generated readiness artifact.",
+      "requires": ["explicit approval", "controller implementation", "new fail-closed tests", "new evidence"]
+    }
+  ],
+  "prohibited_actions": [
+    "renaming current state in a report without controller support",
+    "manually editing controller state to LOCAL_VNEXT_READY",
+    "declaring R3.2 complete while all_70_evidenced is false"
+  ]
+}

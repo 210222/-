@@ -1,0 +1,48 @@
+{
+  "task_id": "R2.3",
+  "record_id": "R2.3_REVALIDATION_002",
+  "created_date": "2026-07-29",
+  "purpose": "User-authorized dependency-chain revalidation. No implementation artifact was rewritten.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/knowledge_auditor.py",
+    "01_调度器/mode_p_vnext/knowledge_flow.py",
+    "01_调度器/mode_p_vnext/knowledge_security.py",
+    "01_调度器/mode_p_vnext/knowledge_snapshot.py",
+    "01_调度器/mode_p_vnext/retrieval_budget.py",
+    "01_调度器/mode_p_vnext/diagnosis_artifact.py",
+    "01_调度器/mode_p_vnext/tests/test_v3_1_knowledge_auditor.py",
+    "01_调度器/mode_p_vnext/tests/test_v3_3_conflict_graph.py",
+    "01_调度器/mode_p_vnext/tests/test_v3_4_scene_diagnosis.py",
+    "01_调度器/mode_p_vnext/tests/test_v3_5_retrieval_budget.py",
+    "01_调度器/mode_p_vnext/tests/test_v3_6_knowledge_snapshot.py",
+    "01_调度器/mode_p_vnext/tests/test_v9_1_vertical_integration.py"
+  ],
+  "predecessor_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R2.3.json",
+  "checks": [
+    {
+      "name": "diagnosis_to_snapshot",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "no_full_library_load",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "prompt_injection_blocked",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "vertical_fixture_uses_knowledge",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    }
+  ],
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

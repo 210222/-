@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_002",
+  "stage": "batch_commit",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 1,
+  "master_path": "DIRECTOR_MASTER.md",
+  "master_sha256": "bd410aff4048dfe2eb37d87d6c9670e10319df3ba6d54d0ae5908fa92d0e24dd",
+  "manifest_path": "working/SHOT_MANIFEST.json",
+  "manifest_sha256": "e8507e19d8147ae89ae0dbf96c29f28f118f41408313f241dfb2090caa5faf04",
+  "checks": {},
+  "dp_review": {
+    "status": "committed",
+    "verdict": "READY"
+  },
+  "dp_issue_history": [],
+  "episode_review": {
+    "verdict": "PASS"
+  },
+  "committed_batches": [
+    {
+      "batch_index": 1,
+      "status": "committed"
+    }
+  ],
+  "dp_attempts": 1,
+  "revision_count": 0,
+  "transition_sequence": 0,
+  "updated_at": "2026-07-19T14:30:00+00:00",
+  "state_sha256": "a8e1ccbfb3c4b6a544cf884bc8c0216e62ff82a3422f6afeed638c79e670c69a"
+}

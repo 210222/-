@@ -1,0 +1,845 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_004",
+  "master_version": "scene_004/v1.0",
+  "master_content_hash": "7d1ac64aebeb76ead4ce7ae2c37a58320a4e37f173ca8d746bfde3e0c98709ac",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_004-1",
+      "duration": 6.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "阿泽抱着文件袋沿坡道向上跑；两名追赶者从下一层冲上来（L42）。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 42,
+        "source_line_end": 42
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "坡道中段，向上奔跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑姿态，前倾，双腿交替"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "尚未完全入画",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑姿态"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中/手臂间"
+          }
+        ],
+        "light_main": {
+          "direction": "停车楼钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨",
+        "environment": "多层停车楼，坡道混凝土湿滑，城市夜景在远处模糊"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "坡道中上段，向上奔跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，接近排水沟"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "坡道下方，向上奔跑中",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中，被雨打湿"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      },
+      "entry_boundary_id": "scene_004-B0",
+      "exit_boundary_id": "scene_004-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_004-2",
+      "duration": 5.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "阿泽跨过排水沟（L44）；在转角处接近停着的货车（L44）。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 44,
+        "source_line_end": 44
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "坡道中上段，向上奔跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，接近排水沟"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "坡道下方，向上奔跑中",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中，被雨打湿"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "排水沟上方，坡道转角处",
+            "facing": "向停着的货车移动",
+            "screen_direction": "depth_in",
+            "posture": "奔跑中转向，准备下蹲"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "坡道下方，接近排水沟",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中/手中"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "prepare",
+        "weather": "雨持续"
+      },
+      "entry_boundary_id": "scene_004-B1",
+      "exit_boundary_id": "scene_004-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_004-3",
+      "duration": 5.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "阿泽在转角处把文件袋滑进一辆停着的货车底部，自己继续向顶层跑（L44-L45）。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 44,
+        "source_line_end": 45
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "排水沟上方，坡道转角处",
+            "facing": "向停着的货车移动",
+            "screen_direction": "depth_in",
+            "posture": "奔跑中转向，准备下蹲"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "坡道下方，接近排水沟",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中/手中"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "prepare",
+        "weather": "雨持续"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "货车上方坡道，向上跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，背影，正在远离货车"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "排水沟上方，接近转角",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，视线锁定前方阿泽背影"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊，文件袋在其下方"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      },
+      "entry_boundary_id": "scene_004-B2",
+      "exit_boundary_id": "scene_004-B3",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_004-4",
+      "duration": 5.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "追赶者只看见他的背影，越过货车追了上去（L45-L46）。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 45,
+        "source_line_end": 46
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "货车上方坡道，向上跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，背影，正在远离货车"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "排水沟上方，接近转角",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，视线锁定前方阿泽背影"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊，文件袋在其下方"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "pursuers",
+            "position": "货车上方坡道，向上追",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，正在远离货车"
+          },
+          {
+            "entity_id": "aze",
+            "position": "坡道顶端",
+            "facing": "身体前倾奔跑",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，即将到达顶层"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      },
+      "entry_boundary_id": "scene_004-B3",
+      "exit_boundary_id": "scene_004-B4",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_004-5",
+      "duration": 6.0,
+      "scene_expression": "contemplative_silence",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "阿泽到达顶层边缘后停下，听见下方传来货车发动的声音（L47）。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 47,
+        "source_line_end": 47
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "pursuers",
+            "position": "货车上方坡道，向上追",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，正在远离货车"
+          },
+          {
+            "entity_id": "aze",
+            "position": "坡道顶端",
+            "facing": "身体前倾奔跑",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，即将到达顶层"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "停车楼顶层边缘",
+            "facing": "面向下方",
+            "screen_direction": "static",
+            "posture": "站立静止，雨水打在身上"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道下方，引擎已发动"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover",
+        "weather": "雨持续",
+        "story_time": "开放式结局——文件袋去向不明"
+      },
+      "entry_boundary_id": "scene_004-B4",
+      "exit_boundary_id": "scene_004-B5",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_004-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_004-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "坡道中段，向上奔跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑姿态，前倾，双腿交替"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "尚未完全入画",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑姿态"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中/手臂间"
+          }
+        ],
+        "light_main": {
+          "direction": "停车楼钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨",
+        "environment": "多层停车楼，坡道混凝土湿滑，城市夜景在远处模糊"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B1",
+      "from_ref": "scene_004-1",
+      "to_ref": "scene_004-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "坡道中上段，向上奔跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，接近排水沟"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "坡道下方，向上奔跑中",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中，被雨打湿"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "坡道中上段，向上奔跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，接近排水沟"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "坡道下方，向上奔跑中",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中，被雨打湿"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B2",
+      "from_ref": "scene_004-2",
+      "to_ref": "scene_004-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "排水沟上方，坡道转角处",
+            "facing": "向停着的货车移动",
+            "screen_direction": "depth_in",
+            "posture": "奔跑中转向，准备下蹲"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "坡道下方，接近排水沟",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中/手中"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "prepare",
+        "weather": "雨持续"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "排水沟上方，坡道转角处",
+            "facing": "向停着的货车移动",
+            "screen_direction": "depth_in",
+            "posture": "奔跑中转向，准备下蹲"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "坡道下方，接近排水沟",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "aze",
+            "location": "阿泽怀中/手中"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "prepare",
+        "weather": "雨持续"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B3",
+      "from_ref": "scene_004-3",
+      "to_ref": "scene_004-4",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "货车上方坡道，向上跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，背影，正在远离货车"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "排水沟上方，接近转角",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，视线锁定前方阿泽背影"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊，文件袋在其下方"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "货车上方坡道，向上跑",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，背影，正在远离货车"
+          },
+          {
+            "entity_id": "pursuers",
+            "position": "排水沟上方，接近转角",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，视线锁定前方阿泽背影"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊，文件袋在其下方"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B4",
+      "from_ref": "scene_004-4",
+      "to_ref": "scene_004-5",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "pursuers",
+            "position": "货车上方坡道，向上追",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，正在远离货车"
+          },
+          {
+            "entity_id": "aze",
+            "position": "坡道顶端",
+            "facing": "身体前倾奔跑",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，即将到达顶层"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "pursuers",
+            "position": "货车上方坡道，向上追",
+            "facing": "沿坡道向上",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，正在远离货车"
+          },
+          {
+            "entity_id": "aze",
+            "position": "坡道顶端",
+            "facing": "身体前倾奔跑",
+            "screen_direction": "right_to_left",
+            "posture": "奔跑，即将到达顶层"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道转角处，停泊"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:5"
+        },
+        "action_phase": "travel",
+        "weather": "雨持续"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B5",
+      "from_ref": "scene_004-5",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "aze",
+            "position": "停车楼顶层边缘",
+            "facing": "面向下方",
+            "screen_direction": "static",
+            "posture": "站立静止，雨水打在身上"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "货车底部"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "坡道下方，引擎已发动"
+          }
+        ],
+        "light_main": {
+          "direction": "钠灯",
+          "color_temp_k": 2200,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover",
+        "weather": "雨持续",
+        "story_time": "开放式结局——文件袋去向不明"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

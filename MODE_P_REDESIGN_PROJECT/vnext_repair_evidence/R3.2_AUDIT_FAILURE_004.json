@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "record_id": "R3.2_AUDIT_FAILURE_004",
+  "task_id": "R3.2",
+  "created_date": "2026-07-29",
+  "status": "NOT_COMPLETE",
+  "purpose": "Truthful continuation audit after a controller-scope correction. This record is failure evidence only and must not be used as a completion, readiness, production, or media-acceptance certificate.",
+  "scope_correction": {
+    "audit_record": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.2_SCOPE_BOUNDARY_AUDIT_001.json",
+    "audit_sha256": "ff8a4c27c46e0a83acc6a44b1dad55e0003a2556772560a6e3ce73b25b333607",
+    "change_request": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.2_SECURITY_BOUNDARY_CHANGE_REQUEST_001.md",
+    "change_request_sha256": "efb9f69b38291d1bae377318ad6dd26cac1ccaa91c3e21b18c4755fa1e327b86",
+    "source_edits_left_in_workspace": false,
+    "all_attempted_out_of_scope_source_paths_match_the_r3_2_claim_manifest": true
+  },
+  "test_runs": [
+    {
+      "name": "vnext_full_after_scope_correction",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "PASS",
+      "summary": "728 passed, 416 subtests passed in 26.93s"
+    },
+    {
+      "name": "v4_active_entrypoint_environment_gate",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "result": "FAIL",
+      "summary": "1 failed, 14 passed in 5.61s",
+      "failure": {
+        "test": "mode_p/test_active_entrypoints.py::ActiveCommandTests::test_machine_local_permissions_are_not_packaged",
+        "observed_condition": ".claude/settings.local.json exists in the user-preserved local workspace",
+        "user_direction": "Preserve settings.local.json; do not delete, move, or rewrite it."
+      }
+    }
+  ],
+  "unmet_required_checks": [
+    {
+      "check": "all_70_evidenced",
+      "actual": false,
+      "ledger_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/task_evidence_ledger_v2.json",
+      "verified_count": 62,
+      "unresolved_task_ids": ["V3.7", "V9.5", "V10.1", "V10.2", "V10.3", "V10.4", "V10.5", "V10.6"]
+    },
+    {
+      "check": "v4_full_green",
+      "actual": false,
+      "reason": "The preserved local permissions file makes the immutable v4 entrypoint test fail in this workspace."
+    },
+    {
+      "check": "local_ready_machine_generated",
+      "actual": false,
+      "reason": "The controller terminal contract still ends at V_TASK_REVALIDATION_REQUIRED and has no authoritative local-ready state."
+    },
+    {
+      "check": "security_boundary_remediation_authorized",
+      "actual": false,
+      "reason": "The discovered V3.7/V9.5 source gap is outside R3.2 allowed paths and requires the explicit controlled change request."
+    }
+  ],
+  "proven_but_insufficient": {
+    "vnext_full_green": true,
+    "scope_violation_was_reverted": true,
+    "v4_source_unchanged": true,
+    "settings_local_unchanged": true,
+    "textual_validation_is_not_visual_media_acceptance": true
+  },
+  "scope": {
+    "changed_paths": [
+      "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.2_SCOPE_BOUNDARY_AUDIT_001.json",
+      "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.2_SECURITY_BOUNDARY_CHANGE_REQUEST_001.md",
+      "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.2_AUDIT_FAILURE_004.json"
+    ],
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "external_generation_invoked": false,
+    "director_runtime_implemented": false,
+    "media_visual_acceptance_claimed": false
+  },
+  "required_follow_up": [
+    "Obtain explicit authorization for the security-boundary acceptance-contract rebase described in R3.2_SECURITY_BOUNDARY_CHANGE_REQUEST_001.md.",
+    "After that rebase, implement and evidence V3.7 and V9.5 before revalidating dependent V10.1 through V10.5 and conducting a fresh V10.6 audit.",
+    "Resolve the local-ready controller terminal-state contract through a separate authorized contract change; do not manufacture LOCAL_VNEXT_READY.",
+    "If actual v4 full green is required, separately authorize an isolated clean-workspace/package test or another owner-approved handling of settings.local.json."
+  ],
+  "prohibited_claims": [
+    "R3.2_COMPLETE",
+    "V3.7_VERIFIED_IMPLEMENTED",
+    "V9.5_VERIFIED_IMPLEMENTED",
+    "LOCAL_VNEXT_READY",
+    "PRODUCTION_READY",
+    "STORYBOARD_VIDEO_VISUAL_ACCEPTANCE"
+  ]
+}

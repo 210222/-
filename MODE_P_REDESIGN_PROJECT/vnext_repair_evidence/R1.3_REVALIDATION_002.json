@@ -1,0 +1,52 @@
+{
+  "task_id": "R1.3",
+  "record_id": "R1.3_REVALIDATION_002",
+  "created_date": "2026-07-29",
+  "purpose": "User-authorized dependency-chain revalidation. No R1.3 implementation artifact was rewritten.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/storyboard_projection.py",
+    "01_调度器/mode_p_vnext/storyboard_renderer.py",
+    "01_调度器/mode_p_vnext/video_projection.py",
+    "01_调度器/mode_p_vnext/video_renderer.py",
+    "01_调度器/mode_p_vnext/fixtures/r1_3/source_spans.json",
+    "01_调度器/mode_p_vnext/fixtures/r1_3/golden_cases.py",
+    "01_调度器/mode_p_vnext/fixtures/r1_3/generate_registry.py",
+    "01_调度器/mode_p_vnext/fixtures/r1_3/structural_signature.json",
+    "01_调度器/mode_p_vnext/tests/test_v5_1_storyboard_projection.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_2_storyboard_renderer.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_3_video_projection.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_4_video_renderer.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_5_capability_adapter.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_6_payload_compiler.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_7_payload_manifest.py",
+    "01_调度器/mode_p_vnext/tests/test_v5_8_dual_output_sync.py"
+  ],
+  "predecessor_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R1.3.json",
+  "checks": [
+    {
+      "name": "storyboard_full_template",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered R1.3 command."
+    },
+    {
+      "name": "video_full_template",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered R1.3 command."
+    },
+    {
+      "name": "golden_structure_match",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered R1.3 command."
+    },
+    {
+      "name": "no_semantic_rewrite",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered R1.3 command."
+    }
+  ],
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

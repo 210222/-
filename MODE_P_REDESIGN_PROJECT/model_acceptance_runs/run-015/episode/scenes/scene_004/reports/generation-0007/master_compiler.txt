@@ -1,0 +1,2 @@
+FAIL master_compiler
+Compiler error: Malformed or unknown state-key line in 接入状态键：[M]: '- character:aze position:坡道中段，向上奔跑 facing:沿坡道向上 screen_direction:right_to_left 或 depth_in（依机位而定——坡道运动方向） posture:奔跑姿态，前倾，双腿交替'

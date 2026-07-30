@@ -1,0 +1,1062 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_003",
+  "master_version": "scene_003/v1.0",
+  "master_content_hash": "1dd42c819e0332cd3cf2d9ce2cbc999fe707d08e2d8c152f0eea4b895f5f5f6b",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_003-1",
+      "duration": 12.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L30——顾言与证人米娅隔着窄桌坐着；列车经过隧道，窗外的城市灯光短暂消失。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 30,
+        "source_line_end": 30
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table",
+            "wardrobe": "dark_overcoat"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge",
+            "wardrobe": "plain_casual_jacket"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:4"
+        },
+        "action_phase": "static",
+        "story_time": "night",
+        "environment": "train_moving_open_night_city_lights_streaking"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      },
+      "entry_boundary_id": "scene_003-B0",
+      "exit_boundary_id": "scene_003-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-2",
+      "duration": 8.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L32——顾言：「存储卡给我，你下一站下车。」",
+        "source_scene_id": "scene_003",
+        "source_line_start": 32,
+        "source_line_end": 32
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      },
+      "entry_boundary_id": "scene_003-B1",
+      "exit_boundary_id": "scene_003-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-3",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L34——米娅把存储卡夹在两指之间，却没有递出；L36——米娅：「先把我的名字从证人名单里删掉。」",
+        "source_scene_id": "scene_003",
+        "source_line_start": 34,
+        "source_line_end": 36
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_card_between_two_fingers_at_face_level"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "between_two_fingers_at_face_level"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      },
+      "entry_boundary_id": "scene_003-B2",
+      "exit_boundary_id": "scene_003-B3",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-4",
+      "duration": 8.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L36 之后、L38 之前的必要反应：顾言接收条件并取出工作证的过渡动作。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 36,
+        "source_line_end": 38
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_card_between_two_fingers_at_face_level"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "between_two_fingers_at_face_level"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_right_hand_holding_work_id_above_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_card_between_two_fingers_at_face_level"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "between_two_fingers_at_face_level"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "in_right_hand_above_table"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "prepare",
+        "environment": "tunnel_inside_window_black"
+      },
+      "entry_boundary_id": "scene_003-B3",
+      "exit_boundary_id": "scene_003-B4",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-5",
+      "duration": 9.0,
+      "scene_expression": "investigation_object",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L38——列车驶出隧道；顾言把自己的工作证翻面扣在桌上，米娅才把存储卡放到桌面中央。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 38,
+        "source_line_end": 38
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_right_hand_holding_work_id_above_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_card_between_two_fingers_at_face_level"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "between_two_fingers_at_face_level"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "in_right_hand_above_table"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "prepare",
+        "environment": "tunnel_inside_window_black"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_hands_withdrawn_to_table_edge"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_hands_withdrawn_to_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "table_center_right_face_down"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:4"
+        },
+        "action_phase": "static",
+        "environment": "train_moving_open_night_city_lights_streaking"
+      },
+      "entry_boundary_id": "scene_003-B4",
+      "exit_boundary_id": "scene_003-B5",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_003-6",
+      "duration": 10.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L38 之后的场面结果：交换完成后的对坐状态。",
+        "source_scene_id": "scene_003",
+        "source_line_start": 38,
+        "source_line_end": 38
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_hands_withdrawn_to_table_edge"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_hands_withdrawn_to_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "table_center_right_face_down"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:4"
+        },
+        "action_phase": "static",
+        "environment": "train_moving_open_night_city_lights_streaking"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_back_against_seat"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_back_against_seat"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "table_center_right_face_down"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "entry_boundary_id": "scene_003-B5",
+      "exit_boundary_id": "scene_003-B6",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_003-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_003-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table",
+            "wardrobe": "dark_overcoat"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge",
+            "wardrobe": "plain_casual_jacket"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:4"
+        },
+        "action_phase": "static",
+        "story_time": "night",
+        "environment": "train_moving_open_night_city_lights_streaking"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B1",
+      "from_ref": "scene_003-1",
+      "to_ref": "scene_003-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B2",
+      "from_ref": "scene_003-2",
+      "to_ref": "scene_003-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_right_fist_on_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "inside_right_fist_on_table_edge"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B3",
+      "from_ref": "scene_003-3",
+      "to_ref": "scene_003-4",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_card_between_two_fingers_at_face_level"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "between_two_fingers_at_face_level"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_forearms_on_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_card_between_two_fingers_at_face_level"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "between_two_fingers_at_face_level"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "coat_inner_pocket"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "static",
+        "environment": "tunnel_inside_window_black"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B4",
+      "from_ref": "scene_003-4",
+      "to_ref": "scene_003-5",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_right_hand_holding_work_id_above_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_card_between_two_fingers_at_face_level"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "between_two_fingers_at_face_level"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "in_right_hand_above_table"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "prepare",
+        "environment": "tunnel_inside_window_black"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_right_hand_holding_work_id_above_table"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_card_between_two_fingers_at_face_level"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "mi_ya",
+            "location": "between_two_fingers_at_face_level"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "gu_yan",
+            "location": "in_right_hand_above_table"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:8"
+        },
+        "action_phase": "prepare",
+        "environment": "tunnel_inside_window_black"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B5",
+      "from_ref": "scene_003-5",
+      "to_ref": "scene_003-6",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_hands_withdrawn_to_table_edge"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_hands_withdrawn_to_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "table_center_right_face_down"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:4"
+        },
+        "action_phase": "static",
+        "environment": "train_moving_open_night_city_lights_streaking"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_hands_withdrawn_to_table_edge"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_hands_withdrawn_to_table_edge"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "table_center_right_face_down"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:4"
+        },
+        "action_phase": "static",
+        "environment": "train_moving_open_night_city_lights_streaking"
+      }
+    },
+    {
+      "boundary_id": "scene_003-B6",
+      "from_ref": "scene_003-6",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "gu_yan",
+            "position": "train_compartment|table_north_seat|seated",
+            "facing": "south",
+            "screen_direction": "static",
+            "posture": "seated_back_against_seat"
+          },
+          {
+            "entity_id": "mi_ya",
+            "position": "train_compartment|table_south_seat|seated",
+            "facing": "north",
+            "screen_direction": "static",
+            "posture": "seated_back_against_seat"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "memory_card",
+            "held_by": "none",
+            "location": "table_center"
+          },
+          {
+            "prop_id": "work_id",
+            "held_by": "none",
+            "location": "table_center_right_face_down"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead_cabin_lamp",
+          "color_temp_k": 3200,
+          "ratio": "1:4"
+        },
+        "action_phase": "static"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

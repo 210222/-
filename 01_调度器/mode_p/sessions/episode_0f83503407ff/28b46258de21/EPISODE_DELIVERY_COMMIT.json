@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "status": "committed",
+  "review_session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\episode_review",
+  "review_input_sha256": "98699c4e79f55734cd04f4e89d59b084f516982c33400515f3a1b18c582fdeb7",
+  "scenes": [
+    {
+      "scene_index": 1,
+      "scene_id": "scene_001",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_001",
+      "master_content_hash": "fc3f9d48bcccc911fab03ab5d9e5a6a04ce5b42151decac13503df05945aeda1",
+      "storyboard_sha256": "245af7630a457e5a087053e148506171d40b5f0ea1add8dbb455a3e8f8ad7f79",
+      "video_prompt_sha256": "cf47a57fad15f5af0163fde588eb4fe756e48fb57cdf3a5c9f6bb3267e19b550"
+    },
+    {
+      "scene_index": 2,
+      "scene_id": "scene_002",
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\01_调度器\\mode_p\\sessions\\episode_0f83503407ff\\28b46258de21\\scenes\\scene_002",
+      "master_content_hash": "8bb9efa0222ce0723d0c07b09860a023845a0f192f07bfa2e92cf2050bb27f5e",
+      "storyboard_sha256": "4516745241a7e4d40cb62cbb236823f1aa350c234bd38c56ef2e31f0b25ac119",
+      "video_prompt_sha256": "a64111bc4bc85cd37314a3b7d6ff9b57638c5de7b2f02b3adcd7fc3af37dd5cb"
+    }
+  ],
+  "files": {
+    "STORYBOARD.md": "0505a78b838ac49506d68db95275ec3c8cc647966aa8a17cb59fb62424331575",
+    "VIDEO_PROMPT.md": "479bccf9b4bb7148137c1a2b9f15d5497cfe11e655538d5151845afd9ac167ae"
+  },
+  "commit_sha256": "73d75f3ffc4b92ae1e893f0092c5ff455683abd155ed1cf03bcf0f8b83224586"
+}

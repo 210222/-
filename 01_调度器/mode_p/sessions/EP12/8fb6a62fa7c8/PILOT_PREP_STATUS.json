@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "stage": "ready_for_scene_design",
+  "script_source_hash": "535240582f020fee98eb1ea7592027bbb968ce5b0a72ad27bb8b0a88cf281160",
+  "episode_id": "EP12",
+  "episode_version": "8fb6a62fa7c8458aa4e2ffe91d522060910148fed2708aebd4d2174dc8edbcd1",
+  "project_mode": "standalone",
+  "project_id": "",
+  "active_scenes": [
+    1,
+    2,
+    3
+  ],
+  "facts_ready": true,
+  "episode_documents_ready": true
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.1",
+  "description": "MODE:P reference assets with stable IDs, content hashes, availability, and permitted responsibilities.",
+  "updated_at": "2026-07-16T00:00:00+08:00",
+  "asset_root": ".",
+  "asset_count": 0,
+  "assets": []
+}

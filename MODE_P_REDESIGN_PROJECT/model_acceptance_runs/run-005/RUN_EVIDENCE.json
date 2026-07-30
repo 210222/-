@@ -1,0 +1,72 @@
+{
+  "run_id": "run-005",
+  "created_at": "2026-07-17T02:56:44.064177+00:00",
+  "completed_at": "2026-07-17T04:05:00+00:00",
+  "protocol": "MODE_P_REDESIGN_PROJECT/MODEL_ACCEPTANCE_PROTOCOL.md",
+  "fixed_input": {
+    "path": "MODE_P_REDESIGN_PROJECT/acceptance_cases/director_transfer_4scenes.md",
+    "sha256": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+    "scene_count": 4,
+    "description": "四种压力下的决定 — four independent anthology vignettes"
+  },
+  "director": {
+    "agent_type": "mode-p-director",
+    "agent_call_id": "aee80b90bb0f25729",
+    "resolved_model": "deepseek-v4-pro[1m]",
+    "effort": "max",
+    "revisions": 7,
+    "revision_reasons": [
+      "code-fence removal and angle-bracket format corrections",
+      "single-line source reference to range format",
+      "second_nodes timeline gap fixes (scene_4-1, scene_4-2)",
+      "boundary continuity fixes across all four scenes",
+      "opening/closing entity key mismatches",
+      "duplicate action_phase and missing pursuers",
+      "episode review cross-scene consistency check"
+    ]
+  },
+  "dp": [
+    {
+      "review_id": "round-1",
+      "agent_call_id": "a459a1c2ec9013b0b",
+      "resolved_model": "deepseek-v4-pro[1m]",
+      "effort": "high",
+      "result": "READY — all 12 shots pass"
+    }
+  ],
+  "knowledge_loaded": {
+    "capsules": [],
+    "experiences": [],
+    "asset_cards": [],
+    "core": [
+      "director_core.md",
+      "sd2.md",
+      "performance.md",
+      "editing_transition.md"
+    ]
+  },
+  "test_hashes": {
+    "local_suite": "655 passed, 8 subtests passed, 0 failed",
+    "legacy_residue": "clean"
+  },
+  "pipeline": {
+    "scaffold": "mode_p_pilot",
+    "compile": "master_compiler × 4 scenes",
+    "derive": "view_deriver × 4 scenes",
+    "precheck": "structural_precheck — all 4 passed",
+    "dp_batch": "batch_dp prepare + submit",
+    "episode_review": "episode_review — PASS",
+    "delivery": "episode_delivery assemble + verify"
+  },
+  "shots": {
+    "total": 12,
+    "per_scene": {"scene_1": 3, "scene_2": 3, "scene_3": 3, "scene_4": 3},
+    "all_durations_within_15s": true,
+    "generation_mode": "text_only — all 12 shots"
+  },
+  "delivery": {
+    "files": ["STORYBOARD.md", "VIDEO_PROMPT.md"],
+    "storyboard_sha256": "ba9ad986ec15ed426a7fd89ec8c9ecfa00f1966df4ee094f1b77b7eab92d5711",
+    "video_prompt_sha256": "4f0f0b5b4d773e398f1f1553de3e8746c92a19126a18adcaa043b735248e6dc3"
+  }
+}

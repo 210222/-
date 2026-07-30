@@ -1,0 +1,1015 @@
+{
+  "manifest_version": "1.2",
+  "scene_id": "scene_004",
+  "master_version": "scene_004/v1.0",
+  "master_content_hash": "b9da71d55bcb8635a60bc317b0e20c519d2cd0a3bb8fbb24b0b7bee5e2b15e1e",
+  "compiler_version": "2.0.0",
+  "shots": [
+    {
+      "shot_id": "scene_004-1",
+      "duration": 8.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "second_nodes",
+      "story_fact_ref": {
+        "text_start": "L42——快递员阿泽抱着文件袋沿坡道向上跑；两名追赶者从下一层冲上来。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 42,
+        "source_line_end": 42
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|ramp_p3_lower_section|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_bag_clutched_to_chest",
+            "wardrobe": "courier_uniform_rain_soaked"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|p3_level_mouth_below|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|p3_level_mouth_below|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "clutched_to_chest"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel",
+        "story_time": "night",
+        "weather": "steady_rain",
+        "environment": "multi_storey_carpark_wet_surfaces"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|ramp_p3_to_p4_transition|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_bag_clutched_to_chest"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|ramp_p3_mid|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|ramp_p3_mid|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "clutched_to_chest"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      },
+      "entry_boundary_id": "scene_004-B0",
+      "exit_boundary_id": "scene_004-B1",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_004-2",
+      "duration": 8.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "second_nodes",
+      "story_fact_ref": {
+        "text_start": "L44——阿泽跨过排水沟，在转角处滑向货车（藏袋动作于下一镜完成）。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 44,
+        "source_line_end": 44
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|ramp_p3_to_p4_transition|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_bag_clutched_to_chest"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|ramp_p3_mid|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|ramp_p3_mid|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "clutched_to_chest"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|p4_corner_truck_side|crouched",
+            "facing": "upslope_north",
+            "screen_direction": "static",
+            "posture": "crouch_right_hand_extending_bag_to_truck_underside"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|ramp_p3_upper|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|ramp_p3_upper|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "at_truck_underside_edge"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "prepare"
+      },
+      "entry_boundary_id": "scene_004-B1",
+      "exit_boundary_id": "scene_004-B2",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_004-3",
+      "duration": 5.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "half_second_nodes",
+      "story_fact_ref": {
+        "text_start": "L44——把文件袋滑进一辆停着的货车底部，自己继续向顶层跑。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 44,
+        "source_line_end": 44
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|p4_corner_truck_side|crouched",
+            "facing": "upslope_north",
+            "screen_direction": "static",
+            "posture": "crouch_right_hand_extending_bag_to_truck_underside"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|ramp_p3_upper|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|ramp_p3_upper|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "at_truck_underside_edge"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "prepare"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|p4_beyond_truck_upslope|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|p4_corner_approach|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|p4_corner_approach|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_against_inner_wheel"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      },
+      "entry_boundary_id": "scene_004-B2",
+      "exit_boundary_id": "scene_004-B3",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_004-4",
+      "duration": 8.0,
+      "scene_expression": "action_chase",
+      "timing_mode": "second_nodes",
+      "story_fact_ref": {
+        "text_start": "L45——追赶者只看见他的背影，越过货车追了上去。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 45,
+        "source_line_end": 45
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|p4_beyond_truck_upslope|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|p4_corner_approach|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|p4_corner_approach|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_against_inner_wheel"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|rooftop_entry|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|upper_ramp_offscreen|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|upper_ramp_offscreen|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_against_inner_wheel"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      },
+      "entry_boundary_id": "scene_004-B3",
+      "exit_boundary_id": "scene_004-B4",
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production"
+    },
+    {
+      "shot_id": "scene_004-5",
+      "duration": 12.0,
+      "scene_expression": "suspense_reveal",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "L47——阿泽到达顶层边缘后停下，听见下方传来货车发动的声音。",
+        "source_scene_id": "scene_004",
+        "source_line_start": 47,
+        "source_line_end": 47
+      },
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|rooftop_entry|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|upper_ramp_offscreen|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|upper_ramp_offscreen|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_against_inner_wheel"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|rooftop_edge_railing|standing",
+            "facing": "downward_over_railing",
+            "screen_direction": "static",
+            "posture": "leaning_on_railing_looking_down_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|upper_ramp_offscreen|unseen",
+            "facing": "upslope_north",
+            "screen_direction": "static",
+            "posture": "offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|upper_ramp_offscreen|unseen",
+            "facing": "upslope_north",
+            "screen_direction": "static",
+            "posture": "offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_last_seen_position"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_engine_running"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "static",
+        "environment": "truck_engine_idling_below_rain_continuous"
+      },
+      "entry_boundary_id": "scene_004-B4",
+      "exit_boundary_id": "scene_004-B5",
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production"
+    }
+  ],
+  "boundaries": [
+    {
+      "boundary_id": "scene_004-B0",
+      "from_ref": "SCENE_ENTRY",
+      "to_ref": "scene_004-1",
+      "relation": "scene_entry",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": null,
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|ramp_p3_lower_section|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_bag_clutched_to_chest",
+            "wardrobe": "courier_uniform_rain_soaked"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|p3_level_mouth_below|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|p3_level_mouth_below|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "clutched_to_chest"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel",
+        "story_time": "night",
+        "weather": "steady_rain",
+        "environment": "multi_storey_carpark_wet_surfaces"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B1",
+      "from_ref": "scene_004-1",
+      "to_ref": "scene_004-2",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|ramp_p3_to_p4_transition|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_bag_clutched_to_chest"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|ramp_p3_mid|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|ramp_p3_mid|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "clutched_to_chest"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|ramp_p3_to_p4_transition|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_bag_clutched_to_chest"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|ramp_p3_mid|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|ramp_p3_mid|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "clutched_to_chest"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B2",
+      "from_ref": "scene_004-2",
+      "to_ref": "scene_004-3",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|p4_corner_truck_side|crouched",
+            "facing": "upslope_north",
+            "screen_direction": "static",
+            "posture": "crouch_right_hand_extending_bag_to_truck_underside"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|ramp_p3_upper|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|ramp_p3_upper|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "at_truck_underside_edge"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "prepare"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|p4_corner_truck_side|crouched",
+            "facing": "upslope_north",
+            "screen_direction": "static",
+            "posture": "crouch_right_hand_extending_bag_to_truck_underside"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|ramp_p3_upper|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|ramp_p3_upper|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "a_ze",
+            "location": "at_truck_underside_edge"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "prepare"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B3",
+      "from_ref": "scene_004-3",
+      "to_ref": "scene_004-4",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|p4_beyond_truck_upslope|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|p4_corner_approach|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|p4_corner_approach|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_against_inner_wheel"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|p4_beyond_truck_upslope|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|p4_corner_approach|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|p4_corner_approach|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_against_inner_wheel"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B4",
+      "from_ref": "scene_004-4",
+      "to_ref": "scene_004-5",
+      "relation": "continuous",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|rooftop_entry|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|upper_ramp_offscreen|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|upper_ramp_offscreen|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_against_inner_wheel"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      },
+      "incoming_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|rooftop_entry|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|upper_ramp_offscreen|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|upper_ramp_offscreen|running",
+            "facing": "upslope_north",
+            "screen_direction": "left_to_right",
+            "posture": "running_offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_against_inner_wheel"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_parked_engine_off"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "travel"
+      }
+    },
+    {
+      "boundary_id": "scene_004-B5",
+      "from_ref": "scene_004-5",
+      "to_ref": "SCENE_EXIT",
+      "relation": "scene_exit",
+      "transition_execution": "post_production",
+      "outgoing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "a_ze",
+            "position": "carpark|rooftop_edge_railing|standing",
+            "facing": "downward_over_railing",
+            "screen_direction": "static",
+            "posture": "leaning_on_railing_looking_down_hands_empty"
+          },
+          {
+            "entity_id": "chaser_a",
+            "position": "carpark|upper_ramp_offscreen|unseen",
+            "facing": "upslope_north",
+            "screen_direction": "static",
+            "posture": "offscreen"
+          },
+          {
+            "entity_id": "chaser_b",
+            "position": "carpark|upper_ramp_offscreen|unseen",
+            "facing": "upslope_north",
+            "screen_direction": "static",
+            "posture": "offscreen"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "file_bag",
+            "held_by": "none",
+            "location": "under_truck_last_seen_position"
+          },
+          {
+            "prop_id": "truck",
+            "held_by": "none",
+            "location": "p4_corner_bay_engine_running"
+          }
+        ],
+        "light_main": {
+          "direction": "sodium_lamps_overhead_spaced",
+          "color_temp_k": 2200,
+          "ratio": "1:16"
+        },
+        "action_phase": "static",
+        "environment": "truck_engine_idling_below_rain_continuous"
+      },
+      "incoming_state_keys": null
+    }
+  ]
+}

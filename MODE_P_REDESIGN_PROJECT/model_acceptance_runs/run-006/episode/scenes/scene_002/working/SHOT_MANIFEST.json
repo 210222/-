@@ -1,0 +1,541 @@
+{
+    "manifest_version":  "1.2",
+    "scene_id":  "S2",
+    "master_version":  "S2/v1.0",
+    "master_content_hash":  "a2b1cbb95a615ef2460fa038b18541ce2e7f4b1be5f765d97d95bba6af3a0ecc",
+    "compiler_version":  "2.0.0",
+    "shots":  [
+                  {
+                      "shot_id":  "S2-1",
+                      "duration":  7.0,
+                      "scene_expression":  "conversation_power",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "周岚站在水槽旁，周成坐在餐桌前，桌上放着已拆开的信。周岚说出对白。",
+                                             "source_scene_id":  "S2",
+                                             "source_line_start":  17,
+                                             "source_line_end":  19
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "周岚",
+                                                                        "position":  "sink_right",
+                                                                        "facing":  "left",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "standing_turned"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "周成",
+                                                                        "position":  "table_left",
+                                                                        "facing":  "rear",
+                                                                        "screen_direction":  "depth_in",
+                                                                        "posture":  "seated_slumped"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "信",
+                                                                   "held_by":  "none",
+                                                                   "location":  "table_left"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "储物柜钥匙",
+                                                                   "held_by":  "周成",
+                                                                   "location":  "table_right_near_hand"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "window_and_stove",
+                                                                    "color_temp_k":  5500,
+                                                                    "ratio":  "1:4"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "story_time":  "清晨",
+                                                 "environment":  "kitchen_kettle_heating"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "周岚",
+                                                                        "position":  "sink_right",
+                                                                        "facing":  "left",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "standing_leaning_mouth_closed"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "周成",
+                                                                        "position":  "table_left",
+                                                                        "facing":  "rear",
+                                                                        "screen_direction":  "depth_in",
+                                                                        "posture":  "seated_watching_steam"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "信",
+                                                                   "held_by":  "none",
+                                                                   "location":  "table_left"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "储物柜钥匙",
+                                                                   "held_by":  "周成",
+                                                                   "location":  "table_right_near_hand"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "window_and_stove",
+                                                                    "color_temp_k":  5500,
+                                                                    "ratio":  "1:4"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "entry_boundary_id":  "SCENE_ENTRY",
+                      "exit_boundary_id":  "S2-B1",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "S2-2",
+                      "duration":  9.0,
+                      "scene_expression":  "investigation_object",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "周成看着水壶蒸汽不回答。水壶鸣叫后关火，将储物柜钥匙推向周岚。说出对白。",
+                                             "source_scene_id":  "S2",
+                                             "source_line_start":  21,
+                                             "source_line_end":  24
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "周岚",
+                                                                        "position":  "sink_right",
+                                                                        "facing":  "left",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "standing_leaning_mouth_closed"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "周成",
+                                                                        "position":  "table_left",
+                                                                        "facing":  "rear",
+                                                                        "screen_direction":  "depth_in",
+                                                                        "posture":  "seated_watching_steam"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "信",
+                                                                   "held_by":  "none",
+                                                                   "location":  "table_left"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "储物柜钥匙",
+                                                                   "held_by":  "周成",
+                                                                   "location":  "table_right_near_hand"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "window_and_stove",
+                                                                    "color_temp_k":  5500,
+                                                                    "ratio":  "1:4"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "周岚",
+                                                                        "position":  "sink_right",
+                                                                        "facing":  "left",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "standing_looking_key"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "周成",
+                                                                        "position":  "table_left",
+                                                                        "facing":  "right",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "seated_hand_retracting"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "信",
+                                                                   "held_by":  "none",
+                                                                   "location":  "table_left"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "储物柜钥匙",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏右"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "window_right",
+                                                                    "color_temp_k":  5500,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "entry_boundary_id":  "S2-B1",
+                      "exit_boundary_id":  "S2-B2",
+                      "boundary_continuity":  "continuous",
+                      "transition_execution":  "post_production"
+                  },
+                  {
+                      "shot_id":  "S2-3",
+                      "duration":  6.0,
+                      "scene_expression":  "contemplative_silence",
+                      "timing_mode":  "event_nodes",
+                      "story_fact_ref":  {
+                                             "text_start":  "周岚拿起钥匙，仍把信留在桌上。",
+                                             "source_scene_id":  "S2",
+                                             "source_line_start":  26,
+                                             "source_line_end":  26
+                                         },
+                      "generation_mode":  "text_only",
+                      "reference_assets":  [
+
+                                           ],
+                      "opening_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "周岚",
+                                                                        "position":  "sink_right",
+                                                                        "facing":  "left",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "standing_looking_key"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "周成",
+                                                                        "position":  "table_left",
+                                                                        "facing":  "right",
+                                                                        "screen_direction":  "left_to_right",
+                                                                        "posture":  "seated_hand_retracting"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "信",
+                                                                   "held_by":  "none",
+                                                                   "location":  "table_left"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "储物柜钥匙",
+                                                                   "held_by":  "none",
+                                                                   "location":  "桌面中央偏右"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "window_right",
+                                                                    "color_temp_k":  5500,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static"
+                                             },
+                      "closing_state_keys":  {
+                                                 "characters":  [
+                                                                    {
+                                                                        "entity_id":  "周岚",
+                                                                        "position":  "sink_right",
+                                                                        "facing":  "left",
+                                                                        "screen_direction":  "right_to_left",
+                                                                        "posture":  "standing_holding_key"
+                                                                    },
+                                                                    {
+                                                                        "entity_id":  "周成",
+                                                                        "position":  "table_left",
+                                                                        "facing":  "rear",
+                                                                        "screen_direction":  "depth_in",
+                                                                        "posture":  "seated_hands_in"
+                                                                    }
+                                                                ],
+                                                 "props":  [
+                                                               {
+                                                                   "prop_id":  "信",
+                                                                   "held_by":  "none",
+                                                                   "location":  "table_letter_spot"
+                                                               },
+                                                               {
+                                                                   "prop_id":  "储物柜钥匙",
+                                                                   "held_by":  "周岚",
+                                                                   "location":  "hand_zhoulan_right"
+                                                               }
+                                                           ],
+                                                 "light_main":  {
+                                                                    "direction":  "window_right",
+                                                                    "color_temp_k":  5500,
+                                                                    "ratio":  "1:6"
+                                                                },
+                                                 "action_phase":  "static",
+                                                 "story_time":  "清晨",
+                                                 "environment":  "kitchen_kettle_off"
+                                             },
+                      "entry_boundary_id":  "S2-B2",
+                      "exit_boundary_id":  "SCENE_EXIT",
+                      "boundary_continuity":  "scene_exit",
+                      "transition_execution":  "post_production"
+                  }
+              ],
+    "boundaries":  [
+                       {
+                           "boundary_id":  "S2-B0",
+                           "from_ref":  "SCENE_ENTRY",
+                           "to_ref":  "S2-1",
+                           "relation":  "scene_entry",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  null,
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "周岚",
+                                                                              "position":  "sink_right",
+                                                                              "facing":  "left",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "standing_turned"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "周成",
+                                                                              "position":  "table_left",
+                                                                              "facing":  "rear",
+                                                                              "screen_direction":  "depth_in",
+                                                                              "posture":  "seated_slumped"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "信",
+                                                                         "held_by":  "none",
+                                                                         "location":  "table_left"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "储物柜钥匙",
+                                                                         "held_by":  "周成",
+                                                                         "location":  "table_right_near_hand"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "window_and_stove",
+                                                                          "color_temp_k":  5500,
+                                                                          "ratio":  "1:4"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "story_time":  "清晨",
+                                                       "environment":  "kitchen_kettle_heating"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "S2-B1",
+                           "from_ref":  "S2-1",
+                           "to_ref":  "S2-2",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "周岚",
+                                                                              "position":  "sink_right",
+                                                                              "facing":  "left",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "standing_leaning_mouth_closed"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "周成",
+                                                                              "position":  "table_left",
+                                                                              "facing":  "rear",
+                                                                              "screen_direction":  "depth_in",
+                                                                              "posture":  "seated_watching_steam"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "信",
+                                                                         "held_by":  "none",
+                                                                         "location":  "table_left"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "储物柜钥匙",
+                                                                         "held_by":  "周成",
+                                                                         "location":  "table_right_near_hand"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "window_and_stove",
+                                                                          "color_temp_k":  5500,
+                                                                          "ratio":  "1:4"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "周岚",
+                                                                              "position":  "sink_right",
+                                                                              "facing":  "left",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "standing_leaning_mouth_closed"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "周成",
+                                                                              "position":  "table_left",
+                                                                              "facing":  "rear",
+                                                                              "screen_direction":  "depth_in",
+                                                                              "posture":  "seated_watching_steam"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "信",
+                                                                         "held_by":  "none",
+                                                                         "location":  "table_left"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "储物柜钥匙",
+                                                                         "held_by":  "周成",
+                                                                         "location":  "table_right_near_hand"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "window_and_stove",
+                                                                          "color_temp_k":  5500,
+                                                                          "ratio":  "1:4"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "S2-B2",
+                           "from_ref":  "S2-2",
+                           "to_ref":  "S2-3",
+                           "relation":  "continuous",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "周岚",
+                                                                              "position":  "sink_right",
+                                                                              "facing":  "left",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "standing_looking_key"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "周成",
+                                                                              "position":  "table_left",
+                                                                              "facing":  "right",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "seated_hand_retracting"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "信",
+                                                                         "held_by":  "none",
+                                                                         "location":  "table_left"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "储物柜钥匙",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏右"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "window_right",
+                                                                          "color_temp_k":  5500,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   },
+                           "incoming_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "周岚",
+                                                                              "position":  "sink_right",
+                                                                              "facing":  "left",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "standing_looking_key"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "周成",
+                                                                              "position":  "table_left",
+                                                                              "facing":  "right",
+                                                                              "screen_direction":  "left_to_right",
+                                                                              "posture":  "seated_hand_retracting"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "信",
+                                                                         "held_by":  "none",
+                                                                         "location":  "table_left"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "储物柜钥匙",
+                                                                         "held_by":  "none",
+                                                                         "location":  "桌面中央偏右"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "window_right",
+                                                                          "color_temp_k":  5500,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static"
+                                                   }
+                       },
+                       {
+                           "boundary_id":  "S2-B3",
+                           "from_ref":  "S2-3",
+                           "to_ref":  "SCENE_EXIT",
+                           "relation":  "scene_exit",
+                           "transition_execution":  "post_production",
+                           "outgoing_state_keys":  {
+                                                       "characters":  [
+                                                                          {
+                                                                              "entity_id":  "周岚",
+                                                                              "position":  "sink_right",
+                                                                              "facing":  "left",
+                                                                              "screen_direction":  "right_to_left",
+                                                                              "posture":  "standing_holding_key"
+                                                                          },
+                                                                          {
+                                                                              "entity_id":  "周成",
+                                                                              "position":  "table_left",
+                                                                              "facing":  "rear",
+                                                                              "screen_direction":  "depth_in",
+                                                                              "posture":  "seated_hands_in"
+                                                                          }
+                                                                      ],
+                                                       "props":  [
+                                                                     {
+                                                                         "prop_id":  "信",
+                                                                         "held_by":  "none",
+                                                                         "location":  "table_letter_spot"
+                                                                     },
+                                                                     {
+                                                                         "prop_id":  "储物柜钥匙",
+                                                                         "held_by":  "周岚",
+                                                                         "location":  "hand_zhoulan_right"
+                                                                     }
+                                                                 ],
+                                                       "light_main":  {
+                                                                          "direction":  "window_right",
+                                                                          "color_temp_k":  5500,
+                                                                          "ratio":  "1:6"
+                                                                      },
+                                                       "action_phase":  "static",
+                                                       "story_time":  "清晨",
+                                                       "environment":  "kitchen_kettle_off"
+                                                   },
+                           "incoming_state_keys":  null
+                       }
+                   ]
+}

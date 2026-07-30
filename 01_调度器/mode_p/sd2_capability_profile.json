@@ -1,0 +1,181 @@
+{
+  "schema_version": "2.0",
+  "profile_id": "jimeng-seedance-2.0-canvas-2026-07-16",
+  "description": "即梦画布 Seedance 2.0 的可验证能力边界。平台事实、项目规则和质量经验分层记录；未知限制不得被本地检查器猜测。",
+  "product": {
+    "platform": "即梦智能画布",
+    "model": "Seedance 2.0",
+    "surface": "web_canvas",
+    "observed_at": "2026-07-16T00:00:00+08:00",
+    "mode_selection_owner": "director"
+  },
+  "evidence": [
+    {
+      "evidence_id": "official-jimeng-product-page-2026-07-16",
+      "kind": "official_product_page",
+      "url": "https://www.jimeng.com/",
+      "claims": ["text_prompt_available", "first_last_frame_available"]
+    },
+    {
+      "evidence_id": "official-jimeng-canvas-ui-2026-07-16",
+      "kind": "official_public_ui",
+      "url": "https://jimeng.jianying.com/ai-tool/home?type=video",
+      "claims": [
+        "omni_reference_available",
+        "omni_reference_accepts_image_video_audio",
+        "omni_reference_max_total_assets_12"
+      ]
+    },
+    {
+      "evidence_id": "official-seedance-launch-2026-02-12",
+      "kind": "official_model_release",
+      "url": "https://seed.bytedance.com/blog/seedance-2-0-official-launch",
+      "claims": [
+        "input_modalities_text_image_video_audio",
+        "reference_max_images_9",
+        "reference_max_videos_3",
+        "reference_max_audio_3",
+        "supports_15s_multishot_audio_video",
+        "multi_subject_text_and_complex_editing_remain_imperfect"
+      ]
+    },
+    {
+      "evidence_id": "seedance-2.0-technical-report-2026-04-15",
+      "kind": "official_technical_report",
+      "url": "https://arxiv.org/abs/2604.14148",
+      "claims": [
+        "direct_generation_duration_4_to_15s",
+        "native_resolution_480p_720p",
+        "reference_max_images_9",
+        "reference_max_videos_3",
+        "reference_max_audio_3"
+      ]
+    },
+    {
+      "evidence_id": "mode-p-project-policy-2026-07-16",
+      "kind": "user_requirement",
+      "url": null,
+      "claims": ["max_shot_duration_15s"]
+    }
+  ],
+  "mode_contract": {
+    "selection": "exactly_one_per_shot",
+    "enforcement": "hard"
+  },
+  "model_capabilities": {
+    "generation_duration_s": {
+      "min": 4,
+      "max": 15,
+      "enforcement": "hard",
+      "evidence_ids": ["seedance-2.0-technical-report-2026-04-15"]
+    },
+    "native_output_resolutions": {
+      "values": ["480p", "720p"],
+      "enforcement": "informational",
+      "evidence_ids": ["seedance-2.0-technical-report-2026-04-15"]
+    },
+    "multimodal_reference_limits": {
+      "image": 9,
+      "video": 3,
+      "audio": 3,
+      "canvas_total": 12,
+      "enforcement": "hard",
+      "evidence_ids": [
+        "official-seedance-launch-2026-02-12",
+        "official-jimeng-canvas-ui-2026-07-16"
+      ]
+    }
+  },
+  "modes": {
+    "text_only": {
+      "description": "只使用文字描述，不绑定参考素材。",
+      "availability": {
+        "status": "verified",
+        "evidence_ids": ["official-jimeng-product-page-2026-07-16"]
+      },
+      "asset_count": {
+        "min": 0,
+        "max": 0,
+        "enforcement": "hard",
+        "evidence_ids": ["official-jimeng-product-page-2026-07-16"]
+      },
+      "allowed_media_types": {
+        "values": [],
+        "enforcement": "hard",
+        "evidence_ids": ["official-jimeng-product-page-2026-07-16"]
+      },
+      "required_responsibilities": []
+    },
+    "first_last_frame": {
+      "description": "使用一张首帧图和一张尾帧图约束镜头的开始与结束。",
+      "availability": {
+        "status": "verified",
+        "evidence_ids": ["official-jimeng-product-page-2026-07-16"]
+      },
+      "asset_count": {
+        "min": 2,
+        "max": 2,
+        "enforcement": "hard",
+        "evidence_ids": ["official-jimeng-product-page-2026-07-16"]
+      },
+      "allowed_media_types": {
+        "values": ["image"],
+        "enforcement": "hard",
+        "evidence_ids": ["official-jimeng-product-page-2026-07-16"]
+      },
+      "required_responsibilities": ["first_frame", "last_frame"]
+    },
+    "omni_reference": {
+      "description": "用最小必要的图片、视频或音频素材分别承担身份、空间、动作、镜头或声音职责。",
+      "availability": {
+        "status": "verified",
+        "evidence_ids": ["official-jimeng-canvas-ui-2026-07-16"]
+      },
+      "asset_count": {
+        "min": 1,
+        "max": 12,
+        "enforcement": "hard",
+        "evidence_ids": ["official-jimeng-canvas-ui-2026-07-16"]
+      },
+      "allowed_media_types": {
+        "values": ["image", "video", "audio"],
+        "enforcement": "hard",
+        "evidence_ids": ["official-jimeng-canvas-ui-2026-07-16"]
+      },
+      "required_responsibilities": []
+    }
+  },
+  "project_policies": {
+    "max_shot_duration_s": {
+      "value": 15,
+      "enforcement": "hard",
+      "evidence_ids": ["mode-p-project-policy-2026-07-16"]
+    }
+  },
+  "quality_heuristics": {
+    "max_clear_faces_per_shot": {
+      "value": 2,
+      "enforcement": "advisory",
+      "reason": "多人清晰面孔会增加身份漂移风险；这不是已验证的平台硬限制。"
+    },
+    "max_core_actions_per_shot": {
+      "value": 1,
+      "enforcement": "advisory",
+      "reason": "保持动作意图可读；复杂动作可由 Director 按阶段拆分。"
+    },
+    "readable_in_frame_text": {
+      "value": "unreliable",
+      "enforcement": "advisory",
+      "reason": "叙事关键信息不应只依赖模型生成的画内文字。"
+    }
+  },
+  "unknown_limits": [
+    "per_file_size",
+    "total_upload_size",
+    "reference_video_duration",
+    "reference_audio_duration",
+    "accepted_file_extensions",
+    "account_entitlement_specific_resolution_options",
+    "account_specific_generation_duration_options"
+  ]
+}

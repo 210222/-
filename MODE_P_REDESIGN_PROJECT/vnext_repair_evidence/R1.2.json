@@ -1,0 +1,106 @@
+{
+  "task_id": "R1.2",
+  "title": "Correct Golden facts and add exact prompt fixtures",
+  "completed_at": "2026-07-23T04:44:00.000000+00:00",
+  "owner": "ds-r12-exact-repair-20260723",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/fixtures/gun_barrel_sb_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/gun_barrel_video_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/audience_sb_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/audience_video_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/prep_area_sb_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/prep_area_video_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/alley_sb_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/alley_video_prompt.json",
+    "01_调度器/mode_p_vnext/fixtures/prompt_fixture_manifest.json",
+    "01_调度器/mode_p_vnext/golden_fixture_registry.py",
+    "01_调度器/mode_p_vnext/golden_registration.py",
+    "01_调度器/mode_p_vnext/tests/test_v0_5_golden_fixtures.py",
+    "01_调度器/mode_p_vnext/tests/test_v8_1_golden_registration.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R1.2.json"
+  ],
+  "verbatim_source": {
+    "source_file": "Codex user-message JSONL",
+    "source_path": "C:/Users/JT/.codex/sessions/2026/07/22/rollout-2026-07-22T08-59-14-019f8755-685c-7fe1-b712-5db7b5960a77.jsonl",
+    "extraction_rule": "Stream JSONL; filter type=event_msg, payload.type=user_message; extract payload.message; if text contains '## My request for Codex:\\n', take body after first occurrence; otherwise take full text. No strip, no newline normalization, no re-encoding.",
+    "pinned_bodies": {
+      "gun_barrel_sb":    {"jsonl_line": 275, "source_body_length": 1703, "source_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8", "status": "verbatim"},
+      "gun_barrel_video": {"jsonl_line": 293, "source_body_length": 2544, "source_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce", "status": "verbatim"},
+      "audience_sb":      {"jsonl_line": 360, "source_body_length": 2099, "source_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141", "status": "verbatim"},
+      "audience_video":   {"jsonl_line": 381, "source_body_length": 2397, "source_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787", "status": "verbatim"},
+      "prep_area_sb":     {"jsonl_line": 404, "source_body_length": 1600, "source_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057", "status": "verbatim"},
+      "prep_area_video":  {"jsonl_line": 425, "source_body_length": 1811, "source_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c", "status": "verbatim"},
+      "alley_sb":         {"jsonl_line": 440, "source_body_length": 3032, "source_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb", "status": "verbatim"},
+      "alley_video":      {"jsonl_line": 458, "source_body_length": 2932, "source_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9", "status": "verbatim"}
+    }
+  },
+  "checks": [
+    {
+      "name": "four_exact_prompt_pairs",
+      "exit_code": 0,
+      "output": "8 verbatim prompt fixtures verified against Codex JSONL pinned hashes. FourExactPromptPairsTests (19 methods) all pass: exactly 8 files with correct scene pairs; source_kind=codex_user_message, source_fidelity=verbatim, source_body_sha256/length/jsonl_line match pinned constants; prompt_text character count and UTF-8 SHA-256 match pinned independent constants for all 8 fixtures; integrity_note contains no 'Reconstructed'/'reconstructed'/'summary'/'created from descriptions' text; one-code-point tamper changes hash; manifest hashes all 8 files; prep_area→§9, alley→§8 references correct."
+    },
+    {
+      "name": "prep_area_no_cut_fact",
+      "exit_code": 0,
+      "output": "PrepAreaNoCutFactTests (5 methods v0.5 + 3 methods v8.1) all pass. Design correctly stated as single continuous fixed-position shot. Actual failures: timing (early entrance ~2.5s vs ~5s) and behavior deviation. User statement notes composition success. Classification labeled INFERENCE. No 'missing_internal_cut_diagnostic' in evidence roles."
+    },
+    {
+      "name": "user_vs_inference_separated",
+      "exit_code": 0,
+      "output": "UserVsInferenceSeparatedTests (6 methods v0.5) all pass. All 4 scenes have structured UserEvaluation dicts with user_statement, audit_classification (labeled INFERENCE), composition_result, timing_result, behavior_result. User statements free of INFERENCE label. Valid result values (success|deviation|failure|n/a)."
+    }
+  ],
+  "artifact_hashes": {
+    "01_调度器/mode_p_vnext/fixtures/gun_barrel_sb_prompt.json": "74715235da9be4806668f7e97e947dffb9632b54b8b8af252846e0bb91768b76",
+    "01_调度器/mode_p_vnext/fixtures/gun_barrel_video_prompt.json": "5f6a600d8fae08cccd145a5d2b63f05e87fe0890a88e9c3a2bb89fec93de00dd",
+    "01_调度器/mode_p_vnext/fixtures/audience_sb_prompt.json": "a529cfc688dba2bc3cc2edb6a8e45b1a01f03e94fc707dd4a190a28ed5883a34",
+    "01_调度器/mode_p_vnext/fixtures/audience_video_prompt.json": "7bc512a01c5cf644a286467db11396536c589ae6a2eacdc83fcd7fdb3e3b0357",
+    "01_调度器/mode_p_vnext/fixtures/prep_area_sb_prompt.json": "df3c55251b156b0447734d58c8cc4b14e19b356360abffedf36438ab99888969",
+    "01_调度器/mode_p_vnext/fixtures/prep_area_video_prompt.json": "6bbd458818b1680844dabe2fdb0503aa10c4906eb44566bfabcb4fb0a9fc6fd9",
+    "01_调度器/mode_p_vnext/fixtures/alley_sb_prompt.json": "81b9eca3c4d32c3438261607afe766f1501f9ffa01c03303d45dd39c47ea1c47",
+    "01_调度器/mode_p_vnext/fixtures/alley_video_prompt.json": "1504e523ec0dddd487a7d791677fb5b308f8e64c8fae2620118c38206b40daa1",
+    "01_调度器/mode_p_vnext/fixtures/prompt_fixture_manifest.json": "0743f2a22d2d7132c1fd7ad15e8409df6f3310f6f093baac2b491df02606673f",
+    "01_调度器/mode_p_vnext/golden_fixture_registry.py": "f1f46f94347fb4113ff0e0e0b6bceb32b371ef7877218785a35deb708614ed93",
+    "01_调度器/mode_p_vnext/golden_registration.py": "69747d622c1d1f86b974b45c0817cdf7cc063f50e456d322289735ea0a13cb3b",
+    "01_调度器/mode_p_vnext/tests/test_v0_5_golden_fixtures.py": "3f3c79636ae273a7d5c753a2288c8b61bf60cf2ec8f8ecc4fec5a02501947606",
+    "01_调度器/mode_p_vnext/tests/test_v8_1_golden_registration.py": "5eeabfa86339f26ea5358aa6e74626e6c864b632ab6be7465862367663787939"
+  },
+  "repair_summary": {
+    "before": "Fixtures were already repaired to verbatim status by prior ds-r12-verbatim-20260723 cycle. All 8 fixtures already contained exact verbatim user-submitted prompt text from Codex JSONL with correct pinned hashes.",
+    "after": "Re-verified all 8 fixtures against pinned independent constants via fresh JSONL extraction. All match. No file edits needed — fixtures already correct. Fresh evidence trail with corrected extraction filter (event_msg/user_message).",
+    "action": "Exact-prompt-repair re-validation cycle: invalidate, claim, verify all 4 test suites, complete with fresh evidence."
+  },
+  "verification_results": [
+    {
+      "name": "r1_2_golden_suite",
+      "argv": ["C:\\Users\\JT\\AppData\\Local\\Programs\\Python\\Python312\\python.exe", "-m", "pytest", "mode_p_vnext/tests/test_v0_5_golden_fixtures.py", "mode_p_vnext/tests/test_v8_1_golden_registration.py", "-q"],
+      "cwd": "01_调度器",
+      "duration_ms": 110,
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_tail": "",
+      "stdout_sha256": "91f3f5d078c7bbabd6d1955da48a31ca42510189a56b5ec594261e674062f3d5",
+      "stdout_tail": "........................................................ [ 90%]\n......                                                                   [100%]\n62 passed, 160 subtests passed in 0.11s\n"
+    }
+  ],
+  "postconditions": {
+    "audit_clean": true,
+    "r01_r11_hashes_unchanged": true,
+    "r12_artifact_hashes_bound": true,
+    "no_owner_token": true,
+    "next_task": "R1.3",
+    "settings_local_absent": true,
+    "production_entry": "v4_unchanged"
+  },
+  "integrity_notes": [
+    "All 8 fixture prompt_text values match pinned source-body SHA-256 hashes and character counts extracted from Codex JSONL.",
+    "source_fidelity is 'verbatim' on all 8 fixtures. source_kind is 'codex_user_message' on all 8.",
+    "No fixture, manifest, registry, registration, or evidence file contains 'Reconstructed', 'reconstructed', 'summary', or 'created from descriptions' except in test guards and historical repair_summary.before.",
+    "All R0.1-R1.1 evidence files verified unchanged since their last completion.",
+    "Fixture manifest hashes match all 8 final JSON fixture files.",
+    "prep_area remains single continuous fixed camera design; section references correct (prep_area→§9, alley→§8).",
+    "user_statement and audit_classification=INFERENCE remain separated in all UserEvaluation dicts.",
+    "8 pinned source-body hashes, lengths, extraction rule, and verbatim status recorded in verbatim_source section."
+  ]
+}

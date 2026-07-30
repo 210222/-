@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0",
+  "task_id": "R0.3",
+  "generated_at": "2026-07-23T01:21:32Z",
+  "generated_by": "r03-rebuild-20260723-001",
+  "summary": {
+    "total_tasks": 70,
+    "checked_count": 61,
+    "unchecked_count": 9,
+    "with_historical_evidence": 11,
+    "with_repair_evidence": 0,
+    "with_zero_evidence": 50,
+    "invalid_dependency_count": 6,
+    "premature_check_reversions": 1,
+    "audit_count_discrepancy": {
+      "repair_plan_claimed": 65,
+      "actual_checked": 61,
+      "gap": 4,
+      "likely_cause": "repair plan audit based on stale snapshot or 4 items unchecked post-audit"
+    },
+    "progress_md_claimed_count": 10,
+    "progress_md_actual_records": 11,
+    "progress_md_discrepancy_note": "PROGRESS.md line 92 self-reports 10 records; grep reveals 11 blocks (V0.1 through V1.6)"
+  },
+  "classifications": {
+    "PROGRESS_DOCUMENTED": {
+      "description": "Task has a completion record in PROGRESS.md §5 from the old Markdown-driven LOOP",
+      "count": 11,
+      "task_ids": ["V0.1", "V0.2", "V0.3", "V0.4", "V0.5", "V1.1", "V1.2", "V1.3", "V1.4", "V1.5", "V1.6"]
+    },
+    "IMPLEMENTED_UNVERIFIED": {
+      "description": "Task was checked [x] in IMPLEMENTATION_PLAN.md but has no evidence record anywhere",
+      "count": 44,
+      "task_ids": [
+        "V2.1", "V2.2", "V2.3", "V2.4", "V2.5", "V2.6",
+        "V3.1", "V3.2", "V3.3", "V3.4", "V3.5", "V3.6",
+        "V4.1", "V4.2", "V4.3", "V4.4", "V4.5", "V4.6",
+        "V5.1", "V5.2", "V5.3", "V5.4", "V5.5", "V5.6", "V5.7", "V5.8",
+        "V6.1", "V6.2", "V6.3", "V6.4", "V6.5", "V6.6", "V6.7",
+        "V7.1", "V7.2", "V7.3", "V7.4", "V7.5",
+        "V8.1", "V8.2", "V8.3", "V8.4", "V8.5", "V8.6"
+      ]
+    },
+    "IMPLEMENTED_UNVERIFIED_INVALID_DEPS": {
+      "description": "Task was checked [x] but one or more prerequisite tasks were unchecked at time of claim",
+      "count": 6,
+      "task_ids": ["V9.2", "V9.3", "V9.4", "V10.1", "V10.2", "V10.3"]
+    },
+    "NOT_STARTED": {
+      "description": "Task was never checked [ ] in IMPLEMENTATION_PLAN.md",
+      "count": 8,
+      "task_ids": ["V3.7", "V6.8", "V7.6", "V9.1", "V9.5", "V9.6", "V10.4", "V10.5"]
+    },
+    "HISTORICALLY_PREMATURE_THEN_REVERTED": {
+      "description": "Task was historically checked prematurely then unchecked; no machine audit trail for the reversion",
+      "count": 1,
+      "task_ids": ["V10.6"]
+    }
+  },
+  "tasks": [
+    {"task_id":"V0.1","phase":"V0","title":"冻结基线清单","checkbox":"[x]","depends_on":[],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_FREEZE_MANIFEST.json","01_调度器/mode_p_vnext/tests/test_v0_1_baseline.py","01_调度器/mode_p_vnext/tests/__init__.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V0.2","phase":"V0","title":"建立 vNext 包骨架","checkbox":"[x]","depends_on":["V0.1"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/__init__.py","01_调度器/mode_p_vnext/version.py","01_调度器/mode_p_vnext/schema/__init__.py","01_调度器/mode_p_vnext/fixtures/__init__.py","01_调度器/mode_p_vnext/tests/test_v0_2_skeleton.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V0.3","phase":"V0","title":"Canonical Serialization 基础层","checkbox":"[x]","depends_on":["V0.2"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/canonical_serialization.py","01_调度器/mode_p_vnext/tests/test_v0_3_canonical.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V0.4","phase":"V0","title":"v4/vNext 污染扫描器","checkbox":"[x]","depends_on":["V0.2"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/contamination_scanner.py","01_调度器/mode_p_vnext/tests/test_v0_4_contamination.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V0.5","phase":"V0","title":"Golden Fixture Registry","checkbox":"[x]","depends_on":["V0.1","V0.3"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/golden_fixture_registry.py","01_调度器/mode_p_vnext/tests/test_v0_5_golden_fixtures.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V1.1","phase":"V1","title":"Canonical Timeline Schema","checkbox":"[x]","depends_on":["V0.3"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/schema/canonical_timeline.py","01_调度器/mode_p_vnext/tests/test_v1_1_timeline_schema.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V1.2","phase":"V1","title":"Timeline Validator/Compiler","checkbox":"[x]","depends_on":["V1.1"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/timeline_validator.py","01_调度器/mode_p_vnext/tests/test_v1_2_timeline_validator.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V1.3","phase":"V1","title":"Boundary Ownership 与 HOLD","checkbox":"[x]","depends_on":["V1.2"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/schema/boundary.py","01_调度器/mode_p_vnext/tests/test_v1_3_boundary_hold.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V1.4","phase":"V1","title":"Fact Registry Schema","checkbox":"[x]","depends_on":["V0.3"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/schema/fact_registry.py","01_调度器/mode_p_vnext/tests/test_v1_4_fact_registry.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V1.5","phase":"V1","title":"Fact Coverage Checker","checkbox":"[x]","depends_on":["V1.2","V1.4"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/fact_coverage.py","01_调度器/mode_p_vnext/tests/test_v1_5_fact_coverage.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V1.6","phase":"V1","title":"Structured Handoff Contract","checkbox":"[x]","depends_on":["V1.3","V1.4"],"classification":"PROGRESS_DOCUMENTED","evidence":{"historical_progress":true,"repair_evidence":false,"historical_paths":["01_调度器/mode_p_vnext/schema/handoff.py","01_调度器/mode_p_vnext/tests/test_v1_6_handoff.py"]},"invalid_dep":false,"notes":""},
+    {"task_id":"V2.1","phase":"V2","title":"Visibility Contract Schema","checkbox":"[x]","depends_on":["V1.1","V1.4"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V2.2","phase":"V2","title":"Dynamic Visibility State","checkbox":"[x]","depends_on":["V1.2","V2.1"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V2.3","phase":"V2","title":"Positive Closure 与负向路由","checkbox":"[x]","depends_on":["V2.1"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V2.4","phase":"V2","title":"Reference/Asset Binding","checkbox":"[x]","depends_on":["V0.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V2.5","phase":"V2","title":"Aspect Reframe Contract","checkbox":"[x]","depends_on":["V2.4"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V2.6","phase":"V2","title":"Audio/Lipsync Contract","checkbox":"[x]","depends_on":["V1.2","V1.4"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V3.1","phase":"V3","title":"知识来源盘点器","checkbox":"[x]","depends_on":["V0.1","V0.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V3.2","phase":"V3","title":"Atomic Claim/Decision Card Schema","checkbox":"[x]","depends_on":["V3.1"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V3.3","phase":"V3","title":"去重与 Conflict Graph","checkbox":"[x]","depends_on":["V3.2"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V3.4","phase":"V3","title":"Scene Diagnosis 与 Knowledge Query Schema","checkbox":"[x]","depends_on":["V3.2"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V3.5","phase":"V3","title":"最小检索与预算器","checkbox":"[x]","depends_on":["V3.3","V3.4"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V3.6","phase":"V3","title":"Knowledge Snapshot 与可重放证据","checkbox":"[x]","depends_on":["V3.5"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V3.7","phase":"V3","title":"Prompt Injection 与不可信文本隔离","checkbox":"[ ]","depends_on":["V3.5"],"classification":"NOT_STARTED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V4.1","phase":"V4","title":"Scene Diagnosis Artifact","checkbox":"[x]","depends_on":["V3.4"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V4.2","phase":"V4","title":"Generation Segment/Shot/Beat Schema","checkbox":"[x]","depends_on":["V1.2","V1.6","V2.2"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V4.3","phase":"V4","title":"Fidelity Contract","checkbox":"[x]","depends_on":["V4.2"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V4.4","phase":"V4","title":"Correction Impact Schema","checkbox":"[x]","depends_on":["V2.2","V4.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V4.5","phase":"V4","title":"Master Parser 与 Validator","checkbox":"[x]","depends_on":["V4.1","V4.2","V4.3","V4.4"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V4.6","phase":"V4","title":"Schema 版本与迁移策略","checkbox":"[x]","depends_on":["V4.5"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V5.1","phase":"V5","title":"Storyboard Projection","checkbox":"[x]","depends_on":["V4.5"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V5.2","phase":"V5","title":"Storyboard 旧式格式 Renderer","checkbox":"[x]","depends_on":["V5.1","V0.5"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V5.3","phase":"V5","title":"Video Prompt Projection","checkbox":"[x]","depends_on":["V4.5","V2.3","V2.4","V2.5","V2.6"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V5.4","phase":"V5","title":"Video Prompt 旧式格式 Renderer","checkbox":"[x]","depends_on":["V5.3","V0.5"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V5.5","phase":"V5","title":"Capability Profile 与 Prompt Adapter","checkbox":"[x]","depends_on":["V2.3","V2.4"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V5.6","phase":"V5","title":"Render Payload Compiler","checkbox":"[x]","depends_on":["V5.3","V5.5"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V5.7","phase":"V5","title":"Render Payload Manifest","checkbox":"[x]","depends_on":["V5.6","V0.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V5.8","phase":"V5","title":"双输出同步与 Fact/Handoff 检查","checkbox":"[x]","depends_on":["V5.2","V5.4","V5.7"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V6.1","phase":"V6","title":"vNext Session State Machine","checkbox":"[x]","depends_on":["V4.6","V5.8"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V6.2","phase":"V6","title":"事务、staging 与原子提交","checkbox":"[x]","depends_on":["V6.1","V0.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V6.3","phase":"V6","title":"Dependency Invalidation","checkbox":"[x]","depends_on":["V4.4","V5.7","V6.1"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V6.4","phase":"V6","title":"用户故事板批准闸门","checkbox":"[x]","depends_on":["V4.4","V6.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V6.5","phase":"V6","title":"Model Invocation Snapshot","checkbox":"[x]","depends_on":["V3.6","V5.7"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V6.6","phase":"V6","title":"完整上下文预算与截断失败","checkbox":"[x]","depends_on":["V3.5","V6.5"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V6.7","phase":"V6","title":"并发锁、幂等与崩溃恢复","checkbox":"[x]","depends_on":["V6.2","V6.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V6.8","phase":"V6","title":"vNext 工程 CLI（非生产）","checkbox":"[ ]","depends_on":["V6.1","V6.2","V6.3","V6.4","V6.5","V6.6","V6.7"],"classification":"NOT_STARTED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V7.1","phase":"V7","title":"DP_VIEW 白名单编译器","checkbox":"[x]","depends_on":["V5.8"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V7.2","phase":"V7","title":"DP Packet Manifest","checkbox":"[x]","depends_on":["V7.1","V0.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V7.3","phase":"V7","title":"DP Response Contract","checkbox":"[x]","depends_on":["V7.1"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V7.4","phase":"V7","title":"定向修订与受影响边界","checkbox":"[x]","depends_on":["V6.3","V7.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V7.5","phase":"V7","title":"DP 缓存与防空转","checkbox":"[x]","depends_on":["V7.2","V7.4"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V7.6","phase":"V7","title":"DP 对抗与可见性专项测试","checkbox":"[ ]","depends_on":["V7.1","V7.2","V7.3","V7.4","V7.5"],"classification":"NOT_STARTED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V8.1","phase":"V8","title":"四组 Golden Case 结构化登记","checkbox":"[x]","depends_on":["V0.5","V5.8"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V8.2","phase":"V8","title":"多轴 Fidelity 评分器","checkbox":"[x]","depends_on":["V8.1"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V8.3","phase":"V8","title":"Golden Structural Runner","checkbox":"[x]","depends_on":["V8.2"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V8.4","phase":"V8","title":"Holdout Set","checkbox":"[x]","depends_on":["V8.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V8.5","phase":"V8","title":"Knowledge/Constraint Ablation","checkbox":"[x]","depends_on":["V3.6","V8.3"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V8.6","phase":"V8","title":"Storyboard/Render Run Record","checkbox":"[x]","depends_on":["V5.7","V6.5","V8.1"],"classification":"IMPLEMENTED_UNVERIFIED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V9.1","phase":"V9","title":"无模型垂直集成 fixture","checkbox":"[ ]","depends_on":["V6.8","V7.6","V8.3"],"classification":"NOT_STARTED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":"Two of three prerequisites (V6.8, V7.6) are also unchecked"},
+    {"task_id":"V9.2","phase":"V9","title":"人工故事板暂停与恢复测试","checkbox":"[x]","depends_on":["V6.4","V9.1"],"classification":"IMPLEMENTED_UNVERIFIED_INVALID_DEPS","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":true,"invalid_dep_detail":"depends_on V9.1 which is [ ] unchecked","notes":"Checked despite incomplete prerequisite V9.1"},
+    {"task_id":"V9.3","phase":"V9","title":"外部反馈接入测试","checkbox":"[x]","depends_on":["V8.6","V9.1"],"classification":"IMPLEMENTED_UNVERIFIED_INVALID_DEPS","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":true,"invalid_dep_detail":"depends_on V9.1 which is [ ] unchecked","notes":"Checked despite incomplete prerequisite V9.1"},
+    {"task_id":"V9.4","phase":"V9","title":"v4 兼容与旧 Session 隔离","checkbox":"[x]","depends_on":["V9.1"],"classification":"IMPLEMENTED_UNVERIFIED_INVALID_DEPS","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":true,"invalid_dep_detail":"depends_on V9.1 which is [ ] unchecked","notes":"Checked despite incomplete prerequisite V9.1"},
+    {"task_id":"V9.5","phase":"V9","title":"安全、授权与项目隔离回归","checkbox":"[ ]","depends_on":["V2.4","V3.7","V9.1"],"classification":"NOT_STARTED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":"Two of three prerequisites (V3.7, V9.1) are also unchecked"},
+    {"task_id":"V9.6","phase":"V9","title":"遥测、SLO 与错误分类","checkbox":"[ ]","depends_on":["V6.8","V9.1"],"classification":"NOT_STARTED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":"Both prerequisites (V6.8, V9.1) are also unchecked"},
+    {"task_id":"V10.1","phase":"V10","title":"vnext_shadow 入口","checkbox":"[x]","depends_on":["V9.1","V9.2","V9.3","V9.4","V9.5","V9.6"],"classification":"IMPLEMENTED_UNVERIFIED_INVALID_DEPS","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":true,"invalid_dep_detail":"depends_on V9.1, V9.5, V9.6 which are [ ] unchecked","notes":"Checked despite three unchecked prerequisites"},
+    {"task_id":"V10.2","phase":"V10","title":"v4/vNext 对照报告","checkbox":"[x]","depends_on":["V10.1","V8.2"],"classification":"IMPLEMENTED_UNVERIFIED_INVALID_DEPS","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":true,"invalid_dep_detail":"transitively invalid: depends_on V10.1 which has unchecked prerequisites","notes":"Invalid via transitive dependency through V10.1"},
+    {"task_id":"V10.3","phase":"V10","title":"Pilot/Canary Feature Gate","checkbox":"[x]","depends_on":["V10.1"],"classification":"IMPLEMENTED_UNVERIFIED_INVALID_DEPS","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":true,"invalid_dep_detail":"transitively invalid: depends_on V10.1 which has unchecked prerequisites","notes":"Invalid via transitive dependency through V10.1"},
+    {"task_id":"V10.4","phase":"V10","title":"回滚与 Kill Switch","checkbox":"[ ]","depends_on":["V10.3"],"classification":"NOT_STARTED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V10.5","phase":"V10","title":"操作文档与迁移说明","checkbox":"[ ]","depends_on":["V10.1","V10.2","V10.3","V10.4"],"classification":"NOT_STARTED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":""},
+    {"task_id":"V10.6","phase":"V10","title":"Local Completion Audit","checkbox":"[ ]","depends_on":["all engineering tasks"],"classification":"HISTORICALLY_PREMATURE_THEN_REVERTED","evidence":{"historical_progress":false,"repair_evidence":false,"historical_paths":[]},"invalid_dep":false,"notes":"LOOP_REPAIR_PLAN.md §1 line 14: was checked prematurely when 5 incomplete items and 4 incomplete prerequisites existed. Now unchecked. No machine audit trail for the reversion. Who unchecked, when, and why is unknown."}
+  ],
+  "evidence_index": {
+    "repair_evidence_files": {
+      "R0.1": {
+        "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R0.1.json",
+        "sha256": "7396899e6725a3d42ce12decd735bc71dd287745d6035a866de58c5b62993194",
+        "completed_at": "2026-07-22T09:23:58.750458+00:00",
+        "invalidated_twice": true,
+        "invalidations": [
+          {"reason": "post-completion regression: real CLI test depended on mutable project state", "owner": "codex-audit-20260722", "at": "2026-07-22T09:16:45.484157+00:00"},
+          {"reason": "evidence exit codes were declarative; complete did not execute authoritative task verification commands", "owner": "codex-audit-20260722", "at": "2026-07-22T09:20:09.380073+00:00"}
+        ]
+      },
+      "R0.2": {
+        "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R0.2.json",
+        "sha256": "0351bb44ab2b1ab17d6cbaeb16fca0a22228a7cacaf01feedfe3ba90fe0be2b6",
+        "completed_at": "2026-07-22T10:53:06.712970+00:00",
+        "invalidated": false
+      }
+    },
+    "historical_progress_records": [
+      {"task_id": "V1.6", "completed_at": "2026-07-22", "test_count": "12 passed", "regression": "216 passed, 150 subtests passed"},
+      {"task_id": "V1.5", "completed_at": "2026-07-22", "test_count": "11 passed", "regression": "204 passed, 150 subtests passed"},
+      {"task_id": "V1.4", "completed_at": "2026-07-22", "test_count": "24 passed", "regression": "193 passed, 150 subtests passed"},
+      {"task_id": "V1.3", "completed_at": "2026-07-22", "test_count": "18 passed", "regression": "169 passed, 150 subtests passed"},
+      {"task_id": "V1.2", "completed_at": "2026-07-22", "test_count": "25 passed", "regression": "151 passed, 150 subtests passed"},
+      {"task_id": "V1.1", "completed_at": "2026-07-22", "test_count": "33 passed", "regression": "126 passed, 150 subtests passed"},
+      {"task_id": "V0.5", "completed_at": "2026-07-22", "test_count": "22 passed, 40 subtests passed", "regression": "93 passed, 150 subtests passed"},
+      {"task_id": "V0.4", "completed_at": "2026-07-22", "test_count": "19 passed", "regression": "71 passed, 110 subtests passed"},
+      {"task_id": "V0.3", "completed_at": "2026-07-22", "test_count": "24 passed", "regression": "52 passed, 110 subtests passed"},
+      {"task_id": "V0.2", "completed_at": "2026-07-22", "test_count": "15 passed", "regression": "28 passed, 110 subtests passed"},
+      {"task_id": "V0.1", "completed_at": "2026-07-22", "test_count": "13 passed, 110 subtests passed", "regression": "v4: 685 passed, 1 failed (settings.local.json)"}
+    ]
+  },
+  "discrepancies": [
+    {
+      "type": "audit_count_mismatch",
+      "detail": "LOOP_REPAIR_PLAN.md §1 claims '65/70项勾选' but IMPLEMENTATION_PLAN.md has 61 [x] and 9 [ ] = 70 total. Gap of 4.",
+      "severity": "P2",
+      "investigation_needed": true
+    },
+    {
+      "type": "self_reported_count_wrong",
+      "detail": "PROGRESS.md §5 line 92 self-reports '10项留下完整记录'; actual count is 11 records (V0.1-V1.6).",
+      "severity": "P1"
+    },
+    {
+      "type": "stale_header",
+      "detail": "PROGRESS.md line 5 says '当前任务：R0.1'; machine state says completed=[R0.1,R0.2], next=R0.3.",
+      "severity": "P1"
+    },
+    {
+      "type": "v10_6_reversion_no_trail",
+      "detail": "V10.6 was historically checked prematurely per LOOP_REPAIR_PLAN.md §1 line 14. Now unchecked. No machine audit trail exists for who unchecked it, when, or why.",
+      "severity": "P2"
+    }
+  ]
+}

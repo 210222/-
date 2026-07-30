@@ -1,0 +1,44 @@
+{
+  "task_id": "R3.1",
+  "record_id": "R3.1_REVALIDATION_002",
+  "created_date": "2026-07-29",
+  "purpose": "User-authorized dependency-chain revalidation. No implementation artifact was rewritten.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/feature_gate.py",
+    "01_调度器/mode_p_vnext/rollback.py",
+    "01_调度器/mode_p_vnext/README.md",
+    "01_调度器/mode_p_vnext/tests/test_v10_3_feature_gate.py",
+    "01_调度器/mode_p_vnext/tests/test_v10_4_rollback.py",
+    "01_调度器/mode_p_vnext/tests/test_v10_5_kill_switch.py",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_OPERATIONS.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_OPTIMIZATION_CHANGE_REQUEST_001.md"
+  ],
+  "predecessor_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.1.json",
+  "checks": [
+    {
+      "name": "rebuild_cannot_enable_any_gate",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "rollback_manifest",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "kill_switch",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "operations_complete",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    }
+  ],
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

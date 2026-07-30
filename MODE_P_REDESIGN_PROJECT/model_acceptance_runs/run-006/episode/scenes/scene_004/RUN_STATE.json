@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_004",
+  "stage": "batch_commit",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 1,
+  "master_path": "DIRECTOR_MASTER.md",
+  "master_sha256": "934cc6c3c0d81de712e274aa7f8c1adce220d59bb0e023ae47688054ea3d1853",
+  "manifest_path": "working/SHOT_MANIFEST.json",
+  "manifest_sha256": "1fb2b69dea14800a42a98cad6690e41347a487503345b62ffd8dcfeb0a234f7a",
+  "checks": {
+    "final_master_sync": {
+      "passed": true,
+      "stage": "final_check",
+      "artifact_generation": 1,
+      "master_sha256": "934cc6c3c0d81de712e274aa7f8c1adce220d59bb0e023ae47688054ea3d1853",
+      "manifest_sha256": "1fb2b69dea14800a42a98cad6690e41347a487503345b62ffd8dcfeb0a234f7a",
+      "report_path": "reports/generation-0001/final_master_sync.txt",
+      "report_sha256": "a7a9367e8eae8f73ccc87ab546503332529e2e783ad4b3e556147a1244802fee"
+    }
+  },
+  "dp_review": {
+    "status": "ready",
+    "artifact_generation": 1,
+    "master_sha256": "934cc6c3c0d81de712e274aa7f8c1adce220d59bb0e023ae47688054ea3d1853",
+    "manifest_sha256": "1fb2b69dea14800a42a98cad6690e41347a487503345b62ffd8dcfeb0a234f7a",
+    "review_path": "reviews/dp-0001.md",
+    "review_sha256": "da4482226ef1fd332755d12862dfc38a5a85ac9c1f23dd04043addda2aa10aae",
+    "issue_fingerprint": null,
+    "stalled": false
+  },
+  "dp_issue_history": [],
+  "episode_review": null,
+  "committed_batches": [
+    {
+      "batch_index": 1,
+      "artifact_generation": 1,
+      "master_sha256": "934cc6c3c0d81de712e274aa7f8c1adce220d59bb0e023ae47688054ea3d1853",
+      "manifest_sha256": "1fb2b69dea14800a42a98cad6690e41347a487503345b62ffd8dcfeb0a234f7a",
+      "commit_path": "commits/delivery-3a4aa7a1ec1a4a88bc203ed380b98e1d.json",
+      "commit_sha256": "0c7e9a5b9925b7d504548daab530de78f0df0f1a636648fd75a143302979ab05"
+    }
+  ],
+  "dp_attempts": 1,
+  "revision_count": 0,
+  "transition_sequence": 6,
+  "updated_at": "2026-07-18T14:40:08.295713+00:00",
+  "state_sha256": "222f769b5d5395fed6c0e643a6ef4c021a4d8fea8365666ef7165c9d02e90955"
+}

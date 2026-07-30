@@ -1,0 +1,49 @@
+{
+  "task_id": "R2.4",
+  "record_id": "R2.4_REVALIDATION_002",
+  "created_date": "2026-07-29",
+  "purpose": "User-authorized dependency-chain revalidation. No implementation artifact was rewritten.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/dp_view_compiler.py",
+    "01_调度器/mode_p_vnext/dp_manifest.py",
+    "01_调度器/mode_p_vnext/dp_response_contract.py",
+    "01_调度器/mode_p_vnext/dp_cache.py",
+    "01_调度器/mode_p_vnext/dp_adversarial.py",
+    "01_调度器/mode_p_vnext/dp_revision_router.py",
+    "01_调度器/mode_p_vnext/targeted_revision.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_1_dp_view.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_2_dp_manifest.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_3_dp_response.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_4_targeted_revision.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_5_dp_cache.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_6_dp_adversarial.py"
+  ],
+  "predecessor_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R2.4.json",
+  "checks": [
+    {
+      "name": "visibility_leak_cases",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "fresh_dp",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "no_redirection",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    },
+    {
+      "name": "targeted_scope_only",
+      "exit_code": 0,
+      "result": "Revalidated by the controller's registered command."
+    }
+  ],
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "media_visual_acceptance_claimed": false
+  }
+}

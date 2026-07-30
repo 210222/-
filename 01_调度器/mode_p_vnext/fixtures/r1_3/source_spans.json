@@ -1,0 +1,1547 @@
+{
+  "schema_version": "1.0",
+  "fixtures": {
+    "gun_barrel_sb": {
+      "fixture_file": "gun_barrel_sb_prompt.json",
+      "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+      "fields": [
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1591,
+          "end": 1616,
+          "exact_text": "格13 [12-13s·极特写·135mm·静止]",
+          "exact_text_sha256": "56e41d51f8aac8e05d110262955728394aff5ed8e895ff9ee79d144db662318c",
+          "field_id": "gun_barrel_sb.anchor_panel13"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 345,
+          "end": 358,
+          "exact_text": "Rico背对镜头坐在台灯后",
+          "exact_text_sha256": "4605aa18926186429215d9027a3499354fc69da8142b38a2df764941d0a27dff",
+          "field_id": "gun_barrel_sb.anchor_rico"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 64,
+          "end": 68,
+          "exact_text": "16:9",
+          "exact_text_sha256": "cb140f95f8a88c27fc464e08c2e4627de234c89cfbec1feb903e8733ff04f073",
+          "field_id": "gun_barrel_sb.aspect"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1525,
+          "end": 1528,
+          "exact_text": "11s",
+          "exact_text_sha256": "0cae1687760f9d5b954e4d5d48e399a034eade34c187e22d7db14855a1e6548c",
+          "field_id": "gun_barrel_sb.auto_0cae1687760f9d5b954e"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1409,
+          "end": 1412,
+          "exact_text": "极特写",
+          "exact_text_sha256": "1452fda88a628f4a22f6a0e484af410f5326b17e4ae2b5da42cdb2054ef56b63",
+          "field_id": "gun_barrel_sb.auto_1452fda88a628f4a22f6"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 19,
+          "end": 21,
+          "exact_text": "3s",
+          "exact_text_sha256": "1e93cc055d0a90f48e1b5c0ed4eceb9cb80879ab37e852be68668a3cfe880132",
+          "field_id": "gun_barrel_sb.auto_1e93cc055d0a90f48e1b"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1102,
+          "end": 1106,
+          "exact_text": "极近特写",
+          "exact_text_sha256": "205824d7ff6b74013b03d75e9c6fb619801a58ca93220da29fe0f795896f56a5",
+          "field_id": "gun_barrel_sb.auto_205824d7ff6b74013b03"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1323,
+          "end": 1325,
+          "exact_text": "9s",
+          "exact_text_sha256": "327ec92a3bb26a3eefe4b83e0d635aa313267797b16576c7253a91d1cfe96903",
+          "field_id": "gun_barrel_sb.auto_327ec92a3bb26a3eefe4"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1681,
+          "end": 1694,
+          "exact_text": "画面保持→嗡声硬切断→段3",
+          "exact_text_sha256": "34337fafc23f2fbeb46d1d25699eb15595d47c83d806dc6b5a0e1715866c3198",
+          "field_id": "gun_barrel_sb.auto_34337fafc23f2fbeb46d"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 557,
+          "end": 559,
+          "exact_text": "2s",
+          "exact_text_sha256": "3896078db33d5c8576d4e8b5305ab1a5f763f182f9d644153677cb9fbb0e4465",
+          "field_id": "gun_barrel_sb.auto_3896078db33d5c8576d4"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 325,
+          "end": 327,
+          "exact_text": "全景",
+          "exact_text_sha256": "3daa593fc1281ddb039075820fe0e467e155f46b4652beaff070369d0d8377c5",
+          "field_id": "gun_barrel_sb.auto_3daa593fc1281ddb0390"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1413,
+          "end": 1418,
+          "exact_text": "135mm",
+          "exact_text_sha256": "3e123e67db0c5b06c2025b9a2a008908092c9a706d51275c90b219ea37cd77a5",
+          "field_id": "gun_barrel_sb.auto_3e123e67db0c5b06c202"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 797,
+          "end": 799,
+          "exact_text": "4s",
+          "exact_text_sha256": "3fffd018d2223020be85670d93f565b63df54a9ce3ed2cdf6347a61df016938c",
+          "field_id": "gun_barrel_sb.auto_3fffd018d2223020be85"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 23,
+          "end": 28,
+          "exact_text": "@rico",
+          "exact_text_sha256": "4cf40f17c2dedad662fa171289cb26f99f6d9be314ccd38e90efab76de5d08a4",
+          "field_id": "gun_barrel_sb.auto_4cf40f17c2dedad662fa"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 138,
+          "end": 142,
+          "exact_text": "相机运动",
+          "exact_text_sha256": "50c732f8bb3a9cbc096bf054550f0a660a928b27a0255ecabc41f07e0c3eed91",
+          "field_id": "gun_barrel_sb.auto_50c732f8bb3a9cbc096b"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 970,
+          "end": 972,
+          "exact_text": "6s",
+          "exact_text_sha256": "51841482e71014cf72aabef4f129f657399f9d17a0f7ba284e3d3f3afaa8fe56",
+          "field_id": "gun_barrel_sb.auto_51841482e71014cf72aa"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 127,
+          "end": 131,
+          "exact_text": "身体运动",
+          "exact_text_sha256": "5d7f345e52418a4da372952785a744fbd81edcb57470331b7030a4aebe6b9d19",
+          "field_id": "gun_barrel_sb.auto_5d7f345e52418a4da372"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 458,
+          "end": 460,
+          "exact_text": "1s",
+          "exact_text_sha256": "64c83df872d808a1820aab72aa20bf2cf33b96fff4933e691e30f7646dfcc1be",
+          "field_id": "gun_barrel_sb.auto_64c83df872d808a1820a"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 472,
+          "end": 474,
+          "exact_text": "前推",
+          "exact_text_sha256": "6debe27284f690e0678f5c6b919feae6de38f2436e17830534261c80baa9e6a9",
+          "field_id": "gun_barrel_sb.auto_6debe27284f690e0678f"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1405,
+          "end": 1408,
+          "exact_text": "10s",
+          "exact_text_sha256": "7819f63beefe24e83edd23116f7b91ec06ea33ea4501f21c62d1d09b2a84cd4d",
+          "field_id": "gun_barrel_sb.auto_7819f63beefe24e83edd"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 145,
+          "end": 149,
+          "exact_text": "绿色标记",
+          "exact_text_sha256": "78e97b3ce1378e66ed114d434d256b31a3a2c7b3550f0e4511d5f1cd7b31c0f6",
+          "field_id": "gun_barrel_sb.auto_78e97b3ce1378e66ed11"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 179,
+          "end": 315,
+          "exact_text": "共享视觉锚(全部13格):\nRico工作室·深夜·工作台(厚重木质·房间中部)·台灯(工作台上方·金属灯罩·\n2800K暖黄·光区向下)·光区外全黑·洞洞板工具墙(暗处·隐约可见轮廓)·\n窗户(左上·极微小暖橙光点=远处贫民窟灯火)·Rico(黑色工装衬衫·独自·背对门)",
+          "exact_text_sha256": "8403975c7f92ef353568f0e26c2ca9a61e98e3458808d8e509fcdf5b4ad897b4",
+          "field_id": "gun_barrel_sb.auto_8403975c7f92ef353568"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 700,
+          "end": 704,
+          "exact_text": "弧形绕行",
+          "exact_text_sha256": "8455619e652a11babb414a63463b38987f1026a1a142e4b8731580a8e5cde6d9",
+          "field_id": "gun_barrel_sb.auto_8455619e652a11babb41"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 695,
+          "end": 699,
+          "exact_text": "50mm",
+          "exact_text_sha256": "88463cae8afcb03629384e832bc464e7be2117a3fc5c7f86d9402c2d2d79555f",
+          "field_id": "gun_barrel_sb.auto_88463cae8afcb0362938"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 150,
+          "end": 154,
+          "exact_text": "构图笔记",
+          "exact_text_sha256": "90fde2b6ce18e4937a852d030bff2cf82de0b1685c5f3655526b627d1b054748",
+          "field_id": "gun_barrel_sb.auto_90fde2b6ce18e4937a85"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1112,
+          "end": 1116,
+          "exact_text": "85mm",
+          "exact_text_sha256": "91b8eaebd47e01e8fd33efa942146d9a915e7dd651ada1bf1a397369d7ebd58c",
+          "field_id": "gun_barrel_sb.auto_91b8eaebd47e01e8fd33"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 328,
+          "end": 332,
+          "exact_text": "24mm",
+          "exact_text_sha256": "92c73aa0bb9386d9a09bcf6179b3ba19fcb8eed0e1983c6e772e7a3779c9cbef",
+          "field_id": "gun_barrel_sb.auto_92c73aa0bb9386d9a09b"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 900,
+          "end": 902,
+          "exact_text": "5s",
+          "exact_text_sha256": "93e3d8c5b10657d2884f177488b689aadf82a83f962237cb602b3314386ab3b7",
+          "field_id": "gun_barrel_sb.auto_93e3d8c5b10657d2884f"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 122,
+          "end": 126,
+          "exact_text": "红色箭头",
+          "exact_text_sha256": "98649c1e6401f272e015e73db921622d865410324cfc9ba8f482b2866a30f965",
+          "field_id": "gun_barrel_sb.auto_98649c1e6401f272e015"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 156,
+          "end": 160,
+          "exact_text": "橙色标记",
+          "exact_text_sha256": "a3585d6a32f1e6d89526f51096e6a97feae9380b4dec00c0dc7955139552850c",
+          "field_id": "gun_barrel_sb.auto_a3585d6a32f1e6d89526"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1214,
+          "end": 1216,
+          "exact_text": "8s",
+          "exact_text_sha256": "a5da9841fa3011b3c456f51181f7d7965ff96ee8a4f4c971920e2dce6d0cc0e1",
+          "field_id": "gun_barrel_sb.auto_a5da9841fa3011b3c456"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 686,
+          "end": 689,
+          "exact_text": "中近景",
+          "exact_text_sha256": "bf9a12f872d3c933444e174cd0d735717b0ae0b003ba2be3e579bf7ad9d0faeb",
+          "field_id": "gun_barrel_sb.auto_bf9a12f872d3c933444e"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 705,
+          "end": 709,
+          "exact_text": "极慢推近",
+          "exact_text_sha256": "c567a8668d40168e5dc24296eebf2e631d49b960e555bc6114e9a65acb058532",
+          "field_id": "gun_barrel_sb.auto_c567a8668d40168e5dc2"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 133,
+          "end": 137,
+          "exact_text": "蓝色箭头",
+          "exact_text_sha256": "cad522e250db2208d399b51136cf1ac3c588fda76405c30fa04a2fa5a3b3629a",
+          "field_id": "gun_barrel_sb.auto_cad522e250db2208d399"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 322,
+          "end": 324,
+          "exact_text": "0s",
+          "exact_text_sha256": "cc21f265975e48b967a0601c0d204e0cd82dc43f6ff6223538008e63d6265f43",
+          "field_id": "gun_barrel_sb.auto_cc21f265975e48b967a0"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1095,
+          "end": 1097,
+          "exact_text": "7s",
+          "exact_text_sha256": "df4f4518ead1fa9e23950735dcb7a62c152139dc556c5896ac37f24e213f49cc",
+          "field_id": "gun_barrel_sb.auto_df4f4518ead1fa9e2395"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 112,
+          "end": 176,
+          "exact_text": "标注颜色系统:\n  红色箭头=身体运动  蓝色箭头=相机运动\n  绿色标记=构图笔记  橙色标记=光线方向  黑色文本=镜头标签",
+          "exact_text_sha256": "e89c94b252f0ee94f2ddaf8ea5476ccbbfe7f554f7a73fe32714cdff1d0271c2",
+          "field_id": "gun_barrel_sb.auto_e89c94b252f0ee94f2dd"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 161,
+          "end": 165,
+          "exact_text": "光线方向",
+          "exact_text_sha256": "fb1550f5f0506ca53128719c10733c35faa48483d2ce727f670e8a71e2d1f316",
+          "field_id": "gun_barrel_sb.auto_fb1550f5f0506ca53128"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 51,
+          "end": 58,
+          "exact_text": "13格电影分镜",
+          "exact_text_sha256": "586e470d3d4131d3792d9e32d3ce15119911b1ab893598365cacf3c024363b15",
+          "field_id": "gun_barrel_sb.frames"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1681,
+          "end": 1685,
+          "exact_text": "画面保持",
+          "exact_text_sha256": "26f13ea627443d1c734b8db408a2a709d6629e6b728ea94592b05ca528b0077f",
+          "field_id": "gun_barrel_sb.handoff"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 1686,
+          "end": 1691,
+          "exact_text": "嗡声硬切断",
+          "exact_text_sha256": "98300a22fde41d7dca636ab3d70bc770d35083e3e74dcb9cb4275cc65c010689",
+          "field_id": "gun_barrel_sb.hard_cut"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 234,
+          "end": 239,
+          "exact_text": "2800K",
+          "exact_text_sha256": "09cb729cfde99d1b5d53a9cefe389d7a180605e1fe09ed1c3959cefce24198de",
+          "field_id": "gun_barrel_sb.kelvin"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 219,
+          "end": 221,
+          "exact_text": "台灯",
+          "exact_text_sha256": "c16356377863fc8b012a65edf34dc07b418e21e30ccb7f7900728c1ca9ccd18f",
+          "field_id": "gun_barrel_sb.lamp"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 345,
+          "end": 353,
+          "exact_text": "Rico背对镜头",
+          "exact_text_sha256": "f16710e4c56c9262d7d834360f849dbbc09f38dea1f213b107b581f4448f6031",
+          "field_id": "gun_barrel_sb.rico_seated"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 41,
+          "end": 109,
+          "exact_text": "黑白手绘线稿故事板。13格电影分镜·按秒排列。16:9。粗糙铅笔线条，动态未完成感，\n强烈轮廓。纸张纹理。仅黑白——不渲染光影色彩材质。",
+          "exact_text_sha256": "ef5535fd785e672a9eee7ce95e14ae51fd95ab2da0508cc3a73c0f2ceebdc468",
+          "field_id": "gun_barrel_sb.style"
+        },
+        {
+          "fixture_id": "gun_barrel_sb",
+          "prompt_body_sha256": "ce4caf8504593b307d0835120e516f427f4d6ed0e41d2bf35395f95169496ea8",
+          "start": 239,
+          "end": 241,
+          "exact_text": "暖黄",
+          "exact_text_sha256": "59b1a9867be19eadb4abdf798303031d32a9bb748bf17629a7c0ee33f5a2c162",
+          "field_id": "gun_barrel_sb.warm_yellow"
+        }
+      ]
+    },
+    "gun_barrel_video": {
+      "fixture_file": "gun_barrel_video_prompt.json",
+      "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+      "fields": [
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 24,
+          "end": 30,
+          "exact_text": "摄影机在门口",
+          "exact_text_sha256": "6fd34f565227ed4cba809f0561e4df21aec426a2d763fb53faa000037de94286",
+          "field_id": "gun_barrel_video.anchor_door"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 2274,
+          "end": 2283,
+          "exact_text": "那不是漩涡不是幻觉",
+          "exact_text_sha256": "85cd3bbe833042d853f728e457d34991b53d8df2c0ed19d43cf6326ec55e361a",
+          "field_id": "gun_barrel_video.anchor_vortex"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 1956,
+          "end": 1961,
+          "exact_text": "7-13s",
+          "exact_text_sha256": "0be91d672d8eef43da06880d63855d2f2c05e1d903c0e2840d5b0c7ea4bdce42",
+          "field_id": "gun_barrel_video.auto_0be91d672d8eef43da06"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 2261,
+          "end": 2274,
+          "exact_text": "窗外远处隐约狗叫声，一声。",
+          "exact_text_sha256": "491bd8f919bd523ff3b2dbabd7f53d57bd6a96a08a08fe8531034cb9bc7d822f",
+          "field_id": "gun_barrel_video.auto_491bd8f919bd523ff3b2"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 1187,
+          "end": 1191,
+          "exact_text": "3-7s",
+          "exact_text_sha256": "869c187610d2578409cb2b163649b340a0e8d0113aebac073c057a96b700c0b2",
+          "field_id": "gun_barrel_video.auto_869c187610d2578409cb"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 12,
+          "end": 17,
+          "exact_text": "为分镜参考",
+          "exact_text_sha256": "8eb896a325aa7c978a160922d2602f7bc9c676927b9ab70fe577d3f9d90e8049",
+          "field_id": "gun_barrel_video.auto_8eb896a325aa7c978a16"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 430,
+          "end": 434,
+          "exact_text": "0-3s",
+          "exact_text_sha256": "98835b223816d5f2ec886e281e48e7640c451ec59527e086c16fc4a9031933d7",
+          "field_id": "gun_barrel_video.auto_98835b223816d5f2ec88"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 6,
+          "end": 10,
+          "exact_text": "@图片1",
+          "exact_text_sha256": "c1131684a81db39d29a2ed37f81ac70b9fb5e686b60f667efabcc0c90a192045",
+          "field_id": "gun_barrel_video.auto_c1131684a81db39d29a2"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 2401,
+          "end": 2543,
+          "exact_text": "【禁止】\n  光区外不使用任何补光——暗部自然衰减\n  内壁螺旋阴影为自然投影——不发光不魔幻\n  推进过程全程平滑——不抖动不步进\n  Rico面部仅眼角缝隙可见——脸部其余在画面外\n  台灯位置方向固定——不移动\n  光区外空间不可见\n  面部稳定无扭曲，动作连贯自然，画面不闪烁",
+          "exact_text_sha256": "d2fe01a174f06993d44e7b48a66e6238d1febc70153c41268cc4a1936d153da1",
+          "field_id": "gun_barrel_video.auto_d2fe01a174f06993d44e"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 2203,
+          "end": 2206,
+          "exact_text": "12s",
+          "exact_text_sha256": "d65ca5bf6d610aeaacc8d7d012ae4a68139b94416383070a0615708c069aa5ae",
+          "field_id": "gun_barrel_video.auto_d65ca5bf6d610aeaacc8"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 307,
+          "end": 383,
+          "exact_text": "工作台单盏金属罩台灯，钨丝2800K暖黄，光向下集中成光区，\n灯罩外缘微弱漏光，光区边缘亮度自然衰减融入黑暗，\n35mm Portra 400胶片颗粒。",
+          "exact_text_sha256": "df1a39c480bd8b0d11c5cc4d984df3f057c0ace0beaf7f044e29f5b910beb8dc",
+          "field_id": "gun_barrel_video.auto_df1a39c480bd8b0d11c5"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 2323,
+          "end": 2398,
+          "exact_text": "End of segment: tube opening frame held→hum hard cut→0.3s silence→Segment 3",
+          "exact_text_sha256": "e54ac6d65b5e658d8bdd4f6d06fb40fa7dae11b5aa55d5b4de242ea0191699a3",
+          "field_id": "gun_barrel_video.auto_e54ac6d65b5e658d8bdd"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 196,
+          "end": 214,
+          "exact_text": "rico 作为主角，保持外貌服装一致",
+          "exact_text_sha256": "f03ca837257967d842c54846acc17e7120a7f91fcacc87a09847e883e9e044d8",
+          "field_id": "gun_barrel_video.auto_f03ca837257967d842c5"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 0,
+          "end": 186,
+          "exact_text": "编号含义:\n@图片1\n\n为分镜参考\n  ① = 摄影机在门口，全景，固定→极慢向前推进\n  ①→② = 摄影机沿弧线绕到Rico右手侧，同时继续向前推进，视角从背影变侧面\n  ② = 摄影机在Rico右手侧，中近景，固定\n  ②→③ = 摄影机极慢推近进入圆管管口，画面从手和金属部件收窄至管口填满画面\n  ③ = 摄影机进入圆管内部，极近特写→管内极特写，极慢推近至静止",
+          "exact_text_sha256": "fd11cd44543b9986b4e56244702e668ac0548e61d3590a83b63c10f51b4ad50f",
+          "field_id": "gun_barrel_video.auto_fd11cd44543b9986b4e5"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 24,
+          "end": 30,
+          "exact_text": "摄影机在门口",
+          "exact_text_sha256": "6fd34f565227ed4cba809f0561e4df21aec426a2d763fb53faa000037de94286",
+          "field_id": "gun_barrel_video.camera_door"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 236,
+          "end": 241,
+          "exact_text": "电影级光影",
+          "exact_text_sha256": "8905e113e197ab39c4df444a765164eb72454c1580fef78289ed74ce6da09535",
+          "field_id": "gun_barrel_video.cinematic"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 229,
+          "end": 247,
+          "exact_text": "真人实拍风格，电影级光影，8K分辨率",
+          "exact_text_sha256": "fbb3f900a18a41c0c7878692af568947976674bcbe8c3f80ab7e1493fcd67ae9",
+          "field_id": "gun_barrel_video.live_action"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 2274,
+          "end": 2279,
+          "exact_text": "那不是漩涡",
+          "exact_text_sha256": "8a77fc9d1f1f3061dfd42de6bd2cb73b03ab801bf77ef4551fc5e85cb8948478",
+          "field_id": "gun_barrel_video.not_vortex"
+        },
+        {
+          "fixture_id": "gun_barrel_video",
+          "prompt_body_sha256": "452f8fabc04e6e44b6e8f4d80919ea35b37bd8b765cc52bad94dfaa1a5095cce",
+          "start": 242,
+          "end": 247,
+          "exact_text": "8K分辨率",
+          "exact_text_sha256": "f96553b10de925fd3759243b06fd93c34d00d113f5dc3a35bb009fc41286c586",
+          "field_id": "gun_barrel_video.resolution"
+        }
+      ]
+    },
+    "audience_sb": {
+      "fixture_file": "audience_sb_prompt.json",
+      "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+      "fields": [
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 1003,
+          "end": 1014,
+          "exact_text": "格3s→格4s [切]",
+          "exact_text_sha256": "e598e9622f36be4d0f7a6d212df239144314b531cb367ac77a1d9464e5900718",
+          "field_id": "audience_sb.anchor_cut"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 1620,
+          "end": 1628,
+          "exact_text": "WhatsApp",
+          "exact_text_sha256": "6a40edf1fc87a29f243a7eefdbed57d19bfe16ab2e039d7ae1a44c097297e2f3",
+          "field_id": "audience_sb.anchor_wa"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 111,
+          "end": 115,
+          "exact_text": "16:9",
+          "exact_text_sha256": "cb140f95f8a88c27fc464e08c2e4627de234c89cfbec1feb903e8733ff04f073",
+          "field_id": "audience_sb.aspect_au"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 209,
+          "end": 388,
+          "exact_text": "共享视觉锚(全部12格):\n层层升高阶梯式深色折叠座椅成排·坐满观众·多排长条LED灯管从裸露钢梁悬挂(冷白偏暖~4000K)·\n纵深透视汇聚·巴西国旗多机位悬挂·墙面IPSC盾形徽章·远端靶场暖黄LED~3500K·\n第一排靠走道——伊莎贝拉(燕麦色针织开衫·暖棕卷发·双手攥拳·指关节发白)·\n乔(军绿战术衫·耳罩挂颈·防护镜放膝·下颌微动·有咀嚼节奏)",
+          "exact_text_sha256": "0b366c9361079d603847df34ad7aa66ceb2d307af49d77c9f869c650a9822969",
+          "field_id": "audience_sb.auto_0b366c9361079d603847"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 168,
+          "end": 169,
+          "exact_text": "红",
+          "exact_text_sha256": "0eb7ee7e38effcf36fbc5d3bddb54e99f87cdd7a438c99aa5f0bb7cfcf7060af",
+          "field_id": "audience_sb.auto_0eb7ee7e38effcf36fbc"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 1598,
+          "end": 1653,
+          "exact_text": "格8s→格9s [切]: 切至镜B-3·手机WhatsApp特写。景别跳跃MCU→ECU(有动机:信息揭示)。",
+          "exact_text_sha256": "127b2c555a9819ba4ef7ff35e01cca800df10a8fb0a62df173aea771b6b9d24f",
+          "field_id": "audience_sb.auto_127b2c555a9819ba4ef7"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 463,
+          "end": 466,
+          "exact_text": "MCU",
+          "exact_text_sha256": "1b2e7ffeb706c79bdaef621e3091025a2baec982d8cf6e4bfe613fcb812f86a2",
+          "field_id": "audience_sb.auto_1b2e7ffeb706c79bdaef"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 17,
+          "end": 18,
+          "exact_text": "切",
+          "exact_text_sha256": "3ecade35371c924e290eeb9e73dc6440e03acfd29007467ed2e348a0487ea080",
+          "field_id": "audience_sb.auto_3ecade35371c924e290e"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 176,
+          "end": 177,
+          "exact_text": "蓝",
+          "exact_text_sha256": "52f354ecfccbb8e6c739fc93ce22ed3c66763b60c19d03cdb158f5c1fb83b132",
+          "field_id": "audience_sb.auto_52f354ecfccbb8e6c739"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 552,
+          "end": 557,
+          "exact_text": "8-11s",
+          "exact_text_sha256": "5471e7b4ecd6fb763c41e4b2718bd807b0d05b5d23b4e5bfbaeda2bcc08ab4b3",
+          "field_id": "audience_sb.auto_5471e7b4ecd6fb763c41"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 45,
+          "end": 53,
+          "exact_text": "@Isabela",
+          "exact_text_sha256": "629eeeef22a87fbc5dc8be6b87bfedeed8a38523256417e7a80c44ff76aa5cc1",
+          "field_id": "audience_sb.auto_629eeeef22a87fbc5dc8"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 523,
+          "end": 526,
+          "exact_text": "ECU",
+          "exact_text_sha256": "79d807f3bc3d0e48f8ce9ad916420e9f73045a8bc6974a31c8f7b8e5e4ad2f1e",
+          "field_id": "audience_sb.auto_79d807f3bc3d0e48f8ce"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 159,
+          "end": 206,
+          "exact_text": "标注颜色系统: 🔴红=身体运动 🔵蓝=相机运动 🟢绿=构图 🟠橙=光线 ⚫黑=时间+景别+运镜",
+          "exact_text_sha256": "7c829b4909a759ff3ecd2aba0102b1124546f195466adf80bfdace1a5aea3ed3",
+          "field_id": "audience_sb.auto_7c829b4909a759ff3ecd"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 391,
+          "end": 561,
+          "exact_text": "编号含义:\n  ① = WS·24mm·固定·观众席前方偏左·高1.3m (0-3s·4帧)\n  切 = B-1→B-2 (3s)\n  ② = MCU·50mm·固定·第一排正前方·高1.3m (3-8s·5帧)\n  切 = B-2→B-3 (8s)\n  ③ = ECU·85mm·微俯·固定·伊莎贝拉膝上·高0.8m (8-11s·3帧)",
+          "exact_text_sha256": "7d4961b4f6f080098ac33ff6dc3350d17508c3462070373828c959721d5999fc",
+          "field_id": "audience_sb.auto_7d4961b4f6f080098ac3"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 489,
+          "end": 493,
+          "exact_text": "3-8s",
+          "exact_text_sha256": "c7a05e843c999cc77837f2ed43fd269d31fd0cc53be00df256bd28ac1f53f88e",
+          "field_id": "audience_sb.auto_c7a05e843c999cc77837"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 403,
+          "end": 405,
+          "exact_text": "WS",
+          "exact_text_sha256": "dbc9c4a7e48f437de8301a70954970c36bf78453f91359f25c18027628fa2dda",
+          "field_id": "audience_sb.auto_dbc9c4a7e48f437de830"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 98,
+          "end": 105,
+          "exact_text": "12格电影分镜",
+          "exact_text_sha256": "aac4254338ed277c582ff16797a5cf5af7de293852f9c53a9f1c16c014ffe060",
+          "field_id": "audience_sb.frames_au"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 46,
+          "end": 53,
+          "exact_text": "Isabela",
+          "exact_text_sha256": "84dce405bf987fa256f505720122de59295c094f7cfccf32c82e0c392b0369e6",
+          "field_id": "audience_sb.isabela"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 88,
+          "end": 156,
+          "exact_text": "黑白手绘线稿故事板。12格电影分镜·按秒排列。16:9。粗糙铅笔线条，\n动态未完成感，强烈轮廓。纸张纹理。仅黑白——不渲染光影色彩材质。",
+          "exact_text_sha256": "44e7c267374c2d7eb4149a69ca0bc9542c7c7b334f98d9ffbfc2a7cfb97e76b6",
+          "field_id": "audience_sb.style_long"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 5,
+          "end": 8,
+          "exact_text": "观众席",
+          "exact_text_sha256": "58a0facabc9b57f0d7358dc6fdcfe04dbdf8c4343833849994cee8632b51b9b6",
+          "field_id": "audience_sb.venue"
+        },
+        {
+          "fixture_id": "audience_sb",
+          "prompt_body_sha256": "1cd5a30f019e97f6651771fa8155229c85c8c969eca0400d7da0db3bb2b02141",
+          "start": 1620,
+          "end": 1628,
+          "exact_text": "WhatsApp",
+          "exact_text_sha256": "6a40edf1fc87a29f243a7eefdbed57d19bfe16ab2e039d7ae1a44c097297e2f3",
+          "field_id": "audience_sb.whatsapp"
+        }
+      ]
+    },
+    "audience_video": {
+      "fixture_file": "audience_video_prompt.json",
+      "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+      "fields": [
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 1200,
+          "end": 1210,
+          "exact_text": "切 镜B-1→B-2",
+          "exact_text_sha256": "e8ffbb8f07277e84d8798c78838071f4d8c0ff7c5164f507e88f51db93cb61f2",
+          "field_id": "audience_video.anchor_cutv"
+        },
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 1602,
+          "end": 1610,
+          "exact_text": "WhatsApp",
+          "exact_text_sha256": "6a40edf1fc87a29f243a7eefdbed57d19bfe16ab2e039d7ae1a44c097297e2f3",
+          "field_id": "audience_video.anchor_wav"
+        },
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 214,
+          "end": 271,
+          "exact_text": "人物/伊莎贝拉・科斯塔（Isabela Costa）.txt(面部·鹅蛋脸·灰绿色眼睛·暖棕卷发·燕麦色针织开衫)",
+          "exact_text_sha256": "07c76b0d1ffe0d351413416e516f4fd47ba38524ff9009fe0281da5787a0b9ad",
+          "field_id": "audience_video.auto_07c76b0d1ffe0d351413"
+        },
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 2262,
+          "end": 2395,
+          "exact_text": "@禁止: 伊莎贝拉/乔外观偏离角色设定图·LED闪烁或色温变化·巴西国旗颜色偏移·画面抖动·观众个体过于显著·手机屏幕文字乱码·WhatsApp绿色偏离#25D366·\"已读\"标记出现·屏幕反射伊莎贝拉面部·手指咖啡磨痕消失·面部稳定无扭曲·动作连贯自然·画面不闪烁",
+          "exact_text_sha256": "0cfe10791feea31bd1b0e8ad1a9ef01ddbb77eeb59a32785ee3c2d5bd070ca1c",
+          "field_id": "audience_video.auto_0cfe10791feea31bd1b0"
+        },
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 851,
+          "end": 890,
+          "exact_text": "以 @STORYBOARD_LINEART_场景B.png 为构图和机位参考。",
+          "exact_text_sha256": "13b1a1622ff610084bcbc56c860a8f4d940d65aa027edc0b53b2be8da9d34a6f",
+          "field_id": "audience_video.auto_13b1a1622ff610084bcb"
+        },
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 811,
+          "end": 850,
+          "exact_text": "观众席LED灯管~4000K冷白偏暖·顶光漫射·靶场远端暖黄LED~3500K",
+          "exact_text_sha256": "6be82e7b52568e793508dd7b11dd283f526ca1628ed887033dbf15c10da9a6b1",
+          "field_id": "audience_video.auto_6be82e7b52568e793508"
+        },
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 1798,
+          "end": 2259,
+          "exact_text": "@音轨:\n0-3s: <crowd murmur filling the auditorium — continuous hum of voices, occasional cough or chair creak>\n4-7s: <crowd murmur continues (background)> <Joe chewing gum — faint oral sound, stops at 6s>\n5s: {Isabela (offscreen): \"He said he was at the studio last night. But I went to find him — the light was on, he was gone.\"}\n5s: {Joe (offscreen): \"...He does that sometimes. Don't overthink it.\"}\n8-11s: <quiet — crowd murmur subsides to distant background>",
+          "exact_text_sha256": "a0ffd845d03cb86443855f370242a443326a22217657475d3064d33cf205f98f",
+          "field_id": "audience_video.auto_a0ffd845d03cb8644385"
+        },
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 491,
+          "end": 543,
+          "exact_text": "STORYBOARD_LINEART_场景B.png(黑白线稿故事板·12格·构图+机位+人物位置参考)",
+          "exact_text_sha256": "be6a5d14bffe3c3f563c29686665aad7e95b971f42a897c930ec731466561e76",
+          "field_id": "audience_video.auto_be6a5d14bffe3c3f563c"
+        },
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 18,
+          "end": 21,
+          "exact_text": "观众席",
+          "exact_text_sha256": "58a0facabc9b57f0d7358dc6fdcfe04dbdf8c4343833849994cee8632b51b9b6",
+          "field_id": "audience_video.venue_v"
+        },
+        {
+          "fixture_id": "audience_video",
+          "prompt_body_sha256": "5fa1815ade3e507807f583c2d4556997bbe8e10538a4badeaaed4eb51bfb8787",
+          "start": 2326,
+          "end": 2334,
+          "exact_text": "WhatsApp",
+          "exact_text_sha256": "6a40edf1fc87a29f243a7eefdbed57d19bfe16ab2e039d7ae1a44c097297e2f3",
+          "field_id": "audience_video.whatsapp_v"
+        }
+      ]
+    },
+    "prep_area_sb": {
+      "fixture_file": "prep_area_sb_prompt.json",
+      "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+      "fields": [
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 1019,
+          "end": 1041,
+          "exact_text": "格5s [5s·MS·35-50mm·固定]",
+          "exact_text_sha256": "ff7fabf167d616be9cc7ccdb8cbde91183cd82933e0ceddc7a8f4ac11b8ae810",
+          "field_id": "prep_area_sb.anchor_p5s"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 1144,
+          "end": 1156,
+          "exact_text": "Rico低头擦枪·没抬头",
+          "exact_text_sha256": "50c6e05e3e998b42e571761184e22d8c22dd262dbdd8aef7ebd3ed6f865f602d",
+          "field_id": "prep_area_sb.anchor_rico"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 416,
+          "end": 465,
+          "exact_text": "编号含义:\n  ① = 中景·35-50mm·固定·备赛区中央通道旁·面朝中央金属长桌·高1.3m",
+          "exact_text_sha256": "0e71b3572291040bae3f638690095b2e8d799df533e768b50bb05fb6aa0e2c79",
+          "field_id": "prep_area_sb.auto_0e71b3572291040bae3f"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 496,
+          "end": 501,
+          "exact_text": "0-10s",
+          "exact_text_sha256": "0f2a0b654385179d7ded3640c071b9f04ce1b4b2aab226465758c0454be0c0eb",
+          "field_id": "prep_area_sb.auto_0f2a0b654385179d7ded"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 503,
+          "end": 505,
+          "exact_text": "MS",
+          "exact_text_sha256": "4d95e550b47c0122b96cf2a846ab3ae30759457fdd3a719a7e47ad5e7d269379",
+          "field_id": "prep_area_sb.auto_4d95e550b47c0122b96c"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 229,
+          "end": 413,
+          "exact_text": "共享视觉锚(全部10格):\n备赛区·琥珀色安全灯(2200K·灯罩金属网格)·灰色环氧树脂地面·微尘悬浮·中央金属长桌\n(冷轧钢质感·画面偏右)·左侧金属立式枪架·右侧金属器材柜·中央通道(宽约2m)·\n远端靶场开口·暖黄LED~3500K渗入·矩形光区边缘锐利·\nRico——黑色工装衬衫·低头擦枪·手枪·擦枪布·虎口射击茧·\nIuri——深藏青夹克·凌乱卷发·背影",
+          "exact_text_sha256": "69b55daff831fff6b9b49a2f4a1d373e10e3c1d3a2b4f9a10b3a292d2b80ff6e",
+          "field_id": "prep_area_sb.auto_69b55daff831fff6b9b4"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 1518,
+          "end": 1532,
+          "exact_text": "一个走向亮处·一个留在暗处。",
+          "exact_text_sha256": "787331ada434b07455c8925700ecb6337f6a6241e1c666b598c1d8db2f81c616",
+          "field_id": "prep_area_sb.auto_787331ada434b07455c8"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 108,
+          "end": 110,
+          "exact_text": "黑白",
+          "exact_text_sha256": "47d88357c5eaba22b4caff9a6de06ed48141fb1aac426902ee81a2383ac3fb48",
+          "field_id": "prep_area_sb.bw"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 375,
+          "end": 379,
+          "exact_text": "低头擦枪",
+          "exact_text_sha256": "3b5a6386511d4be09252521c290b307da3051a0ffdac85d1cb3aefc5b1cc778a",
+          "field_id": "prep_area_sb.cleaning"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 118,
+          "end": 125,
+          "exact_text": "10格电影分镜",
+          "exact_text_sha256": "5dab5795d47bdbcbeb7e82f78c5f89cb19de25a1f9ab3dccd3aa19fd7bf2a508",
+          "field_id": "prep_area_sb.frames_pa"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 394,
+          "end": 398,
+          "exact_text": "Iuri",
+          "exact_text_sha256": "f515ddcf94912ea848c94751d0fee37782987aef026e9076cc226ceb3e52ce40",
+          "field_id": "prep_area_sb.iuri"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 1153,
+          "end": 1156,
+          "exact_text": "没抬头",
+          "exact_text_sha256": "69332ce65b4b8b6c481aae6ce3f6f3cd611d930b01ff43d12d8c76e5beb9f87f",
+          "field_id": "prep_area_sb.no_look"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 7,
+          "end": 10,
+          "exact_text": "备赛区",
+          "exact_text_sha256": "b002347520c3a3c532f98e8196aaeb877a26aa6d9ffad0c6be7dbc2759023998",
+          "field_id": "prep_area_sb.prep_zone"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 50,
+          "end": 54,
+          "exact_text": "Rico",
+          "exact_text_sha256": "6a08b4691f5e982d01ddabf21145c804ed5a42e6106874a355d434acffc0d611",
+          "field_id": "prep_area_sb.rico"
+        },
+        {
+          "fixture_id": "prep_area_sb",
+          "prompt_body_sha256": "ed006256727083cba8e1b5ae065fe6e1e7671b02f033c8d4c738d49d3af1b057",
+          "start": 108,
+          "end": 176,
+          "exact_text": "黑白手绘线稿故事板。10格电影分镜·按秒排列。16:9。粗糙铅笔线条，\n动态未完成感，强烈轮廓。纸张纹理。仅黑白——不渲染光影色彩材质。",
+          "exact_text_sha256": "a8145817ca89cb37cce6476e13ee70c72d41afdb87d23541f671cdfcecd99ac5",
+          "field_id": "prep_area_sb.style_long"
+        }
+      ]
+    },
+    "prep_area_video": {
+      "fixture_file": "prep_area_video_prompt.json",
+      "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+      "fields": [
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 1049,
+          "end": 1069,
+          "exact_text": "格5s [5s] 伊乌里从画左走入备赛区",
+          "exact_text_sha256": "f7af79e86db0249695c092fc7d8a1300e597840fb5155e4890034c59622abc79",
+          "field_id": "prep_area_video.anchor_iuri"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 1129,
+          "end": 1146,
+          "exact_text": "Rico低头擦枪·视线锁定在手枪上",
+          "exact_text_sha256": "08d5853e3307aa76872ee83747c87116050f43ff0d06e0ba664048c2a1f19fdf",
+          "field_id": "prep_area_video.anchor_locked"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 98,
+          "end": 143,
+          "exact_text": "以 @图片1\n\nSTORYBOARD_LINEART_场景C1.png 为构图和机位参考。",
+          "exact_text_sha256": "223752b67e622cac161e4368c9933d758a249f81a192e9df799b1990f3d06fbc",
+          "field_id": "prep_area_video.auto_223752b67e622cac161e"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 704,
+          "end": 914,
+          "exact_text": "格0s [0s] 固定机位·中景。备赛区中央——低照度琥珀色安全灯(2200K·灯罩金属网格·低瓦数)·灰色环氧树脂地面·微尘悬浮·压抑静默。中央金属长桌(冷轧钢质感)画面偏右。Rico坐长桌旁折叠椅上——黑色工装衬衫·低头擦枪·右手握竞赛手枪·左手持擦枪布·布沿套筒卷草雕花纹路移动。远端——备赛区北端靶场开口·暖黄LED~3500K渗入·矩形光区投在灰色地面·光区边缘锐利·明暗交界线·工位编号\"5\"\"6\"隐约可见。",
+          "exact_text_sha256": "5202f13e7d5debda0227c2ffca590744326ccb97c13ab6b113a097cfdaf12859",
+          "field_id": "prep_area_video.auto_5202f13e7d5debda0227"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 528,
+          "end": 592,
+          "exact_text": "STORYBOARD_LINEART_场景C1.png(黑白线稿故事板·镜C1-1(7格)+C1-2(10格)·构图+机位参考)",
+          "exact_text_sha256": "79092cb5f7dbfa33e301976ea52a1299cbce41e0ad5236e4c28b221215e0a8ce",
+          "field_id": "prep_area_video.auto_79092cb5f7dbfa33e301"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 1669,
+          "end": 1807,
+          "exact_text": "@禁止:Rico面部偏离角色图·伊乌里看Rico(剧本:\"伊乌里没有看Rico\")·Rico抬头(剧本:\"没抬头\")·擦肩距离>1m·嘴角动被解读为微笑(剧本:\"不是笑\")·手指停顿超过1.5秒或短于0.8秒·备赛区亮度超过空间地图描述·远端靶场光区形状偏离(矩形·边缘锐利)",
+          "exact_text_sha256": "baebbc7aa218f8bfbbcf760290b0309985314a628efbbbf4af59eb885af2de4b",
+          "field_id": "prep_area_video.auto_baebbc7aa218f8bfbbcf"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 1357,
+          "end": 1666,
+          "exact_text": "@音轨:\n0-4s: <extremely quiet — cleaning cloth sliding across metal gun body, faint dry friction sound — distant hum of warm yellow range lights (extremely low, offscreen)>\n5-7s: <Iuri's sneakers on the epoxy floor — faint footsteps approaching, passing beside, receding>\n8-9s: <silence — footsteps fading away>",
+          "exact_text_sha256": "ebcd90fd1bde13224402be3679181cb4e063a8898bf5038b2789c5833e1199a0",
+          "field_id": "prep_area_video.auto_ebcd90fd1bde13224402"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 0,
+          "end": 97,
+          "exact_text": "故事板线稿箭头含义: 红色箭头=身体运动方向和路径·蓝色箭头=相机运动方向和路径·绿色标记=构图笔记·橙色标记=光线方向·黑色文本=时间+景别+运镜。实线箭头=确定的运动·虚线箭头=计划的路径。",
+          "exact_text_sha256": "fdbc5e929a43a8d5673a5db723bee73ed8c46453015484653662c23cb1d214e6",
+          "field_id": "prep_area_video.auto_fdbc5e929a43a8d5673a"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 650,
+          "end": 652,
+          "exact_text": "固定",
+          "exact_text_sha256": "d4b3f49cd2e4254f16646bd5e04ed99edfb406e13a9c113836823e3748824ef9",
+          "field_id": "prep_area_video.fixed"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 413,
+          "end": 416,
+          "exact_text": "伊乌里",
+          "exact_text_sha256": "cafa13f3fba560962808e4cf60fa9c2241efa27bc59acef350916e8b865c3b27",
+          "field_id": "prep_area_video.iyuri"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 1062,
+          "end": 1064,
+          "exact_text": "画左",
+          "exact_text_sha256": "04f33a4204f4277f9cdf8d46b0fa2afe0227e96e56e24c825e9e20713e08b872",
+          "field_id": "prep_area_video.left_enter"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 1138,
+          "end": 1142,
+          "exact_text": "视线锁定",
+          "exact_text_sha256": "e47481d5a1f03bbf6302429339755d0087513926902b28de22ff5e89091269b1",
+          "field_id": "prep_area_video.locked"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 159,
+          "end": 162,
+          "exact_text": "备赛区",
+          "exact_text_sha256": "b002347520c3a3c532f98e8196aaeb877a26aa6d9ffad0c6be7dbc2759023998",
+          "field_id": "prep_area_video.prep_zone_v"
+        },
+        {
+          "fixture_id": "prep_area_video",
+          "prompt_body_sha256": "36f45f042d3c3350a3e6a847e321eb9c0e3c9b2be9966a8154237af42d13a46c",
+          "start": 1129,
+          "end": 1137,
+          "exact_text": "Rico低头擦枪",
+          "exact_text_sha256": "348c28134d14a3c9a059201e41adc377703bf1ea8a57035510f813442b425237",
+          "field_id": "prep_area_video.rico_clean"
+        }
+      ]
+    },
+    "alley_sb": {
+      "fixture_file": "alley_sb_prompt.json",
+      "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+      "fields": [
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 8,
+          "end": 10,
+          "exact_text": "窄巷",
+          "exact_text_sha256": "e91ad8c408137e49614a9593ed9690f120f50276d19986716caa18baada3fd66",
+          "field_id": "alley_sb.alley"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 2427,
+          "end": 2431,
+          "exact_text": "轿车静止",
+          "exact_text_sha256": "efc19cb5f8bf2044a788dc72e015742b369677bbb8c78e33659dfd457358d159",
+          "field_id": "alley_sb.anchor_car"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 974,
+          "end": 978,
+          "exact_text": "跑动追球",
+          "exact_text_sha256": "b1eaf64325733687d63b4422869fb364afdb3ae40f796f26bfaf831df3c79a2f",
+          "field_id": "alley_sb.anchor_chase"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 1705,
+          "end": 1713,
+          "exact_text": "直升机画右→画左",
+          "exact_text_sha256": "8f393735c2c918bb74247ebb4e1d32b24cc591ee0e5bb6448d674edd09a1951e",
+          "field_id": "alley_sb.anchor_heli"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 487,
+          "end": 710,
+          "exact_text": "编号含义:\n  ① = MS·24mm·低角度0.8m(Pedro眼高)·手持微跟0.3x·巷中段 (0-2s)\n  ①→② = 仰摇0.5x·下→上 (2-3s)\n  ② = 天空·24mm·固定 (3-5s)\n  切 = D-2→D-3 (5s)\n  ③ = MS·35mm·固定·巷口·高1.5m (5-9s)\n  切 = D-3→D-4 (9s)\n  ①→③ = 微推近0.3x·MS→MCU·50mm→85mm·面朝轿车 (9-12s)",
+          "exact_text_sha256": "43fa177838ec5092549f5e80b57442bf41f435fc7699beb58d59e2adb1c81e39",
+          "field_id": "alley_sb.auto_43fa177838ec5092549f"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 622,
+          "end": 626,
+          "exact_text": "35mm",
+          "exact_text_sha256": "5b91a77b055484008303f4f7e8ee5ba086ab2551c5c07c52fa2b2ec2fc3d860e",
+          "field_id": "alley_sb.auto_5b91a77b055484008303"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 673,
+          "end": 680,
+          "exact_text": "微推近0.3x",
+          "exact_text_sha256": "65c853620863afc1e5aa5bf13f93abf8192993399c6ae4d76286f7e9e9857da5",
+          "field_id": "alley_sb.auto_65c853620863afc1e5aa"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 118,
+          "end": 120,
+          "exact_text": "天空",
+          "exact_text_sha256": "6c8c7a77cdfd4fd3e8d872de821ed94b78d8a967978cb3b460f06602c6e5ee67",
+          "field_id": "alley_sb.auto_6c8c7a77cdfd4fd3e8d8"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 640,
+          "end": 644,
+          "exact_text": "5-9s",
+          "exact_text_sha256": "6d47daec9365ee778c95ef4d6e8627bf5841072b2af21a1023106becffe31ecb",
+          "field_id": "alley_sb.auto_6d47daec9365ee778c95"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 674,
+          "end": 676,
+          "exact_text": "推近",
+          "exact_text_sha256": "821476a72bd380bacfb57c6c85e749028cbf358188f7d74725930c99bda6cdf5",
+          "field_id": "alley_sb.auto_821476a72bd380bacfb5"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 301,
+          "end": 484,
+          "exact_text": "共享视觉锚(全部13格):\n窄巷·宽不足2m·左墙红砖+水泥补丁·右墙灰泥剥落+红砖·架空电线·头顶一线天·\n电线网格·晾衣绳空·天空阴灰(~6000-6500K)·碎石地面·积水洼·青苔·排水管·\nPedro——深棕皮肤·黑色短卷发·褪色红T恤·卡其短裤·光脚·旧足球·黑色轿车(距巷口15-20m·画右东侧)·\n圣保罗市中心摩天楼群(灰蓝薄雾·玻璃幕墙反冷白光)",
+          "exact_text_sha256": "8412534ab51ccaf166da108b5b12d6ee6afdb9641e6e9b82b0a2b1336543cbac",
+          "field_id": "alley_sb.auto_8412534ab51ccaf166da"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 552,
+          "end": 558,
+          "exact_text": "仰摇0.5x",
+          "exact_text_sha256": "92345a423decf11747665cd6299f6cf9ffb64711710fa8f092827f2ac93dcf56",
+          "field_id": "alley_sb.auto_92345a423decf1174766"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 564,
+          "end": 568,
+          "exact_text": "2-3s",
+          "exact_text_sha256": "bf219ae344bdd0ea172d00ef48f2db1432cf783874fa41b475abee230184c25a",
+          "field_id": "alley_sb.auto_bf219ae344bdd0ea172d"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 524,
+          "end": 532,
+          "exact_text": "手持微跟0.3x",
+          "exact_text_sha256": "c870423ea9ec026adee2e0adad727a86156e09162a55f972e8b3b80f3c0e36df",
+          "field_id": "alley_sb.auto_c870423ea9ec026adee2"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 688,
+          "end": 697,
+          "exact_text": "50mm→85mm",
+          "exact_text_sha256": "d150ab12f3941794911b70922bc589f52f09825428fb58ff14b71affd23f7287",
+          "field_id": "alley_sb.auto_d150ab12f3941794911b"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 704,
+          "end": 709,
+          "exact_text": "9-12s",
+          "exact_text_sha256": "dfd3a692d569a5ecda2745a8d6d03fdba09d07aaae9ada8f0aaf4082a8728a4a",
+          "field_id": "alley_sb.auto_dfd3a692d569a5ecda27"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 2960,
+          "end": 2981,
+          "exact_text": "落幅静止。黑色轿车·车窗漆黑·无声·静止。",
+          "exact_text_sha256": "eb23bc020a04b2724897fbbc990aa07f041381c8e22d5d57acfef506a8b1d4b2",
+          "field_id": "alley_sb.auto_eb23bc020a04b2724897"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 538,
+          "end": 542,
+          "exact_text": "0-2s",
+          "exact_text_sha256": "f2decb20c1507a636e2102fc6a0323ddff634dad15df55f0b9fe89ee3c880b19",
+          "field_id": "alley_sb.auto_f2decb20c1507a636e21"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 234,
+          "end": 236,
+          "exact_text": "黑白",
+          "exact_text_sha256": "47d88357c5eaba22b4caff9a6de06ed48141fb1aac426902ee81a2383ac3fb48",
+          "field_id": "alley_sb.bw_al"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 2427,
+          "end": 2431,
+          "exact_text": "轿车静止",
+          "exact_text_sha256": "efc19cb5f8bf2044a788dc72e015742b369677bbb8c78e33659dfd457358d159",
+          "field_id": "alley_sb.car_static"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 190,
+          "end": 193,
+          "exact_text": "13格",
+          "exact_text_sha256": "736637870932881ed70ae2f095f94dde7bbbedeab1e9114ef72ece8d1861a68e",
+          "field_id": "alley_sb.frames_al"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 1705,
+          "end": 1710,
+          "exact_text": "直升机画右",
+          "exact_text_sha256": "0c4d69ff3e0ef5ec49a1e76346c588f5aff68cc3019530b607ca0be032bfcac7",
+          "field_id": "alley_sb.heli_rl"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 1785,
+          "end": 1787,
+          "exact_text": "画左",
+          "exact_text_sha256": "04f33a4204f4277f9cdf8d46b0fa2afe0227e96e56e24c825e9e20713e08b872",
+          "field_id": "alley_sb.left"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 401,
+          "end": 406,
+          "exact_text": "Pedro",
+          "exact_text_sha256": "a432d817e884eb8bd3953177b68c747b64d8d6a705b79787445750bf80fe55b6",
+          "field_id": "alley_sb.pedro"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 401,
+          "end": 406,
+          "exact_text": "Pedro",
+          "exact_text_sha256": "a432d817e884eb8bd3953177b68c747b64d8d6a705b79787445750bf80fe55b6",
+          "field_id": "alley_sb.pedro_long"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 974,
+          "end": 978,
+          "exact_text": "跑动追球",
+          "exact_text_sha256": "b1eaf64325733687d63b4422869fb364afdb3ae40f796f26bfaf831df3c79a2f",
+          "field_id": "alley_sb.run_chase"
+        },
+        {
+          "fixture_id": "alley_sb",
+          "prompt_body_sha256": "8e14b8f21da8a54116d2ff2fe5ef0ec9eab5c03a3d8c55ae28daa184aa766edb",
+          "start": 180,
+          "end": 248,
+          "exact_text": "黑白手绘线稿故事板。13格电影分镜·按秒排列。16:9。粗糙铅笔线条，\n动态未完成感，强烈轮廓。纸张纹理。仅黑白——不渲染光影色彩材质。",
+          "exact_text_sha256": "e89ffe25969b49944752d4fcf30b35a74c40f50072136f3ca046e423d8970f32",
+          "field_id": "alley_sb.style_long"
+        }
+      ]
+    },
+    "alley_video": {
+      "fixture_file": "alley_video_prompt.json",
+      "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+      "fields": [
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 26,
+          "end": 28,
+          "exact_text": "窄巷",
+          "exact_text_sha256": "e91ad8c408137e49614a9593ed9690f120f50276d19986716caa18baada3fd66",
+          "field_id": "alley_video.alley_v"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 1923,
+          "end": 1927,
+          "exact_text": "轿车静止",
+          "exact_text_sha256": "efc19cb5f8bf2044a788dc72e015742b369677bbb8c78e33659dfd457358d159",
+          "field_id": "alley_video.anchor_carv"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 988,
+          "end": 992,
+          "exact_text": "跑动追球",
+          "exact_text_sha256": "b1eaf64325733687d63b4422869fb364afdb3ae40f796f26bfaf831df3c79a2f",
+          "field_id": "alley_video.anchor_chasev"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 1354,
+          "end": 1364,
+          "exact_text": "直升机从画右边缘入画",
+          "exact_text_sha256": "8695884b0d162cc0bb97edb8999291c1193fa8dbf8df099aee20a046d4dcbcf9",
+          "field_id": "alley_video.anchor_heliv"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 671,
+          "end": 677,
+          "exact_text": "以 @图片1",
+          "exact_text_sha256": "18077cef3cf3a890d9a9e12747f6c176247dd7db962eb979124ddcd92d3ba7bd",
+          "field_id": "alley_video.auto_18077cef3cf3a890d9a9"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 2894,
+          "end": 2931,
+          "exact_text": "@转场: 微推近至轿车中近景→落幅静止→切→场景E·广播声提前0.5秒渗入",
+          "exact_text_sha256": "295a2a4001097286ac1f864c72b992805117df7c2ba015957208d952b2942fd3",
+          "field_id": "alley_video.auto_295a2a4001097286ac1f"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 2338,
+          "end": 2757,
+          "exact_text": "@音轨:\n0-1s: <soccer ball bouncing on gravel — irregular bouncing — Pedro's bare feet on gravel — distant city ambience>\n2-3s: <仰摇过渡·风声微弱>\n3-4s: <helicopter rotor roar — flooding the alley (maximum volume, wall reflections) — receding>\n5-8s: <rotor sound fading — extreme quiet — wind along gravel roadside — distant São Paulo traffic hum>\n9-12s: <extreme quiet — city low-frequency hum at extreme distance — silent wind>",
+          "exact_text_sha256": "32bbd45b75f317fb8a5c8d5316098a262edc186cf7c97f2396e14e67305b11b0",
+          "field_id": "alley_video.auto_32bbd45b75f317fb8a5c"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 2760,
+          "end": 2891,
+          "exact_text": "@禁止: Pedro穿鞋·窄巷宽度超过2m·天空出现阳光或蓝天·足球弹跳轨迹过于规律·直升机航向偏离(画右→画左·南→北)·直升机出现探照灯·黑色轿车有任何灯光·轿车车窗出现反光内容·轿车移动或出现人·外部道路有其他车辆或行人·摩天楼群方向偏离·天空出现矛盾天气",
+          "exact_text_sha256": "82813ce3ac9bcd11d54ba93a925b0e0ec57a4e7982cc58ddc2b1770afa0bed1f",
+          "field_id": "alley_video.auto_82813ce3ac9bcd11d54b"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 286,
+          "end": 372,
+          "exact_text": "STORYBOARD_LINEART_场景D.png(黑白线稿故事板·D-1(6格)+D-2(5格)+D-3(8格)+D-4(5格)+俯视运动图·构图+机位+人物走位参考)",
+          "exact_text_sha256": "a2ce8368c11156b5056378eeca1e471214e58d36696ec439cc0caaee72554aa2",
+          "field_id": "alley_video.auto_a2ce8368c11156b50563"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 808,
+          "end": 1009,
+          "exact_text": "格0s [0s] 低角度0.8m(Pedro眼高)·手持微跟0.3x。窄巷中段——两侧墙面挤压·宽不足2m。左墙红砖裸露·水泥补丁块·渗水深灰蔓延·高处小窗铁栅栏锈蚀。右墙灰泥剥落·红砖显露·架空电线。头顶一线天·电线网格·天空阴灰(~6000-6500K)。碎石地面·积水洼·青苔。Pedro——深棕皮肤·黑色短卷发·褪色红T恤(领口松垮)·卡其短裤·光脚·跑动追球。旧足球在前方碎石地上不规则弹跳。",
+          "exact_text_sha256": "d9ce2dc7c74923736c4e50d5180e65cfa4652ac5c664a0d1990249e09af5e1e1",
+          "field_id": "alley_video.auto_d9ce2dc7c74923736c4e"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 2269,
+          "end": 2273,
+          "exact_text": "轿车静止",
+          "exact_text_sha256": "efc19cb5f8bf2044a788dc72e015742b369677bbb8c78e33659dfd457358d159",
+          "field_id": "alley_video.car_static_v"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 1354,
+          "end": 1360,
+          "exact_text": "直升机从画右",
+          "exact_text_sha256": "1f5d857a91d6eba85b7de53bada9f203504cd62d5fbddf53ec3929b74dcfa1b1",
+          "field_id": "alley_video.heli_enter"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 825,
+          "end": 830,
+          "exact_text": "Pedro",
+          "exact_text_sha256": "a432d817e884eb8bd3953177b68c747b64d8d6a705b79787445750bf80fe55b6",
+          "field_id": "alley_video.pedro_v"
+        },
+        {
+          "fixture_id": "alley_video",
+          "prompt_body_sha256": "a558b598e0718c3bbae1aa717c44f08b07c2939d2feedce5c775ad97fcdc52c9",
+          "start": 988,
+          "end": 992,
+          "exact_text": "跑动追球",
+          "exact_text_sha256": "b1eaf64325733687d63b4422869fb364afdb3ae40f796f26bfaf831df3c79a2f",
+          "field_id": "alley_video.run_chase_v"
+        }
+      ]
+    }
+  }
+}

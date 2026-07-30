@@ -1,0 +1,49 @@
+{
+  "checkpoint": "FAILED_TEXT_SHADOW.json",
+  "claim_ceiling": "TEXT_VALIDATED",
+  "created_at": "2026-07-30T05:10:08.206794+00:00",
+  "error": "Claude Code text transport failed: TimeoutExpired",
+  "error_type": "DeepSeekProviderError",
+  "media_visual_acceptance": false,
+  "model_calls": [
+    {
+      "accepted": true,
+      "attempt": 1,
+      "cache_hit_tokens": 103552,
+      "duration_ms": 141781,
+      "input_tokens": 6098,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 836,
+      "rejection_reason": "",
+      "request_id": "cddfe2b1-679e-4533-b75f-28bd775dfba9",
+      "request_sha256": "4fe3bdaac070a3e86acf4a4504a0f7045498753f66606acaf92c1133cbe0fd52",
+      "response_sha256": "31c2e375aea1a31abdc89db370941dcb0948fc4b886cb50d3ef804f73aab3081",
+      "stage": "E0",
+      "transport_normalization": "",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    },
+    {
+      "accepted": true,
+      "attempt": 1,
+      "cache_hit_tokens": 488704,
+      "duration_ms": 279750,
+      "input_tokens": 83615,
+      "media_inspection_performed": false,
+      "model": "deepseek-v4-pro",
+      "output_tokens": 19609,
+      "rejection_reason": "",
+      "request_id": "6ce7af07-75ef-427e-873c-64772480d08c",
+      "request_sha256": "9938d1cf63db332faf2550b6583dba9463c55aae4e75493330a8a3c3bf2369b0",
+      "response_sha256": "e1052460a1ce3563d15ffd3364ac12c825e2b11071587f8dae1575efb17bd916",
+      "stage": "S1",
+      "transport_normalization": "",
+      "validation_status": "TEXT_VALIDATED",
+      "visual_acceptance_claimed": false
+    }
+  ],
+  "production_entry_changed": false,
+  "schema_version": "director-text-shadow-checkpoint-v1",
+  "status": "FAILED_TEXT_ONLY"
+}

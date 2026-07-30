@@ -1,0 +1,279 @@
+{
+  "manifest_version": "1.1",
+  "scene_id": "scene_1",
+  "master_version": "scene_1/v1.0",
+  "master_content_hash": "0469fbe3e2def2a836b4c1cf5d3d134dc5decaa52cd39edd58015ea7acde76d7",
+  "compiler_version": "1.6.0",
+  "shots": [
+    {
+      "shot_id": "scene_1-1",
+      "duration": 8.0,
+      "scene_expression": "conversation_power",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "林警探与许然隔桌相对。林警探把一张模糊的停车场照片推到桌中央。林警探质问许然关于时间线的不一致。",
+        "source_scene_id": "scene_1",
+        "source_line_start": 5,
+        "source_line_end": 7
+      },
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "table_left|0|0.4",
+            "facing": "toward_xu",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          },
+          {
+            "entity_id": "xu",
+            "position": "table_right|0|-0.4",
+            "facing": "toward_lin",
+            "screen_direction": "static",
+            "posture": "seated_reclined"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "lin",
+            "location": "table_center|0|0.2"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "xu",
+            "location": "xu_jacket_inner|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead",
+          "color_temp_k": 4200,
+          "ratio": "1:7"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "table_left|0|0.4",
+            "facing": "toward_xu",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          },
+          {
+            "entity_id": "xu",
+            "position": "table_right|0|-0.4",
+            "facing": "toward_lin",
+            "screen_direction": "static",
+            "posture": "seated_reclined"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "table_center|0|0"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "xu",
+            "location": "xu_jacket_inner|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead",
+          "color_temp_k": 4200,
+          "ratio": "1:7"
+        },
+        "action_phase": "static"
+      },
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production",
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "entry_boundary_id": "SCENE_ENTRY",
+      "exit_boundary_id": "scene_1-2"
+    },
+    {
+      "shot_id": "scene_1-2",
+      "duration": 10.0,
+      "scene_expression": "suspense_reveal",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "许然没有碰照片。他从外套内袋取出一枚警徽，放在照片旁。许然说：先问问这枚警徽昨晚为什么在你的车里。林警探停住，收回压在照片上的手——这一反应的起始发生在 Sho",
+        "source_scene_id": "scene_1",
+        "source_line_start": 9,
+        "source_line_end": 13
+      },
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "xu",
+            "position": "table_right|0|-0.4",
+            "facing": "toward_lin",
+            "screen_direction": "static",
+            "posture": "seated_reclined"
+          },
+          {
+            "entity_id": "lin",
+            "position": "table_left|0|0.4",
+            "facing": "toward_xu",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "table_center|0|0"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "xu",
+            "location": "xu_jacket_inner|0|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead",
+          "color_temp_k": 4200,
+          "ratio": "1:7"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "xu",
+            "position": "table_right|0|-0.2",
+            "facing": "toward_lin",
+            "screen_direction": "static",
+            "posture": "seated_slight_forward"
+          },
+          {
+            "entity_id": "lin",
+            "position": "table_left|0|0.4",
+            "facing": "toward_xu",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "table_center|0|0"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "table_center|0.05|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead",
+          "color_temp_k": 4200,
+          "ratio": "1:7"
+        },
+        "action_phase": "recover"
+      },
+      "boundary_continuity": "continuous",
+      "transition_execution": "post_production",
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "entry_boundary_id": "scene_1-1",
+      "exit_boundary_id": "scene_1-3"
+    },
+    {
+      "shot_id": "scene_1-3",
+      "duration": 6.0,
+      "scene_expression": "contemplative_silence",
+      "timing_mode": "event_nodes",
+      "story_fact_ref": {
+        "text_start": "林警探停住，收回压在照片上的手。",
+        "source_scene_id": "scene_1",
+        "source_line_start": 13,
+        "source_line_end": 13
+      },
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "table_left|0|0.4",
+            "facing": "toward_xu",
+            "screen_direction": "static",
+            "posture": "seated_forward_lean"
+          },
+          {
+            "entity_id": "xu",
+            "position": "table_right|0|-0.2",
+            "facing": "toward_lin",
+            "screen_direction": "static",
+            "posture": "seated_slight_forward"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "table_center|0|0"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "table_center|0.05|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead",
+          "color_temp_k": 4200,
+          "ratio": "1:7"
+        },
+        "action_phase": "recover"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "lin",
+            "position": "table_left|0|0.7",
+            "facing": "toward_xu",
+            "screen_direction": "static",
+            "posture": "seated_reclined"
+          },
+          {
+            "entity_id": "xu",
+            "position": "table_right|0|-0.2",
+            "facing": "toward_lin",
+            "screen_direction": "static",
+            "posture": "seated_slight_forward"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "photo",
+            "held_by": "none",
+            "location": "table_center|0|0"
+          },
+          {
+            "prop_id": "badge",
+            "held_by": "none",
+            "location": "table_center|0.05|0"
+          }
+        ],
+        "light_main": {
+          "direction": "overhead",
+          "color_temp_k": 4200,
+          "ratio": "1:8"
+        },
+        "action_phase": "recover"
+      },
+      "boundary_continuity": "scene_exit",
+      "transition_execution": "post_production",
+      "generation_mode": "text_only",
+      "reference_assets": [],
+      "entry_boundary_id": "scene_1-2",
+      "exit_boundary_id": "SCENE_EXIT"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_004",
+  "stage": "batch_commit",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 3,
+  "master_path": "DIRECTOR_MASTER.md",
+  "master_sha256": "a6da6cbd63f935fef7c68d556902c16a54ad7e463199acb2047930a123360362",
+  "manifest_path": "working/SHOT_MANIFEST.json",
+  "manifest_sha256": "c8ba3a7e885ea707b74a943f65789849dee2c8a789aa36879908a79f508a42b0",
+  "checks": {
+    "final_master_sync": {
+      "passed": true,
+      "stage": "final_check",
+      "artifact_generation": 3,
+      "master_sha256": "a6da6cbd63f935fef7c68d556902c16a54ad7e463199acb2047930a123360362",
+      "manifest_sha256": "c8ba3a7e885ea707b74a943f65789849dee2c8a789aa36879908a79f508a42b0",
+      "report_path": "reports/generation-0003/final_master_sync.txt",
+      "report_sha256": "a7a9367e8eae8f73ccc87ab546503332529e2e783ad4b3e556147a1244802fee"
+    }
+  },
+  "dp_review": {
+    "status": "ready",
+    "artifact_generation": 3,
+    "master_sha256": "a6da6cbd63f935fef7c68d556902c16a54ad7e463199acb2047930a123360362",
+    "manifest_sha256": "c8ba3a7e885ea707b74a943f65789849dee2c8a789aa36879908a79f508a42b0",
+    "review_path": "reviews/dp-0001.md",
+    "review_sha256": "e06d635137ffe7b6fcfb098c4a49dde7530b7f4915b792283e73dbaf58f19de5",
+    "issue_fingerprint": null,
+    "stalled": false
+  },
+  "dp_issue_history": [],
+  "episode_review": null,
+  "committed_batches": [
+    {
+      "batch_index": 1,
+      "artifact_generation": 3,
+      "master_sha256": "a6da6cbd63f935fef7c68d556902c16a54ad7e463199acb2047930a123360362",
+      "manifest_sha256": "c8ba3a7e885ea707b74a943f65789849dee2c8a789aa36879908a79f508a42b0",
+      "commit_path": "commits/delivery-8505a455701d40d7a4bf7f41c823c90f.json",
+      "commit_sha256": "4cb893e32d951530dee51f4e16d4b88cf45c6e3ced514875ebab4dc2e6456219"
+    }
+  ],
+  "dp_attempts": 1,
+  "revision_count": 1,
+  "transition_sequence": 8,
+  "updated_at": "2026-07-18T17:10:29.492670+00:00",
+  "state_sha256": "56f8ba25ebcc3612bb16e1b59191cf3e16eddee2b35e4137d49eac8d675bcca9"
+}

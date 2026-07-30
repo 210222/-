@@ -1,0 +1,57 @@
+{
+  "task_id": "R2.2",
+  "title": "Implement engineering CLI, persistent session and real shadow run",
+  "owner": "codex-director-runtime-20260729",
+  "completed_at": "2026-07-29T02:43:20.6950480Z",
+  "schema_version": "1.0",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/__main__.py",
+    "01_调度器/mode_p_vnext/cli.py",
+    "01_调度器/mode_p_vnext/session_state.py",
+    "01_调度器/mode_p_vnext/shadow_entry.py",
+    "01_调度器/mode_p_vnext/tests/test_v6_8_engineering_cli.py",
+    "01_调度器/mode_p_vnext/tests/test_v10_1_shadow_entry.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R2.2.json"
+  ],
+  "checks": [
+    {
+      "name": "module_help",
+      "exit_code": 0,
+      "result": "python -m mode_p_vnext --help is a real argparse entrypoint and does not create a session or invoke creative/model code."
+    },
+    {
+      "name": "persistent_state",
+      "exit_code": 0,
+      "result": "Session state is the authoritative UTF-8 canonical JSON record; explicit transitions append immutable JSONL events, bind current artifact hashes and commit IDs, use R2.1 cross-process locks, atomically replace snapshots, reject corrupt or illegal records, and replay one durable event tail after a crash."
+    },
+    {
+      "name": "isolated_shadow_artifacts",
+      "exit_code": 0,
+      "result": "Shadow accepts the same UTF-8 script input but writes only under an explicit vNext shadow_runs directory, rejects v4 cache/generation/delivery and external submission, does not import v4, and records unavailable creative comparison fields honestly during R2.2."
+    },
+    {
+      "name": "manifest_written",
+      "exit_code": 0,
+      "result": "Each Shadow run uses the R2.1 atomic transaction to publish immutable SHADOW_OUTPUT and comparison artifacts, then writes SHADOW_MANIFEST.json with source hash, isolation flags, commit-manifest hash, artifact count, and production_ready=false. The supplemental compatibility, security, pause/resume, and recovery regression set passed 33 tests."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "r2_2_runtime_suite",
+      "exit_code": 0,
+      "result": "13 passed"
+    }
+  ],
+  "construction_baseline": {
+    "plan_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md",
+    "plan_sha256": "37e444e3c25e1e05d0c3f43fa5340631d159c4c69062aa3ca98cb20e5e00b2bc",
+    "goal_lock_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_REFACTOR_GOAL_LOCK.json",
+    "status": "FROZEN_PRECONSTRUCTION_BASELINE"
+  },
+  "compatibility": {
+    "legacy_in_memory_session_state_machine": "preserved",
+    "v4_production_entry": "unchanged",
+    "external_model_or_generation_submission": "not invoked",
+    "director_creative_semantics": "not modified"
+  }
+}

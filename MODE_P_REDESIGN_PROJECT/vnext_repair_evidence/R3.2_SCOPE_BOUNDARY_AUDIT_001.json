@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "record_id": "R3.2_SCOPE_BOUNDARY_AUDIT_001",
+  "task_id": "R3.2",
+  "created_date": "2026-07-29",
+  "status": "SOURCE_EDITS_REVERTED_TO_CLAIM_MANIFEST",
+  "purpose": "Records a controller-scope correction. It is not a completion, readiness, production, or media-acceptance certificate.",
+  "finding": {
+    "r3_2_allowed_source_paths": false,
+    "r3_2_allows_tests_and_evidence": true,
+    "needed_security_boundary_paths_are_outside_current_r3_2_scope": true,
+    "required_follow_up": "Use R3.2_SECURITY_BOUNDARY_CHANGE_REQUEST_001.md to obtain a separate controlled task before modifying source."
+  },
+  "claim_manifest_reversion": {
+    "verified_paths": [
+      {
+        "path": "01_调度器/mode_p_vnext/knowledge_security.py",
+        "sha256": "fe158ff01d0b9710c995ba95e3a9a6470ce56c802f4afdb0567bcc4f8b7d8510",
+        "matches_r3_2_claim_manifest": true
+      },
+      {
+        "path": "01_调度器/mode_p_vnext/schema/asset_binding.py",
+        "sha256": "47569cae9e14711640a1b8ac45a4fd7d09f600a6531d4f53760bd742739d05ba",
+        "matches_r3_2_claim_manifest": true
+      },
+      {
+        "path": "01_调度器/mode_p_vnext/schema/fact_registry.py",
+        "sha256": "8c4018491cdd59fc8d2de26c294d89ec24998daf46dad31ccd64eba49c74c670",
+        "matches_r3_2_claim_manifest": true
+      },
+      {
+        "path": "01_调度器/mode_p_vnext/external_feedback.py",
+        "sha256": "b1a5573436a23f5396be9e93fbd152412fee4df326a7ec1ff43842db2b7d0e83",
+        "matches_r3_2_claim_manifest": true
+      },
+      {
+        "path": "01_调度器/mode_p_vnext/tests/test_v9_5_security.py",
+        "sha256": "657c6605db3317413f5b1e82001c2c04ac682bdcd0dbdd557ab943e9b1d753dc",
+        "matches_r3_2_claim_manifest": true
+      }
+    ],
+    "new_test_path": "01_调度器/mode_p_vnext/tests/test_v3_7_prompt_injection.py",
+    "new_test_exists": false
+  },
+  "unchanged_boundaries": {
+    "v4_source_changed": false,
+    "settings_local_changed": false,
+    "production_entry_changed": false,
+    "external_generation_invoked": false,
+    "director_runtime_activated": false
+  },
+  "prohibited_claims": [
+    "R3.2_COMPLETE",
+    "V3.7_VERIFIED_IMPLEMENTED",
+    "V9.5_VERIFIED_IMPLEMENTED",
+    "LOCAL_VNEXT_READY",
+    "PRODUCTION_READY",
+    "STORYBOARD_VIDEO_VISUAL_ACCEPTANCE"
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "schema_version": "1.0",
+  "batch_index": 1,
+  "total_batches": 1,
+  "script_source_hash": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "batch_manifest": {
+    "label": "batch manifest",
+    "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\BATCH_MANIFEST.json",
+    "sha256": "bcf9c9c21cecea7e03ee016ac21aa5ff187f26e19a2335b75dc94165634e96f3"
+  },
+  "shared_dependencies": [
+    {
+      "label": "SCRIPT_STRUCTURE.json",
+      "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\SCRIPT_STRUCTURE.json",
+      "sha256": "5ab634f121473527c6b1a6b25480e9fe544cbc70cb2aa0de35dc762dda91f483"
+    },
+    {
+      "label": "SCRIPT_FACTS.md",
+      "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\SCRIPT_FACTS.md",
+      "sha256": "a58212ffa6f7a16c1f56548e068108e8470424e6eb7acad10806b8608aa6f3ff"
+    },
+    {
+      "label": "EPISODE_VISUAL_BIBLE.md",
+      "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\EPISODE_VISUAL_BIBLE.md",
+      "sha256": "b990e12e688336b98a26bbc6d2fb8c2c6aa733945461ec2427b40778ea7b6c15"
+    },
+    {
+      "label": "EPISODE_CONTINUITY_LEDGER.md",
+      "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\EPISODE_CONTINUITY_LEDGER.md",
+      "sha256": "ad24bcfbbd7e66299d04ebc13a027da581760c6074ea0d8f8f29ed15e70ef5fd"
+    }
+  ],
+  "runtime_dependencies": [
+    {
+      "label": "SD2 capability profile",
+      "path": "D:\\tsc\\导演系统_v5\\01_调度器\\mode_p\\sd2_capability_profile.json",
+      "sha256": "8d4232333e16d97464503b19a1bf6b3b834e00d1ff21a558327a925ccfdf12c3"
+    },
+    {
+      "label": "asset index",
+      "path": "D:\\tsc\\导演系统_v5\\ASSET_INDEX.json",
+      "sha256": "3b428ae11c7704fc793123eb304fbd2c3151ede99926499b960b05dfd12603e4"
+    },
+    {
+      "label": "text asset-card index",
+      "path": "D:\\tsc\\导演系统_v5\\ASSET_CARD_INDEX.json",
+      "sha256": "e7068cd013e3aaa79bbb020c089d86e54d4f925b0599e810bc8abfd25faefc4d"
+    },
+    {
+      "label": "knowledge index",
+      "path": "D:\\tsc\\导演系统_v5\\01_调度器\\mode_p\\knowledge\\knowledge_index.json",
+      "sha256": "096da39cb46b888ec18200262eb0af3ec2fdf83a5274cb66aa821bf7d3aefa8b"
+    },
+    {
+      "label": "Claude DP agent contract",
+      "path": "D:\\tsc\\导演系统_v5\\.claude\\agents\\mode-p-dp.md",
+      "sha256": "bd1091362d57d0c8d02746be04569a7529be401a8f396731c9dd44d7d90cb129"
+    },
+    {
+      "label": "canonical DP contract",
+      "path": "D:\\tsc\\导演系统_v5\\02_Agent\\dp_agent.md",
+      "sha256": "40f2eb964323c560b4395e0b7a0b978445eaadc9365e7a5ef80f411aab363ad0"
+    },
+    {
+      "label": "DP parser contract",
+      "path": "D:\\tsc\\导演系统_v5\\01_调度器\\mode_p\\dp_contract.py",
+      "sha256": "3b0a76a453471b0c4bf3d639b3b17426c3dd2896259223cd80bb6ba4572e8060"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_index": 1,
+      "session_path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_1",
+      "artifact_generation": 1,
+      "shot_ids": [
+        "scene_1-1",
+        "scene_1-2",
+        "scene_1-3"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 1 Master",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_1\\DIRECTOR_MASTER.md",
+          "sha256": "0469fbe3e2def2a836b4c1cf5d3d134dc5decaa52cd39edd58015ea7acde76d7"
+        },
+        "manifest": {
+          "label": "scene 1 Manifest",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_1\\working\\SHOT_MANIFEST.json",
+          "sha256": "3fb03d3c321fb614c3d89825a34779a9a08b82fc1aeec6cda5363f80a07fa5cf"
+        },
+        "storyboard": {
+          "label": "scene 1 Storyboard",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_1\\working\\STORYBOARD.md",
+          "sha256": "f61f2e1e7dde89a7ef6ef45f9e79abb7be6a4f3f4173559e19ca40b4b5dbacff"
+        },
+        "video_prompt": {
+          "label": "scene 1 Video Prompt",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_1\\working\\VIDEO_PROMPT.md",
+          "sha256": "f9c9ac36a9a26923c835263dd6b7839c614e0ad9bab068ab150d8cb8890a332e"
+        },
+        "scene_context": {
+          "label": "scene 1 context",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_1\\SCENE_CONTEXT.md",
+          "sha256": "0469fbe3e2def2a836b4c1cf5d3d134dc5decaa52cd39edd58015ea7acde76d7"
+        },
+        "dp_evidence": {
+          "label": "scene 1 episode evidence",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\dp_review_1\\DP_EVIDENCE_SCENE_001.md",
+          "sha256": "5068d41f099113352609529cdd20d7fd959eb57a55fc2726d3a66455ab672dd9"
+        }
+      }
+    },
+    {
+      "scene_index": 2,
+      "session_path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_2",
+      "artifact_generation": 1,
+      "shot_ids": [
+        "scene_2-1",
+        "scene_2-2",
+        "scene_2-3"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 2 Master",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_2\\DIRECTOR_MASTER.md",
+          "sha256": "f19fa614cc6584668e37b9671d4bac0e7e7cbabf6692df3fc2930712720b2cb4"
+        },
+        "manifest": {
+          "label": "scene 2 Manifest",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_2\\working\\SHOT_MANIFEST.json",
+          "sha256": "18a679120db0cb93dd5d438182a0fcb98606d8b9f3fe45083802f2a33eddbbae"
+        },
+        "storyboard": {
+          "label": "scene 2 Storyboard",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_2\\working\\STORYBOARD.md",
+          "sha256": "2a978e3f6a734295377a9c4dd06f250423a93bf2a422ec83c2f4b204dd46364b"
+        },
+        "video_prompt": {
+          "label": "scene 2 Video Prompt",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_2\\working\\VIDEO_PROMPT.md",
+          "sha256": "47de61772b8a4dc05e6f4c4f81a92f2fa4ebcc67949d6f1c96b93f556211c6d3"
+        },
+        "scene_context": {
+          "label": "scene 2 context",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_2\\SCENE_CONTEXT.md",
+          "sha256": "f19fa614cc6584668e37b9671d4bac0e7e7cbabf6692df3fc2930712720b2cb4"
+        },
+        "dp_evidence": {
+          "label": "scene 2 episode evidence",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\dp_review_1\\DP_EVIDENCE_SCENE_002.md",
+          "sha256": "51c94b29b21c167ca4c8dcd416b8596da377b788d666dccd73be24fdd062304d"
+        }
+      }
+    },
+    {
+      "scene_index": 3,
+      "session_path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_3",
+      "artifact_generation": 1,
+      "shot_ids": [
+        "scene_3-1",
+        "scene_3-2",
+        "scene_3-3"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 3 Master",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_3\\DIRECTOR_MASTER.md",
+          "sha256": "b5d3ea1afaa57b4049833528ff80f531b76ce289d42c5d5f0bfb106bc0523f24"
+        },
+        "manifest": {
+          "label": "scene 3 Manifest",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_3\\working\\SHOT_MANIFEST.json",
+          "sha256": "0155625ff00cc9aa33239c909cc4dcd6bbc84dad5fa1d39c35c0ef160640a596"
+        },
+        "storyboard": {
+          "label": "scene 3 Storyboard",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_3\\working\\STORYBOARD.md",
+          "sha256": "7d9a5f41018141c20bf4a39fd0d66b7766e273947a3a7198a789be820e5e20d3"
+        },
+        "video_prompt": {
+          "label": "scene 3 Video Prompt",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_3\\working\\VIDEO_PROMPT.md",
+          "sha256": "49d4e0616b1be93cb9cbb2912667079ed6b6f5ffb950cd1b471f7b60a98e5e26"
+        },
+        "scene_context": {
+          "label": "scene 3 context",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_3\\SCENE_CONTEXT.md",
+          "sha256": "b5d3ea1afaa57b4049833528ff80f531b76ce289d42c5d5f0bfb106bc0523f24"
+        },
+        "dp_evidence": {
+          "label": "scene 3 episode evidence",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\dp_review_1\\DP_EVIDENCE_SCENE_003.md",
+          "sha256": "8276ed8942f81cc0a4088ffc61e5b2a9a2b03fc7f68303ff929d56ae0aba7662"
+        }
+      }
+    },
+    {
+      "scene_index": 4,
+      "session_path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_4",
+      "artifact_generation": 1,
+      "shot_ids": [
+        "scene_4-1",
+        "scene_4-2",
+        "scene_4-3"
+      ],
+      "files": {
+        "master": {
+          "label": "scene 4 Master",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_4\\DIRECTOR_MASTER.md",
+          "sha256": "19b9df664d73b0cdd34d3f619c71445f195c01587477ed8eb09d5bdf3e6593ad"
+        },
+        "manifest": {
+          "label": "scene 4 Manifest",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_4\\working\\SHOT_MANIFEST.json",
+          "sha256": "4c17a361af542086d63888820cf26441d2ff6d000190e20f5652ca4d9e7d13db"
+        },
+        "storyboard": {
+          "label": "scene 4 Storyboard",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_4\\working\\STORYBOARD.md",
+          "sha256": "ce7004216a4f171069a21252b828407f498ff7b996bad47721fd874e31a26160"
+        },
+        "video_prompt": {
+          "label": "scene 4 Video Prompt",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_4\\working\\VIDEO_PROMPT.md",
+          "sha256": "144eddafbf0feab2d42ddd627d5547b4ecb7502bc3612bd4567fbdc0468569e3"
+        },
+        "scene_context": {
+          "label": "scene 4 context",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\scenes\\scene_4\\SCENE_CONTEXT.md",
+          "sha256": "19b9df664d73b0cdd34d3f619c71445f195c01587477ed8eb09d5bdf3e6593ad"
+        },
+        "dp_evidence": {
+          "label": "scene 4 episode evidence",
+          "path": "D:\\tsc\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-005\\episode\\dp_review_1\\DP_EVIDENCE_SCENE_004.md",
+          "sha256": "0a27e26b72ad45d74e22ee4f1a4325426cce5235a7eed4be245c0cde28ff9c07"
+        }
+      }
+    }
+  ],
+  "shot_ids": [
+    "scene_1-1",
+    "scene_1-2",
+    "scene_1-3",
+    "scene_2-1",
+    "scene_2-2",
+    "scene_2-3",
+    "scene_3-1",
+    "scene_3-2",
+    "scene_3-3",
+    "scene_4-1",
+    "scene_4-2",
+    "scene_4-3"
+  ],
+  "dp_model": "deepseek-v4-pro",
+  "review_content_sha256": "15f7dccc368815124d466fa526bcc9b91be0f688c84f5ef01538c6a7cb4f361c",
+  "cache_dir": "D:\\tsc\\导演系统_v5\\01_调度器\\mode_p\\runtime_cache\\dp",
+  "packet_sha256": "f8008f009fd6230f9607fe78442e781888754031932fe0863c9cf5fa17f06a4f"
+}

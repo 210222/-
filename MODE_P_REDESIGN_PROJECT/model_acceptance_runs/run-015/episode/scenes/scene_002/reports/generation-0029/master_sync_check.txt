@@ -1,0 +1,2 @@
+PASS master_sync_check
+Sync check passed — all canonical fields consistent.

@@ -1,0 +1,2 @@
+PASS master_compiler
+Manifest compiled: 4 shot(s) -> C:\Users\21022\Desktop\导演系统\导演系统_v5\MODE_P_REDESIGN_PROJECT\model_acceptance_runs\run-006\episode\scenes\scene_004\.build\00b6040ded80413f8a973a40c429a832\SHOT_MANIFEST.json

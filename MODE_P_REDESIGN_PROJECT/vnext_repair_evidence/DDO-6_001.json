@@ -1,0 +1,34 @@
+{
+  "schema_version": "ddo-evidence-v1",
+  "task_id": "DDO-6",
+  "run_id": "DDO-6_001",
+  "status": "DIRECTOR_TEXT_PIPELINE_IMPLEMENTED",
+  "claim_boundary": "PLANNED_PREVIEW",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/director_vnext1/render_evidence.py",
+    "01_调度器/mode_p_vnext/director_vnext1/holdout.py",
+    "01_调度器/mode_p_vnext/tests/test_ddo_6_evidence.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DDO-6_001.json"
+  ],
+  "checks": [
+    {"name": "holdout_separate", "exit_code": 0},
+    {"name": "render_record", "exit_code": 0},
+    {"name": "ffmpeg_frame_plan", "exit_code": 0},
+    {"name": "approval_required", "exit_code": 0},
+    {"name": "no_production_switch", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "ddo_6_evidence", "exit_code": 0, "summary": "3 passed in 0.07s"}
+  ],
+  "scope": {
+    "external_generation_invoked": false,
+    "production_entry_changed": false,
+    "real_storyboard_media_available": false,
+    "real_video_media_available": false,
+    "owner_production_approval_recorded": false
+  },
+  "non_claims": [
+    "FFmpeg commands are an extraction plan; no media was decoded or visually accepted in this run.",
+    "The queue terminal only proves the text pipeline. Real Holdout media and explicit owner approval remain required before any production discussion."
+  ]
+}

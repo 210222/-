@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "script_source_hash": "6cb709ad33294d0caf5aedb3ab6b528ab9cdcd0ff15e81240e8559bbf3b15073",
+  "scenes": [
+    {
+      "scene_index": 1,
+      "batch_index": 1,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-009\\episode\\scenes\\scene_001",
+      "context_sha256": "0c8a31221583228553a8650d3442c3752c3a88fc45122845471d165615edc347"
+    },
+    {
+      "scene_index": 2,
+      "batch_index": 1,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-009\\episode\\scenes\\scene_002",
+      "context_sha256": "3ebad6955f92d73892757bab7f093f3d4768c39c8ec07b88dc34eeb6164b2131"
+    },
+    {
+      "scene_index": 3,
+      "batch_index": 1,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-009\\episode\\scenes\\scene_003",
+      "context_sha256": "48f186ec46612ce73a707cde3c54600d9825b95e5234d5d4e13752d8e8ef2320"
+    },
+    {
+      "scene_index": 4,
+      "batch_index": 1,
+      "session_path": "C:\\Users\\21022\\Desktop\\导演系统\\导演系统_v5\\MODE_P_REDESIGN_PROJECT\\model_acceptance_runs\\run-009\\episode\\scenes\\scene_004",
+      "context_sha256": "70a849976f85f14fbf718fffd9875d6bbcbd794040da36792bf730dbae65bd2e"
+    }
+  ]
+}

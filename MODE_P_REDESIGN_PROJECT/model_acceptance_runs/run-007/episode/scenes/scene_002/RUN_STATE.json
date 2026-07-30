@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.1",
+  "session_id": "scene_002",
+  "stage": "director_batch",
+  "batch_index": 1,
+  "total_batches": 1,
+  "artifact_generation": 0,
+  "master_path": "",
+  "master_sha256": "",
+  "manifest_path": "",
+  "manifest_sha256": "",
+  "checks": {},
+  "dp_review": null,
+  "dp_issue_history": [],
+  "episode_review": null,
+  "committed_batches": [],
+  "dp_attempts": 0,
+  "revision_count": 0,
+  "transition_sequence": 2,
+  "updated_at": "2026-07-18T15:15:36.500358+00:00",
+  "state_sha256": "46ec4113b86b0c6982f4b543c2729ec303ed0aac0151c177287b5f6b0e363ded"
+}

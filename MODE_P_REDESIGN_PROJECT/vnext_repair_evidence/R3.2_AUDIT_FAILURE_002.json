@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0",
+  "record_id": "R3.2_AUDIT_FAILURE_002",
+  "task_id": "R3.2",
+  "created_date": "2026-07-29",
+  "status": "NOT_COMPLETE",
+  "purpose": "Truthful R3.2 release evidence. This record documents that the audit may not be completed or promoted; it is not a completion certificate.",
+  "scope": {
+    "v4_source_changed": false,
+    "production_entry_changed": false,
+    "external_generation_invoked": false,
+    "media_acceptance_claimed": false,
+    "director_decision_optimization": "FROZEN_PRECONSTRUCTION_PLAN_ONLY"
+  },
+  "verified_inputs": {
+    "director_refactor_plan_v1_1": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN_V1.1.md",
+      "sha256": "6309b31867d74065f4297f57f7a2fb5cee41f933aec0e149a9127466ef8338ce"
+    },
+    "director_goal_lock_v1_1": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_REFACTOR_GOAL_LOCK_V1.1.json",
+      "sha256": "0bd185474534d83366058fe1b3a2acc10ff347db8370246b7d9765ea57a281dc"
+    },
+    "baseline_cohort_reconciliation": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.2_BASELINE_COHORT_RECONCILIATION_001.json",
+      "sha256": "660ef8036807daeaf8c0a9b6e3ba62942fec61ebbb7af007644d2805cf4861e2",
+      "result": "CURRENT_781_EXACTLY_PARTITIONED_AS_686_GENERIC_PLUS_95_POST_FREEZE_EP35"
+    },
+    "task_evidence_ledger": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/task_evidence_ledger_v2.json",
+      "sha256": "cac6ad99549f69dcc92c431767756d0e510b9f52c684a02444974550d24d437f",
+      "result": "62_OF_70_CURRENTLY_VERIFIED;_8_NOT_EVIDENCED_OR_BLOCKED"
+    },
+    "terminal_state_contract": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.2_TERMINAL_STATE_CONTRACT_001.json",
+      "sha256": "9d07ac1ad05d9135ac6c46dd9d12b58307ab11f608c23b5a27eef9639d209c48",
+      "result": "CONTRACT_MISMATCH_CONFIRMED_NOT_RESOLVED"
+    }
+  },
+  "test_runs": [
+    {
+      "name": "vnext_full",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "PASS",
+      "summary": "728 passed, 416 subtests passed in 23.51s",
+      "stdout_sha256": "43e25d818b7baca8391aabf70e202af8829cf30ad15d2fac31effc30d41a35ee"
+    },
+    {
+      "name": "v4_full_compatibility",
+      "command": "python -m pytest mode_p -q -p no:cacheprovider",
+      "result": "FAIL",
+      "summary": "1 failed, 780 passed, 8 subtests passed in 110.85s",
+      "stdout_sha256": "addc3f60c758a9a971fbc8d50a47e4bf7451f087755dd5f59b9d5214f77058d4",
+      "failure": {
+        "test": "mode_p/test_active_entrypoints.py::ActiveCommandTests::test_machine_local_permissions_are_not_packaged",
+        "observed_condition": "D:/tsc/导演系统_v5/.claude/settings.local.json exists although the v4 regression test requires it to be absent.",
+        "observed_file_metadata": {
+          "content_not_recorded": true,
+          "sha256": "b7d3791edcaa52cbab4a51393d42fcffc33afdacfec214d4baec339b19132e3b",
+          "length_bytes": 404,
+          "creation_utc": "2026-07-29T07:10:06.2747093Z"
+        },
+        "attribution": "UNATTRIBUTED_LOCAL_RUNTIME_ARTIFACT",
+        "required_handling": "Do not delete or alter this local permissions file without its owner’s explicit authorization. It prevents a green v4 compatibility result in the present environment."
+      }
+    }
+  ],
+  "unmet_required_checks": [
+    {
+      "check": "all_70_evidenced",
+      "actual": false,
+      "remaining_task_ids": ["V3.7", "V9.5", "V10.1", "V10.2", "V10.3", "V10.4", "V10.5", "V10.6"]
+    },
+    {
+      "check": "local_ready_machine_generated",
+      "actual": false,
+      "reason": "The repair task registry ends at V_TASK_REVALIDATION_REQUIRED while the R3.2 check requires a different machine state; the controller has no LOCAL_VNEXT_READY implementation."
+    },
+    {
+      "check": "v4_full_green",
+      "actual": false,
+      "reason": "The current local runtime contains an ignored settings.local.json file that the immutable v4 compatibility test forbids."
+    }
+  ],
+  "follow_up_order": [
+    "Obtain owner authorization before altering or isolating the local v4 permissions artifact, then re-run v4 compatibility.",
+    "Implement and evidence V3.7, then its dependent V9.5 and V10.1 through V10.5; revalidate V10.6 historically.",
+    "Obtain a controlled, explicitly authorized resolution of the terminal-state contract before any completion claim or Director Decision Optimization queue activation.",
+    "Only after those gates may DDO implementation, Shadow operation, real media generation, and visual acceptance begin."
+  ],
+  "prohibited_claims": [
+    "R3.2_COMPLETE",
+    "LOCAL_VNEXT_READY",
+    "DIRECTOR_RUNTIME_IMPLEMENTED",
+    "STORYBOARD_VIDEO_VISUAL_ACCEPTANCE",
+    "PRODUCTION_READY"
+  ]
+}

@@ -1,0 +1,388 @@
+{
+  "schema_version": "1.0",
+  "status": "committed",
+  "batch_index": 1,
+  "script_source_hash": "535240582f020fee98eb1ea7592027bbb968ce5b0a72ad27bb8b0a88cf281160",
+  "batch_manifest_sha256": "050b59f4adf41cfe6ff7e324faf43af929ed7468c41808cd11283f112e72d8c0",
+  "episode_ledger_sha256": "10e0565694da42c6f76c4127cc913e0c0b6ecfd440bf6ba05d66bf1d5ebdcba9",
+  "scene_states": [
+    {
+      "scene_index": 1,
+      "scene_id": "scene_001",
+      "manifest_sha256": "937f0722dc3aaf3d2242f5d72c31a852c42852cdc68c4b27fbd236863accb753",
+      "master_content_hash": "707e7211d2cd902d05db2640d637062adcbea42e2ceb92f5560077c3043b121e",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_desk",
+            "facing": "around_room",
+            "screen_direction": "static",
+            "posture": "standing_looking_around"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "医学书",
+            "held_by": "无",
+            "location": "desk_stacked_two_piles"
+          },
+          {
+            "prop_id": "菜板",
+            "held_by": "无",
+            "location": "desk_center"
+          },
+          {
+            "prop_id": "五花肉",
+            "held_by": "无",
+            "location": "on_cutting_board"
+          },
+          {
+            "prop_id": "手术刀",
+            "held_by": "无",
+            "location": "desk_near_cutting_board"
+          },
+          {
+            "prop_id": "无菌手套",
+            "held_by": "无",
+            "location": "desk_near_surgical_knife"
+          }
+        ],
+        "light_main": {
+          "direction": "from_left_window_daylight",
+          "color_temp_k": 5000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "in_front_of_desk",
+            "facing": "toward_shredded_pork",
+            "screen_direction": "static",
+            "posture": "standing_hands_bare_relaxed_exhausted"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "五花肉屑碎堆",
+            "held_by": "无",
+            "location": "covering_cutting_board_and_desk"
+          },
+          {
+            "prop_id": "手术刀",
+            "held_by": "无",
+            "location": "desk_beside_cutting_board"
+          },
+          {
+            "prop_id": "无菌手套",
+            "held_by": "无",
+            "location": "desk_on_meat_scraps"
+          },
+          {
+            "prop_id": "医学书",
+            "held_by": "无",
+            "location": "desk_two_piles"
+          }
+        ],
+        "light_main": {
+          "direction": "from_left_window_late_afternoon_fading",
+          "color_temp_k": 4200,
+          "ratio": "1:4"
+        },
+        "action_phase": "recover"
+      },
+      "storyboard_sha256": "a44ae382c8cf41d9113acb6c363c36550034b3348d938c4db6d6601b75a38a61",
+      "video_prompt_sha256": "9c70083f43278318379e42e7975f44ae88e1c76b971d8c5d512ce8a3efbc164b"
+    },
+    {
+      "scene_index": 2,
+      "scene_id": "scene_002",
+      "manifest_sha256": "743424774c715774f3c6f665c267b8a9671f91e4e4584f85c1f9bbfd13c5736a",
+      "master_content_hash": "a41904050ce0762dde87a1034c8dde77aee3a673ded6113b1a8d49f1a6be317c",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "stepping_out_of_doorway",
+            "facing": "outward",
+            "screen_direction": "depth_out",
+            "posture": "walking_casually_empty_hands"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "beside_doorway",
+            "facing": "outward",
+            "screen_direction": "static",
+            "posture": "standing_about_to_go_out"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "beside_doorway",
+            "facing": "outward",
+            "screen_direction": "static",
+            "posture": "standing_eating_candied_hawthorn"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "冰糖葫芦",
+            "held_by": "柳小别",
+            "location": "right_hand_near_mouth"
+          }
+        ],
+        "light_main": {
+          "direction": "from_doorway_warm_lamp",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "travel"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "on_empty_ground_in_front_of_doorway",
+            "facing": "toward_房东大婶",
+            "screen_direction": "static",
+            "posture": "standing_hands_at_sides_ready_to_follow"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "beside_doorway",
+            "facing": "toward_direction_of_bbq_or_down",
+            "screen_direction": "static",
+            "posture": "holding_hawthorn_neutral_expression"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "doorway",
+            "facing": "toward_street_direction",
+            "screen_direction": "depth_out",
+            "posture": "standing_smiling_about_to_lead"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "冰糖葫芦",
+            "held_by": "柳小别",
+            "location": "right_hand_at_side"
+          }
+        ],
+        "light_main": {
+          "direction": "from_doorway_warm_lamp",
+          "color_temp_k": 3000,
+          "ratio": "1:3"
+        },
+        "action_phase": "static"
+      },
+      "storyboard_sha256": "82bd0d0120fd3faa031208edeee7c221eb21dbc277011c54b2187c35ab4cf931",
+      "video_prompt_sha256": "e842a2f71983f8bb5995d723c03ab0b0aa45231b2a59f384200a3a3a8a3d520c"
+    },
+    {
+      "scene_index": 3,
+      "scene_id": "scene_003",
+      "manifest_sha256": "fd0b25647428a030b549722039118180146ba641d2b78777b007254308752993",
+      "master_content_hash": "cca71a57c32dc1191ba9f5fa32d80859afacf3ef47931499fd837fec00733a2f",
+      "opening_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "seated_at_table",
+            "facing": "toward_bbq_stall",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "seated_at_table_near_周从文",
+            "facing": "toward_bbq_stall",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "standing_at_bbq_stall",
+            "facing": "toward_stall_owner",
+            "screen_direction": "static",
+            "posture": "standing_holding_menu_ordering"
+          },
+          {
+            "entity_id": "烧烤摊老板",
+            "position": "behind_bbq_stall",
+            "facing": "toward_柳小别",
+            "screen_direction": "static",
+            "posture": "standing_grilling_taking_order"
+          },
+          {
+            "entity_id": "情侣男",
+            "position": "seated_at_neighboring_table",
+            "facing": "toward_partner_or_table",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "seated_at_neighboring_table_near_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "seated_casual"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "菜单",
+            "held_by": "柳小别",
+            "location": "in_hands"
+          },
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_neighboring_table_in_front_of_情侣男"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "static"
+      },
+      "closing_state_keys": {
+        "characters": [
+          {
+            "entity_id": "周从文",
+            "position": "at_or_near_main_table",
+            "facing": "toward_情侣男_on_ground",
+            "screen_direction": "static",
+            "posture": "standing_or_seated_phone_in_hand_monitoring_calm"
+          },
+          {
+            "entity_id": "房东大婶",
+            "position": "at_main_table",
+            "facing": "toward_情侣男_or_周从文",
+            "screen_direction": "static",
+            "posture": "seated_or_standing_worried_but_calmer"
+          },
+          {
+            "entity_id": "柳小别",
+            "position": "near_bbq_stall",
+            "facing": "toward_accident_scene",
+            "screen_direction": "static",
+            "posture": "standing_watching"
+          },
+          {
+            "entity_id": "情侣男",
+            "position": "on_ground_side_laying",
+            "facing": "up_or_side",
+            "screen_direction": "static",
+            "posture": "choking_on_ground_face_purple"
+          },
+          {
+            "entity_id": "情侣女",
+            "position": "beside_情侣男",
+            "facing": "toward_情侣男",
+            "screen_direction": "static",
+            "posture": "kneeling_comforting_or_panicked"
+          },
+          {
+            "entity_id": "烧烤摊老板",
+            "position": "near_bbq_stall_or_moved_toward_scene",
+            "facing": "toward_scene",
+            "screen_direction": "static",
+            "posture": "standing_watching_or_approaching"
+          }
+        ],
+        "props": [
+          {
+            "prop_id": "手机",
+            "held_by": "周从文",
+            "location": "in_hand_at_ear_or_lowered"
+          },
+          {
+            "prop_id": "可乐瓶",
+            "held_by": "无",
+            "location": "on_ground_tipped"
+          }
+        ],
+        "light_main": {
+          "direction": "from_charcoal_fire_orange_warm",
+          "color_temp_k": 2300,
+          "ratio": "1:2"
+        },
+        "action_phase": "recover"
+      },
+      "storyboard_sha256": "101f9f3646c1a508324f3854cf859f06c5c00a84355e406374d5a60662b95899",
+      "video_prompt_sha256": "341ffd21c8902c0bf8b04edc444b018eac6e20eab6497ef941ad8378563eaf4c"
+    }
+  ],
+  "outgoing_scene_index": 3,
+  "outgoing_scene_id": "scene_003",
+  "outgoing_state": {
+    "characters": [
+      {
+        "entity_id": "周从文",
+        "position": "at_or_near_main_table",
+        "facing": "toward_情侣男_on_ground",
+        "screen_direction": "static",
+        "posture": "standing_or_seated_phone_in_hand_monitoring_calm"
+      },
+      {
+        "entity_id": "房东大婶",
+        "position": "at_main_table",
+        "facing": "toward_情侣男_or_周从文",
+        "screen_direction": "static",
+        "posture": "seated_or_standing_worried_but_calmer"
+      },
+      {
+        "entity_id": "柳小别",
+        "position": "near_bbq_stall",
+        "facing": "toward_accident_scene",
+        "screen_direction": "static",
+        "posture": "standing_watching"
+      },
+      {
+        "entity_id": "情侣男",
+        "position": "on_ground_side_laying",
+        "facing": "up_or_side",
+        "screen_direction": "static",
+        "posture": "choking_on_ground_face_purple"
+      },
+      {
+        "entity_id": "情侣女",
+        "position": "beside_情侣男",
+        "facing": "toward_情侣男",
+        "screen_direction": "static",
+        "posture": "kneeling_comforting_or_panicked"
+      },
+      {
+        "entity_id": "烧烤摊老板",
+        "position": "near_bbq_stall_or_moved_toward_scene",
+        "facing": "toward_scene",
+        "screen_direction": "static",
+        "posture": "standing_watching_or_approaching"
+      }
+    ],
+    "props": [
+      {
+        "prop_id": "手机",
+        "held_by": "周从文",
+        "location": "in_hand_at_ear_or_lowered"
+      },
+      {
+        "prop_id": "可乐瓶",
+        "held_by": "无",
+        "location": "on_ground_tipped"
+      }
+    ],
+    "light_main": {
+      "direction": "from_charcoal_fire_orange_warm",
+      "color_temp_k": 2300,
+      "ratio": "1:2"
+    },
+    "action_phase": "recover"
+  },
+  "commit_sha256": "136a16fa4112cf92359ed57fd64117ee2982664210ec47d4637dd2ef8053057f"
+}

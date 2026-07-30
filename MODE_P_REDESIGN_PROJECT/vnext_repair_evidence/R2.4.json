@@ -1,0 +1,80 @@
+{
+  "task_id": "R2.4",
+  "title": "Complete DP adversarial and targeted-revision safety",
+  "owner": "codex-director-runtime-20260729",
+  "evidence_created_at": "2026-07-29T05:13:30.6460560Z",
+  "schema_version": "1.0",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/dp_view_compiler.py",
+    "01_调度器/mode_p_vnext/dp_manifest.py",
+    "01_调度器/mode_p_vnext/dp_response_contract.py",
+    "01_调度器/mode_p_vnext/dp_cache.py",
+    "01_调度器/mode_p_vnext/dp_adversarial.py",
+    "01_调度器/mode_p_vnext/dp_revision_router.py",
+    "01_调度器/mode_p_vnext/targeted_revision.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_1_dp_view.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_2_dp_manifest.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_3_dp_response.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_4_targeted_revision.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_5_dp_cache.py",
+    "01_调度器/mode_p_vnext/tests/test_v7_6_dp_adversarial.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R2.4.json"
+  ],
+  "checks": [
+    {
+      "name": "visibility_leak_cases",
+      "exit_code": 0,
+      "result": "Deterministic DP review detects visible-surface, audio-only, occluded-state, timed-visibility, reflection-path, undeclared rear/UI surface, payload-route and human-QA-only leaks. Positive closure is required; findings are bound to current objects and remain TEXT_VALIDATED only."
+    },
+    {
+      "name": "fresh_dp",
+      "exit_code": 0,
+      "result": "A DP packet has a strictly whitelisted, integrity-checked view plus a unique context and manifest. Cache records bind the view and revision identity; a revision cannot reuse its prior context or prior response as fresh review evidence."
+    },
+    {
+      "name": "no_redirection",
+      "exit_code": 0,
+      "result": "DP output may report observable, scope-bound questions but cannot select camera or cut answers, mandate a focal length/motion/shot count, replace the Director, or request a whole-scene rewrite. The router retains the same Director identity."
+    },
+    {
+      "name": "targeted_scope_only",
+      "exit_code": 0,
+      "result": "Only DIRECTED_QUESTION issues may produce revisions. Scope derives from DP-bound objects and directly adjacent boundaries; frozen segments, Input Block, unrelated scope and changed untouched hashes fail closed. A valid revision requires PRECHECK, DERIVE and a fresh DP context."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "r2_4_dp_safety_suite",
+      "exit_code": 0,
+      "result": "34 passed in 0.15s"
+    }
+  ],
+  "artifact_hashes": {
+    "01_调度器/mode_p_vnext/dp_view_compiler.py": "44c6f2eae1c8baf9b022c9398e8512c0012c0c4fd050806f05569661c7ab00c0",
+    "01_调度器/mode_p_vnext/dp_manifest.py": "6b33371e3eddb73a6915286c480b93312173578629584af82a162812d72e2257",
+    "01_调度器/mode_p_vnext/dp_response_contract.py": "8358cd6a2272defe18cde5718a063234a63064d36fb724a18dc71abdaac7f504",
+    "01_调度器/mode_p_vnext/dp_cache.py": "adc328075b82ce5f025649587e34244c3e3c91243e2155d3ce86b7e1c729d5b1",
+    "01_调度器/mode_p_vnext/dp_adversarial.py": "623e799d88a7ffb638f3a4352729f72595c0d4bec3eec1652132b753a29f8945",
+    "01_调度器/mode_p_vnext/dp_revision_router.py": "f4024bc3e02b654c370d2eba7eb47e302d2ddff16c5e6b2d030dce8495806101",
+    "01_调度器/mode_p_vnext/targeted_revision.py": "e30b1692b26c6669bd4e2d3a66f6c8d1562ddd74665875762542ed5b0ea34b49",
+    "01_调度器/mode_p_vnext/tests/test_v7_1_dp_view.py": "f907dfe3389750f7d35f7518c8504f1c19250f84e390a0b36df973664d3e8719",
+    "01_调度器/mode_p_vnext/tests/test_v7_2_dp_manifest.py": "4d9a55b476827cb156304a4d47992e223bf3c6b2eeb33aa8f212fa377672e16d",
+    "01_调度器/mode_p_vnext/tests/test_v7_3_dp_response.py": "0295a35f99ac140994189a1511862900ee0cb6d4314d1a4ee74326a86dce95c8",
+    "01_调度器/mode_p_vnext/tests/test_v7_4_targeted_revision.py": "48526a6e213a1877e093096dc967ee3cd9fe82c8ad5efee24198dbc0967086c1",
+    "01_调度器/mode_p_vnext/tests/test_v7_5_dp_cache.py": "0fdff2939dc5b047a38c5a9f20585d873dbcf80250370b055f1d5f11c21bbe72",
+    "01_调度器/mode_p_vnext/tests/test_v7_6_dp_adversarial.py": "f8500b18cfe2f52021b8932d746c7907d5bd5abafa3760f98bb14b4e83647587"
+  },
+  "construction_baseline": {
+    "plan_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_DECISION_REFACTOR_CONSTRUCTION_PLAN.md",
+    "plan_sha256": "37e444e3c25e1e05d0c3f43fa5340631d159c4c69062aa3ca98cb20e5e00b2bc",
+    "goal_lock_path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/DIRECTOR_REFACTOR_GOAL_LOCK.json",
+    "goal_lock_sha256": "71edcc7152e9268886a99723e00b707caa892fb5ef9feac0df750f965dcd1272",
+    "status": "FROZEN_PRECONSTRUCTION_BASELINE"
+  },
+  "compatibility": {
+    "v4_production_entry": "unchanged",
+    "external_model_or_generation_submission": "not invoked",
+    "media_acceptance_claim": "not made; DP is TEXT_VALIDATED only",
+    "director_creative_semantics": "not implemented in R2.4; actual Director Phase B and VEC remain later controlled work packages"
+  }
+}

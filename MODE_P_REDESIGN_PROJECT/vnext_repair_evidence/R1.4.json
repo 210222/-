@@ -1,0 +1,57 @@
+{
+  "task_id": "R1.4",
+  "title": "Implement real Golden structural runner",
+  "owner": "codex-director-refactor-20260729",
+  "completed_at": "2026-07-29T01:30:00+00:00",
+  "schema_version": "1.0",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/structural_runner.py",
+    "01_调度器/mode_p_vnext/fixtures/r1_4/golden_expectations.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R1.4.json"
+  ],
+  "checks": [
+    {
+      "name": "runner_parses_artifacts",
+      "exit_code": 0,
+      "result": "Storyboard and video artifacts are parsed fail-closed, including unknown sections, unparseable nodes, interval endpoints, references, transitions, and prohibition-body boundaries."
+    },
+    {
+      "name": "runner_computes_results",
+      "exit_code": 0,
+      "result": "All seven structural categories are computed independently; Golden cases pass and category-specific mutations fail in their responsible category."
+    },
+    {
+      "name": "tamper_detection",
+      "exit_code": 0,
+      "result": "The runner rejects public expectation fingerprint tampering, contract/source authority changes, segment/ref rewrites, directing-field drift, terminal/cut topology changes, reference-target errors, and forbidden-text leakage."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "r1_4_structural_runner_suite",
+      "exit_code": 0,
+      "result": "47 passed"
+    },
+    {
+      "name": "r1_4_external_gate",
+      "exit_code": 0,
+      "result": "14 passed, 4 subtests passed"
+    },
+    {
+      "name": "r1_4_adversarial_gate",
+      "exit_code": 0,
+      "result": "23 passed"
+    }
+  ],
+  "repair_summary": {
+    "authority_binding": "Each Golden expectation now binds the exact R1.3 dual-output contract fingerprint and semantic-source hash, and its public fingerprint must equal the independent runner authority.",
+    "category_specific_validation": "Timing, cuts, reference duties, forbidden routes, homology, and format now reject their own mutations instead of relying only on whole-artifact hashes.",
+    "directing_homology": "Storyboard and video are compared panel-by-panel for time, phase, shot size, camera motion, description presence, segment identity, references, boundaries, terminal nodes, and transitions.",
+    "fail_closed_inputs": "Unknown sections, empty required sections, unparseable timeline nodes, invalid intervals, missing seconds, duplicate seconds, and exclusive-end panels are rejected."
+  },
+  "locked_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_acceptance/test_r1_4_external_acceptance.py": "c4002cb806831f3688e8d2946a3715da653d72df804d0378712ce1e8d7099b42",
+    "MODE_P_REDESIGN_PROJECT/vnext_acceptance/test_r1_4_adversarial_acceptance.py": "264c0138832a752d9e21d9baf61f8b56c0315b513adaabc33e397edc007854ed"
+  },
+  "production_entry": "v4_unchanged"
+}
