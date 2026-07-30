@@ -181,17 +181,45 @@ def _validate_artifact_set(
         if not isinstance(expected_size, int) or artifact_path.stat().st_size != expected_size:
             violations.append(f"artifact size mismatch for {relative}")
 
-    actual_paths = {
-        path.relative_to(directory).as_posix()
-        for path in directory.rglob("*")
-        if path.is_file() and path.name not in {MANIFEST_NAME, ABANDONED_NAME}
-    }
+    actual_paths = set()
+    for path in directory.rglob("*"):
+        if not path.is_file() or path.name in {MANIFEST_NAME, ABANDONED_NAME}:
+            continue
+        relative = path.relative_to(directory).as_posix()
+        if relative == "MANIFEST.json" and _is_valid_vnext_manifest(
+            directory, path, manifest
+        ):
+            continue
+        actual_paths.add(relative)
     if actual_paths != declared_paths:
         violations.append(
             f"artifact set mismatch: actual={sorted(actual_paths)!r}, "
             f"declared={sorted(declared_paths)!r}"
         )
     return violations
+
+
+def _is_valid_vnext_manifest(
+    commit_dir: Path,
+    manifest_path: Path,
+    legacy_manifest: Mapping[str, Any],
+) -> bool:
+    """Allow only the vNext companion manifest, never an arbitrary extra file."""
+    try:
+        value = _read_json(manifest_path)
+        expected_digest = _sha256_file(commit_dir / MANIFEST_NAME)
+        return (
+            value.get("schema_name") == "mode_p_vnext_commit_manifest"
+            and value.get("schema_version") == "2.1"
+            and value.get("commit_id") == legacy_manifest.get("commit_id")
+            and value.get("legacy_manifest_sha256") == expected_digest
+            and isinstance(value.get("state_sha256"), str)
+            and len(value["state_sha256"]) == 64
+            and isinstance(value.get("base_state_sha256"), str)
+            and len(value["base_state_sha256"]) == 64
+        )
+    except (TransactionError, KeyError, TypeError):
+        return False
 
 
 def _validate_candidate(

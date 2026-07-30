@@ -1,0 +1,102 @@
+{
+  "task_id": "A2",
+  "kind": "MODE_P_VNEXT_A2_PERSISTENT_STATE_GRAPH_EVIDENCE",
+  "architecture_version": "2.1",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/atomic_commit.py",
+    "01_调度器/mode_p_vnext/pipeline/state.py",
+    "01_调度器/mode_p_vnext/pipeline/graph.py",
+    "01_调度器/mode_p_vnext/pipeline/invalidation.py",
+    "01_调度器/mode_p_vnext/runtime/__init__.py",
+    "01_调度器/mode_p_vnext/runtime/artifacts.py",
+    "01_调度器/mode_p_vnext/runtime/cache.py",
+    "01_调度器/mode_p_vnext/runtime/session.py",
+    "01_调度器/mode_p_vnext/runtime/transaction.py",
+    "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py"
+  ],
+  "checks": [
+    {
+      "name": "persistent_state_graph",
+      "exit_code": 0,
+      "evidence": "Typed PersistentGraphState accepts only a node's owned ArtifactRef fields and preserves prior accepted fields."
+    },
+    {
+      "name": "checkpoint_resume",
+      "exit_code": 0,
+      "evidence": "Content-bound checkpoints and resume plans use dependency digests; recovery coverage includes E0, S1, B0, and B1."
+    },
+    {
+      "name": "pending_write_atomicity",
+      "exit_code": 0,
+      "evidence": "Prepared state events remain invisible before atomic commit promotion; restart promotes the staged write without node re-execution."
+    },
+    {
+      "name": "content_addressed_artifacts",
+      "exit_code": 0,
+      "evidence": "Artifact envelopes persist below artifacts/<kind>/<sha256>.json and cache values contain ArtifactRef only."
+    },
+    {
+      "name": "field_level_invalidation",
+      "exit_code": 0,
+      "evidence": "Digest-edge invalidation follows deterministic graph declaration order and preserves unrelated accepted nodes."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a2_persistent_graph",
+      "argv": [
+        "C:\\Users\\21022\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_a2_persistent_graph.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "stdout_tail": ".........                                                                [100%]\\n9 passed in 2.25s\\n"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a2_related_regression_suite",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "argv": [
+        "pytest",
+        "mode_p_vnext/tests/test_a0_release_control.py",
+        "mode_p_vnext/tests/test_a1_domain_model.py",
+        "mode_p_vnext/tests/test_a2_persistent_graph.py",
+        "mode_p_vnext/tests/test_rebuild_control.py",
+        "mode_p_vnext/tests/test_v6_2_atomic_commit.py",
+        "mode_p_vnext/tests/test_v6_3_dependency_invalidation.py",
+        "mode_p_vnext/tests/test_v6_7_concurrency_lock.py",
+        "mode_p/test_active_entrypoints.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "exit_code": 1,
+      "summary": "102 passed, 1 failed. The only failure is test_a0_release_control.py::test_release_control_has_one_legal_next_task_and_at_most_one_matching_lock, whose static A0->A1 expectation conflicts with the valid current ledger state A0/A1 completed and next_task A2. It is outside A2 allowed paths and does not indicate an A2 runtime regression."
+    }
+  ],
+  "architecture_review": {
+    "authority_decision": "Architecture v2.1 is authoritative. No construction-plan conflict was found in A2.",
+    "legacy_adapter_boundary": "The established COMMIT_MANIFEST.json transaction remains the atomic promotion authority. The vNext MANIFEST.json is a validated companion manifest; its presence is allowed only when bound to the legacy manifest digest.",
+    "pointer_compatibility": "vNext current.json retains the legacy manifest_sha256 contract and adds only sequence/state_sha256/node metadata, so later commits continue to validate their parent.",
+    "recovery_boundary": "An event is replayed only after its matching legacy commit manifest exists. A pre-promotion prepared event is durable but non-authoritative; recovery promotes it without rerunning the node.",
+    "production_boundary": "v4 production entry remains unchanged. No media, provider, owner-approval, or production-switch path was modified."
+  },
+  "residual_risks": [
+    {
+      "severity": "low",
+      "scope": "A0 historical test fixture",
+      "status": "recorded_not_modified",
+      "detail": "The A0 controller test hard-codes A1 as next task after A0, so it fails after A1 has legitimately completed. Repairing it is outside A2 path authority and must be handled by its owning work package."
+    }
+  ]
+}
