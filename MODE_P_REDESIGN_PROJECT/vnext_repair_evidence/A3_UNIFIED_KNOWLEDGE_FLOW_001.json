@@ -1,0 +1,116 @@
+{
+  "task_id": "A3",
+  "kind": "MODE_P_VNEXT_A3_UNIFIED_KNOWLEDGE_FLOW_EVIDENCE",
+  "architecture_version": "2.1",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952"
+  },
+  "changed_paths": [
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/services/knowledge_retriever.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a3_knowledge_flow.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A3_UNIFIED_KNOWLEDGE_FLOW_001.json"
+  ],
+  "checks": [
+    {
+      "name": "single_k1_k2_implementation",
+      "exit_code": 0,
+      "evidence": "KnowledgeRetriever is the v2.1 service boundary for both stages; K2 rejects the old boolean-only convention and requires VerifiedBlockingCommit with scene, artifact, content, and verification digests."
+    },
+    {
+      "name": "replayable_snapshot",
+      "exit_code": 0,
+      "evidence": "KnowledgeSnapshot seals the compact decision view, selection, exclusions, conflicts, catalog digest, legacy selection digest, binding digest, and redacted security-event digests. Replay verifies the seal and does not invoke catalog search."
+    },
+    {
+      "name": "untrusted_text_isolation",
+      "exit_code": 0,
+      "evidence": "The established security filter quarantines contaminated envelopes before selection. The v2.1 runtime view has only reviewed decision fields and source digests; the snapshot excludes raw text and untrusted source identifiers."
+    },
+    {
+      "name": "director_conflict_ownership",
+      "exit_code": 0,
+      "evidence": "Conflict candidates remain excluded from ranking and are returned only as requires_director_decision records. K1 independently fail-closes mislabelled camera, shot, lens, composition, edit, and timeline knowledge."
+    },
+    {
+      "name": "evidence_gated_promotion",
+      "exit_code": 0,
+      "evidence": "EvidenceVerifiedPromotion cannot promote without independently verified evidence, a verifier, and explicit human approval; promotion emits a canonical digest and never mutates the catalog automatically."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a3_knowledge_flow",
+      "argv": [
+        "C:\\Users\\21022\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_a3_knowledge_flow.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_\u8c03\u5ea6\u5668",
+      "exit_code": 0,
+      "stdout_tail": ".......                                                                  [100%]\\n7 passed in 0.14s\\n"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a3_related_knowledge_security_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "argv": [
+        "pytest",
+        "mode_p_vnext/tests/test_a3_knowledge_flow.py",
+        "mode_p_vnext/tests/test_v3_6_knowledge_snapshot.py",
+        "mode_p_vnext/tests/test_v3_3_conflict_graph.py",
+        "mode_p_vnext/tests/test_v3_1_knowledge_auditor.py",
+        "mode_p_vnext/tests/test_v9_5_security.py",
+        "mode_p_vnext/tests/test_cpl_1_knowledge.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "exit_code": 0,
+      "summary": "39 passed, 81 subtests passed in 0.55s."
+    },
+    {
+      "name": "a0_a3_completed_package_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "argv": [
+        "pytest",
+        "mode_p_vnext/tests/test_a0_release_control.py",
+        "mode_p_vnext/tests/test_a1_domain_model.py",
+        "mode_p_vnext/tests/test_a2_persistent_graph.py",
+        "mode_p_vnext/tests/test_a3_knowledge_flow.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "exit_code": 1,
+      "summary": "35 passed, 1 failed. The only failure is test_a0_release_control.py::test_release_control_has_one_legal_next_task_and_at_most_one_matching_lock, whose static A0-complete => A1 expectation contradicts the valid ledger state with A0/A1/A2 completed and A3 claimed. This A0-owned fixture is outside A3 path authority and does not indicate an A3 runtime regression."
+    }
+  ],
+  "architecture_review": {
+    "authority_decision": "Architecture v2.1 is authoritative. No architecture-versus-construction-plan conflict was found in A3.",
+    "runtime_boundary": "KnowledgeDecisionView contains only the compact Director fields mandated by §7.2. Full selection data is sealed in KnowledgeSnapshot rather than repeated into a model input.",
+    "k1_k2_boundary": "K1 is restricted to non-execution knowledge and K2 requires a verified, scene-bound BlockingCommit. The legacy metadata retriever is consumed behind this service boundary rather than becoming a second v2 interface.",
+    "security_boundary": "Untrusted text retains no instruction authority. Quarantined material is represented only by redacted, hash-addressed security evidence and cannot appear in Director view or replay payloads.",
+    "promotion_boundary": "The service records the evidence-verifier-human promotion gate but does not auto-promote media observations or mutate the catalog. Later typed media/outcome artifacts must supply any cross-case proof.",
+    "production_boundary": "v4 production entry remains unchanged. No provider invocation, media submission, owner approval, or production switch was performed."
+  },
+  "residual_risks": [
+    {
+      "severity": "low",
+      "scope": "A0 historical test fixture",
+      "status": "recorded_not_modified",
+      "detail": "The A0 controller test hard-codes A1 as the next task after A0, so it fails once later work packages have legitimately completed. Repairing that A0-owned fixture is outside A3 path authority."
+    },
+    {
+      "severity": "controlled",
+      "scope": "experience promotion inputs",
+      "status": "not_auto_promoted",
+      "detail": "A3 accepts only verified evidence digests and human approval. It intentionally does not infer cross-case repetition or platform applicability from raw media; those future typed inputs remain required before a catalog update can be proposed."
+    }
+  ]
+}
