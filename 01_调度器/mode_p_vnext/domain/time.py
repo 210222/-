@@ -48,7 +48,11 @@ class CanonicalTimeline:
     timebase_version: str = TIMEBASE_VERSION
 
     def __post_init__(self) -> None:
-        if self.ticks_per_second != TICKS_PER_SECOND:
+        if (
+            isinstance(self.ticks_per_second, bool)
+            or not isinstance(self.ticks_per_second, int)
+            or self.ticks_per_second != TICKS_PER_SECOND
+        ):
             raise DomainValidationError("vNext canonical timebase is exactly 24000 ticks per second")
         if self.timebase_version != TIMEBASE_VERSION:
             raise DomainValidationError("timebase changes require a future versioned architecture capability")
@@ -64,7 +68,7 @@ class TimelinePlacement:
     interval: TickRange
 
     def __post_init__(self) -> None:
-        if not self.scope_id.strip():
+        if not isinstance(self.scope_id, str) or not self.scope_id.strip():
             raise DomainValidationError("scope_id must be non-empty")
         if not isinstance(self.interval, TickRange):
             raise DomainValidationError("interval must be a TickRange")

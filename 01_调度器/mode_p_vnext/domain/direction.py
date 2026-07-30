@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import ClassVar
 
-from .artifact import DomainValidationError
+from .artifact import ArtifactKind, DomainValidationError
 
 
 DOMAIN_SCHEMA_VERSION = "2.1"
@@ -20,6 +21,8 @@ def _texts(value: tuple[str, ...], field_name: str, *, require_items: bool) -> t
 
 @dataclass(frozen=True)
 class EpisodeDirectionDraft:
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.EPISODE_DIRECTION
+
     dramatic_promise: str
     audience_contract: str
     tension_curve: tuple[str, ...]
@@ -28,7 +31,12 @@ class EpisodeDirectionDraft:
     unresolved_questions: tuple[str, ...]
 
     def __post_init__(self) -> None:
-        if not self.dramatic_promise.strip() or not self.audience_contract.strip():
+        if (
+            not isinstance(self.dramatic_promise, str)
+            or not self.dramatic_promise.strip()
+            or not isinstance(self.audience_contract, str)
+            or not self.audience_contract.strip()
+        ):
             raise DomainValidationError("dramatic_promise and audience_contract must be non-empty")
         for field_name in ("tension_curve", "visual_principles", "continuity_priorities"):
             object.__setattr__(self, field_name, _texts(getattr(self, field_name), field_name, require_items=True))
@@ -41,6 +49,8 @@ class EpisodeDirectionDraft:
 
 @dataclass(frozen=True)
 class SceneIntentDraft:
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.SCENE_INTENT
+
     scene_purpose: str
     state_change: str
     audience_information: tuple[str, ...]
@@ -51,7 +61,12 @@ class SceneIntentDraft:
     unresolved_questions: tuple[str, ...]
 
     def __post_init__(self) -> None:
-        if not self.scene_purpose.strip() or not self.state_change.strip():
+        if (
+            not isinstance(self.scene_purpose, str)
+            or not self.scene_purpose.strip()
+            or not isinstance(self.state_change, str)
+            or not self.state_change.strip()
+        ):
             raise DomainValidationError("scene_purpose and state_change must be non-empty")
         for field_name in (
             "audience_information",

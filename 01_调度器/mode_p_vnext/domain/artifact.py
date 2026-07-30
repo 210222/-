@@ -33,7 +33,14 @@ class ArtifactKind(str, enum.Enum):
     EXECUTION_DESIGN_DRAFT = "execution_design_draft"
     VISUAL_EXECUTION_CONTRACT = "visual_execution_contract"
     PROJECTION_AST = "projection_ast"
+    PROJECTION_MANIFEST = "projection_manifest"
+    CAPABILITY_ADAPTATION = "capability_adaptation"
+    REVIEW_PACKET = "review_packet"
+    REVISION_REQUEST = "revision_request"
+    MEDIA_RUN_RECORD = "media_run_record"
+    FRAME_EVIDENCE_PLAN = "frame_evidence_plan"
     MEDIA_EVIDENCE = "media_evidence"
+    VISUAL_VERIFICATION_RESULT = "visual_verification_result"
     RELEASE_DECISION = "release_decision"
 
 
@@ -55,14 +62,108 @@ def require_sha256(value: str, field_name: str) -> None:
         raise DomainValidationError(f"{field_name} must be a lowercase SHA-256")
 
 
+def _require_deeply_immutable(
+    value: Any, field_name: str, active: set[int] | None = None
+) -> None:
+    if value is None or isinstance(value, (str, int, bool, enum.Enum)):
+        return
+    if isinstance(value, float):
+        raise DomainValidationError(f"{field_name} cannot contain floating-point values")
+
+    active = set() if active is None else active
+    identity = id(value)
+    if identity in active:
+        raise DomainValidationError(f"{field_name} cannot contain recursive values")
+
+    if dataclasses.is_dataclass(value) and not isinstance(value, type):
+        params = getattr(value, "__dataclass_params__", None)
+        if params is None or not params.frozen:
+            raise DomainValidationError(f"{field_name} dataclass values must be frozen")
+        active.add(identity)
+        try:
+            for item in dataclasses.fields(value):
+                _require_deeply_immutable(
+                    getattr(value, item.name), f"{field_name}.{item.name}", active
+                )
+        finally:
+            active.remove(identity)
+        return
+
+    if isinstance(value, Mapping):
+        if not isinstance(value, MappingProxyType):
+            raise DomainValidationError(f"{field_name} retains a mutable mapping")
+        active.add(identity)
+        try:
+            for key, item in value.items():
+                _require_text(key, f"{field_name} key")
+                _require_deeply_immutable(item, f"{field_name}[{key}]", active)
+        finally:
+            active.remove(identity)
+        return
+
+    if isinstance(value, tuple):
+        active.add(identity)
+        try:
+            for index, item in enumerate(value):
+                _require_deeply_immutable(item, f"{field_name}[{index}]", active)
+        finally:
+            active.remove(identity)
+        return
+
+    raise DomainValidationError(
+        f"{field_name} retains mutable or unsupported type: {type(value).__name__}"
+    )
+
+
+def _deep_freeze(value: Any, field_name: str, active: set[int] | None = None) -> Any:
+    """Create an immutable canonical snapshot without retaining mutable aliases."""
+
+    if value is None or isinstance(value, (str, int, bool, enum.Enum)):
+        return value
+    if isinstance(value, float):
+        raise DomainValidationError(f"{field_name} cannot contain floating-point values")
+    if dataclasses.is_dataclass(value) and not isinstance(value, type):
+        _require_deeply_immutable(value, field_name)
+        return value
+
+    active = set() if active is None else active
+    identity = id(value)
+    if identity in active:
+        raise DomainValidationError(f"{field_name} cannot contain recursive values")
+
+    if isinstance(value, Mapping):
+        active.add(identity)
+        try:
+            frozen: dict[str, Any] = {}
+            for key, item in value.items():
+                _require_text(key, f"{field_name} key")
+                frozen[key] = _deep_freeze(item, f"{field_name}[{key}]", active)
+            return MappingProxyType(frozen)
+        finally:
+            active.remove(identity)
+
+    if isinstance(value, (tuple, list)):
+        active.add(identity)
+        try:
+            return tuple(
+                _deep_freeze(item, f"{field_name}[{index}]", active)
+                for index, item in enumerate(value)
+            )
+        finally:
+            active.remove(identity)
+
+    raise DomainValidationError(
+        f"{field_name} contains unsupported canonical type: {type(value).__name__}"
+    )
+
+
 def freeze_mapping(value: Mapping[str, Any], field_name: str = "mapping") -> Mapping[str, Any]:
     if not isinstance(value, Mapping):
         raise DomainValidationError(f"{field_name} must be a mapping")
-    frozen: dict[str, Any] = {}
-    for key, item in value.items():
-        _require_text(key, f"{field_name} key")
-        frozen[key] = item
-    return MappingProxyType(frozen)
+    frozen = _deep_freeze(value, field_name)
+    if not isinstance(frozen, Mapping):
+        raise DomainValidationError(f"{field_name} must be a mapping")
+    return frozen
 
 
 def _canonical_value(value: Any) -> Any:
@@ -131,6 +232,12 @@ class ArtifactEnvelope(Generic[T]):
         _require_text(self.created_at, "created_at")
         if not isinstance(self.validation_status, ValidationStatus):
             raise DomainValidationError("validation_status must be a ValidationStatus")
+        payload = _deep_freeze(self.payload, "payload")
+        declared_kind = getattr(payload, "ARTIFACT_KIND", None)
+        if declared_kind is not None and declared_kind is not self.artifact_kind:
+            raise DomainValidationError(
+                "artifact_kind does not match the payload's canonical authority"
+            )
         refs = tuple(self.source_refs)
         if not refs or not all(isinstance(ref, SourceRef) for ref in refs):
             raise DomainValidationError("source_refs must contain at least one SourceRef")
@@ -139,12 +246,13 @@ class ArtifactEnvelope(Generic[T]):
             require_sha256(digest, f"dependency_digests[{key}]")
         object.__setattr__(self, "source_refs", refs)
         object.__setattr__(self, "dependency_digests", dependencies)
+        object.__setattr__(self, "payload", payload)
         require_sha256(self.content_sha256, "content_sha256")
         expected = self.content_digest_for(
             artifact_kind=self.artifact_kind,
             schema_version=self.schema_version,
             program_version=self.program_version,
-            payload=self.payload,
+            payload=payload,
             source_refs=refs,
             dependency_digests=dependencies,
         )

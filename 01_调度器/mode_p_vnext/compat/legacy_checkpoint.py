@@ -50,6 +50,25 @@ def _legacy_state(value: Any, field_name: str) -> Mapping[str, str]:
     return converted
 
 
+def _legacy_gaze_relations(
+    character_states: list[Any],
+) -> tuple[str, ...]:
+    relations: list[str] = []
+    for state in character_states:
+        if not isinstance(state, Mapping):
+            continue
+        character_id = state.get("character_id")
+        gaze_target = state.get("gaze_target")
+        if (
+            isinstance(character_id, str)
+            and character_id.strip()
+            and isinstance(gaze_target, str)
+            and gaze_target.strip()
+        ):
+            relations.append(f"{character_id} -> {gaze_target}")
+    return tuple(relations)
+
+
 def read_legacy_b0_k2_checkpoint(path: Path) -> ArtifactEnvelope[BlockingDraft]:
     """Read a historical checkpoint and return a canonical *draft* envelope.
 
@@ -75,27 +94,27 @@ def read_legacy_b0_k2_checkpoint(path: Path) -> ArtifactEnvelope[BlockingDraft]:
         prop_states = raw_beat.get("prop_states", [])
         if not isinstance(character_states, list) or not isinstance(prop_states, list):
             raise DomainValidationError("legacy blocking state lists are malformed")
+        continuity_effect = "; ".join(
+            (
+                f"entry={_legacy_text(raw_beat.get('entry_state_id'), 'beat.entry_state_id')}",
+                f"exit={_legacy_text(raw_beat.get('exit_state_id'), 'beat.exit_state_id')}",
+                f"space={_legacy_text(raw_beat.get('space_control'), 'beat.space_control')}",
+                f"consequence={_legacy_text(raw_beat.get('dramatic_reason'), 'beat.dramatic_reason')}",
+            )
+        )
         beats.append(
             BlockingBeatDraft(
                 ordinal=ordinal,
                 dramatic_action=_legacy_text(raw_beat.get("dramatic_function"), "beat.dramatic_function"),
-                dramatic_reason=_legacy_text(raw_beat.get("dramatic_reason"), "beat.dramatic_reason"),
                 character_states=tuple(_legacy_state(item, "character_states") for item in character_states),
                 prop_states=tuple(_legacy_state(item, "prop_states") for item in prop_states),
+                gaze_relations=_legacy_gaze_relations(character_states),
                 action_paths=_legacy_texts(raw_beat.get("action_paths"), "beat.action_paths"),
-                constraint_refs=_legacy_texts(raw_beat.get("constraint_refs"), "beat.constraint_refs"),
-                entry_state=_legacy_text(raw_beat.get("entry_state_id"), "beat.entry_state_id"),
-                exit_state=_legacy_text(raw_beat.get("exit_state_id"), "beat.exit_state_id"),
-                space_control=_legacy_text(raw_beat.get("space_control"), "beat.space_control"),
+                continuity_effect=continuity_effect,
             )
         )
 
-    draft = BlockingDraft(
-        scene_id=scene_id,
-        beats=tuple(beats),
-        constraint_refs=_legacy_texts(commit.get("constraint_refs"), "blocking_commit.constraint_refs"),
-        dramatic_reason=_legacy_text(beats[-1].dramatic_reason, "final beat dramatic_reason"),
-    )
+    draft = BlockingDraft(beats=tuple(beats))
     input_digest = canonical_sha256(raw)
     source_ref = SourceRef(
         source_id=f"legacy-checkpoint:{source_path.name}",

@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import enum
 from dataclasses import dataclass
+from typing import ClassVar
 
-from .artifact import DomainValidationError, SourceRef
+from .artifact import ArtifactKind, DomainValidationError, SourceRef
 
 
 DOMAIN_SCHEMA_VERSION = "2.1"
@@ -28,7 +29,10 @@ class ScriptFact:
     source_ref: SourceRef
 
     def __post_init__(self) -> None:
-        if not self.fact_id.strip() or not self.scene_id.strip() or not self.statement.strip():
+        if any(
+            not isinstance(value, str) or not value.strip()
+            for value in (self.fact_id, self.scene_id, self.statement)
+        ):
             raise DomainValidationError("fact_id, scene_id, and statement must be non-empty")
         if not isinstance(self.kind, FactKind) or not isinstance(self.source_ref, SourceRef):
             raise DomainValidationError("ScriptFact requires a FactKind and SourceRef")
@@ -36,6 +40,8 @@ class ScriptFact:
 
 @dataclass(frozen=True)
 class FactRegistry:
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.SCRIPT_FACT
+
     facts: tuple[ScriptFact, ...]
 
     def __post_init__(self) -> None:

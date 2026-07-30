@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .artifact import ArtifactKind, DomainValidationError, require_sha256
+from .artifact import ArtifactKind, DomainValidationError, canonical_sha256, require_sha256
 
 
 DOMAIN_SCHEMA_VERSION = "2.1"
@@ -16,7 +16,7 @@ class IdFactory:
     program_version: str
 
     def __post_init__(self) -> None:
-        if not self.program_version.strip():
+        if not isinstance(self.program_version, str) or not self.program_version.strip():
             raise DomainValidationError("program_version must be non-empty")
 
     def create(
@@ -31,12 +31,29 @@ class IdFactory:
     ) -> str:
         if not isinstance(artifact_kind, ArtifactKind):
             raise DomainValidationError("artifact_kind must be an ArtifactKind")
-        if not episode_id.strip() or not stage.strip():
+        if (
+            not isinstance(episode_id, str)
+            or not episode_id.strip()
+            or not isinstance(stage, str)
+            or not stage.strip()
+        ):
             raise DomainValidationError("episode_id and stage must be non-empty")
-        if scene_id is not None and not scene_id.strip():
+        if scene_id is not None and (
+            not isinstance(scene_id, str) or not scene_id.strip()
+        ):
             raise DomainValidationError("scene_id must be non-empty when supplied")
         if isinstance(ordinal, bool) or not isinstance(ordinal, int) or ordinal < 0:
             raise DomainValidationError("ordinal must be a non-negative integer")
         require_sha256(input_digest, "input_digest")
-        scope = scene_id or "episode"
-        return ":".join((artifact_kind.value, episode_id, scope, stage, f"{ordinal:04d}", input_digest[:20]))
+        identity_digest = canonical_sha256(
+            {
+                "artifact_kind": artifact_kind,
+                "program_version": self.program_version,
+                "episode_id": episode_id,
+                "scene_id": scene_id,
+                "stage": stage,
+                "input_digest": input_digest,
+                "ordinal": ordinal,
+            }
+        )
+        return f"{artifact_kind.value}:{ordinal:04d}:{identity_digest}"

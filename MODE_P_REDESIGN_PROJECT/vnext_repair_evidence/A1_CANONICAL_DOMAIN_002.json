@@ -1,0 +1,111 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A1",
+  "run_id": "codex-a1-revalidation-20260731",
+  "architecture_version": "2.1",
+  "architecture_authority": {
+    "base": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
+    "normative_amendment": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md",
+    "decision": "A1 is governed by the architecture authority package. It freezes the pure canonical schemas and the one-way legacy reader; downstream assembly, retrieval, projection, prompt, media, approval, and production behavior remain outside A1."
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/compat/legacy_checkpoint.py",
+    "01_调度器/mode_p_vnext/domain/__init__.py",
+    "01_调度器/mode_p_vnext/domain/artifact.py",
+    "01_调度器/mode_p_vnext/domain/blocking.py",
+    "01_调度器/mode_p_vnext/domain/decisions.py",
+    "01_调度器/mode_p_vnext/domain/direction.py",
+    "01_调度器/mode_p_vnext/domain/evidence.py",
+    "01_调度器/mode_p_vnext/domain/facts.py",
+    "01_调度器/mode_p_vnext/domain/ids.py",
+    "01_调度器/mode_p_vnext/domain/knowledge.py",
+    "01_调度器/mode_p_vnext/domain/projection.py",
+    "01_调度器/mode_p_vnext/domain/release.py",
+    "01_调度器/mode_p_vnext/domain/time.py",
+    "01_调度器/mode_p_vnext/domain/vec.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_CANONICAL_DOMAIN_002.json"
+  ],
+  "checks": [
+    {
+      "name": "canonical_artifact_envelope",
+      "exit_code": 0,
+      "evidence": "ArtifactEnvelope deep-freezes payloads and dependencies before hashing, binds declared persistent payload types to their canonical ArtifactKind, rejects type-confused envelopes and forged hashes, and permits untyped generic mappings only where a later task has not yet introduced a canonical payload type."
+    },
+    {
+      "name": "canonical_24000_tick_timebase",
+      "exit_code": 0,
+      "evidence": "CanonicalTimeline accepts only 24000 ticks per second; TickRange is half-open, and each generation segment uses its own local zero-based timeline."
+    },
+    {
+      "name": "draft_artifact_separation",
+      "exit_code": 0,
+      "evidence": "Episode, scene, B0, and B1 creative Draft schemas contain creative proposals only. IDs, hashes, state-boundary authority, ticks, and final VEC graph authority are assigned by local canonical types."
+    },
+    {
+      "name": "no_duplicate_domain_authority",
+      "exit_code": 0,
+      "evidence": "The mode_p_vnext.domain package is the single accepted v2.1 type authority, declares one package-wide owner for every canonical type, and assigns one ArtifactKind to every persistent canonical payload. Historical and invalidated service-layer representations do not grant authority."
+    },
+    {
+      "name": "domain_schemas_frozen_for_downstream",
+      "exit_code": 0,
+      "evidence": "All canonical domain dataclasses are frozen, nested mappings and sequences are recursively snapshotted, B0/B1 and final VEC fields match architecture section 5.3, and knowledge, projection, review, evidence, and release schemas are explicitly bounded for downstream tasks."
+    },
+    {
+      "name": "legacy_read_adapter_only",
+      "exit_code": 0,
+      "evidence": "The compatibility boundary imports no legacy runtime module, performs only a one-way historical B0/K2 read, derives the missing canonical B0 gaze and continuity fields, and emits a canonical BlockingDraft envelope with provenance."
+    }
+  ],
+  "review": {
+    "finding": "The prior A1 implementation passed a narrow seven-test contract but remained structurally incomplete against architecture v2.1: B0/B1 schemas omitted authority-bearing fields, the final VEC graph was underspecified, nested payload aliases could mutate after hashing, ID inputs could collide at delimiters, and envelopes did not bind a canonical payload class to its ArtifactKind.",
+    "root_cause": "The earlier construction encoded a minimal compatibility-shaped model instead of freezing the complete architecture-owned domain boundary before downstream work consumed it.",
+    "considered_options": [
+      {
+        "option": "Keep the narrow A1 schema and repair mismatches in A4-A10",
+        "decision": "rejected",
+        "reason": "That would let downstream packages invent parallel authority and would preserve schema drift at the root."
+      },
+      {
+        "option": "Adopt historical director_vnext1 or legacy pipeline types as canonical",
+        "decision": "rejected",
+        "reason": "Historical types belong to invalidated or read-only paths and cannot override the v2.1 architecture package."
+      },
+      {
+        "option": "Freeze the complete architecture-aligned domain now and force downstream revalidation against it",
+        "decision": "accepted",
+        "reason": "A1 owns the domain boundary. Fixing it here preserves the intended architecture and makes later incompatibilities fail closed instead of being hidden by adapters."
+      }
+    ],
+    "residual_risk": "A2 and A3 are invalidated and must be revalidated against these expanded canonical schemas. In particular, A3's historical service-local KnowledgeDecisionView and KnowledgeSnapshot definitions must be removed or replaced with imports from mode_p_vnext.domain. No downstream task, shadow run, media run, owner approval, or production switch is authorized by this A1 result."
+  },
+  "informational_results": [
+    {
+      "name": "a1_test_first_red",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 1,
+      "result": "5 failed, 6 passed before implementation; failures covered B0, B1 decisions, final VEC authority, deep immutability, and ID collision."
+    },
+    {
+      "name": "a1_related_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "59 passed"
+    },
+    {
+      "name": "a1_compile_and_patch_check",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m compileall -q mode_p_vnext/domain mode_p_vnext/compat; git diff --check",
+      "exit_code": 0,
+      "result": "Canonical domain and compatibility modules compile; no whitespace errors were found."
+    }
+  ],
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

@@ -23,6 +23,7 @@ from mode_p_vnext.domain.artifact import (
     canonical_sha256,
 )
 from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingDraft
+from mode_p_vnext.domain.decisions import DecisionDraft, VisualCurvePointDraft
 from mode_p_vnext.domain.direction import EpisodeDirectionDraft, SceneIntentDraft
 from mode_p_vnext.domain.ids import IdFactory
 from mode_p_vnext.domain.time import (
@@ -32,7 +33,12 @@ from mode_p_vnext.domain.time import (
     TickRange,
     TimelinePlacement,
 )
-from mode_p_vnext.domain.vec import ExecutionDesignDraft
+from mode_p_vnext.domain.vec import (
+    ExecutionDesignDraft,
+    ShotDesignDraft,
+    VisualBeatDraft,
+    VisualExecutionContract,
+)
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
@@ -48,6 +54,432 @@ def _episode_direction() -> EpisodeDirectionDraft:
         continuity_priorities=("the letter remains in the left hand",),
         unresolved_questions=("Does the other character see the letter?",),
     )
+
+
+def _field_names(domain_type: type) -> tuple[str, ...]:
+    return tuple(field.name for field in dataclasses.fields(domain_type))
+
+
+def test_stage_draft_schemas_match_architecture_section_5_3_exactly() -> None:
+    assert _field_names(EpisodeDirectionDraft) == (
+        "dramatic_promise",
+        "audience_contract",
+        "tension_curve",
+        "visual_principles",
+        "continuity_priorities",
+        "unresolved_questions",
+    )
+    assert _field_names(SceneIntentDraft) == (
+        "scene_purpose",
+        "state_change",
+        "audience_information",
+        "character_knowledge",
+        "performance_questions",
+        "director_problems",
+        "continuity_effects",
+        "unresolved_questions",
+    )
+    assert _field_names(BlockingBeatDraft) == (
+        "ordinal",
+        "dramatic_action",
+        "character_states",
+        "prop_states",
+        "gaze_relations",
+        "action_paths",
+        "continuity_effect",
+    )
+    assert _field_names(BlockingDraft) == ("beats",)
+    assert _field_names(DecisionDraft) == (
+        "scope",
+        "basis",
+        "locked_by",
+        "options",
+        "selected_index",
+        "rationale",
+        "tradeoff",
+    )
+    assert _field_names(VisualBeatDraft) == (
+        "phase",
+        "subject_state",
+        "attention",
+        "storyboard_role",
+    )
+    assert _field_names(ShotDesignDraft) == (
+        "blocking_beat_ordinal",
+        "dramatic_function",
+        "attention_target",
+        "information_action",
+        "framing_intent",
+        "camera_pose",
+        "camera_motion",
+        "composition",
+        "lighting",
+        "performance",
+        "duration_weight",
+        "visual_beats",
+    )
+    assert _field_names(ExecutionDesignDraft) == (
+        "curve_points",
+        "decisions",
+        "shots",
+        "transition_intents",
+        "audio_intents",
+        "reference_intents",
+        "handoff_intent",
+    )
+
+
+def test_b1_decision_modes_and_visual_beat_roles_are_bounded() -> None:
+    from mode_p_vnext.domain.decisions import DecisionBasis
+    from mode_p_vnext.domain.vec import StoryboardRole, VisualBeatPhase
+
+    choice = DecisionDraft(
+        scope="shot:1",
+        basis=DecisionBasis.CHOICE,
+        locked_by=(),
+        options=("hold the frame", "move with the subject"),
+        selected_index=0,
+        rationale="The held frame makes the decision legible.",
+        tradeoff="Less kinetic energy.",
+    )
+    locked = DecisionDraft(
+        scope="continuity:axis",
+        basis=DecisionBasis.LOCKED,
+        locked_by=("fact:axis-established",),
+        options=("preserve screen direction",),
+        selected_index=0,
+        rationale="The established axis is a locked fact.",
+        tradeoff="Camera placement remains inside the safe corridor.",
+    )
+    beat = VisualBeatDraft(
+        phase=VisualBeatPhase.REACTION,
+        subject_state="Lin Lan absorbs the transfer of authority.",
+        attention="Her gaze remains on the key.",
+        storyboard_role=StoryboardRole.REQUIRED,
+    )
+    shot = ShotDesignDraft(
+        blocking_beat_ordinal=1,
+        dramatic_function="Make the transfer of authority legible.",
+        attention_target="the key",
+        information_action="The audience sees that Lin Lan does not reach.",
+        framing_intent="hold both the hand and key in frame",
+        camera_pose="eye-level across the table",
+        camera_motion="locked",
+        composition="the key divides the frame",
+        lighting="soft side light preserves the key silhouette",
+        performance="Lin Lan stays still after the hand withdraws",
+        duration_weight=3,
+        visual_beats=(beat,),
+    )
+    draft = ExecutionDesignDraft(
+        curve_points=(
+            VisualCurvePointDraft(
+                dramatic_beat_ordinal=1,
+                intensity=70,
+                explanation="The physical handoff concentrates the scene.",
+            ),
+        ),
+        decisions=(choice, locked),
+        shots=(shot,),
+        transition_intents=(),
+        audio_intents=("Preserve the key line without adding dialogue.",),
+        reference_intents=("Maintain character and key identity.",),
+        handoff_intent="End on Lin Lan alone with the unresolved choice.",
+    )
+
+    assert choice.options[choice.selected_index] == "hold the frame"
+    assert locked.locked_by == ("fact:axis-established",)
+    assert beat.storyboard_role is StoryboardRole.REQUIRED
+    assert draft.shots[0].duration_weight == 3
+    with pytest.raises(DomainValidationError, match="exactly two"):
+        DecisionDraft(
+            scope="shot:1",
+            basis=DecisionBasis.CHOICE,
+            locked_by=(),
+            options=("hold",),
+            selected_index=0,
+            rationale="reason",
+            tradeoff="tradeoff",
+        )
+    with pytest.raises(DomainValidationError, match="locked_by"):
+        DecisionDraft(
+            scope="continuity:axis",
+            basis=DecisionBasis.LOCKED,
+            locked_by=(),
+            options=("preserve",),
+            selected_index=0,
+            rationale="reason",
+            tradeoff="tradeoff",
+        )
+
+
+def test_canonical_vec_schema_carries_all_locally_assembled_authority() -> None:
+    from mode_p_vnext.domain.blocking import BlockingBeat, BlockingCommit
+    from mode_p_vnext.domain.decisions import DirectorDecision, VisualCurvePoint
+    from mode_p_vnext.domain.vec import (
+        AudioEvent,
+        GenerationSegment,
+        ReferenceRequirement,
+        ShotBoundary,
+        VisualBeat,
+        VoiceRequirement,
+    )
+
+    assert _field_names(VisualExecutionContract) == (
+        "contract_id",
+        "scene_id",
+        "execution_design_artifact_id",
+        "blocking_commit_artifact_id",
+        "source_fact_ids",
+        "timeline",
+        "curve_points",
+        "decisions",
+        "segments",
+        "shots",
+        "boundaries",
+        "audio_events",
+        "voice_requirements",
+        "reference_requirements",
+        "handoff_intent",
+    )
+    required_types = {
+        BlockingBeat,
+        BlockingCommit,
+        DirectorDecision,
+        VisualCurvePoint,
+        GenerationSegment,
+        VisualBeat,
+        ShotBoundary,
+        AudioEvent,
+        VoiceRequirement,
+        ReferenceRequirement,
+    }
+    assert all(dataclasses.is_dataclass(item) for item in required_types)
+    assert all(item.__dataclass_params__.frozen for item in required_types)
+
+
+def test_minimal_vec_is_closed_over_ids_ticks_states_and_requirements() -> None:
+    from mode_p_vnext.domain.decisions import (
+        DecisionBasis,
+        DirectorDecision,
+        VisualCurvePoint,
+    )
+    from mode_p_vnext.domain.vec import (
+        GenerationSegment,
+        ReferenceRequirement,
+        StoryboardRole,
+        VisualBeat,
+        VisualBeatPhase,
+        VisualShot,
+    )
+
+    decision = DirectorDecision(
+        decision_id="decision:1",
+        source_decision_ordinal=1,
+        scope="shot:1",
+        basis=DecisionBasis.CHOICE,
+        locked_by=(),
+        options=("hold", "move"),
+        selected_index=0,
+        rationale="A hold preserves the decision.",
+        tradeoff="Less motion.",
+    )
+    visual_beat = VisualBeat(
+        beat_id="visual-beat:1",
+        shot_id="shot:1",
+        phase=VisualBeatPhase.REACTION,
+        interval=TickRange(0, 2_400),
+        subject_state="Lin Lan remains still.",
+        attention="the key",
+        storyboard_role=StoryboardRole.REQUIRED,
+        start_state_id="state:entry",
+        end_state_id="state:exit",
+        decision_ids=(decision.decision_id,),
+    )
+    requirement = ReferenceRequirement(
+        requirement_id="reference:1",
+        role="character_identity",
+        scope_kind="character",
+        scope_id="character:lin-lan",
+        source_fact_ids=("fact:lin-lan",),
+    )
+    shot = VisualShot(
+        shot_id="shot:1",
+        segment_id="segment:1",
+        source_shot_ordinal=1,
+        blocking_beat_id="blocking-beat:1",
+        interval=TickRange(0, 2_400),
+        dramatic_function="Hold the decision.",
+        attention_target="the key",
+        information_action="Lin Lan does not reach.",
+        framing_intent="two-shot across the table",
+        camera_pose="eye-level",
+        camera_motion="locked",
+        composition="key at the center divide",
+        lighting="soft side light",
+        performance="stillness after the handoff",
+        visual_beats=(visual_beat,),
+        decision_ids=(decision.decision_id,),
+        reference_requirement_ids=(requirement.requirement_id,),
+        audio_event_ids=(),
+    )
+    vec = VisualExecutionContract(
+        contract_id="vec:1",
+        scene_id="scene:1",
+        execution_design_artifact_id="execution-design:1",
+        blocking_commit_artifact_id="blocking-commit:1",
+        source_fact_ids=("fact:lin-lan",),
+        timeline=CanonicalTimeline(),
+        curve_points=(
+            VisualCurvePoint(
+                point_id="curve:1",
+                source_curve_ordinal=1,
+                blocking_beat_id="blocking-beat:1",
+                intensity=70,
+                explanation="The transfer peaks here.",
+            ),
+        ),
+        decisions=(decision,),
+        segments=(
+            GenerationSegment(
+                segment_id="segment:1",
+                timeline=GenerationSegmentTimeline(duration_ticks=2_400),
+                shot_ids=(shot.shot_id,),
+            ),
+        ),
+        shots=(shot,),
+        boundaries=(),
+        audio_events=(),
+        voice_requirements=(),
+        reference_requirements=(requirement,),
+        handoff_intent="End on Lin Lan and the key.",
+    )
+
+    assert vec.shots[0].visual_beats[0].interval == TickRange(0, 2_400)
+    assert vec.shots[0].mirror_flip_forbidden is True
+    with pytest.raises(DomainValidationError, match="local safety constant"):
+        dataclasses.replace(shot, mirror_flip_forbidden=False)
+
+
+def test_knowledge_projection_and_review_schemas_match_architecture_views() -> None:
+    from mode_p_vnext.domain.evidence import RevisionRequest
+    from mode_p_vnext.domain.knowledge import (
+        KnowledgeDecisionEntry,
+        KnowledgeDecisionView,
+        KnowledgeSnapshot,
+    )
+    from mode_p_vnext.domain.projection import ProjectionManifest, ProjectionNode
+
+    assert _field_names(KnowledgeDecisionEntry) == (
+        "capsule_id",
+        "director_question",
+        "applies_because",
+        "execution_constraints",
+        "expected_effect",
+        "tradeoff",
+        "anti_pattern",
+        "source_digest",
+    )
+    assert _field_names(KnowledgeDecisionView) == ("scene_id", "stage", "entries")
+    assert {
+        "snapshot_id",
+        "scene_id",
+        "stage",
+        "decision_view",
+        "selected_capsule_ids",
+        "exclusions",
+        "conflicts",
+        "catalog_index_sha256",
+        "retrieval_input_digest",
+        "blocking_commit_digest",
+        "security_event_digests",
+    } == set(_field_names(KnowledgeSnapshot))
+    assert _field_names(RevisionRequest) == (
+        "request_id",
+        "target_artifact_id",
+        "failure_type",
+        "fact_refs",
+        "field_paths",
+        "observed_issue",
+        "requested_change",
+        "evidence_refs",
+    )
+    assert {
+        "node_id",
+        "source_beat_id",
+        "source_shot_id",
+        "interval",
+        "start_state_id",
+        "end_state_id",
+        "decision_ids",
+        "attributes",
+        "children",
+    } == set(_field_names(ProjectionNode))
+    assert _field_names(ProjectionManifest) == (
+        "vec_digest",
+        "projection_ast_digest",
+        "source_node_ids",
+        "compiler_version",
+        "adapter_version",
+        "capability_profile_digest",
+        "reference_binding_digest",
+        "audio_binding_digest",
+    )
+
+
+def test_release_phase_schema_cannot_claim_a_production_switch() -> None:
+    from mode_p_vnext.domain.release import ReleasePhase
+
+    assert {phase.value for phase in ReleasePhase} == {
+        "BASELINE_REPAIR_REQUIRED",
+        "ARCHITECTURE_MIGRATION_REQUIRED",
+        "TEXT_SHADOW_REQUIRED",
+        "HOLDOUT_EVALUATION_REQUIRED",
+        "MEDIA_EVIDENCE_REQUIRED",
+        "OWNER_APPROVAL_REQUIRED",
+        "PRODUCTION_SWITCH_PROPOSAL_ELIGIBLE",
+    }
+    assert all("AUTHORIZED" not in phase.value for phase in ReleasePhase)
+    assert all("SWITCHED" not in phase.value for phase in ReleasePhase)
+
+
+def test_nested_domain_data_is_deeply_frozen_before_hashing() -> None:
+    visible_parts = ["head", "torso"]
+    character_state = {
+        "character_id": "character:lin-lan",
+        "visible_body_parts": visible_parts,
+    }
+    beat = BlockingBeatDraft(
+        ordinal=1,
+        dramatic_action="Lin Lan watches the key.",
+        character_states=(character_state,),
+        prop_states=({"prop_id": "prop:key", "holder": "table"},),
+        gaze_relations=("Lin Lan -> key",),
+        action_paths=("stillness -> decision",),
+        continuity_effect="The key remains on the table.",
+    )
+    draft = BlockingDraft(beats=(beat,))
+    source = SourceRef(source_id="script:scene-1", digest="a" * 64)
+    envelope = ArtifactEnvelope.create(
+        artifact_id="blocking_draft:scene-1:0001",
+        artifact_kind=ArtifactKind.BLOCKING_DRAFT,
+        schema_version="2.1",
+        program_version="vnext-2.1",
+        payload=draft,
+        source_refs=(source,),
+        dependency_digests={"script": source.digest},
+        created_at="2026-07-30T00:00:00Z",
+    )
+    digest = envelope.content_sha256
+
+    visible_parts.append("hand")
+    character_state["new_field"] = "must not leak"
+    assert beat.character_states[0]["visible_body_parts"] == ("head", "torso")
+    assert "new_field" not in beat.character_states[0]
+    assert envelope.content_sha256 == digest
+    assert canonical_sha256(envelope.payload) == canonical_sha256(draft)
+    with pytest.raises(TypeError):
+        beat.character_states[0]["character_id"] = "mutated"
 
 
 def test_canonical_artifact_envelope_is_hash_bound_and_machine_assembled() -> None:
@@ -101,6 +533,65 @@ def test_canonical_artifact_envelope_is_hash_bound_and_machine_assembled() -> No
             created_at="2026-07-30T00:00:00Z",
             validation_status=ValidationStatus.DRAFT,
         )
+    with pytest.raises(DomainValidationError, match="artifact_kind"):
+        ArtifactEnvelope.create(
+            artifact_id=artifact_id,
+            artifact_kind=ArtifactKind.SCENE_INTENT,
+            schema_version="2.1",
+            program_version="vnext-2.1",
+            payload=direction,
+            source_refs=(source,),
+            dependency_digests={"script": source.digest},
+            created_at="2026-07-30T00:00:00Z",
+        )
+
+
+def test_persistent_domain_payloads_declare_their_canonical_artifact_kind() -> None:
+    from mode_p_vnext.domain.blocking import BlockingCommit
+    from mode_p_vnext.domain.evidence import (
+        FrameEvidencePlan,
+        MediaRunRecord,
+        ReviewPacket,
+        RevisionRequest,
+        VisualVerificationResult,
+    )
+    from mode_p_vnext.domain.facts import FactRegistry
+    from mode_p_vnext.domain.knowledge import (
+        KnowledgeCapsuleV2,
+        KnowledgeSnapshot,
+    )
+    from mode_p_vnext.domain.projection import (
+        CapabilityAdaptationRecord,
+        ProjectionAST,
+        ProjectionManifest,
+    )
+    from mode_p_vnext.domain.release import ReleaseGateRecord
+
+    expected_kinds = {
+        EpisodeDirectionDraft: ArtifactKind.EPISODE_DIRECTION,
+        SceneIntentDraft: ArtifactKind.SCENE_INTENT,
+        FactRegistry: ArtifactKind.SCRIPT_FACT,
+        KnowledgeCapsuleV2: ArtifactKind.KNOWLEDGE_CAPSULE,
+        KnowledgeSnapshot: ArtifactKind.KNOWLEDGE_SNAPSHOT,
+        BlockingDraft: ArtifactKind.BLOCKING_DRAFT,
+        BlockingCommit: ArtifactKind.BLOCKING_COMMIT,
+        ExecutionDesignDraft: ArtifactKind.EXECUTION_DESIGN_DRAFT,
+        VisualExecutionContract: ArtifactKind.VISUAL_EXECUTION_CONTRACT,
+        ProjectionAST: ArtifactKind.PROJECTION_AST,
+        ProjectionManifest: ArtifactKind.PROJECTION_MANIFEST,
+        CapabilityAdaptationRecord: ArtifactKind.CAPABILITY_ADAPTATION,
+        ReviewPacket: ArtifactKind.REVIEW_PACKET,
+        RevisionRequest: ArtifactKind.REVISION_REQUEST,
+        MediaRunRecord: ArtifactKind.MEDIA_RUN_RECORD,
+        FrameEvidencePlan: ArtifactKind.FRAME_EVIDENCE_PLAN,
+        VisualVerificationResult: ArtifactKind.VISUAL_VERIFICATION_RESULT,
+        ReleaseGateRecord: ArtifactKind.RELEASE_DECISION,
+    }
+
+    assert {
+        payload_type: payload_type.ARTIFACT_KIND
+        for payload_type in expected_kinds
+    } == expected_kinds
 
 
 def test_id_factory_is_stable_and_drafts_cannot_carry_machine_authority() -> None:
@@ -115,6 +606,9 @@ def test_id_factory_is_stable_and_drafts_cannot_carry_machine_authority() -> Non
     }
     assert factory.create(**kwargs) == factory.create(**kwargs)
     assert factory.create(**kwargs) != factory.create(**{**kwargs, "ordinal": 4})
+    assert factory.create(**{**kwargs, "episode_id": "episode:a", "scene_id": "scene"}) != factory.create(
+        **{**kwargs, "episode_id": "episode", "scene_id": "a:scene"}
+    )
 
     draft_fields = {
         field.name
@@ -136,6 +630,11 @@ def test_id_factory_is_stable_and_drafts_cannot_carry_machine_authority() -> Non
         "timeline",
         "vec_id",
         "contract_id",
+        "segment_id",
+        "shot_id",
+        "boundary_id",
+        "event_id",
+        "requirement_id",
     }
     assert not (draft_fields & forbidden_model_authority)
 
