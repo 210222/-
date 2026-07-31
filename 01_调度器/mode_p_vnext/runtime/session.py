@@ -104,6 +104,7 @@ class RunSession:
     def state(self) -> PersistentGraphState:
         """Replay only state events whose referenced commit was atomically promoted."""
         state, checkpoint_sequence = self._latest_valid_checkpoint()
+        self._validate_graph_state(state)
         for event in self._events():
             if int(event["state"]["event_sequence"]) <= checkpoint_sequence:
                 continue
@@ -117,6 +118,7 @@ class RunSession:
                 continue
             if candidate.event_sequence != state.event_sequence + 1:
                 raise RunSessionError("accepted state events have a sequence gap")
+            self._validate_graph_state(candidate)
             state = candidate
         return state
 
@@ -145,11 +147,26 @@ class RunSession:
             for staging_dir in candidates:
                 pending = NodeTransaction.read_prepared(staging_dir)
                 state = self.state()
+                self._validate_graph_state(pending.next_state)
                 if pending.node_id in state.accepted:
                     continue
                 if canonical_sha256(state.to_dict()) != pending.base_state_sha256:
                     raise RunSessionError(
                         "prepared write base state no longer matches the last accepted state"
+                    )
+                try:
+                    expected = self.graph.apply(
+                        state,
+                        node_id=pending.node_id,
+                        outputs=pending.outputs,
+                        dependency_digests=pending.dependency_digests,
+                        commit_id=pending.commit_id,
+                    )
+                except StateInvariantError as exc:
+                    raise RunSessionError(str(exc)) from exc
+                if canonical_sha256(expected.to_dict()) != pending.state_sha256:
+                    raise RunSessionError(
+                        "prepared write does not reproduce the graph transition"
                     )
                 try:
                     NodeTransaction.promote(self.run_dir, pending)
@@ -250,10 +267,17 @@ class RunSession:
                     continue
                 state = PersistentGraphState.from_dict(state_data)
                 if state.event_sequence == sequence:
+                    self._validate_graph_state(state)
                     return state, sequence
             except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
                 continue
         return baseline, 0
+
+    def _validate_graph_state(self, state: PersistentGraphState) -> None:
+        try:
+            self.graph.validate_state(state)
+        except StateInvariantError as exc:
+            raise RunSessionError(str(exc)) from exc
 
     def _is_promoted_commit(self, commit_id: str, state_sha256: str) -> bool:
         commit_dir = self.run_dir / "commits" / commit_id

@@ -1,0 +1,113 @@
+{
+  "schema_version": "2.1",
+  "kind": "MODE_P_VNEXT_A2_PERSISTENT_STATE_GRAPH_EVIDENCE",
+  "task_id": "A2",
+  "run_id": "codex-a2-persistent-graph-20260731",
+  "architecture_version": "2.1",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/pipeline/graph.py",
+    "01_调度器/mode_p_vnext/runtime/artifacts.py",
+    "01_调度器/mode_p_vnext/runtime/session.py",
+    "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_PERSISTENT_STATE_GRAPH_002.json"
+  ],
+  "checks": [
+    {
+      "name": "persistent_state_graph",
+      "exit_code": 0,
+      "evidence": "Every NodeSpec binds each owned field to one ArtifactKind; StateGraph rejects a wrong kind both at transition time and when reading a persisted state. B1 now owns ExecutionDesignDraft, while ASSEMBLE_B0 owns BlockingCommit."
+    },
+    {
+      "name": "checkpoint_resume",
+      "exit_code": 0,
+      "evidence": "Kill-point recovery covers E0, S1, B0, and B1 with canonical payloads, and checks checkpoint dependency digests rather than paths. Prepared recovery recomputes the graph transition before promotion."
+    },
+    {
+      "name": "pending_write_atomicity",
+      "exit_code": 0,
+      "evidence": "A prepared event stays invisible until its atomic commit exists. Recovery validates the prepared next state and its deterministic transition against the current accepted state before promotion."
+    },
+    {
+      "name": "content_addressed_artifacts",
+      "exit_code": 0,
+      "evidence": "ArtifactRepository now recomputes the canonical content hash of a stored envelope before accepting an ArtifactRef; a post-hash payload mutation is rejected and cannot enter NodeRunner."
+    },
+    {
+      "name": "field_level_invalidation",
+      "exit_code": 0,
+      "evidence": "Digest-edge invalidation remains graph-declared and preserves unrelated accepted nodes; its graph now has an explicit, persistent field-to-kind contract."
+    }
+  ],
+  "review": {
+    "finding": "The prior A2 fixture used generic SCRIPT_FACT envelopes for multiple semantic fields and modeled B1 as BlockingCommit. StateGraph also had no field-to-ArtifactKind authority, and a mutated on-disk artifact could still satisfy ArtifactRepository.contains().",
+    "root_cause": "The former graph encoded field ownership without output type ownership, while loading persistent state trusted self-consistent JSON without validating it against the graph declaration.",
+    "considered_options": [
+      {
+        "option": "Relax A1 payload authority so the old generic fixture passes",
+        "decision": "rejected",
+        "reason": "It would restore the escape hatch that A1 was specifically repaired to close."
+      },
+      {
+        "option": "Put kind checking only in NodeRunner",
+        "decision": "rejected",
+        "reason": "Checkpoints and state events must fail closed after restart as well as on the live write path."
+      },
+      {
+        "option": "Bind NodeSpec fields to ArtifactKind and validate every state load, recovery, and repository reference",
+        "decision": "accepted",
+        "reason": "It freezes the A2 state/recovery port while preserving the A1 canonical domain authority."
+      }
+    ],
+    "residual_risk": "A2 supplies the durable typed graph boundary only. Later packages remain responsible for Director creative orchestration, Gate 0/DP behavior, projection, media evidence, and user approval. No external model, media, Shadow, approval, or production switch was started."
+  },
+  "verification_results": [
+    {
+      "name": "a2_persistent_graph",
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "12 passed"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "compile_and_patch_check",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m compileall -q mode_p_vnext; git diff --check",
+      "exit_code": 0,
+      "result": "Compiled without error and no whitespace errors found."
+    },
+    {
+      "name": "a1_domain_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "17 passed"
+    },
+    {
+      "name": "a0_control_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "13 passed"
+    },
+    {
+      "name": "v4_entrypoint_isolation",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "15 passed"
+    }
+  ],
+  "non_activation": {
+    "director_runtime_started": false,
+    "external_submission": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "production_entry": "v4_unchanged",
+    "production_switch_performed": false
+  }
+}

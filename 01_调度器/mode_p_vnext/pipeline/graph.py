@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Mapping, Sequence
 
-from mode_p_vnext.domain.artifact import DomainValidationError, require_sha256
+from mode_p_vnext.domain.artifact import ArtifactKind, DomainValidationError, require_sha256
 
 from .state import ArtifactRef, NodeAcceptance, PersistentGraphState, StateInvariantError
 
@@ -20,22 +20,44 @@ def _tuple_of_text(value: Sequence[str], field_name: str, *, require_items: bool
     return values
 
 
+def _freeze_output_kinds(value: Mapping[str, ArtifactKind]) -> Mapping[str, ArtifactKind]:
+    """Freeze the field-to-artifact contract that a node alone may publish."""
+    if not isinstance(value, Mapping) or not value:
+        raise StateInvariantError("output_kinds must be a non-empty mapping")
+    frozen: dict[str, ArtifactKind] = {}
+    for field_name, artifact_kind in value.items():
+        if not isinstance(field_name, str) or not field_name.strip():
+            raise StateInvariantError("output_kinds fields must be non-empty strings")
+        if not isinstance(artifact_kind, ArtifactKind):
+            raise StateInvariantError(
+                f"output_kinds[{field_name}] must be an ArtifactKind"
+            )
+        frozen[field_name] = artifact_kind
+    return MappingProxyType(frozen)
+
+
 @dataclass(frozen=True)
 class NodeSpec:
     node_id: str
     node_version: str
-    owns_fields: tuple[str, ...]
+    output_kinds: Mapping[str, ArtifactKind]
     input_fields: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.node_id.strip() or not self.node_version.strip():
             raise StateInvariantError("node_id and node_version must be non-empty")
-        owns = _tuple_of_text(self.owns_fields, "owns_fields", require_items=True)
+        output_kinds = _freeze_output_kinds(self.output_kinds)
+        owns = tuple(output_kinds)
         inputs = _tuple_of_text(self.input_fields, "input_fields", require_items=False)
         if set(inputs) & set(owns):
             raise StateInvariantError("a node cannot read and own the same field")
-        object.__setattr__(self, "owns_fields", owns)
+        object.__setattr__(self, "output_kinds", output_kinds)
         object.__setattr__(self, "input_fields", inputs)
+
+    @property
+    def owns_fields(self) -> tuple[str, ...]:
+        """The derived field list; kind authority stays in ``output_kinds``."""
+        return tuple(self.output_kinds)
 
 
 class StateGraph:
@@ -49,16 +71,19 @@ class StateGraph:
         if len(identifiers) != len(set(identifiers)):
             raise StateInvariantError("node_id must be unique")
         owners: dict[str, str] = {}
+        output_kinds: dict[str, ArtifactKind] = {}
         for node in values:
             for field_name in node.owns_fields:
                 if field_name in owners:
                     raise StateInvariantError(
                         f"field '{field_name}' has duplicate owners: {owners[field_name]}, {node.node_id}"
-                    )
+                )
                 owners[field_name] = node.node_id
+                output_kinds[field_name] = node.output_kinds[field_name]
         self._nodes = values
         self._by_id = MappingProxyType({item.node_id: item for item in values})
         self._owners = MappingProxyType(owners)
+        self._output_kinds = MappingProxyType(output_kinds)
 
     @property
     def nodes(self) -> tuple[NodeSpec, ...]:
@@ -76,10 +101,83 @@ class StateGraph:
                 "node_id": node.node_id,
                 "node_version": node.node_version,
                 "owns_fields": node.owns_fields,
+                "output_kinds": {
+                    field_name: artifact_kind.value
+                    for field_name, artifact_kind in node.output_kinds.items()
+                },
                 "input_fields": node.input_fields,
             }
             for node in self._nodes
         )
+
+    def expected_artifact_kind(self, field_name: str) -> ArtifactKind:
+        try:
+            return self._output_kinds[field_name]
+        except KeyError as exc:
+            raise StateInvariantError(f"unknown output field '{field_name}'") from exc
+
+    def validate_state(self, state: PersistentGraphState) -> None:
+        """Reject persisted state that is not a valid projection of this graph.
+
+        ``PersistentGraphState`` intentionally carries no graph object so it
+        can remain a portable value.  This graph-bound validation is therefore
+        required whenever a state is loaded, recovered, or advanced.
+        """
+        if not isinstance(state, PersistentGraphState):
+            raise StateInvariantError("state must be a PersistentGraphState")
+
+        accepted_fields: set[str] = set()
+        for node_id, acceptance in state.accepted.items():
+            node = self.node(node_id)
+            if acceptance.node_version != node.node_version:
+                raise StateInvariantError(
+                    f"accepted node '{node_id}' has a different node version"
+                )
+            if set(acceptance.output_digests) != set(node.owns_fields):
+                raise StateInvariantError(
+                    f"accepted node '{node_id}' output fields do not match its contract"
+                )
+            if set(acceptance.dependency_digests) != set(node.input_fields):
+                raise StateInvariantError(
+                    f"accepted node '{node_id}' dependency fields do not match its contract"
+                )
+            accepted_fields.update(node.owns_fields)
+            for field_name in node.owns_fields:
+                ref = state.outputs.get(field_name)
+                if ref is None:
+                    raise StateInvariantError(
+                        f"accepted node '{node_id}' has no ArtifactRef for '{field_name}'"
+                    )
+                expected_kind = node.output_kinds[field_name]
+                if ref.artifact_kind is not expected_kind:
+                    raise StateInvariantError(
+                        f"artifact kind for '{field_name}' must be "
+                        f"{expected_kind.value}, got {ref.artifact_kind.value}"
+                    )
+                if acceptance.output_digests[field_name] != ref.content_sha256:
+                    raise StateInvariantError(
+                        f"accepted node '{node_id}' digest does not match '{field_name}'"
+                    )
+            for field_name, digest in acceptance.dependency_digests.items():
+                if field_name in self._owners:
+                    upstream = state.outputs.get(field_name)
+                    if upstream is None or upstream.content_sha256 != digest:
+                        raise StateInvariantError(
+                            f"accepted node '{node_id}' dependency digest does not match "
+                            f"'{field_name}'"
+                        )
+
+        if set(state.outputs) != accepted_fields:
+            raise StateInvariantError(
+                "persistent state outputs must be exactly the accepted node fields"
+            )
+        for field_name, ref in state.outputs.items():
+            expected_kind = self.expected_artifact_kind(field_name)
+            if ref.artifact_kind is not expected_kind:
+                raise StateInvariantError(
+                    f"artifact kind for '{field_name}' must be "
+                    f"{expected_kind.value}, got {ref.artifact_kind.value}"
+                )
 
     def apply(
         self,
@@ -93,6 +191,7 @@ class StateGraph:
     ) -> PersistentGraphState:
         if not isinstance(state, PersistentGraphState):
             raise StateInvariantError("state must be a PersistentGraphState")
+        self.validate_state(state)
         node = self.node(node_id)
         if node_id in state.accepted:
             raise StateInvariantError(f"node '{node_id}' is already accepted")
@@ -107,6 +206,12 @@ class StateGraph:
             ref = outputs[field_name]
             if not isinstance(ref, ArtifactRef):
                 raise StateInvariantError("node outputs must be ArtifactRef values")
+            expected_kind = node.output_kinds[field_name]
+            if ref.artifact_kind is not expected_kind:
+                raise StateInvariantError(
+                    f"artifact kind for '{field_name}' must be "
+                    f"{expected_kind.value}, got {ref.artifact_kind.value}"
+                )
             if field_name in state.outputs:
                 raise StateInvariantError(f"owned field '{field_name}' already has an accepted value")
             output_refs[field_name] = ref
@@ -136,13 +241,15 @@ class StateGraph:
             commit_id=commit_id,
             cache_key=cache_key,
         )
-        return PersistentGraphState(
+        next_state = PersistentGraphState(
             run_id=state.run_id,
             outputs=next_outputs,
             accepted=next_accepted,
             event_sequence=state.event_sequence + 1,
             current_commit_id=commit_id or state.current_commit_id,
         )
+        self.validate_state(next_state)
+        return next_state
 
     def runnable_node_ids(self, state: PersistentGraphState) -> tuple[str, ...]:
         runnable: list[str] = []

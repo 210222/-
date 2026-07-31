@@ -12,18 +12,37 @@ from mode_p_vnext.domain.artifact import (
     ArtifactKind,
     SourceRef,
     ValidationStatus,
+    canonical_json_bytes,
     canonical_sha256,
 )
+from mode_p_vnext.domain.blocking import (
+    BlockingBeat,
+    BlockingBeatDraft,
+    BlockingCommit,
+    BlockingDraft,
+)
+from mode_p_vnext.domain.decisions import (
+    DecisionBasis,
+    DecisionDraft,
+    VisualCurvePointDraft,
+)
 from mode_p_vnext.domain.direction import EpisodeDirectionDraft, SceneIntentDraft
+from mode_p_vnext.domain.vec import (
+    ExecutionDesignDraft,
+    ShotDesignDraft,
+    StoryboardRole,
+    VisualBeatDraft,
+    VisualBeatPhase,
+)
 from mode_p_vnext.pipeline.graph import NodeSpec, StateGraph
 from mode_p_vnext.pipeline.invalidation import FieldInvalidator
 from mode_p_vnext.pipeline.state import ArtifactRef, PersistentGraphState, StateInvariantError
 from mode_p_vnext.runtime.cache import NodeCacheKey
-from mode_p_vnext.runtime.session import RunSession
+from mode_p_vnext.runtime.session import RunSession, RunSessionError
 
 
-def _direction_artifact() -> ArtifactEnvelope[EpisodeDirectionDraft]:
-    source = SourceRef("script:episode-1", "a" * 64)
+def _direction_artifact(digest_char: str = "a") -> ArtifactEnvelope[EpisodeDirectionDraft]:
+    source = SourceRef("script:episode-1", digest_char * 64)
     payload = EpisodeDirectionDraft(
         dramatic_promise="A choice reshapes the relationship.",
         audience_contract="The cause of every change remains legible.",
@@ -33,7 +52,7 @@ def _direction_artifact() -> ArtifactEnvelope[EpisodeDirectionDraft]:
         unresolved_questions=(),
     )
     return ArtifactEnvelope.create(
-        artifact_id="episode_direction:episode-1:episode:A1:0001:aaaaaaaaaaaaaaaaaaaa",
+        artifact_id=f"episode_direction:episode-1:episode:E0:0001:{digest_char * 20}",
         artifact_kind=ArtifactKind.EPISODE_DIRECTION,
         schema_version="2.1",
         program_version="test-vnext-2.1",
@@ -45,8 +64,8 @@ def _direction_artifact() -> ArtifactEnvelope[EpisodeDirectionDraft]:
     )
 
 
-def _scene_intent_artifact() -> ArtifactEnvelope[SceneIntentDraft]:
-    source = SourceRef("script:scene-1", "b" * 64)
+def _scene_intent_artifact(digest_char: str = "b") -> ArtifactEnvelope[SceneIntentDraft]:
+    source = SourceRef("script:scene-1", digest_char * 64)
     payload = SceneIntentDraft(
         scene_purpose="Transfer visible responsibility.",
         state_change="The subordinate must decide alone.",
@@ -58,7 +77,7 @@ def _scene_intent_artifact() -> ArtifactEnvelope[SceneIntentDraft]:
         unresolved_questions=(),
     )
     return ArtifactEnvelope.create(
-        artifact_id="scene_intent:episode-1:scene-1:S1:0001:bbbbbbbbbbbbbbbbbbbb",
+        artifact_id=f"scene_intent:episode-1:scene-1:S1:0001:{digest_char * 20}",
         artifact_kind=ArtifactKind.SCENE_INTENT,
         schema_version="2.1",
         program_version="test-vnext-2.1",
@@ -70,31 +89,159 @@ def _scene_intent_artifact() -> ArtifactEnvelope[SceneIntentDraft]:
     )
 
 
+def _blocking_draft_artifact(digest_char: str = "c") -> ArtifactEnvelope[BlockingDraft]:
+    source = SourceRef("script:scene-1", digest_char * 64)
+    payload = BlockingDraft(
+        beats=(
+            BlockingBeatDraft(
+                ordinal=1,
+                dramatic_action="The lead retains the key while the decision lands.",
+                character_states=({"character_id": "lead", "state": "still"},),
+                prop_states=({"prop_id": "key", "state": "on_table"},),
+                gaze_relations=("lead watches the key",),
+                action_paths=("lead holds position",),
+                continuity_effect="The key remains visible at the scene boundary.",
+            ),
+        )
+    )
+    return ArtifactEnvelope.create(
+        artifact_id=f"blocking_draft:episode-1:scene-1:B0:0001:{digest_char * 20}",
+        artifact_kind=ArtifactKind.BLOCKING_DRAFT,
+        schema_version="2.1",
+        program_version="test-vnext-2.1",
+        payload=payload,
+        source_refs=(source,),
+        dependency_digests={"source": source.digest},
+        created_at="2026-07-30T00:00:00Z",
+        validation_status=ValidationStatus.DRAFT,
+    )
+
+
+def _blocking_commit_artifact(digest_char: str = "d") -> ArtifactEnvelope[BlockingCommit]:
+    source = SourceRef("script:scene-1", digest_char * 64)
+    payload = BlockingCommit(
+        commit_id=f"blocking-commit-{digest_char}",
+        scene_id="scene-1",
+        blocking_draft_artifact_id="blocking_draft:episode-1:scene-1:B0:0001",
+        beats=(
+            BlockingBeat(
+                beat_id=f"blocking-beat-{digest_char}",
+                source_ordinal=1,
+                dramatic_action="The lead retains the key while the decision lands.",
+                character_states=({"character_id": "lead", "state": "still"},),
+                prop_states=({"prop_id": "key", "state": "on_table"},),
+                gaze_relations=("lead watches the key",),
+                action_paths=("lead holds position",),
+                continuity_effect="The key remains visible at the scene boundary.",
+                entry_state_id="state-entry",
+                exit_state_id="state-exit",
+            ),
+        ),
+        entry_state_id="state-entry",
+        exit_state_id="state-exit",
+    )
+    return ArtifactEnvelope.create(
+        artifact_id=f"blocking_commit:episode-1:scene-1:ASSEMBLE_B0:0001:{digest_char * 20}",
+        artifact_kind=ArtifactKind.BLOCKING_COMMIT,
+        schema_version="2.1",
+        program_version="test-vnext-2.1",
+        payload=payload,
+        source_refs=(source,),
+        dependency_digests={"source": source.digest},
+        created_at="2026-07-30T00:00:00Z",
+        validation_status=ValidationStatus.TEXT_VALIDATED,
+    )
+
+
+def _execution_design_artifact(
+    digest_char: str = "e",
+) -> ArtifactEnvelope[ExecutionDesignDraft]:
+    source = SourceRef("script:scene-1", digest_char * 64)
+    payload = ExecutionDesignDraft(
+        curve_points=(
+            VisualCurvePointDraft(
+                dramatic_beat_ordinal=1,
+                intensity=55,
+                explanation="Keep the handoff tension legible.",
+            ),
+        ),
+        decisions=(
+            DecisionDraft(
+                scope="camera framing",
+                basis=DecisionBasis.LOCKED,
+                locked_by=("blocking_commit",),
+                options=("Retain the key in the composition.",),
+                selected_index=0,
+                rationale="The object carries the scene state.",
+                tradeoff="The frame remains deliberately restrained.",
+            ),
+        ),
+        shots=(
+            ShotDesignDraft(
+                blocking_beat_ordinal=1,
+                dramatic_function="Reveal the handoff decision.",
+                attention_target="the key",
+                information_action="keep the transfer state visible",
+                framing_intent="medium two-shot",
+                camera_pose="eye level",
+                camera_motion="locked-off",
+                composition="lead and key on the decision line",
+                lighting="consistent soft key",
+                performance="contained hesitation",
+                duration_weight=1,
+                visual_beats=(
+                    VisualBeatDraft(
+                        phase=VisualBeatPhase.ACTION,
+                        subject_state="lead holds the key",
+                        attention="the key remains central",
+                        storyboard_role=StoryboardRole.REQUIRED,
+                    ),
+                ),
+            ),
+        ),
+        transition_intents=("cut after the resolved handoff",),
+        audio_intents=(),
+        reference_intents=(),
+        handoff_intent="Preserve the key state into the following segment.",
+    )
+    return ArtifactEnvelope.create(
+        artifact_id=f"execution_design:episode-1:scene-1:B1:0001:{digest_char * 20}",
+        artifact_kind=ArtifactKind.EXECUTION_DESIGN_DRAFT,
+        schema_version="2.1",
+        program_version="test-vnext-2.1",
+        payload=payload,
+        source_refs=(source,),
+        dependency_digests={"source": source.digest},
+        created_at="2026-07-30T00:00:00Z",
+        validation_status=ValidationStatus.DRAFT,
+    )
+
+
 def _graph() -> StateGraph:
     return StateGraph(
         (
             NodeSpec(
                 node_id="E0",
                 node_version="1",
-                owns_fields=("episode_direction",),
+                output_kinds={"episode_direction": ArtifactKind.EPISODE_DIRECTION},
                 input_fields=("episode_facts",),
             ),
             NodeSpec(
                 node_id="S1",
                 node_version="1",
-                owns_fields=("scene_intent",),
+                output_kinds={"scene_intent": ArtifactKind.SCENE_INTENT},
                 input_fields=("episode_direction", "scene_facts"),
             ),
             NodeSpec(
                 node_id="B0",
                 node_version="1",
-                owns_fields=("blocking_draft",),
+                output_kinds={"blocking_draft": ArtifactKind.BLOCKING_DRAFT},
                 input_fields=("scene_intent",),
             ),
             NodeSpec(
                 node_id="DP",
                 node_version="1",
-                owns_fields=("dp_review",),
+                output_kinds={"dp_review": ArtifactKind.DP_REVIEW_RESULT},
                 input_fields=("dp_rules",),
             ),
         )
@@ -107,53 +254,57 @@ def _recovery_graph() -> StateGraph:
             NodeSpec(
                 node_id="E0",
                 node_version="1",
-                owns_fields=("episode_direction",),
+                output_kinds={"episode_direction": ArtifactKind.EPISODE_DIRECTION},
                 input_fields=("episode_facts",),
             ),
             NodeSpec(
                 node_id="S1",
                 node_version="1",
-                owns_fields=("scene_intent",),
+                output_kinds={"scene_intent": ArtifactKind.SCENE_INTENT},
                 input_fields=("episode_direction", "scene_facts"),
             ),
             NodeSpec(
                 node_id="B0",
                 node_version="1",
-                owns_fields=("blocking_draft",),
+                output_kinds={"blocking_draft": ArtifactKind.BLOCKING_DRAFT},
                 input_fields=("scene_intent",),
+            ),
+            NodeSpec(
+                node_id="ASSEMBLE_B0",
+                node_version="1",
+                output_kinds={"blocking_commit": ArtifactKind.BLOCKING_COMMIT},
+                input_fields=("blocking_draft",),
             ),
             NodeSpec(
                 node_id="B1",
                 node_version="1",
-                owns_fields=("blocking_commit",),
-                input_fields=("blocking_draft",),
+                output_kinds={
+                    "execution_design": ArtifactKind.EXECUTION_DESIGN_DRAFT,
+                },
+                input_fields=("blocking_commit",),
             ),
         )
     )
 
 
-def _ref(field_name: str, digest_char: str) -> ArtifactRef:
+def _ref(field_name: str, artifact_kind: ArtifactKind, digest_char: str) -> ArtifactRef:
     return ArtifactRef(
         artifact_id=f"{field_name}:{digest_char}",
-        artifact_kind=ArtifactKind.SCRIPT_FACT,
+        artifact_kind=artifact_kind,
         content_sha256=digest_char * 64,
         schema_version="2.1",
     )
 
 
-def _generic_artifact(field_name: str, digest_char: str) -> ArtifactEnvelope[dict[str, str]]:
-    source = SourceRef(f"test:{field_name}", digest_char * 64)
-    return ArtifactEnvelope.create(
-        artifact_id=f"{field_name}:episode-1:scene-1:{digest_char * 20}",
-        artifact_kind=ArtifactKind.SCRIPT_FACT,
-        schema_version="2.1",
-        program_version="test-vnext-2.1",
-        payload={"field": field_name, "marker": digest_char},
-        source_refs=(source,),
-        dependency_digests={"source": source.digest},
-        created_at="2026-07-30T00:00:00Z",
-        validation_status=ValidationStatus.DRAFT,
-    )
+def _artifact_for(field_name: str, digest_char: str) -> ArtifactEnvelope[object]:
+    factories = {
+        "episode_direction": _direction_artifact,
+        "scene_intent": _scene_intent_artifact,
+        "blocking_draft": _blocking_draft_artifact,
+        "blocking_commit": _blocking_commit_artifact,
+        "execution_design": _execution_design_artifact,
+    }
+    return factories[field_name](digest_char)  # type: ignore[return-value]
 
 
 def test_typed_state_graph_allows_only_owned_partial_state_and_preserves_upstream() -> None:
@@ -162,7 +313,11 @@ def test_typed_state_graph_allows_only_owned_partial_state_and_preserves_upstrea
     state = graph.apply(
         state,
         node_id="E0",
-        outputs={"episode_direction": _ref("episode_direction", "a")},
+        outputs={
+            "episode_direction": _ref(
+                "episode_direction", ArtifactKind.EPISODE_DIRECTION, "a"
+            )
+        },
         dependency_digests={"episode_facts": "1" * 64},
     )
     assert state.outputs["episode_direction"].content_sha256 == "a" * 64
@@ -172,14 +327,22 @@ def test_typed_state_graph_allows_only_owned_partial_state_and_preserves_upstrea
         graph.apply(
             state,
             node_id="S1",
-            outputs={"episode_direction": _ref("episode_direction", "b")},
+            outputs={
+                "episode_direction": _ref(
+                    "episode_direction", ArtifactKind.EPISODE_DIRECTION, "b"
+                )
+            },
             dependency_digests={"scene_facts": "2" * 64},
         )
     with pytest.raises(StateInvariantError, match="accepted"):
         graph.apply(
             state,
             node_id="E0",
-            outputs={"episode_direction": _ref("episode_direction", "b")},
+            outputs={
+                "episode_direction": _ref(
+                    "episode_direction", ArtifactKind.EPISODE_DIRECTION, "b"
+                )
+            },
             dependency_digests={"episode_facts": "1" * 64},
         )
 
@@ -234,7 +397,8 @@ def test_recovery_accepts_each_required_kill_point_without_rerun(
         ("E0", "episode_direction", "a"),
         ("S1", "scene_intent", "b"),
         ("B0", "blocking_draft", "c"),
-        ("B1", "blocking_commit", "d"),
+        ("ASSEMBLE_B0", "blocking_commit", "d"),
+        ("B1", "execution_design", "e"),
     )
     for node_id, field_name, digest_char in workflow:
         state = session.state()
@@ -250,11 +414,15 @@ def test_recovery_accepts_each_required_kill_point_without_rerun(
             dependency_digests = {
                 "scene_intent": state.outputs["scene_intent"].content_sha256,
             }
-        else:
+        elif node_id == "ASSEMBLE_B0":
             dependency_digests = {
                 "blocking_draft": state.outputs["blocking_draft"].content_sha256,
             }
-        artifact = _generic_artifact(field_name, digest_char)
+        else:
+            dependency_digests = {
+                "blocking_commit": state.outputs["blocking_commit"].content_sha256,
+            }
+        artifact = _artifact_for(field_name, digest_char)
         runner = session.runner(owner=f"worker-{node_id}")
         if node_id != recovery_node:
             runner.accept(
@@ -323,25 +491,35 @@ def test_field_level_invalidation_is_digest_edge_scoped_and_keeps_unrelated_node
     state = graph.apply(
         state,
         node_id="E0",
-        outputs={"episode_direction": _ref("episode_direction", "a")},
+        outputs={
+            "episode_direction": _ref(
+                "episode_direction", ArtifactKind.EPISODE_DIRECTION, "a"
+            )
+        },
         dependency_digests={"episode_facts": "1" * 64},
     )
     state = graph.apply(
         state,
         node_id="S1",
-        outputs={"scene_intent": _ref("scene_intent", "b")},
+        outputs={"scene_intent": _ref("scene_intent", ArtifactKind.SCENE_INTENT, "b")},
         dependency_digests={"episode_direction": "a" * 64, "scene_facts": "2" * 64},
     )
     state = graph.apply(
         state,
         node_id="B0",
-        outputs={"blocking_draft": _ref("blocking_draft", "c")},
+        outputs={
+            "blocking_draft": _ref(
+                "blocking_draft", ArtifactKind.BLOCKING_DRAFT, "c"
+            )
+        },
         dependency_digests={"scene_intent": "b" * 64},
     )
     state = graph.apply(
         state,
         node_id="DP",
-        outputs={"dp_review": _ref("dp_review", "d")},
+        outputs={
+            "dp_review": _ref("dp_review", ArtifactKind.DP_REVIEW_RESULT, "d")
+        },
         dependency_digests={"dp_rules": "3" * 64},
     )
 
@@ -372,3 +550,75 @@ def test_checkpoint_is_bound_to_dependency_digests_not_a_file_path_guess(tmp_pat
     assert session.resume_plan({"episode_facts": "1" * 64}).checkpoint_sequence == 1
     assert session.resume_plan({"episode_facts": "f" * 64}).checkpoint_sequence == 0
     assert canonical_sha256(payload["state"]) == payload["state_sha256"]
+
+
+def test_each_output_field_rejects_an_artifact_kind_from_another_stage() -> None:
+    graph = _graph()
+    with pytest.raises(StateInvariantError, match="artifact kind"):
+        graph.apply(
+            PersistentGraphState.empty("run-kind"),
+            node_id="E0",
+            outputs={
+                "episode_direction": _ref(
+                    "episode_direction", ArtifactKind.SCENE_INTENT, "a"
+                )
+            },
+            dependency_digests={"episode_facts": "1" * 64},
+        )
+
+
+def test_session_rejects_a_persisted_state_with_a_wrong_field_kind(tmp_path: Path) -> None:
+    graph = _graph()
+    session = RunSession.create(tmp_path / "runs", run_id="run-tampered-state", graph=graph)
+    accepted = session.runner(owner="worker").accept(
+        node_id="E0",
+        artifacts={"episode_direction": _direction_artifact()},
+        dependency_digests={"episode_facts": "1" * 64},
+    )
+    forged = PersistentGraphState(
+        run_id=accepted.run_id,
+        outputs={
+            "episode_direction": _ref(
+                "episode_direction", ArtifactKind.SCENE_INTENT, "a"
+            )
+        },
+        accepted=accepted.accepted,
+        event_sequence=accepted.event_sequence + 1,
+        current_commit_id=accepted.current_commit_id,
+    )
+    event = {
+        "state": forged.to_dict(),
+        "state_sha256": canonical_sha256(forged.to_dict()),
+        "commit_id": None,
+        "node_id": None,
+    }
+    with (session.run_dir / "STATE_EVENTS.jsonl").open("ab") as handle:
+        handle.write(canonical_json_bytes(event))
+        handle.write(b"\n")
+
+    with pytest.raises(RunSessionError, match="artifact kind"):
+        RunSession.open(session.run_dir, graph=graph).state()
+
+
+def test_content_addressed_repository_rejects_a_mutated_payload(tmp_path: Path) -> None:
+    graph = _graph()
+    session = RunSession.create(tmp_path / "runs", run_id="run-tampered-artifact", graph=graph)
+    artifact = _direction_artifact()
+    ref = session.artifacts.put(artifact)
+    path = (
+        session.run_dir
+        / "artifacts"
+        / artifact.artifact_kind.value
+        / f"{artifact.content_sha256}.json"
+    )
+    stored = json.loads(path.read_text(encoding="utf-8"))
+    stored["payload"]["dramatic_promise"] = "Forged post-hash payload."
+    path.write_text(json.dumps(stored), encoding="utf-8")
+
+    assert not session.artifacts.contains(ref)
+    with pytest.raises(StateInvariantError, match="not a persisted artifact"):
+        session.runner(owner="worker").prepare(
+            node_id="E0",
+            artifacts={"episode_direction": ref},
+            dependency_digests={"episode_facts": "1" * 64},
+        )
