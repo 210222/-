@@ -1,0 +1,122 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A0",
+  "run_id": "codex-a0-portable-hash-repair-20260731",
+  "architecture_version": "2.1",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_RELEASE_LEDGER_006.json"
+  ],
+  "checks": [
+    {
+      "name": "single_release_ledger",
+      "exit_code": 0,
+      "evidence": "ReleaseControl remains the sole A0-A10 selector and ReleaseLedger audit reports no issues."
+    },
+    {
+      "name": "legacy_queues_historical",
+      "exit_code": 0,
+      "evidence": "R, DDO, and CPL queues remain explicitly HISTORICAL_READ_ONLY and grant no v2.1 completion."
+    },
+    {
+      "name": "legacy_controllers_superseded",
+      "exit_code": 0,
+      "evidence": "A0 mechanical tests keep legacy controller task, state, and lock paths distinct from ReleaseControl."
+    },
+    {
+      "name": "one_lock_one_next_task",
+      "exit_code": 0,
+      "evidence": "The controller retained one exclusive lock and one dependency-derived next task throughout this repair."
+    },
+    {
+      "name": "task_path_ownership_disjoint",
+      "exit_code": 0,
+      "evidence": "Registered A0-A10 allowed paths remain mechanically checked for ownership overlap."
+    },
+    {
+      "name": "phase_status_progression",
+      "exit_code": 0,
+      "evidence": "Release phases and pending statuses remain registry-derived and bounded by architecture v2.1."
+    },
+    {
+      "name": "bounded_control_output",
+      "exit_code": 0,
+      "evidence": "Claim CLI output excludes the workspace manifest and remains bounded."
+    },
+    {
+      "name": "portable_canonical_hashes",
+      "exit_code": 0,
+      "evidence": "The architecture-bundle assertion now uses _sha256_file, the same LF/CRLF-normalizing policy as ReleaseLedger. It passes on this Windows CRLF checkout; binary payloads remain byte-sensitive."
+    },
+    {
+      "name": "architecture_bundle_locked",
+      "exit_code": 0,
+      "evidence": "Both v2.0 base and v2.1 amendment hashes match locked_verification_inputs under the canonical portable hash policy."
+    },
+    {
+      "name": "manual_release_gates",
+      "exit_code": 0,
+      "evidence": "Media and owner gates remain explicit A10-only records and cannot authorize production switching."
+    },
+    {
+      "name": "construction_entry_migrated",
+      "exit_code": 0,
+      "evidence": "Construction control remains on ReleaseControl; no legacy queue was advanced."
+    },
+    {
+      "name": "production_v4_unchanged",
+      "exit_code": 0,
+      "evidence": "The registered active-entrypoint regression passes and production_entry remains v4_unchanged."
+    }
+  ],
+  "review": {
+    "finding": "The prior A0 evidence was green only on checkouts whose architecture documents already used LF bytes. The registered architecture-bundle test bypassed the controller's canonical hash helper.",
+    "root_cause": "The controller and the test used two different file-digest policies: canonical UTF-8 text hashing in production control versus raw-byte hashing in one acceptance assertion.",
+    "considered_options": [
+      {
+        "option": "Rewrite architecture files to LF on this workstation",
+        "decision": "rejected",
+        "reason": "That would hide the defect locally and fail again for another Git line-ending policy."
+      },
+      {
+        "option": "Change locked architecture hashes to CRLF digests",
+        "decision": "rejected",
+        "reason": "That would violate portable architecture authority and make hashes platform-dependent."
+      },
+      {
+        "option": "Make the registered test use the controller's canonical _sha256_file policy",
+        "decision": "accepted",
+        "reason": "It tests the actual portable contract while retaining byte-sensitive hashing for binary artifacts."
+      }
+    ],
+    "residual_risk": "A1 remains uncompleted and must be reclaimed and revalidated in a later work package. Its current domain edits were already present at A0 claim time and were not modified or claimed by this A0 repair."
+  },
+  "informational_results": [
+    {
+      "name": "a0_release_control_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "13 passed"
+    },
+    {
+      "name": "a0_v4_entrypoint_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "15 passed"
+    },
+    {
+      "name": "a0_control_regression_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_rebuild_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "31 passed"
+    }
+  ],
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

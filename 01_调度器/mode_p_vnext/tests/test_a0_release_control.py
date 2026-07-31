@@ -133,7 +133,7 @@ def test_architecture_bundle_hashes_are_locked_and_current():
     document = _read_json(control.tasks_path)
     expected = document["locked_verification_inputs"]
     actual = {
-        rel_path: hashlib.sha256((control.root / rel_path).read_bytes()).hexdigest()
+        rel_path: _sha256_file(control.root / rel_path)
         for rel_path in ARCHITECTURE_BUNDLE
     }
     assert expected == actual
