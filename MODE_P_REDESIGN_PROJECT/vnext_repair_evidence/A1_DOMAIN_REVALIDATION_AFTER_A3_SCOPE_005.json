@@ -1,0 +1,86 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A1",
+  "run_id": "codex-a1-revalidation-20260731",
+  "architecture_version": "2.1",
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_DOMAIN_REVALIDATION_AFTER_A3_SCOPE_005.json"
+  ],
+  "checks": [
+    {
+      "name": "canonical_artifact_envelope",
+      "exit_code": 0,
+      "evidence": "Registered A1 tests prove canonical payload kinds, hash-bound ArtifactEnvelope construction, deep freezing, and rejection of forged generic authority."
+    },
+    {
+      "name": "canonical_24000_tick_timebase",
+      "exit_code": 0,
+      "evidence": "Registered A1 tests prove the sole 24000 tick time base and half-open canonical ranges."
+    },
+    {
+      "name": "draft_artifact_separation",
+      "exit_code": 0,
+      "evidence": "Registered A1 tests prove creative Draft schemas cannot carry IDs, hashes, ticks, timeline authority, or release authority."
+    },
+    {
+      "name": "no_duplicate_domain_authority",
+      "exit_code": 0,
+      "evidence": "Registered A1 tests prove one declared canonical authority per domain type and separate Gate, DP, media, and owner results."
+    },
+    {
+      "name": "domain_schemas_frozen_for_downstream",
+      "exit_code": 0,
+      "evidence": "All canonical A1 schemas remain frozen and unchanged after the A0 task-boundary correction."
+    },
+    {
+      "name": "legacy_read_adapter_only",
+      "exit_code": 0,
+      "evidence": "Registered A1 tests prove compat imports are one-way and the legacy checkpoint adapter is read-only. Legacy K1/K2 runtime adaptation remains explicitly owned by A3."
+    }
+  ],
+  "review": {
+    "finding": "A1 was invalidated only because the A3 repair required an A0-owned task-boundary correction.",
+    "root_cause": "The previous A1 Evidence was dependency-stale after controlled invalidation, not contradicted by an A1 implementation defect.",
+    "considered_options": [
+      {
+        "option": "Modify A1 domain schemas while revalidating",
+        "decision": "rejected",
+        "reason": "No registered or mechanical check failed, and A3 now owns the legacy knowledge adapter migration."
+      },
+      {
+        "option": "Revalidate the unchanged A1 artifacts against the locked architecture bundle",
+        "decision": "accepted",
+        "reason": "It restores dependency-valid Evidence without expanding A1 scope or weakening the canonical domain contract."
+      }
+    ],
+    "remaining_risk": "A2 and A3 remain incomplete. A3 must still remove the second runtime KnowledgeSnapshot authority under its corrected file ownership."
+  },
+  "informational_results": [
+    {
+      "name": "a1_domain_model_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "19 passed"
+    },
+    {
+      "name": "a1_test_inventory",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py --collect-only -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "19 architecture-focused tests collected"
+    },
+    {
+      "name": "v4_entrypoint_isolation_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "15 passed"
+    }
+  ],
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}
