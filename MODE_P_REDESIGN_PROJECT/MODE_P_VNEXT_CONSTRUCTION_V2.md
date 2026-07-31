@@ -105,6 +105,10 @@ Evidence 通配符重叠。后续任务发现上游缺陷时，必须先失效�
 该文件的工作包；不得在下游任务中顺手修改上游产物。A10 是验收工作包，没有实现
 代码写权限。
 
+### A3 规范知识权威边界
+
+A3 独占 `knowledge_retriever.py`、`knowledge_flow.py` 与 `knowledge_snapshot.py` 的迁移写入权。后两者仅可保留为面向既有调用者的兼容适配入口；不得继续定义或生成第二个运行时 `KnowledgeSnapshot`、K1 或 K2 权威。A3 完成时，唯一可用于 vNext 运行、封存与回放的知识快照必须是 `mode_p_vnext.domain.knowledge.KnowledgeSnapshot`，并由 `ArtifactEnvelope` 绑定完整性。
+
 ## 5. 单轮施工流程
 
 从 `01_调度器` 执行：

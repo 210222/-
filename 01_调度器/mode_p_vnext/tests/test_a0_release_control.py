@@ -128,6 +128,18 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     assert "deterministic_vec_rebuild" in a5["required_checks"]
 
 
+def test_a3_exclusively_owns_legacy_knowledge_adapter_migration():
+    """The A3 migration owns every legacy source that can mint a K1/K2 snapshot."""
+    tasks = ReleaseControl.default().load_tasks()
+    a3 = next(task for task in tasks if task.task_id == "A3")
+
+    assert {
+        "01_调度器/mode_p_vnext/services/knowledge_retriever.py",
+        "01_调度器/mode_p_vnext/knowledge_flow.py",
+        "01_调度器/mode_p_vnext/knowledge_snapshot.py",
+    }.issubset(a3.allowed_paths)
+
+
 def test_architecture_bundle_hashes_are_locked_and_current():
     control = ReleaseControl.default()
     document = _read_json(control.tasks_path)

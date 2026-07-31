@@ -1,0 +1,109 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A0",
+  "run_id": "codex-a3-canonical-snapshot-repair-20260731",
+  "architecture_version": "2.1",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_A3_SCOPE_REALIGNMENT_007.json"
+  ],
+  "checks": [
+    {
+      "name": "single_release_ledger",
+      "exit_code": 0,
+      "evidence": "ReleaseControl remains the sole A0-A10 task selector."
+    },
+    {
+      "name": "legacy_queues_historical",
+      "exit_code": 0,
+      "evidence": "Historical R, DDO, and CPL queues were not advanced."
+    },
+    {
+      "name": "legacy_controllers_superseded",
+      "exit_code": 0,
+      "evidence": "The existing A0 control-plane regression keeps legacy controllers read-only."
+    },
+    {
+      "name": "one_lock_one_next_task",
+      "exit_code": 0,
+      "evidence": "The A0 claim is the sole active ReleaseLedger lock."
+    },
+    {
+      "name": "task_path_ownership_disjoint",
+      "exit_code": 0,
+      "evidence": "A3 now exclusively owns its retriever and legacy knowledge adapter migration sources."
+    },
+    {
+      "name": "phase_status_progression",
+      "exit_code": 0,
+      "evidence": "A3, A2, A1, and A0 were invalidated in dependency-safe reverse order before the A0 boundary repair."
+    },
+    {
+      "name": "bounded_control_output",
+      "exit_code": 0,
+      "evidence": "The existing A0 regression retains bounded claim summaries."
+    },
+    {
+      "name": "portable_canonical_hashes",
+      "exit_code": 0,
+      "evidence": "The existing A0 regression retains canonical LF/CRLF hashing coverage."
+    },
+    {
+      "name": "architecture_bundle_locked",
+      "exit_code": 0,
+      "evidence": "ReleaseLedger audit passed with both locked architecture documents unchanged."
+    },
+    {
+      "name": "manual_release_gates",
+      "exit_code": 0,
+      "evidence": "No media, owner approval, or production gate was changed."
+    },
+    {
+      "name": "construction_entry_migrated",
+      "exit_code": 0,
+      "evidence": "The construction protocol now records the A3 canonical-knowledge ownership boundary."
+    },
+    {
+      "name": "production_v4_unchanged",
+      "exit_code": 0,
+      "evidence": "The registered v4 active-entrypoint regression passed; production remains v4_unchanged."
+    }
+  ],
+  "review": {
+    "finding": "A3 previously adapted only the new service while legacy knowledge_flow.py still imported and created a distinct KnowledgeSnapshot from knowledge_snapshot.py.",
+    "root_cause": "A3's ReleaseLedger scope omitted the legacy adapter sources named by the architecture's single K1/K2 and single Snapshot requirement.",
+    "repair": "A3 now owns knowledge_flow.py and knowledge_snapshot.py in addition to knowledge_retriever.py, and an A0 acceptance test makes that ownership mechanical.",
+    "safety_boundary": "This A0 package changes only the construction boundary. It does not modify A1/A2/A3 runtime implementation, start Director, submit externally, accept media, or switch production.",
+    "next_required_work": "Revalidate A1, then A2, then repair A3 under the corrected scope."
+  },
+  "informational_results": [
+    {
+      "name": "a0_release_control_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "14 passed"
+    },
+    {
+      "name": "a0_v4_entrypoint_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "15 passed"
+    },
+    {
+      "name": "a0_control_regression_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_rebuild_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "31 passed"
+    }
+  ],
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

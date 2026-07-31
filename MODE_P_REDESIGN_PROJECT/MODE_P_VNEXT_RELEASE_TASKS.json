@@ -225,6 +225,8 @@
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/services/knowledge_retriever.py",
+        "01_调度器/mode_p_vnext/knowledge_flow.py",
+        "01_调度器/mode_p_vnext/knowledge_snapshot.py",
         "01_调度器/mode_p_vnext/tests/test_a3_*.py",
         "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A3_*.json"
       ],
