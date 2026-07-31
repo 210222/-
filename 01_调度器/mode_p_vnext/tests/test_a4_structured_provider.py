@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from dataclasses import fields
 
 import pytest
 
@@ -26,6 +27,12 @@ from mode_p_vnext.prompts.budgets import PromptBudgetExceeded
 from mode_p_vnext.prompts.compiler import PromptCompiler
 from mode_p_vnext.prompts.schema_registry import DraftSchemaRegistry
 from mode_p_vnext.prompts.signatures import Stage, stage_signatures
+
+
+def _assert_schema_node_matches_dataclass(schema: dict, draft_type: type) -> None:
+    expected = {field.name for field in fields(draft_type)}
+    assert set(schema["properties"]) == expected
+    assert set(schema["required"]) == expected
 
 
 def test_stage_signatures_declare_the_only_four_model_stages() -> None:
@@ -77,6 +84,79 @@ def test_b1_prompt_and_schema_are_preflight_budgeted() -> None:
         compiler.compile(signature, {"scene_id": "EP35-S2", "oversized": "x" * 12_000})
 
 
+def test_registered_schemas_match_the_canonical_creative_draft_contracts() -> None:
+    """A provider-valid Draft must decode without alternate field aliases."""
+
+    from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingDraft
+    from mode_p_vnext.domain.decisions import DecisionDraft, VisualCurvePointDraft
+    from mode_p_vnext.domain.direction import EpisodeDirectionDraft, SceneIntentDraft
+    from mode_p_vnext.domain.vec import (
+        ExecutionDesignDraft,
+        ShotDesignDraft,
+        VisualBeatDraft,
+    )
+
+    registry = DraftSchemaRegistry()
+    schemas = {
+        stage: registry.schema_for(signature).document
+        for stage, signature in stage_signatures().items()
+    }
+
+    _assert_schema_node_matches_dataclass(schemas[Stage.E0], EpisodeDirectionDraft)
+    _assert_schema_node_matches_dataclass(schemas[Stage.S1], SceneIntentDraft)
+    _assert_schema_node_matches_dataclass(schemas[Stage.B0], BlockingDraft)
+    _assert_schema_node_matches_dataclass(
+        schemas[Stage.B0]["properties"]["beats"]["items"],
+        BlockingBeatDraft,
+    )
+    _assert_schema_node_matches_dataclass(schemas[Stage.B1], ExecutionDesignDraft)
+    _assert_schema_node_matches_dataclass(
+        schemas[Stage.B1]["properties"]["curve_points"]["items"],
+        VisualCurvePointDraft,
+    )
+    _assert_schema_node_matches_dataclass(
+        schemas[Stage.B1]["properties"]["decisions"]["items"],
+        DecisionDraft,
+    )
+    _assert_schema_node_matches_dataclass(
+        schemas[Stage.B1]["properties"]["shots"]["items"],
+        ShotDesignDraft,
+    )
+    _assert_schema_node_matches_dataclass(
+        schemas[Stage.B1]["properties"]["shots"]["items"]["properties"]
+        ["visual_beats"]["items"],
+        VisualBeatDraft,
+    )
+
+
+def test_b0_state_maps_reject_values_outside_the_domain_safe_transport_shape() -> None:
+    from mode_p_vnext.adapters.model.claude_deepseek import (
+        _validate_draft_against_schema,
+    )
+
+    schema = DraftSchemaRegistry().schema_for(
+        stage_signatures()[Stage.B0]
+    ).document
+    payload = {
+        "beats": [
+            {
+                "ordinal": 1,
+                "dramatic_action": "He holds at the doorway.",
+                "character_states": [{"character_id": "chen", "posture": "still"}],
+                "prop_states": [],
+                "gaze_relations": ["chen -> zhou"],
+                "action_paths": ["hold position"],
+                "continuity_effect": "The exit direction stays locked.",
+            }
+        ]
+    }
+    _validate_draft_against_schema(payload, schema)
+
+    payload["beats"][0]["character_states"][0]["character_id"] = 7
+    with pytest.raises(ValueError, match="expected string"):
+        _validate_draft_against_schema(payload, schema)
+
+
 def test_windows_resolution_prefers_native_executable_over_cmd_shim() -> None:
     resolved = resolve_windows_claude_binary(
         (
@@ -111,9 +191,12 @@ def test_schema_is_a_dedicated_transport_field_not_prompt_text() -> None:
     adapter = ClaudeDeepSeekStructuredAdapter(
         runner=lambda request: requests.append(request) or {
             "payload": {
-                "thematic_axis": "responsibility",
-                "dramatic_direction": "certainty fractures under pressure",
+                "dramatic_promise": "Responsibility makes certainty fracture under pressure.",
+                "audience_contract": "Each scene reveals a concrete emotional cost.",
+                "tension_curve": ["confidence", "pressure"],
                 "visual_principles": ["preserve readable action"],
+                "continuity_priorities": ["preserve the established screen direction"],
+                "unresolved_questions": [],
             },
             "resolved_model": "deepseek-v4-pro",
         },

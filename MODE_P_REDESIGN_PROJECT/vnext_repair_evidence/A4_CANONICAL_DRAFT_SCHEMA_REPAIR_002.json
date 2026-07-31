@@ -1,0 +1,87 @@
+{
+  "kind": "A4_CANONICAL_DRAFT_SCHEMA_REPAIR",
+  "task_id": "A4",
+  "architecture_version": "2.1",
+  "architecture_inputs": {
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952"
+  },
+  "root_cause": "The initial compact E0/S1/B0/B1 transport schemas used alternate and incomplete field names, so a provider-valid payload could not construct the A1-frozen canonical creative Drafts. A5 correctly failed closed rather than adding an alias adapter.",
+  "repair": {
+    "schema_authority": "Canonical dataclass fields in mode_p_vnext.domain.direction, blocking, decisions, and vec",
+    "runtime_guard": "DraftSchemaRegistry rejects schema/domain field divergence before prompt compilation or provider I/O",
+    "decoder_guard": "Structured transport now validates schema-defined additional-property values, including B0 state-map string values",
+    "model_boundary": "All stages remain creative Draft-only; no ID, hash, tick, final VEC, or local safety constant was added to any schema"
+  },
+  "budgets": {
+    "E0_schema_characters": 745,
+    "S1_schema_characters": 929,
+    "B0_schema_characters": 952,
+    "B1_prompt_characters": 984,
+    "B1_prompt_limit": 12000,
+    "B1_schema_characters": 2777,
+    "B1_schema_limit": 4500
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/prompts/schema_registry.py",
+    "01_调度器/mode_p_vnext/prompts/signatures.py",
+    "01_调度器/mode_p_vnext/adapters/model/claude_deepseek.py",
+    "01_调度器/mode_p_vnext/tests/test_a4_structured_provider.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A4_CANONICAL_DRAFT_SCHEMA_REPAIR_002.json"
+  ],
+  "checks": [
+    {
+      "name": "stage_signatures_declared",
+      "exit_code": 0,
+      "evidence": "The stage registry still contains only E0, S1, B0, and B1 with their fixed budgets."
+    },
+    {
+      "name": "prompt_schema_separate_transport",
+      "exit_code": 0,
+      "evidence": "A4 provider tests confirm JSON Schema remains a dedicated transport field and out of prompt text."
+    },
+    {
+      "name": "b1_prompt_under_12000_chars",
+      "exit_code": 0,
+      "evidence": "Measured B1 compiled prompt: 984/12000 characters."
+    },
+    {
+      "name": "b1_schema_under_4500_chars",
+      "exit_code": 0,
+      "evidence": "Measured B1 Draft schema: 2777/4500 characters."
+    },
+    {
+      "name": "native_windows_binary_first",
+      "exit_code": 0,
+      "evidence": "Registered A4 tests retain native claude.exe preference and .cmd rejection."
+    },
+    {
+      "name": "one_scoped_contract_repair",
+      "exit_code": 0,
+      "evidence": "Registered A4 tests retain the one scoped ContractPatch budget and transport-failure behavior."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a4_structured_provider",
+      "exit_code": 0,
+      "summary": "12 passed"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_to_a4_regression",
+      "exit_code": 0,
+      "summary": "73 passed",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit"
+    },
+    {
+      "name": "v4_entrypoint_isolation",
+      "exit_code": 0,
+      "summary": "15 passed",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit"
+    }
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false
+}

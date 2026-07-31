@@ -321,12 +321,20 @@ def _validate_draft_against_schema(
         if not isinstance(value, Mapping):
             raise ValueError(f"draft schema violation at {path}: expected object")
         properties = schema.get("properties", {})
-        if schema.get("additionalProperties") is False:
-            for key in value:
-                if key not in properties:
-                    raise ValueError(
-                        f"draft schema violation at {path}: unexpected field {key}"
-                    )
+        additional_properties = schema.get("additionalProperties", True)
+        for key, item in value.items():
+            if not isinstance(key, str):
+                raise ValueError(f"draft schema violation at {path}: object keys must be strings")
+            if key in properties:
+                continue
+            if additional_properties is False:
+                raise ValueError(
+                    f"draft schema violation at {path}: unexpected field {key}"
+                )
+            if isinstance(additional_properties, Mapping):
+                _validate_draft_against_schema(
+                    item, additional_properties, f"{path}.{key}"
+                )
         for key in schema.get("required", ()):
             if key not in value:
                 raise ValueError(
