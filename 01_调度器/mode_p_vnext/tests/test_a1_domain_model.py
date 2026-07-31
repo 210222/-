@@ -363,6 +363,8 @@ def test_minimal_vec_is_closed_over_ids_ticks_states_and_requirements() -> None:
 def test_knowledge_projection_and_review_schemas_match_architecture_views() -> None:
     from mode_p_vnext.domain.evidence import RevisionRequest
     from mode_p_vnext.domain.knowledge import (
+        KnowledgeCandidateRecord,
+        KnowledgeCapabilityScope,
         KnowledgeDecisionEntry,
         KnowledgeDecisionView,
         KnowledgeSnapshot,
@@ -392,7 +394,24 @@ def test_knowledge_projection_and_review_schemas_match_architecture_views() -> N
         "retrieval_input_digest",
         "blocking_commit_digest",
         "security_event_digests",
+        "candidate_records",
+        "selection_reasons",
+        "catalog_index_abstract",
     } == set(_field_names(KnowledgeSnapshot))
+    assert _field_names(KnowledgeCapabilityScope) == (
+        "valid_from",
+        "valid_until",
+        "target_models",
+        "target_modes",
+        "aspect_ratios",
+        "source_digest",
+    )
+    assert _field_names(KnowledgeCandidateRecord) == (
+        "candidate_id",
+        "content_sha256",
+        "source_refs",
+        "field_provenance",
+    )
     assert _field_names(RevisionRequest) == (
         "request_id",
         "target_artifact_id",
@@ -706,6 +725,166 @@ def test_gate_dp_media_and_owner_results_are_separate_auditable_authorities() ->
             independent_context_digest="d" * 64,
         )
 
+
+def test_knowledge_capsule_requires_field_provenance_and_scoped_capability_validity() -> None:
+    from mode_p_vnext.domain.knowledge import (
+        KnowledgeCapabilityScope,
+        KnowledgeCapsuleV2,
+    )
+
+    source = SourceRef(
+        source_id="capability-note:video-model-x",
+        digest="a" * 64,
+        locator="knowledge/capabilities/video-model-x-2026-07-30.md",
+    )
+    scope = KnowledgeCapabilityScope(
+        valid_from="2026-07-01",
+        valid_until="2026-08-01",
+        target_models=("video-model-x",),
+        target_modes=("image-to-video",),
+        aspect_ratios=("16:9",),
+        source_digest=source.digest,
+    )
+    capsule = KnowledgeCapsuleV2(
+        capsule_id="capsule:capability:video-model-x",
+        category="platform_capability",
+        claims=("The model accepts one character-position reference image.",),
+        source_summary="Verified platform capability note for the tested release window.",
+        source_refs=(source,),
+        field_provenance={
+            "claims": (source,),
+            "source_summary": (source,),
+            "capability_scope": (source,),
+        },
+        capability_scope=scope,
+        confidence="high",
+    )
+
+    assert capsule.capability_scope == scope
+    assert capsule.field_provenance["claims"] == (source,)
+    with pytest.raises(DomainValidationError, match="valid_until"):
+        KnowledgeCapabilityScope(
+            valid_from="2026-08-02",
+            valid_until="2026-08-01",
+            target_models=("video-model-x",),
+            target_modes=("image-to-video",),
+            aspect_ratios=("16:9",),
+            source_digest=source.digest,
+        )
+    with pytest.raises(DomainValidationError, match="field_provenance"):
+        KnowledgeCapsuleV2(
+            capsule_id="capsule:missing-provenance",
+            category="principle",
+            claims=("A claim without a field chain is not canonical.",),
+            source_summary="A source summary.",
+            source_refs=(source,),
+            field_provenance={"claims": (source,)},
+            capability_scope=None,
+            confidence="medium",
+        )
+    with pytest.raises(DomainValidationError, match="source_digest"):
+        KnowledgeCapsuleV2(
+            capsule_id="capsule:unregistered-capability-source",
+            category="platform_capability",
+            claims=("A capability scope cannot cite an unregistered source.",),
+            source_summary="A source summary.",
+            source_refs=(source,),
+            field_provenance={
+                "claims": (source,),
+                "source_summary": (source,),
+                "capability_scope": (source,),
+            },
+            capability_scope=dataclasses.replace(
+                scope,
+                source_digest="b" * 64,
+            ),
+            confidence="medium",
+        )
+
+
+def test_knowledge_snapshot_seals_full_candidate_accounting_and_selection_reasons() -> None:
+    from mode_p_vnext.domain.knowledge import (
+        KnowledgeCandidateRecord,
+        KnowledgeDecisionEntry,
+        KnowledgeDecisionView,
+        KnowledgeSnapshot,
+        KnowledgeStage,
+    )
+
+    source = SourceRef(
+        source_id="knowledge-source:shot-design",
+        digest="b" * 64,
+        locator="knowledge/shot-design.md#reaction",
+    )
+    selected = KnowledgeCandidateRecord(
+        candidate_id="capsule:selected",
+        content_sha256="c" * 64,
+        source_refs=(source,),
+        field_provenance={"claims": (source,)},
+    )
+    excluded = KnowledgeCandidateRecord(
+        candidate_id="capsule:excluded",
+        content_sha256="d" * 64,
+        source_refs=(source,),
+        field_provenance={"claims": (source,)},
+    )
+    view = KnowledgeDecisionView(
+        scene_id="scene:1",
+        stage=KnowledgeStage.K1,
+        entries=(
+            KnowledgeDecisionEntry(
+                capsule_id=selected.candidate_id,
+                director_question="How should the reaction be framed?",
+                applies_because=("The scene turns on withheld reaction.",),
+                execution_constraints=("Do not add unobserved props.",),
+                expected_effect="The audience reads the withheld response.",
+                tradeoff=("The pace briefly slows.",),
+                anti_pattern=False,
+                source_digest=selected.content_sha256,
+            ),
+        ),
+    )
+    snapshot = KnowledgeSnapshot(
+        snapshot_id="knowledge-snapshot:scene:1:k1",
+        scene_id="scene:1",
+        stage=KnowledgeStage.K1,
+        decision_view=view,
+        selected_capsule_ids=(selected.candidate_id,),
+        exclusions={excluded.candidate_id: "Lower-ranked for this director question."},
+        conflicts=(),
+        catalog_index_sha256="e" * 64,
+        retrieval_input_digest="f" * 64,
+        blocking_commit_digest=None,
+        security_event_digests=(),
+        candidate_records=(selected, excluded),
+        selection_reasons={selected.candidate_id: "Best fit for the question and scene state."},
+        catalog_index_abstract={
+            "catalog_version": "knowledge-catalog:2026-07-30",
+            "retriever_version": "vnext-a3",
+        },
+    )
+
+    assert tuple(record.candidate_id for record in snapshot.candidate_records) == (
+        selected.candidate_id,
+        excluded.candidate_id,
+    )
+    with pytest.raises(DomainValidationError, match="account"):
+        KnowledgeSnapshot(
+            snapshot_id="knowledge-snapshot:scene:1:incomplete",
+            scene_id="scene:1",
+            stage=KnowledgeStage.K1,
+            decision_view=view,
+            selected_capsule_ids=(selected.candidate_id,),
+            exclusions={},
+            conflicts=(),
+            catalog_index_sha256="e" * 64,
+            retrieval_input_digest="f" * 64,
+            blocking_commit_digest=None,
+            security_event_digests=(),
+            candidate_records=(selected, excluded),
+            selection_reasons={selected.candidate_id: "Best fit."},
+            catalog_index_abstract={"catalog_version": "knowledge-catalog:2026-07-30"},
+        )
 
 def test_id_factory_is_stable_and_drafts_cannot_carry_machine_authority() -> None:
     factory = IdFactory(program_version="vnext-2.1")

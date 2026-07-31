@@ -31,6 +31,8 @@ from .evidence import (
     OwnerApprovalRecord,
 )
 from .knowledge import (
+    KnowledgeCandidateRecord,
+    KnowledgeCapabilityScope,
     KnowledgeCapsuleV2,
     KnowledgeDecisionEntry,
     KnowledgeDecisionView,
@@ -82,6 +84,8 @@ __all__ = (
     "IdFactory",
     "IndependentDPReviewResult",
     "KnowledgeCapsuleV2",
+    "KnowledgeCandidateRecord",
+    "KnowledgeCapabilityScope",
     "KnowledgeDecisionEntry",
     "KnowledgeDecisionView",
     "KnowledgeSnapshot",
