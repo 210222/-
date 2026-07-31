@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import ast
 from dataclasses import fields
+import inspect
 
 import pytest
 
@@ -29,6 +31,8 @@ from mode_p_vnext.services.knowledge_retriever import (
     VerifiedBlockingCommit,
 )
 import mode_p_vnext.services.knowledge_retriever as knowledge_retriever_service
+import mode_p_vnext.knowledge_flow as legacy_knowledge_flow
+import mode_p_vnext.knowledge_snapshot as legacy_snapshot_adapter
 
 
 def _candidate(
@@ -188,6 +192,27 @@ def test_service_reexports_instead_of_redeclaring_canonical_knowledge_types() ->
     assert knowledge_retriever_service.KnowledgeStage is CanonicalKnowledgeStage
     assert knowledge_retriever_service.KnowledgeDecisionView is KnowledgeDecisionView
     assert knowledge_retriever_service.KnowledgeSnapshot is KnowledgeSnapshot
+
+
+def test_legacy_adapters_do_not_create_a_second_runtime_snapshot_authority() -> None:
+    """The legacy route may emit a receipt, never a second vNext Snapshot."""
+
+    flow_source = inspect.getsource(legacy_knowledge_flow)
+    adapter_tree = ast.parse(inspect.getsource(legacy_snapshot_adapter))
+    assert "mode_p_vnext.knowledge_snapshot" not in flow_source
+    assert not any(
+        isinstance(node, ast.ClassDef) and node.name == "KnowledgeSnapshot"
+        for node in ast.walk(adapter_tree)
+    )
+
+    legacy_result = legacy_knowledge_flow.retrieve_for_diagnosis(
+        _diagnosis(),
+        KnowledgeCatalog((_candidate("K1-ATTENTION"),)),
+        _context(),
+    )
+    assert type(legacy_result.selection_receipt).__name__ == "KnowledgeSelectionReceipt"
+    assert legacy_result.snapshot is legacy_result.selection_receipt
+    assert type(legacy_result.snapshot) is not KnowledgeSnapshot
 
 
 def test_legacy_capability_without_a_complete_scope_fails_closed() -> None:

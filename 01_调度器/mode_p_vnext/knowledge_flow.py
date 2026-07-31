@@ -22,7 +22,6 @@ from mode_p_vnext.knowledge_security import (
     envelope_untrusted_text,
     inspect_untrusted_text,
 )
-from mode_p_vnext.knowledge_snapshot import KnowledgeSnapshot, create_retrieval_snapshot
 from mode_p_vnext.retrieval_budget import RetrievalBudget
 from mode_p_vnext.schema.decision_card import DecisionCard
 from mode_p_vnext.schema.scene_diagnosis import KnowledgeQuery, SceneDiagnosis, generate_knowledge_query
@@ -301,14 +300,88 @@ class KnowledgePacket:
 
 
 @dataclass(frozen=True)
+class KnowledgeSelectionReceipt:
+    """Non-authoritative metadata receipt emitted by the legacy adapter.
+
+    It preserves enough bounded metadata for old callers to inspect a prior
+    selection without becoming a second vNext ``KnowledgeSnapshot``.  Only
+    ``KnowledgeRetriever`` may create the canonical snapshot sealed in an
+    ``ArtifactEnvelope``.
+    """
+
+    snapshot_id: str
+    query: Mapping[str, Any]
+    selected_card_records: Tuple[Mapping[str, Any], ...]
+    conflict_records: Tuple[Mapping[str, Any], ...]
+    index_sha256: str
+    exclusions: Mapping[str, str]
+    selection_reasons: Mapping[str, str]
+    stage_budgets: Mapping[str, int]
+    security_events: Tuple[Mapping[str, Any], ...]
+    content_sha256: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.content_sha256:
+            object.__setattr__(self, "content_sha256", _hash(self._integrity_payload()))
+
+    @property
+    def selected_card_ids(self) -> Tuple[str, ...]:
+        return tuple(str(record["card_id"]) for record in self.selected_card_records)
+
+    @property
+    def conflict_ids(self) -> Tuple[str, ...]:
+        return tuple(
+            str(record.get("conflict_id", _hash(record)[:16]))
+            for record in self.conflict_records
+        )
+
+    @property
+    def query_sha256(self) -> str:
+        return _hash(dict(self.query))
+
+    def _integrity_payload(self) -> Dict[str, Any]:
+        return {
+            "receipt_id": self.snapshot_id,
+            "query": dict(self.query),
+            "selected_card_records": [dict(record) for record in self.selected_card_records],
+            "conflict_records": [dict(record) for record in self.conflict_records],
+            "index_sha256": self.index_sha256,
+            "exclusions": dict(sorted(self.exclusions.items())),
+            "selection_reasons": dict(sorted(self.selection_reasons.items())),
+            "stage_budgets": dict(sorted(self.stage_budgets.items())),
+            "security_events": [dict(event) for event in self.security_events],
+        }
+
+    def to_dict(self) -> Dict[str, Any]:
+        payload = self._integrity_payload()
+        payload.update({
+            "snapshot_id": self.snapshot_id,
+            "selected_card_ids": list(self.selected_card_ids),
+            "conflict_ids": list(self.conflict_ids),
+            "query_sha256": self.query_sha256,
+            "content_sha256": self.content_sha256,
+        })
+        return payload
+
+    def verify_integrity(self) -> bool:
+        return self.content_sha256 == _hash(self._integrity_payload())
+
+
+@dataclass(frozen=True)
 class KnowledgeRetrievalResult:
     """Selection, audit evidence and security events for one no-model retrieval."""
 
     query: KnowledgeQuery
     packet: KnowledgePacket
-    snapshot: KnowledgeSnapshot
+    selection_receipt: KnowledgeSelectionReceipt
     exclusions: Mapping[str, str]
     security_events: Tuple[KnowledgeSecurityEvent, ...]
+
+    @property
+    def snapshot(self) -> KnowledgeSelectionReceipt:
+        """Deprecated compatibility name for historical callers only."""
+
+        return self.selection_receipt
 
 
 def _query_terms(query: KnowledgeQuery, artifact: DiagnosisArtifact | None) -> Tuple[str, ...]:
@@ -560,21 +633,24 @@ def retrieve_for_diagnosis(
         no_match=not primary and not anti_patterns and not conflicts,
     )
     selected = tuple(primary) + tuple(anti_patterns)
-    snapshot = create_retrieval_snapshot(
-        snapshot_id=f"KS-{scene_diagnosis.scene_id}-{phase}",
+    # This compatibility flow only returns a receipt.  The vNext service is
+    # the sole owner that converts this bounded metadata into the canonical
+    # domain KnowledgeSnapshot and seals it in an ArtifactEnvelope.
+    selection_receipt = KnowledgeSelectionReceipt(
+        snapshot_id=f"legacy-selection:{scene_diagnosis.scene_id}:{phase}",
         query={
             "scene_id": query.scene_id,
             "dimension_questions": query.dimension_questions,
             "model_risk_queries": query.model_risk_queries,
             "user_constraint_queries": query.user_constraint_queries,
         },
-        selected_cards=selected,
-        candidate_cards=tuple(catalog.candidates),
-        exclusions=exclusions,
-        conflicts=[item.to_dict() for item in conflicts],
+        selected_card_records=tuple(card.snapshot_record() for card in selected),
+        conflict_records=tuple(item.to_dict() for item in conflicts),
         index_sha256=catalog.index_sha256,
-        retriever_version=policy.retriever_version,
-        ranking_version=policy.ranking_version,
+        exclusions=dict(exclusions),
+        selection_reasons={
+            card.card_id: "matched_explicit_diagnosis_question" for card in selected
+        },
         stage_budgets={
             "primary_limit": policy.primary_card_limit,
             "primary_used": len(primary),
@@ -583,13 +659,12 @@ def retrieve_for_diagnosis(
             "conflict_record_limit": policy.conflict_record_limit,
             "conflict_record_used": len(conflicts),
         },
-        security_events=[item.to_dict() for item in security_events],
-        selection_reasons={card.card_id: "matched_explicit_diagnosis_question" for card in selected},
+        security_events=tuple(item.to_dict() for item in security_events),
     )
     return KnowledgeRetrievalResult(
         query=query,
         packet=packet,
-        snapshot=snapshot,
+        selection_receipt=selection_receipt,
         exclusions=dict(exclusions),
         security_events=tuple(security_events),
     )

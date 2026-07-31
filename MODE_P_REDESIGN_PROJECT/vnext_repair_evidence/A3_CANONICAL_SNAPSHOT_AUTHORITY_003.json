@@ -1,0 +1,98 @@
+{
+  "schema_version": "2.1",
+  "record_type": "mode_p_vnext_a3_canonical_snapshot_authority",
+  "task_id": "A3",
+  "run_id": "codex-a3-canonical-snapshot-repair-20260731",
+  "architecture_version": "2.1",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/knowledge_retriever.py",
+    "01_调度器/mode_p_vnext/knowledge_flow.py",
+    "01_调度器/mode_p_vnext/knowledge_snapshot.py",
+    "01_调度器/mode_p_vnext/tests/test_a3_knowledge_flow.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A3_CANONICAL_SNAPSHOT_AUTHORITY_003.json"
+  ],
+  "root_cause": "The legacy metadata selection flow imported the historical snapshot module and created a second hash-bearing runtime KnowledgeSnapshot before the canonical KnowledgeRetriever created its ArtifactEnvelope[domain.KnowledgeSnapshot]. This created two competing snapshot lifecycles in one vNext retrieval path.",
+  "alternatives_considered": [
+    {
+      "option": "Keep the legacy snapshot creation and label it as a cache.",
+      "decision": "rejected",
+      "reason": "A hash-bearing cache created in the live retrieval path still competes with the canonical sealed snapshot and violates the single-authority boundary."
+    },
+    {
+      "option": "Remove the legacy module and break historical callers.",
+      "decision": "rejected",
+      "reason": "The construction protocol permits a read-only compatibility adapter; historical replay callers remain supported without granting it vNext authority."
+    },
+    {
+      "option": "Move canonical snapshot construction into the legacy flow.",
+      "decision": "rejected",
+      "reason": "The service owns K1/K2 gating, canonical candidate accounting, blocking-commit binding, and ArtifactEnvelope sealing. Moving that boundary back to the adapter would invert the architecture."
+    }
+  ],
+  "repair": [
+    "knowledge_flow no longer imports knowledge_snapshot or creates a KnowledgeSnapshot. It now emits a sealed KnowledgeSelectionReceipt containing only bounded selection metadata for compatibility callers.",
+    "KnowledgeRetrievalResult exposes selection_receipt as its real field and retains snapshot only as a deprecated read-only compatibility property.",
+    "knowledge_snapshot no longer declares a KnowledgeSnapshot class. Its historical archive record is explicitly named LegacyKnowledgeSelectionArchive; the retired constructor name is resolved only through module-level compatibility lookup.",
+    "KnowledgeRetriever remains the sole vNext runtime owner that creates domain.KnowledgeSnapshot and seals it in ArtifactEnvelope. Its dependency trail records the adapter receipt, not a legacy snapshot authority."
+  ],
+  "checks": [
+    {
+      "name": "single_k1_k2_implementation",
+      "exit_code": 0,
+      "evidence": "A3 tests prove K1/K2 use the canonical KnowledgeStage, K2 requires a verified BlockingCommit, the service re-exports canonical types, the legacy flow has no snapshot-module import, and the compatibility module declares no second KnowledgeSnapshot class."
+    },
+    {
+      "name": "replayable_snapshot",
+      "exit_code": 0,
+      "evidence": "A3 tests prove the sole runtime snapshot is ArtifactEnvelope[domain.KnowledgeSnapshot], accounts for every candidate, and fails closed on envelope tampering. Historical callers can replay only the bounded non-authoritative selection receipt without a search."
+    },
+    {
+      "name": "untrusted_text_isolation",
+      "exit_code": 0,
+      "evidence": "The A3 quarantine test and legacy retrieval regression confirm raw untrusted source text and source IDs are excluded from Director-visible packet, receipt, and canonical snapshot."
+    },
+    {
+      "name": "director_conflict_ownership",
+      "exit_code": 0,
+      "evidence": "A3 tests confirm conflict options remain exposed for Director resolution and are never auto-selected into the decision view."
+    },
+    {
+      "name": "evidence_gated_promotion",
+      "exit_code": 0,
+      "evidence": "A3 tests confirm promotion rejects missing verified evidence, human approval, or any required observation-to-applicability chain component."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a3_knowledge_flow",
+      "command": "python -m pytest mode_p_vnext/tests/test_a3_knowledge_flow.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "12 passed"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_to_a3_and_legacy_knowledge_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_v3_1_knowledge_auditor.py mode_p_vnext/tests/test_v3_2_decision_card.py mode_p_vnext/tests/test_v3_3_conflict_graph.py mode_p_vnext/tests/test_v3_4_scene_diagnosis.py mode_p_vnext/tests/test_v3_5_retrieval_budget.py mode_p_vnext/tests/test_v3_6_knowledge_snapshot.py mode_p_vnext/tests/test_v3_7_prompt_injection.py mode_p_vnext/tests/test_v9_1_vertical_integration.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "125 passed, 85 subtests passed"
+    },
+    {
+      "name": "workspace_delta_check",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "git diff --check; static search for legacy snapshot import/class authority",
+      "exit_code": 0,
+      "result": "No whitespace errors; no legacy snapshot import in knowledge_flow; no KnowledgeSnapshot class declaration in compatibility module."
+    }
+  ],
+  "residual_risk": "The historical adapter remains intentionally available for pre-vNext callers, but it is no longer on the canonical snapshot authority path. It cannot create K1/K2 authority, enter the Director view, or replace ArtifactEnvelope sealing.",
+  "non_activation": {
+    "director_runtime_started": false,
+    "external_submission": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  }
+}

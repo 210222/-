@@ -584,7 +584,7 @@ class KnowledgeRetriever:
         dependencies = {
             "catalog_index": catalog.index_sha256,
             "retrieval_input": retrieval_input_digest,
-            "legacy_selection": legacy.snapshot.content_sha256,
+            "selection_receipt": legacy.selection_receipt.content_sha256,
         }
         if blocking_digest is not None:
             dependencies["blocking_commit"] = blocking_digest

@@ -1,9 +1,11 @@
-"""Knowledge-selection snapshots and replay evidence for MODE:P vNext.
+"""Compatibility-only archive records for pre-vNext knowledge callers.
 
-Snapshots prove the bounded metadata packet that was available to a Director;
-they deliberately do not claim that a generative output is reproducible.  The
-v1 list-oriented API remains supported while v2 fields seal the complete
-diagnosis-to-retrieval decision trail.
+The sole runtime knowledge snapshot is
+``mode_p_vnext.domain.knowledge.KnowledgeSnapshot`` sealed in an
+``ArtifactEnvelope`` by ``services.knowledge_retriever``.  This module keeps
+the historical list-oriented API readable for archived callers; its records
+are deliberately not accepted as a vNext retrieval, sealing, or replay
+authority.
 """
 
 from __future__ import annotations
@@ -50,8 +52,8 @@ def _record_card(card: object) -> Dict[str, Any]:
 
 
 @dataclass
-class KnowledgeSnapshot:
-    """Auditable selection record with backwards-compatible v1 fields."""
+class LegacyKnowledgeSelectionArchive:
+    """Historical selection record, not a vNext ``KnowledgeSnapshot``."""
 
     snapshot_id: str
     selected_card_ids: List[str] = field(default_factory=list)
@@ -122,7 +124,7 @@ class KnowledgeReplay:
     index_sha256: str
 
 
-def _seal(snapshot: KnowledgeSnapshot) -> KnowledgeSnapshot:
+def _seal(snapshot: LegacyKnowledgeSelectionArchive) -> LegacyKnowledgeSelectionArchive:
     snapshot.content_sha256 = _hash(snapshot._integrity_payload())
     return snapshot
 
@@ -133,12 +135,12 @@ def create_snapshot(
     not_selected: Dict[str, str],
     budget_total: int,
     conflict_ids: Optional[List[str]] = None,
-) -> KnowledgeSnapshot:
-    """Create a backwards-compatible v1 snapshot with a complete seal."""
+) -> LegacyKnowledgeSelectionArchive:
+    """Create a sealed historical archive record for a legacy caller."""
     if budget_total < 0:
         raise ValueError("budget_total cannot be negative")
     records = [_record_card(card) for card in selected_cards]
-    snapshot = KnowledgeSnapshot(
+    snapshot = LegacyKnowledgeSelectionArchive(
         snapshot_id=snapshot_id,
         selected_card_ids=[record["card_id"] for record in records],
         conflict_ids=list(conflict_ids or []),
@@ -165,8 +167,8 @@ def create_retrieval_snapshot(
     stage_budgets: Mapping[str, int],
     security_events: Sequence[Mapping[str, Any]] = (),
     selection_reasons: Mapping[str, str] | None = None,
-) -> KnowledgeSnapshot:
-    """Seal the full replay packet emitted by metadata-only retrieval."""
+) -> LegacyKnowledgeSelectionArchive:
+    """Seal a historical archive record; never use it in vNext runtime."""
     candidate_records = [_record_card(card) for card in candidate_cards]
     selected_records = [_record_card(card) for card in selected_cards]
     selected_ids = [record["card_id"] for record in selected_records]
@@ -177,7 +179,7 @@ def create_retrieval_snapshot(
     ]
     if any(value < 0 for value in stage_budgets.values()):
         raise ValueError("stage budgets cannot be negative")
-    snapshot = KnowledgeSnapshot(
+    snapshot = LegacyKnowledgeSelectionArchive(
         snapshot_id=snapshot_id,
         selected_card_ids=selected_ids,
         conflict_ids=conflict_ids,
@@ -202,8 +204,8 @@ def create_retrieval_snapshot(
     return _seal(snapshot)
 
 
-def replay_snapshot(snapshot: KnowledgeSnapshot) -> KnowledgeReplay:
-    """Return the sealed packet for history/review without calling retrieval."""
+def replay_snapshot(snapshot: LegacyKnowledgeSelectionArchive | object) -> KnowledgeReplay:
+    """Read a sealed historical archive without invoking retrieval."""
     if not snapshot.verify_integrity():
         raise ValueError("knowledge snapshot integrity check failed")
     return KnowledgeReplay(
@@ -213,3 +215,16 @@ def replay_snapshot(snapshot: KnowledgeSnapshot) -> KnowledgeReplay:
         conflict_records=tuple(dict(record) for record in snapshot.conflict_records),
         index_sha256=snapshot.index_sha256,
     )
+
+
+def __getattr__(name: str) -> object:
+    """Resolve the retired v3 constructor only for historical import sites.
+
+    New vNext code must import the canonical type from
+    ``mode_p_vnext.domain.knowledge``.  Keeping this dynamic compatibility
+    lookup avoids re-declaring a second runtime class with that authority.
+    """
+
+    if name == "KnowledgeSnapshot":
+        return LegacyKnowledgeSelectionArchive
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
