@@ -1,0 +1,81 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A2",
+  "run_id": "codex-a2-revalidation-20260731",
+  "architecture_version": "2.1",
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_PERSISTENT_STATE_REVALIDATION_004.json"
+  ],
+  "checks": [
+    {
+      "name": "persistent_state_graph",
+      "exit_code": 0,
+      "evidence": "A2 tests verify that typed state transitions accept only owned partial state and preserve accepted upstream state."
+    },
+    {
+      "name": "checkpoint_resume",
+      "exit_code": 0,
+      "evidence": "A2 tests cover recovery at E0, S1, B0, and B1 without rerunning accepted nodes, with checkpoint/event-chain binding verified."
+    },
+    {
+      "name": "pending_write_atomicity",
+      "exit_code": 0,
+      "evidence": "A2 tests verify pending-transaction recovery, accepted artifact-reference verification, and manifest-binding rejection."
+    },
+    {
+      "name": "content_addressed_artifacts",
+      "exit_code": 0,
+      "evidence": "A2 tests verify content-addressed artifacts/cache references and reject mutated payloads."
+    },
+    {
+      "name": "field_level_invalidation",
+      "exit_code": 0,
+      "evidence": "A2 tests verify digest-edge scoped invalidation preserves unrelated nodes and replays as a bounded persistent graph transition."
+    }
+  ],
+  "review": {
+    "finding": "A2 was dependency-stale after controlled recovery of A0 and A1 for the A3 scope repair.",
+    "root_cause": "The A3 repair path requires current, hash-bound upstream Evidence. No A2 source defect or source drift was found.",
+    "considered_options": [
+      {
+        "option": "Modify persistent-state implementation without a failing invariant",
+        "decision": "rejected",
+        "reason": "All registered A2 mechanical tests passed and the A0 change did not alter A2-owned source files."
+      },
+      {
+        "option": "Revalidate A2 under the restored A0/A1 dependency chain",
+        "decision": "accepted",
+        "reason": "It restores an auditable dependency chain before the A3 runtime repair without expanding the scope."
+      }
+    ],
+    "remaining_risk": "A3 is still incomplete and must remove the legacy second KnowledgeSnapshot authority under its corrected allowed paths."
+  },
+  "informational_results": [
+    {
+      "name": "a2_persistent_graph_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "16 passed"
+    },
+    {
+      "name": "a2_test_inventory",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py --collect-only -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "16 persistent-state tests collected"
+    },
+    {
+      "name": "v4_entrypoint_isolation_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "15 passed"
+    }
+  ],
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}
