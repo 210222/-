@@ -1,0 +1,74 @@
+{
+  "schema_version": "2.1",
+  "record_type": "mode_p_vnext_upstream_architecture_blocker",
+  "task_id": "A2",
+  "run_id": "codex-a2-architecture-revalidation-20260731",
+  "status": "FAILED_CLOSED",
+  "classification": "UPSTREAM_DOMAIN_AUTHORITY_GAP",
+  "architecture_authority": {
+    "base": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
+    "normative_amendment": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md",
+    "applicable_rules": [
+      "Architecture section 8.1 requires every state node to transform TypedState to PartialState and to write only its owned ArtifactRef and event.",
+      "Architecture section 8.1 includes deterministic Gate 0, independent DP review, media verification, and user approval as persistent graph nodes.",
+      "Architecture section 14 requires A1 to establish the canonical Evidence domain and A2 to freeze the persistent state and recovery ports.",
+      "ADR-016 requires an upstream owner task to be invalidated and redone when downstream review finds its bound artifact defective."
+    ]
+  },
+  "finding": "A2 cannot freeze a fully typed persistent state graph against the completed A1 authority. A1 has no canonical persistent payload for a deterministic Gate 0 result, a successful independent DP review result, or an explicit owner approval record. ReviewPacket is the DP input and RevisionRequest is only a scoped failure output, so neither can truthfully represent a successful DP node. ReleaseGateRecord is a release-phase record and cannot be silently repurposed as the missing director-loop result types.",
+  "code_evidence": [
+    {
+      "path": "01_调度器/mode_p_vnext/domain/artifact.py",
+      "evidence": "ArtifactKind declares REVIEW_PACKET, REVISION_REQUEST, MEDIA_EVIDENCE, VISUAL_VERIFICATION_RESULT, and RELEASE_DECISION, but no deterministic gate-result or DP-review-result kind. ArtifactEnvelope enforces kind binding only when a payload declares ARTIFACT_KIND, so an untyped mapping bypass remains possible."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/domain/evidence.py",
+      "evidence": "The canonical evidence module defines ReviewPacket, RevisionRequest, MediaRunRecord, FrameEvidencePlan, FrameEvidence, OutcomeAttribution, and VisualVerificationResult, but no canonical pass/fail record for Gate 0 or independent DP."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/pipeline/graph.py",
+      "evidence": "NodeSpec declares owned field names but no field-to-ArtifactKind contract; StateGraph.apply accepts any ArtifactRef for any owned field."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py",
+      "evidence": "The current kill-point test uses a generic dictionary envelope with ArtifactKind.SCRIPT_FACT for blocking_draft and blocking_commit, and its B1 test node incorrectly owns blocking_commit. The nine passing tests therefore do not prove a typed architecture graph."
+    }
+  ],
+  "root_cause": "The prior A1 revalidation expanded the creative and evidence schemas but retained an escape hatch for generic mapping payloads and did not enumerate the canonical result records needed by every architecture section 8 state node. The narrow A2 tests then modeled only E0, S1, B0, and a mislabeled B1 path, allowing the gap to remain hidden.",
+  "rejected_workarounds": [
+    {
+      "option": "Use a generic dictionary payload with an arbitrary existing ArtifactKind",
+      "reason": "This would defeat A1's single canonical domain authority and freeze an untyped recovery port."
+    },
+    {
+      "option": "Reuse ReviewPacket or RevisionRequest as a success result",
+      "reason": "ReviewPacket is an input packet and RevisionRequest represents a scoped failure; changing their meaning would contradict the architecture."
+    },
+    {
+      "option": "Add the missing domain classes from A2",
+      "reason": "A2 does not own mode_p_vnext/domain and ADR-016 forbids downstream modification of A1-bound artifacts."
+    }
+  ],
+  "required_upstream_repair": [
+    "Invalidate A1 and add explicit canonical Gate 0 and independent DP result schemas, plus an explicit approval reference/record if the user-approval node persists one.",
+    "Remove the generic-payload authority escape for persistent canonical kinds or explicitly whitelist only architecture-approved opaque kinds.",
+    "Add A1 mechanical tests proving every persistent architecture node output has one canonical payload-to-ArtifactKind binding.",
+    "After A1 is accepted and pushed again, re-claim A2 and add failing tests for field-to-kind enforcement, correct E0/S1/B0/B1 kill points, and the complete typed graph."
+  ],
+  "tests_observed": [
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "9 passed",
+      "interpretation": "Insufficient evidence: the suite permits SCRIPT_FACT envelopes for blocking outputs and does not instantiate the complete architecture graph."
+    }
+  ],
+  "non_activation": {
+    "director_runtime_started": false,
+    "external_submission": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  }
+}
