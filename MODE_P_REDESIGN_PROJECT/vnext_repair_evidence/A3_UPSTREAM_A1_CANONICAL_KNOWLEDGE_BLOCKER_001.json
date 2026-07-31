@@ -1,0 +1,81 @@
+{
+  "schema_version": "2.1",
+  "record_type": "mode_p_vnext_upstream_architecture_blocker",
+  "task_id": "A3",
+  "run_id": "codex-a3-knowledge-flow-20260731",
+  "status": "FAILED_CLOSED",
+  "classification": "UPSTREAM_CANONICAL_KNOWLEDGE_AUTHORITY_GAP",
+  "architecture_authority": {
+    "base": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
+    "normative_amendment": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md",
+    "applicable_rules": [
+      "Architecture section 7.1 requires one KnowledgeCapsuleV2, one KnowledgeRetriever, and one KnowledgeSnapshot.",
+      "Architecture section 7.2 requires a compact KnowledgeDecisionView for the model while full source locators, field provenance, exclusions, candidate sets, index abstracts, and security events remain in the replayable Snapshot.",
+      "Architecture section 7.3 requires capability knowledge to carry valid_from, valid_until, model, mode, aspect scope, and source summary; a single failure cannot become knowledge.",
+      "Architecture section 14 and amendment ADR-016 require the owning upstream work package to be invalidated when a downstream audit finds a frozen artifact boundary deficient."
+    ]
+  },
+  "finding": "A3 cannot implement the one canonical K1/K2 retrieval boundary with the current A1 domain contract. The existing service declares duplicate KnowledgeStage, KnowledgeDecisionView, and KnowledgeSnapshot classes instead of consuming mode_p_vnext.domain.knowledge. Its self-hashed service snapshot is therefore a parallel authority that cannot be wrapped as the canonical KNOWLEDGE_SNAPSHOT ArtifactEnvelope. The A1 snapshot has selected IDs, exclusions, conflicts, index digest, and input digest, but has no candidate-set/provenance record; KnowledgeCapsuleV2 has no field-level provenance or applicability validity/scope fields required for capability knowledge.",
+  "code_evidence": [
+    {
+      "path": "01_调度器/mode_p_vnext/services/knowledge_retriever.py",
+      "evidence": "The service defines KnowledgeStage, KnowledgeDecisionView, and KnowledgeSnapshot locally, while importing only KnowledgeCapsuleV2 from domain. The local snapshot carries content_sha256 and to_dict(), creating a second incompatible persistence authority."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/domain/knowledge.py",
+      "evidence": "Canonical KnowledgeSnapshot has no candidate-set or field-provenance record and KnowledgeCapsuleV2 contains only capsule_id/category/claims/source_refs/confidence, so it cannot represent the architecture-required validity and model/mode/aspect scope of promoted capability knowledge."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/knowledge_flow.py",
+      "evidence": "The historical metadata candidate carries model/mode/aspect and valid_until but no valid_from; its legacy execution switch is approved:true. A3 may reuse it only behind a canonical adapter, not elevate it to the v2.1 authority."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/tests/test_a3_knowledge_flow.py",
+      "evidence": "All seven tests import the service-local KnowledgeStage and never assert identity with the A1 canonical domain classes, so 7 passing tests do not prove the one-authority invariant."
+    }
+  ],
+  "root_cause": "A1 froze a minimal domain schema before the complete architecture section 7 replay/provenance contract was mechanically checked. The prior A3 implementation filled those missing fields by duplicating domain classes inside its allowed service file instead of reopening the upstream domain owner.",
+  "rejected_workarounds": [
+    {
+      "option": "Keep the service-local knowledge classes and call them adapters",
+      "reason": "They have different fields and hashing semantics, so they are a second authority rather than an adapter."
+    },
+    {
+      "option": "Store candidate/provenance data in unconstrained conflict or exclusion mappings",
+      "reason": "That would hide typed snapshot data in semantically unrelated escape hatches and would not freeze a replay port."
+    },
+    {
+      "option": "Modify mode_p_vnext/domain from A3",
+      "reason": "A3 does not own domain paths; ADR-016 requires rework by A1."
+    }
+  ],
+  "required_upstream_repair": [
+    "Invalidate completed A2 first because it depends on A1, then invalidate A1; do not alter completed state manually.",
+    "Extend A1 canonical knowledge schemas with immutable candidate/provenance records and applicability fields including valid_from, valid_until, model, mode, aspect, and source summary where capability scope is present.",
+    "Make the canonical KnowledgeSnapshot sufficient to preserve the candidate set, selection/exclusion reasons, source provenance, index abstract, security-event digests, and replay input binding as a KNOWLEDGE_SNAPSHOT ArtifactEnvelope payload.",
+    "Add A1 mechanical tests that prohibit duplicate vNext knowledge authority classes outside domain and prove the capability-scope invariants.",
+    "After A1 and A2 are accepted again, re-claim A3 and make KnowledgeRetriever consume only canonical domain KnowledgeStage, KnowledgeDecisionView, and KnowledgeSnapshot."
+  ],
+  "tests_observed": [
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a3_knowledge_flow.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "7 passed",
+      "interpretation": "Insufficient: the tests cover the duplicated local types and therefore do not prove the architecture's single canonical knowledge authority."
+    },
+    {
+      "command": "rg -n \"^class Knowledge(Stage|DecisionView|Snapshot)\" mode_p_vnext/domain/knowledge.py mode_p_vnext/services/knowledge_retriever.py",
+      "exit_code": 0,
+      "result": "Mechanical authority audit finds same-named knowledge types in both the canonical domain module and A3 service module.",
+      "interpretation": "Expected failing architecture check."
+    }
+  ],
+  "non_activation": {
+    "director_runtime_started": false,
+    "external_submission": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  }
+}
