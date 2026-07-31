@@ -1,26 +1,35 @@
 """Canonical K1/K2 knowledge boundary for MODE:P vNext.
 
-The pre-existing retrieval implementation remains the metadata-only search
-engine.  This module is the only service boundary that turns that search into
-Director-visible knowledge: it separates K1 from K2, binds K2 to a verified
-blocking commit, seals a replay packet, and refuses to promote raw results or
-feedback without independent evidence and a human decision.
+The legacy retrieval module is intentionally used only as a metadata search
+adapter.  This service is the sole K1/K2 boundary: it converts candidates into
+the v2.1 domain types, seals the complete selection in an ArtifactEnvelope,
+and never lets raw source text or retriever-side conflict resolution enter the
+Director view.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from enum import Enum
+from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
 from mode_p_vnext.domain.artifact import (
+    ArtifactEnvelope,
+    ArtifactKind,
     DomainValidationError,
     SourceRef,
+    ValidationStatus,
     canonical_sha256,
     require_sha256,
 )
-from mode_p_vnext.domain.knowledge import KnowledgeCapsuleV2
+from mode_p_vnext.domain.knowledge import (
+    KnowledgeCandidateRecord,
+    KnowledgeCapsuleV2,
+    KnowledgeDecisionEntry,
+    KnowledgeDecisionView,
+    KnowledgeSnapshot,
+    KnowledgeStage,
+)
 from mode_p_vnext.knowledge_flow import (
     KnowledgeCandidate,
     KnowledgeCatalog,
@@ -31,21 +40,12 @@ from mode_p_vnext.knowledge_flow import (
 from mode_p_vnext.schema.scene_diagnosis import SceneDiagnosis
 
 
-class KnowledgeStage(str, Enum):
-    """The two permitted Director knowledge stages."""
-
-    K1 = "K1"
-    K2 = "K2"
+_SCHEMA_VERSION = "2.1"
+_PROGRAM_VERSION = "mode-p-vnext-2.1"
 
 
 class KnowledgePromotionError(ValueError):
     """A candidate has not cleared the evidence-and-human promotion gate."""
-
-
-def _frozen_mapping(value: Mapping[str, Any], field_name: str) -> Mapping[str, Any]:
-    if not isinstance(value, Mapping):
-        raise DomainValidationError(f"{field_name} must be a mapping")
-    return MappingProxyType(dict(value))
 
 
 def _non_empty_text(value: str, field_name: str) -> None:
@@ -53,14 +53,28 @@ def _non_empty_text(value: str, field_name: str) -> None:
         raise DomainValidationError(f"{field_name} must be a non-empty string")
 
 
+def _unique_text(values: Sequence[str]) -> tuple[str, ...]:
+    """Return compact, stable text without inheriting duplicate metadata."""
+
+    return tuple(dict.fromkeys(value for value in values if value.strip()))
+
+
+def _digest_tuple(
+    value: Sequence[str], field_name: str, *, require_items: bool
+) -> tuple[str, ...]:
+    values = tuple(value)
+    if require_items and not values:
+        raise DomainValidationError(f"{field_name} must not be empty")
+    if len(values) != len(set(values)):
+        raise DomainValidationError(f"{field_name} must not contain duplicates")
+    for digest in values:
+        require_sha256(digest, f"{field_name} entry")
+    return values
+
+
 @dataclass(frozen=True)
 class VerifiedBlockingCommit:
-    """Cryptographically bound evidence that permits the K2 transition.
-
-    This deliberately is not the old ``{approved: true}`` convention.  The
-    caller must supply a sealed blocking artifact digest and an independent
-    verification digest; both are carried into the retrieval snapshot.
-    """
+    """Cryptographically bound evidence that permits the K2 transition."""
 
     scene_id: str
     artifact_id: str
@@ -84,17 +98,68 @@ class EvidenceVerifiedPromotion:
     verifier_id: str
     human_reviewer_id: str
     human_approved: bool
+    media_observation_digests: tuple[str, ...] = ()
+    outcome_attribution_digest: str = ""
+    pattern_candidate_digest: str = ""
+    corroborating_case_digests: tuple[str, ...] = ()
+    counterexample_digests: tuple[str, ...] = ()
+    applicability_scope_digest: str = ""
 
     def __post_init__(self) -> None:
         _non_empty_text(self.proposal_id, "proposal_id")
-        if not isinstance(self.capsule, KnowledgeCapsuleV2):
+        if type(self.capsule) is not KnowledgeCapsuleV2:
             raise DomainValidationError("capsule must be a KnowledgeCapsuleV2")
-        digests = tuple(self.evidence_digests)
-        if any(not isinstance(digest, str) for digest in digests):
-            raise DomainValidationError("evidence_digests must contain SHA-256 strings")
-        for digest in digests:
-            require_sha256(digest, "evidence_digests entry")
-        object.__setattr__(self, "evidence_digests", digests)
+        if (
+            not self.media_observation_digests
+            or not self.outcome_attribution_digest
+            or not self.pattern_candidate_digest
+            or not self.corroborating_case_digests
+            or not self.counterexample_digests
+            or not self.applicability_scope_digest
+        ):
+            raise DomainValidationError(
+                "structured experience promotion chain is required"
+            )
+        evidence = _digest_tuple(
+            self.evidence_digests, "evidence_digests", require_items=False
+        )
+        observations = _digest_tuple(
+            self.media_observation_digests,
+            "media_observation_digests",
+            require_items=True,
+        )
+        corroborating = _digest_tuple(
+            self.corroborating_case_digests,
+            "corroborating_case_digests",
+            require_items=True,
+        )
+        counterexamples = _digest_tuple(
+            self.counterexample_digests,
+            "counterexample_digests",
+            require_items=True,
+        )
+        for field_name in (
+            "outcome_attribution_digest",
+            "pattern_candidate_digest",
+            "applicability_scope_digest",
+        ):
+            require_sha256(getattr(self, field_name), field_name)
+        chain = {
+            *observations,
+            self.outcome_attribution_digest,
+            self.pattern_candidate_digest,
+            *corroborating,
+            *counterexamples,
+            self.applicability_scope_digest,
+        }
+        if evidence and not chain.issubset(evidence):
+            raise DomainValidationError(
+                "evidence_digests must bind every structured experience link"
+            )
+        object.__setattr__(self, "evidence_digests", evidence)
+        object.__setattr__(self, "media_observation_digests", observations)
+        object.__setattr__(self, "corroborating_case_digests", corroborating)
+        object.__setattr__(self, "counterexample_digests", counterexamples)
 
 
 @dataclass(frozen=True)
@@ -106,186 +171,13 @@ class ApprovedKnowledgeCapsule:
 
 
 @dataclass(frozen=True)
-class KnowledgeDecisionView:
-    """The compact decision view; it contains neither raw source nor locator."""
-
-    scene_id: str
-    stage: KnowledgeStage
-    capsule_ids: tuple[str, ...]
-    claims_by_capsule: Mapping[str, tuple[str, ...]]
-    source_digests: Mapping[str, tuple[str, ...]]
-    entries_by_capsule: Mapping[str, Mapping[str, Any]] = field(default_factory=dict)
-
-    def __post_init__(self) -> None:
-        _non_empty_text(self.scene_id, "scene_id")
-        if not isinstance(self.stage, KnowledgeStage):
-            raise DomainValidationError("stage must be a KnowledgeStage")
-        ids = tuple(self.capsule_ids)
-        if any(not isinstance(capsule_id, str) or not capsule_id.strip() for capsule_id in ids):
-            raise DomainValidationError("capsule_ids must contain non-empty text")
-        if len(ids) != len(set(ids)):
-            raise DomainValidationError("capsule_ids must be unique")
-        claims = {
-            capsule_id: tuple(values)
-            for capsule_id, values in self.claims_by_capsule.items()
-        }
-        digests = {
-            capsule_id: tuple(values)
-            for capsule_id, values in self.source_digests.items()
-        }
-        if set(claims) != set(ids) or set(digests) != set(ids):
-            raise DomainValidationError("view mappings must exactly cover capsule_ids")
-        entries = {capsule_id: dict(value) for capsule_id, value in self.entries_by_capsule.items()}
-        if set(entries) != set(ids):
-            raise DomainValidationError("view entries must exactly cover capsule_ids")
-        for capsule_id in ids:
-            if not claims[capsule_id] or any(not value.strip() for value in claims[capsule_id]):
-                raise DomainValidationError("capsule claims must be non-empty")
-            if not digests[capsule_id]:
-                raise DomainValidationError("capsule source digests are required")
-            for digest in digests[capsule_id]:
-                require_sha256(digest, "source digest")
-            entry = entries[capsule_id]
-            required = {
-                "capsule_id", "director_question", "applies_because",
-                "execution_constraints", "expected_effect", "tradeoff",
-                "anti_pattern", "source_digest",
-            }
-            if set(entry) != required or entry["capsule_id"] != capsule_id:
-                raise DomainValidationError("knowledge decision entry has an invalid shape")
-            if not isinstance(entry["director_question"], str) or not entry["director_question"].strip():
-                raise DomainValidationError("knowledge decision entry requires a director_question")
-            if not isinstance(entry["expected_effect"], str) or not entry["expected_effect"].strip():
-                raise DomainValidationError("knowledge decision entry requires an expected_effect")
-            for field_name in ("applies_because", "execution_constraints", "tradeoff"):
-                if not isinstance(entry[field_name], tuple) or any(
-                    not isinstance(value, str) or not value.strip() for value in entry[field_name]
-                ):
-                    raise DomainValidationError(f"knowledge decision entry {field_name} must be text")
-            if not isinstance(entry["anti_pattern"], bool):
-                raise DomainValidationError("knowledge decision entry anti_pattern must be boolean")
-            require_sha256(entry["source_digest"], "knowledge decision entry source_digest")
-        object.__setattr__(self, "capsule_ids", ids)
-        object.__setattr__(self, "claims_by_capsule", _frozen_mapping(claims, "claims_by_capsule"))
-        object.__setattr__(self, "source_digests", _frozen_mapping(digests, "source_digests"))
-        object.__setattr__(
-            self,
-            "entries_by_capsule",
-            _frozen_mapping(
-                {capsule_id: MappingProxyType(entry) for capsule_id, entry in entries.items()},
-                "entries_by_capsule",
-            ),
-        )
-
-    def to_dict(self) -> dict[str, Any]:
-        """Return only prompt-safe, hash-addressed decision content."""
-        return {
-            "scene_id": self.scene_id,
-            "stage": self.stage.value,
-            "capsule_ids": list(self.capsule_ids),
-            "claims_by_capsule": {
-                capsule_id: list(self.claims_by_capsule[capsule_id])
-                for capsule_id in self.capsule_ids
-            },
-            "source_digests": {
-                capsule_id: list(self.source_digests[capsule_id])
-                for capsule_id in self.capsule_ids
-            },
-            "capsules": [
-                {
-                    "capsule_id": capsule_id,
-                    "director_question": self.entries_by_capsule[capsule_id]["director_question"],
-                    "applies_because": list(self.entries_by_capsule[capsule_id]["applies_because"]),
-                    "execution_constraints": list(
-                        self.entries_by_capsule[capsule_id]["execution_constraints"]
-                    ),
-                    "expected_effect": self.entries_by_capsule[capsule_id]["expected_effect"],
-                    "tradeoff": list(self.entries_by_capsule[capsule_id]["tradeoff"]),
-                    "anti_pattern": self.entries_by_capsule[capsule_id]["anti_pattern"],
-                    "source_digest": self.entries_by_capsule[capsule_id]["source_digest"],
-                }
-                for capsule_id in self.capsule_ids
-            ],
-        }
-
-
-@dataclass(frozen=True)
-class KnowledgeSnapshot:
-    """Sealed snapshot sufficient for replay without another catalog search."""
-
-    snapshot_id: str
-    scene_id: str
-    stage: KnowledgeStage
-    decision_view: KnowledgeDecisionView
-    selected_card_ids: tuple[str, ...]
-    exclusions: Mapping[str, str]
-    conflicts: tuple[Mapping[str, Any], ...]
-    catalog_index_sha256: str
-    legacy_selection_digest: str
-    blocking_commit_digest: str | None
-    security_event_digests: tuple[str, ...]
-    content_sha256: str = field(repr=False)
-
-    def __post_init__(self) -> None:
-        _non_empty_text(self.snapshot_id, "snapshot_id")
-        _non_empty_text(self.scene_id, "scene_id")
-        if not isinstance(self.stage, KnowledgeStage):
-            raise DomainValidationError("stage must be a KnowledgeStage")
-        if not isinstance(self.decision_view, KnowledgeDecisionView):
-            raise DomainValidationError("decision_view must be a KnowledgeDecisionView")
-        if self.decision_view.scene_id != self.scene_id or self.decision_view.stage is not self.stage:
-            raise DomainValidationError("snapshot and decision view must have the same scene and stage")
-        ids = tuple(self.selected_card_ids)
-        if ids != self.decision_view.capsule_ids:
-            raise DomainValidationError("selected_card_ids must match the decision view")
-        if len(ids) != len(set(ids)):
-            raise DomainValidationError("selected_card_ids must be unique")
-        require_sha256(self.catalog_index_sha256, "catalog_index_sha256")
-        require_sha256(self.legacy_selection_digest, "legacy_selection_digest")
-        if self.blocking_commit_digest is not None:
-            require_sha256(self.blocking_commit_digest, "blocking_commit_digest")
-        event_digests = tuple(self.security_event_digests)
-        for digest in event_digests:
-            require_sha256(digest, "security_event_digest")
-        object.__setattr__(self, "selected_card_ids", ids)
-        object.__setattr__(self, "exclusions", _frozen_mapping(self.exclusions, "exclusions"))
-        object.__setattr__(self, "conflicts", tuple(MappingProxyType(dict(item)) for item in self.conflicts))
-        object.__setattr__(self, "security_event_digests", event_digests)
-        require_sha256(self.content_sha256, "content_sha256")
-        if self.content_sha256 != canonical_sha256(self._integrity_payload()):
-            raise DomainValidationError("knowledge snapshot content_sha256 does not match its content")
-
-    def _integrity_payload(self) -> dict[str, Any]:
-        return {
-            "snapshot_id": self.snapshot_id,
-            "scene_id": self.scene_id,
-            "stage": self.stage.value,
-            "decision_view": self.decision_view.to_dict(),
-            "selected_card_ids": self.selected_card_ids,
-            "exclusions": dict(sorted(self.exclusions.items())),
-            "conflicts": [dict(item) for item in self.conflicts],
-            "catalog_index_sha256": self.catalog_index_sha256,
-            "legacy_selection_digest": self.legacy_selection_digest,
-            "blocking_commit_digest": self.blocking_commit_digest,
-            "security_event_digests": self.security_event_digests,
-        }
-
-    def verify_integrity(self) -> bool:
-        return self.content_sha256 == canonical_sha256(self._integrity_payload())
-
-    def to_dict(self) -> dict[str, Any]:
-        payload = self._integrity_payload()
-        payload["content_sha256"] = self.content_sha256
-        return payload
-
-
-@dataclass(frozen=True)
 class KnowledgeRetrieval:
-    """The canonical result from the only K1/K2 entry point."""
+    """The sole K1/K2 retrieval result, bound to canonical artifacts."""
 
     stage: KnowledgeStage
+    selected_capsules: tuple[KnowledgeCapsuleV2, ...]
     decision_view: KnowledgeDecisionView
-    snapshot: KnowledgeSnapshot
+    snapshot: ArtifactEnvelope[KnowledgeSnapshot]
     conflicts: tuple[Mapping[str, Any], ...]
     exclusions: Mapping[str, str]
     blocking_commit_digest: str | None
@@ -293,25 +185,84 @@ class KnowledgeRetrieval:
 
 @dataclass(frozen=True)
 class KnowledgeReplay:
-    """A replay reads a sealed snapshot and never invokes catalog retrieval."""
+    """A replay reads a sealed canonical snapshot without catalog retrieval."""
 
     snapshot_id: str
     decision_view: KnowledgeDecisionView
     selected_card_ids: tuple[str, ...]
 
 
-def _candidate_to_capsule(candidate: KnowledgeCandidate) -> KnowledgeCapsuleV2:
+def _candidate_source_ref(candidate: KnowledgeCandidate) -> SourceRef:
+    """Retain trusted locators in the snapshot but never expose raw identities."""
+
     source_digest = candidate.card.source_hash
     try:
         require_sha256(source_digest, "candidate source_hash")
     except DomainValidationError:
-        source_digest = canonical_sha256(candidate.snapshot_record())
-    source_id = candidate.card.source_file or candidate.card_id
+        source_digest = candidate.content_sha256
+
+    if candidate.raw_evidence is not None:
+        synthetic_id = canonical_sha256(
+            {
+                "candidate_id": candidate.card_id,
+                "candidate_digest": candidate.content_sha256,
+                "source_digest": source_digest,
+            }
+        )[:24]
+        return SourceRef(
+            source_id=f"quarantined:{synthetic_id}",
+            digest=source_digest,
+        )
+
+    locator = candidate.card.source_file or None
+    return SourceRef(
+        source_id=locator or f"knowledge-candidate:{candidate.card_id}",
+        digest=source_digest,
+        locator=locator,
+    )
+
+
+def _candidate_record(candidate: KnowledgeCandidate) -> KnowledgeCandidateRecord:
+    """Seal every candidate, including excluded candidates, for replay."""
+
+    source_ref = _candidate_source_ref(candidate)
+    return KnowledgeCandidateRecord(
+        candidate_id=candidate.card_id,
+        content_sha256=candidate.content_sha256,
+        source_refs=(source_ref,),
+        field_provenance={
+            "candidate_metadata": (source_ref,),
+            "selection_metadata": (source_ref,),
+        },
+    )
+
+
+def _candidate_to_capsule(candidate: KnowledgeCandidate) -> KnowledgeCapsuleV2:
+    """Convert reviewed metadata into the unique canonical capsule type.
+
+    The legacy catalog lacks a provenance-complete valid-from capability
+    record.  A claimed ``platform_capability`` is therefore not upgraded by
+    guesswork; it remains excluded until a canonical capability capsule is
+    supplied through the proper promotion route.
+    """
+
+    if candidate.decision_domain == "platform_capability":
+        raise ValueError("capability_scope_required")
+    source_ref = _candidate_source_ref(candidate)
     return KnowledgeCapsuleV2(
         capsule_id=candidate.card_id,
         category=candidate.decision_domain,
         claims=(candidate.card.claim,),
-        source_refs=(SourceRef(source_id=source_id, digest=source_digest),),
+        source_summary=(
+            f"Reviewed catalog metadata for {candidate.card_id}; full source "
+            "provenance is retained in the sealed snapshot."
+        ),
+        source_refs=(source_ref,),
+        field_provenance={
+            "claims": (source_ref,),
+            "source_summary": (source_ref,),
+        },
+        capability_scope=None,
         confidence={
             "golden_evidence": "high",
             "render_evidence": "high",
@@ -321,46 +272,32 @@ def _candidate_to_capsule(candidate: KnowledgeCandidate) -> KnowledgeCapsuleV2:
     )
 
 
-def _view(scene_id: str, stage: KnowledgeStage, selected: Sequence[KnowledgeCandidate]) -> KnowledgeDecisionView:
-    capsules = tuple(_candidate_to_capsule(candidate) for candidate in selected)
-    candidates_by_id = {candidate.card_id: candidate for candidate in selected}
-    return KnowledgeDecisionView(
-        scene_id=scene_id,
-        stage=stage,
-        capsule_ids=tuple(capsule.capsule_id for capsule in capsules),
-        claims_by_capsule={capsule.capsule_id: capsule.claims for capsule in capsules},
-        source_digests={
-            capsule.capsule_id: tuple(reference.digest for reference in capsule.source_refs)
-            for capsule in capsules
-        },
-        entries_by_capsule={
-            capsule.capsule_id: {
-                "capsule_id": capsule.capsule_id,
-                "director_question": candidates_by_id[capsule.capsule_id].director_question,
-                "applies_because": tuple(
-                    candidates_by_id[capsule.capsule_id].query_tags
-                    or (candidates_by_id[capsule.capsule_id].decision_domain,)
-                ),
-                "execution_constraints": tuple(
-                    candidates_by_id[capsule.capsule_id].positive_closure_requirements
-                    + candidates_by_id[capsule.capsule_id].negative_routing_constraints
-                    or candidates_by_id[capsule.capsule_id].must_not_decide
-                ),
-                "expected_effect": capsule.claims[0],
-                "tradeoff": tuple(
-                    tuple(candidates_by_id[capsule.capsule_id].card.counter_examples)
-                    + tuple(candidates_by_id[capsule.capsule_id].non_applicability)
-                ),
-                "anti_pattern": candidates_by_id[capsule.capsule_id].decision_relation == "anti_pattern",
-                "source_digest": capsule.source_refs[0].digest,
-            }
-            for capsule in capsules
-        },
+def _entry_for_candidate(
+    candidate: KnowledgeCandidate, record: KnowledgeCandidateRecord
+) -> KnowledgeDecisionEntry:
+    return KnowledgeDecisionEntry(
+        capsule_id=candidate.card_id,
+        director_question=candidate.director_question,
+        applies_because=_unique_text(
+            candidate.query_tags or (candidate.decision_domain,)
+        ),
+        execution_constraints=_unique_text(
+            candidate.positive_closure_requirements
+            + candidate.negative_routing_constraints
+            or candidate.must_not_decide
+        ),
+        expected_effect=candidate.card.claim,
+        tradeoff=_unique_text(
+            tuple(candidate.card.counter_examples) + candidate.non_applicability
+        ),
+        anti_pattern=candidate.decision_relation == "anti_pattern",
+        source_digest=record.content_sha256,
     )
 
 
 def _security_event_digest(event: object) -> str:
-    """Keep a verifiable event trace without exposing untrusted source IDs."""
+    """Keep a verifiable event trace without exposing an untrusted source ID."""
+
     event_dict = event.to_dict()
     return canonical_sha256(
         {
@@ -374,13 +311,26 @@ def _security_event_digest(event: object) -> str:
 
 
 _K1_EXECUTION_TERMS = (
-    "camera", "shot", "lens", "framing", "composition", "editing", "edit", "timeline",
-    "摄影", "镜头", "镜头", "机位", "构图", "剪辑", "时间线",
+    "camera",
+    "shot",
+    "lens",
+    "framing",
+    "composition",
+    "editing",
+    "edit",
+    "timeline",
+    "摄影",
+    "镜头",
+    "机位",
+    "构图",
+    "剪辑",
+    "时间线",
 )
 
 
 def _is_k1_compatible(candidate: KnowledgeCandidate) -> bool:
-    """Keep execution knowledge out of K1 even when legacy metadata is mislabelled."""
+    """Keep execution knowledge out of K1 even if metadata is mislabelled."""
+
     text = " ".join(
         (
             candidate.decision_domain,
@@ -392,12 +342,84 @@ def _is_k1_compatible(candidate: KnowledgeCandidate) -> bool:
     return not any(term in text for term in _K1_EXECUTION_TERMS)
 
 
+def _retrieval_input_digest(
+    *,
+    diagnosis: SceneDiagnosis,
+    context: RetrievalContext,
+    stage: KnowledgeStage,
+    catalog: KnowledgeCatalog,
+    policy: RetrievalPolicy,
+    blocking_commit_digest: str | None,
+    k1_principles: Sequence[str],
+) -> str:
+    return canonical_sha256(
+        {
+            "scene_id": diagnosis.scene_id,
+            "stage": stage.value,
+            "catalog_index_sha256": catalog.index_sha256,
+            "context": {
+                "project_id": context.project_id,
+                "model_id": context.model_id,
+                "mode": context.mode,
+                "aspect_ratio": context.aspect_ratio,
+                "reference_mode": context.reference_mode,
+                "as_of": context.as_of,
+                "all_overrides": context.all_overrides,
+            },
+            "policy": {
+                "primary_card_limit": policy.primary_card_limit,
+                "conflict_record_limit": policy.conflict_record_limit,
+                "anti_pattern_limit": policy.anti_pattern_limit,
+                "retriever_version": policy.retriever_version,
+                "ranking_version": policy.ranking_version,
+            },
+            "blocking_commit_digest": blocking_commit_digest,
+            "k1_principles": tuple(k1_principles),
+        }
+    )
+
+
+def _envelope_source_refs(
+    catalog: KnowledgeCatalog, records: Sequence[KnowledgeCandidateRecord]
+) -> tuple[SourceRef, ...]:
+    refs = {
+        SourceRef(
+            source_id=f"knowledge-catalog:{catalog.index_sha256[:24]}",
+            digest=catalog.index_sha256,
+        )
+    }
+    for record in records:
+        refs.update(record.source_refs)
+    return tuple(sorted(refs, key=lambda ref: (ref.source_id, ref.digest, ref.locator or "")))
+
+
+def _verify_snapshot_envelope(snapshot: ArtifactEnvelope[KnowledgeSnapshot]) -> bool:
+    if type(snapshot) is not ArtifactEnvelope:
+        return False
+    if snapshot.artifact_kind is not ArtifactKind.KNOWLEDGE_SNAPSHOT:
+        return False
+    if type(snapshot.payload) is not KnowledgeSnapshot:
+        return False
+    try:
+        expected = ArtifactEnvelope.content_digest_for(
+            artifact_kind=snapshot.artifact_kind,
+            schema_version=snapshot.schema_version,
+            program_version=snapshot.program_version,
+            payload=snapshot.payload,
+            source_refs=snapshot.source_refs,
+            dependency_digests=snapshot.dependency_digests,
+        )
+    except DomainValidationError:
+        return False
+    return snapshot.content_sha256 == expected
+
+
 class KnowledgeRetriever:
     """The single canonical K1/K2 knowledge service.
 
-    It deliberately delegates searching to the existing metadata-only engine,
-    then narrows the result into the v2.1 contract.  No conflict is resolved,
-    no raw text is returned, and K2 cannot start from an unverified boolean.
+    Searching remains a metadata-only adapter.  The adapter cannot become a
+    second knowledge authority: all Director-visible values and replayable
+    state are instantiated from the v2.1 domain module below.
     """
 
     def __init__(self, *, policy: RetrievalPolicy | None = None) -> None:
@@ -436,14 +458,20 @@ class KnowledgeRetriever:
         preflight_exclusions: dict[str, str] = {}
         eligible_catalog = catalog
         if stage is KnowledgeStage.K1:
-            eligible = tuple(candidate for candidate in catalog.candidates if _is_k1_compatible(candidate))
+            eligible = tuple(
+                candidate
+                for candidate in catalog.candidates
+                if _is_k1_compatible(candidate)
+            )
             eligible_ids = {candidate.card_id for candidate in eligible}
             preflight_exclusions = {
                 candidate.card_id: "k1_execution_knowledge_forbidden"
                 for candidate in catalog.candidates
                 if candidate.card_id not in eligible_ids
             }
-            eligible_catalog = KnowledgeCatalog(eligible, catalog_version=catalog.catalog_version)
+            eligible_catalog = KnowledgeCatalog(
+                eligible, catalog_version=catalog.catalog_version
+            )
 
         legacy = retrieve_for_diagnosis(
             diagnosis=diagnosis,
@@ -451,78 +479,170 @@ class KnowledgeRetriever:
             context=context,
             policy=self._policy,
             blocking=blocking,
-            k1_principles=tuple(k1_principles) if stage is KnowledgeStage.K1 else (),
+            k1_principles=tuple(k1_principles)
+            if stage is KnowledgeStage.K1
+            else (),
         )
         expected_phase = "problem" if stage is KnowledgeStage.K1 else "execution"
         if legacy.packet.phase != expected_phase:
             raise RuntimeError("knowledge stage boundary violation")
-        selected = tuple(legacy.packet.primary_cards) + tuple(legacy.packet.anti_pattern_cards)
-        decision_view = _view(diagnosis.scene_id, stage, selected)
+
+        records = tuple(_candidate_record(candidate) for candidate in catalog.candidates)
+        records_by_id = {record.candidate_id: record for record in records}
+        candidates_by_id = {candidate.card_id: candidate for candidate in catalog.candidates}
         conflicts = tuple(item.to_dict() for item in legacy.packet.conflict_exposures)
+        conflict_option_ids = {
+            option_id
+            for conflict in conflicts
+            for option_id in conflict["option_card_ids"]
+        }
+        exclusions: dict[str, str] = {
+            **preflight_exclusions,
+            **dict(legacy.exclusions),
+        }
+
+        selected_candidates: list[KnowledgeCandidate] = []
+        selection_reasons: dict[str, str] = {}
+        for relation, candidates in (
+            ("legacy_primary", legacy.packet.primary_cards),
+            ("legacy_anti_pattern", legacy.packet.anti_pattern_cards),
+        ):
+            for candidate in candidates:
+                candidate_id = candidate.card_id
+                if candidate_id in selection_reasons:
+                    continue
+                if candidate_id in conflict_option_ids:
+                    exclusions[candidate_id] = "conflict_requires_director_decision"
+                    continue
+                if candidate.raw_evidence is not None:
+                    exclusions[candidate_id] = "security_quarantined"
+                    continue
+                try:
+                    _candidate_to_capsule(candidate)
+                except ValueError as exc:
+                    exclusions[candidate_id] = str(exc)
+                    continue
+                selected_candidates.append(candidate)
+                selection_reasons[candidate_id] = relation
+
+        selected_ids = {candidate.card_id for candidate in selected_candidates}
+        for candidate in catalog.candidates:
+            if candidate.card_id in selected_ids:
+                exclusions.pop(candidate.card_id, None)
+            else:
+                exclusions.setdefault(candidate.card_id, "not_selected")
+
+        selected_capsules = tuple(
+            _candidate_to_capsule(candidate) for candidate in selected_candidates
+        )
+        decision_view = KnowledgeDecisionView(
+            scene_id=diagnosis.scene_id,
+            stage=stage,
+            entries=tuple(
+                _entry_for_candidate(candidate, records_by_id[candidate.card_id])
+                for candidate in selected_candidates
+            ),
+        )
         blocking_digest = blocking_commit.content_sha256 if blocking_commit else None
-        exclusions = {**preflight_exclusions, **legacy.exclusions}
-        snapshot_id = "KS2-{}-{}-{}".format(
+        retrieval_input_digest = _retrieval_input_digest(
+            diagnosis=diagnosis,
+            context=context,
+            stage=stage,
+            catalog=catalog,
+            policy=self._policy,
+            blocking_commit_digest=blocking_digest,
+            k1_principles=k1_principles,
+        )
+        security_event_digests = _unique_text(
+            tuple(_security_event_digest(event) for event in legacy.security_events)
+        )
+        snapshot_id = "knowledge-snapshot:{}:{}:{}".format(
             diagnosis.scene_id,
             stage.value.lower(),
-            legacy.snapshot.content_sha256[:16],
+            retrieval_input_digest[:16],
         )
-        snapshot_fields = {
-            "snapshot_id": snapshot_id,
-            "scene_id": diagnosis.scene_id,
-            "stage": stage,
-            "decision_view": decision_view,
-            "selected_card_ids": decision_view.capsule_ids,
-            "exclusions": exclusions,
-            "conflicts": conflicts,
-            "catalog_index_sha256": catalog.index_sha256,
-            "legacy_selection_digest": legacy.snapshot.content_sha256,
-            "blocking_commit_digest": blocking_digest,
-            "security_event_digests": tuple(_security_event_digest(event) for event in legacy.security_events),
+        snapshot_payload = KnowledgeSnapshot(
+            snapshot_id=snapshot_id,
+            scene_id=diagnosis.scene_id,
+            stage=stage,
+            decision_view=decision_view,
+            selected_capsule_ids=decision_view.capsule_ids,
+            exclusions=exclusions,
+            conflicts=conflicts,
+            catalog_index_sha256=catalog.index_sha256,
+            retrieval_input_digest=retrieval_input_digest,
+            blocking_commit_digest=blocking_digest,
+            security_event_digests=security_event_digests,
+            candidate_records=records,
+            selection_reasons=selection_reasons,
+            catalog_index_abstract={
+                "catalog_index": catalog.index_sha256,
+                "candidate_count": str(len(catalog.candidates)),
+                "catalog_version_digest": canonical_sha256(catalog.catalog_version),
+            },
+        )
+        dependencies = {
+            "catalog_index": catalog.index_sha256,
+            "retrieval_input": retrieval_input_digest,
+            "legacy_selection": legacy.snapshot.content_sha256,
         }
-        snapshot = KnowledgeSnapshot(
-            **snapshot_fields,
-            content_sha256=canonical_sha256(
-                {
-                    "snapshot_id": snapshot_id,
-                    "scene_id": diagnosis.scene_id,
-                    "stage": stage.value,
-                    "decision_view": decision_view.to_dict(),
-                    "selected_card_ids": decision_view.capsule_ids,
-                    "exclusions": dict(sorted(exclusions.items())),
-                    "conflicts": [dict(item) for item in conflicts],
-                    "catalog_index_sha256": catalog.index_sha256,
-                    "legacy_selection_digest": legacy.snapshot.content_sha256,
-                    "blocking_commit_digest": blocking_digest,
-                    "security_event_digests": tuple(
-                        _security_event_digest(event) for event in legacy.security_events
-                    ),
-                }
-            ),
+        if blocking_digest is not None:
+            dependencies["blocking_commit"] = blocking_digest
+        snapshot = ArtifactEnvelope.create(
+            artifact_id=f"artifact:{snapshot_id}",
+            artifact_kind=ArtifactKind.KNOWLEDGE_SNAPSHOT,
+            schema_version=_SCHEMA_VERSION,
+            program_version=_PROGRAM_VERSION,
+            payload=snapshot_payload,
+            source_refs=_envelope_source_refs(catalog, records),
+            dependency_digests=dependencies,
+            created_at=(f"{context.as_of}T00:00:00Z" if context.as_of else "1970-01-01T00:00:00Z"),
+            validation_status=ValidationStatus.DRAFT,
         )
         return KnowledgeRetrieval(
             stage=stage,
+            selected_capsules=selected_capsules,
             decision_view=decision_view,
             snapshot=snapshot,
-            conflicts=conflicts,
-            exclusions=MappingProxyType(exclusions),
+            conflicts=snapshot_payload.conflicts,
+            exclusions=MappingProxyType(dict(snapshot_payload.exclusions)),
             blocking_commit_digest=blocking_digest,
         )
 
-    def replay(self, snapshot: KnowledgeSnapshot) -> KnowledgeReplay:
-        if not isinstance(snapshot, KnowledgeSnapshot):
-            raise TypeError("snapshot must be a KnowledgeSnapshot")
-        if not snapshot.verify_integrity():
+    def replay(self, snapshot: ArtifactEnvelope[KnowledgeSnapshot]) -> KnowledgeReplay:
+        if not _verify_snapshot_envelope(snapshot):
             raise ValueError("knowledge snapshot integrity check failed")
+        payload = snapshot.payload
         return KnowledgeReplay(
-            snapshot_id=snapshot.snapshot_id,
-            decision_view=snapshot.decision_view,
-            selected_card_ids=snapshot.selected_card_ids,
+            snapshot_id=payload.snapshot_id,
+            decision_view=payload.decision_view,
+            selected_card_ids=payload.selected_capsule_ids,
         )
 
     def promote(self, proposal: EvidenceVerifiedPromotion) -> ApprovedKnowledgeCapsule:
         """Promote only independently evidenced, human-approved knowledge."""
+
         if not isinstance(proposal, EvidenceVerifiedPromotion):
             raise TypeError("proposal must be an EvidenceVerifiedPromotion")
+        try:
+            EvidenceVerifiedPromotion(
+                proposal_id=proposal.proposal_id,
+                capsule=proposal.capsule,
+                evidence_digests=proposal.evidence_digests,
+                verifier_id=proposal.verifier_id,
+                human_reviewer_id=proposal.human_reviewer_id,
+                human_approved=proposal.human_approved,
+                media_observation_digests=proposal.media_observation_digests,
+                outcome_attribution_digest=proposal.outcome_attribution_digest,
+                pattern_candidate_digest=proposal.pattern_candidate_digest,
+                corroborating_case_digests=proposal.corroborating_case_digests,
+                counterexample_digests=proposal.counterexample_digests,
+                applicability_scope_digest=proposal.applicability_scope_digest,
+            )
+        except DomainValidationError as exc:
+            raise KnowledgePromotionError(
+                "structured experience promotion chain is invalid"
+            ) from exc
         if not proposal.evidence_digests or not proposal.verifier_id.strip():
             raise KnowledgePromotionError("evidence verification is required before promotion")
         if not proposal.human_approved or not proposal.human_reviewer_id.strip():
@@ -536,6 +656,12 @@ class KnowledgeRetriever:
                     "evidence_digests": proposal.evidence_digests,
                     "verifier_id": proposal.verifier_id,
                     "human_reviewer_id": proposal.human_reviewer_id,
+                    "media_observation_digests": proposal.media_observation_digests,
+                    "outcome_attribution_digest": proposal.outcome_attribution_digest,
+                    "pattern_candidate_digest": proposal.pattern_candidate_digest,
+                    "corroborating_case_digests": proposal.corroborating_case_digests,
+                    "counterexample_digests": proposal.counterexample_digests,
+                    "applicability_scope_digest": proposal.applicability_scope_digest,
                 }
             ),
         )
