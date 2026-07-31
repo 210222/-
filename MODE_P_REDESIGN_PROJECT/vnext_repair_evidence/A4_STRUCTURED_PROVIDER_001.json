@@ -1,0 +1,110 @@
+{
+  "schema_version": "2.1",
+  "record_type": "mode_p_vnext_a4_structured_provider",
+  "task_id": "A4",
+  "run_id": "codex-a4-structured-provider-20260731",
+  "architecture_version": "2.1",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/prompts/__init__.py",
+    "01_调度器/mode_p_vnext/prompts/signatures.py",
+    "01_调度器/mode_p_vnext/prompts/fragments.py",
+    "01_调度器/mode_p_vnext/prompts/budgets.py",
+    "01_调度器/mode_p_vnext/prompts/schema_registry.py",
+    "01_调度器/mode_p_vnext/prompts/compiler.py",
+    "01_调度器/mode_p_vnext/ports/structured_text.py",
+    "01_调度器/mode_p_vnext/adapters/model/__init__.py",
+    "01_调度器/mode_p_vnext/adapters/model/claude_deepseek.py",
+    "01_调度器/mode_p_vnext/tests/test_a4_structured_provider.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A4_STRUCTURED_PROVIDER_001.json"
+  ],
+  "root_cause": "The v2.1 target module paths did not exist. The only available model boundary was the historical director_vnext1 path, which embeds large recursive output-shape instructions and has no vNext declarative StageSignature, compact Draft Schema registry, preflight budget gate, or vNext structured provider port.",
+  "alternatives_considered": [
+    {
+      "option": "Reuse or patch the historical director_vnext1 prompt/provider implementation.",
+      "decision": "rejected",
+      "reason": "It is a historical island outside A4 ownership and retains the architecture's rejected recursive-shape prompt design."
+    },
+    {
+      "option": "Move the whole Draft Schema into prompt text as a fallback.",
+      "decision": "rejected",
+      "reason": "Architecture §6.3 requires separate schema transport and explicitly forbids silently restoring a complete recursive Schema Prompt."
+    },
+    {
+      "option": "Consume the one repair allowance before an attempted CLI call.",
+      "decision": "rejected",
+      "reason": "A transport failure is not a creative correction. The allowance is consumed only after a successful structured response."
+    }
+  ],
+  "repair": [
+    "Declared immutable E0, S1, B0, and B1 StageSignature records with architecture hard prompt/schema budgets and explicit Draft-only output boundaries.",
+    "Added PromptCompiler, compact conditional fragments, DraftSchemaRegistry, and deterministic PromptBudgetGate. Prompt text carries the contract identity and schema digest, while the compact native JSON Schema remains a separate transport field.",
+    "Added StructuredGenerationPort, GenerationPolicy, ModelDraft, TextCallEvidence with TEXT_VALIDATED claim ceiling, ViolationSet, ContractPatch, and a one-use RepairBudget.",
+    "Added a native Claude Code structured transport that chooses claude.exe on Windows, passes no tools, sends system/user/schema through separate fields, and records only digest/usage metadata.",
+    "Added local compact-schema decoding so unexpected non-Draft fields, including final VEC-shaped output, fail closed after transport rather than reaching later assembly."
+  ],
+  "checks": [
+    {
+      "name": "stage_signatures_declared",
+      "exit_code": 0,
+      "evidence": "A4 tests prove the only declared model stages are E0/S1/B0/B1 with their 6000/8000/10000/12000 prompt and 2500/3500/4500/4500 schema limits."
+    },
+    {
+      "name": "prompt_schema_separate_transport",
+      "exit_code": 0,
+      "evidence": "A4 tests prove the compiled prompt contains a schema digest but no serialized schema or recursive exact_output_shape_lock, and the native runner receives schema as StructuredTransportRequest.json_schema."
+    },
+    {
+      "name": "b1_prompt_under_12000_chars",
+      "exit_code": 0,
+      "evidence": "Measured compact B1 prompt: 968 characters against the 12000 hard limit. The preflight test rejects an oversized prompt before provider invocation."
+    },
+    {
+      "name": "b1_schema_under_4500_chars",
+      "exit_code": 0,
+      "evidence": "Measured compact B1 ExecutionDesignDraft Schema: 1976 characters against the 4500 hard limit; SchemaRegistry enforces the limit deterministically."
+    },
+    {
+      "name": "native_windows_binary_first",
+      "exit_code": 0,
+      "evidence": "A4 tests prove a native claude.exe candidate wins over claude.cmd and the runner passes its native schema in a separate argv value with all model tools disabled."
+    },
+    {
+      "name": "one_scoped_contract_repair",
+      "exit_code": 0,
+      "evidence": "A4 tests prove ContractPatch cannot write outside ViolationSet.repair_scope, only one patch may consume RepairBudget, and a transport exception leaves the budget at zero."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a4_structured_provider",
+      "command": "python -m pytest mode_p_vnext/tests/test_a4_structured_provider.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "10 passed"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_to_a4_and_v4_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "86 passed"
+    },
+    {
+      "name": "a4_compile_and_delta_check",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m compileall -q mode_p_vnext/prompts mode_p_vnext/ports mode_p_vnext/adapters/model; git diff --check",
+      "exit_code": 0,
+      "result": "All A4 modules compiled; no patch whitespace errors."
+    }
+  ],
+  "residual_risk": "A4 establishes the bounded text interface only. A5 must define the formal Draft domain artifacts and deterministically assemble BlockingCommit, Timeline, IDs, hashes, reference duties, safety constants, and VEC. No provider call, Shadow, media operation, user approval, or production switch was started.",
+  "non_activation": {
+    "director_runtime_started": false,
+    "external_submission": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  }
+}
