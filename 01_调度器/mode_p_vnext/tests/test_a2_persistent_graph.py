@@ -362,6 +362,13 @@ def test_pending_transaction_recovers_without_reexecuting_an_accepted_node(tmp_p
     assert not session.state().accepted
     assert not session.current_pointer_path.exists()
     assert (session.run_dir / "staging" / pending.generation_id).is_dir()
+    staged_manifest = (
+        session.run_dir / "staging" / pending.generation_id / "MANIFEST.json"
+    )
+    assert staged_manifest.is_file()
+    assert json.loads(staged_manifest.read_text(encoding="utf-8"))["state_sha256"] == (
+        pending.state_sha256
+    )
 
     resumed = RunSession.open(session.run_dir, graph=graph)
     assert resumed.recover_pending(owner="recovery-worker") == ("E0",)
@@ -535,6 +542,46 @@ def test_field_level_invalidation_is_digest_edge_scoped_and_keeps_unrelated_node
     assert invalidated.record.invalidated_artifact_digests == ("b" * 64, "c" * 64)
 
 
+def test_persisted_field_invalidation_replays_as_a_bounded_graph_transition(
+    tmp_path: Path,
+) -> None:
+    graph = _graph()
+    session = RunSession.create(
+        tmp_path / "runs", run_id="run-persisted-invalidation", graph=graph
+    )
+    direction = _direction_artifact()
+    accepted = session.runner(owner="worker-e0").accept(
+        node_id="E0",
+        artifacts={"episode_direction": direction},
+        dependency_digests={"episode_facts": "1" * 64},
+    )
+    session.runner(owner="worker-s1").accept(
+        node_id="S1",
+        artifacts={"scene_intent": _scene_intent_artifact()},
+        dependency_digests={
+            "episode_direction": accepted.outputs[
+                "episode_direction"
+            ].content_sha256,
+            "scene_facts": "2" * 64,
+        },
+    )
+
+    result = session.invalidate(
+        changed_field_digests={"scene_facts": "9" * 64},
+        reason="scene fact revision",
+    )
+    restored = RunSession.open(session.run_dir, graph=graph).state()
+    assert result.invalidated_node_ids == ("S1",)
+    assert tuple(restored.accepted) == ("E0",)
+    event = json.loads(
+        (session.run_dir / "STATE_EVENTS.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()[-1]
+    )
+    assert event["transition"]["kind"] == "invalidation"
+    assert event["invalidation_record"]["invalidated_node_ids"] == ["S1"]
+
+
 def test_checkpoint_is_bound_to_dependency_digests_not_a_file_path_guess(tmp_path: Path) -> None:
     graph = _graph()
     session = RunSession.create(tmp_path / "runs", run_id="run-checkpoint", graph=graph)
@@ -550,6 +597,115 @@ def test_checkpoint_is_bound_to_dependency_digests_not_a_file_path_guess(tmp_pat
     assert session.resume_plan({"episode_facts": "1" * 64}).checkpoint_sequence == 1
     assert session.resume_plan({"episode_facts": "f" * 64}).checkpoint_sequence == 0
     assert canonical_sha256(payload["state"]) == payload["state_sha256"]
+
+
+def test_recovery_ignores_a_rehashed_checkpoint_that_is_not_bound_to_the_event_chain(
+    tmp_path: Path,
+) -> None:
+    graph = _graph()
+    session = RunSession.create(
+        tmp_path / "runs", run_id="run-forged-checkpoint", graph=graph
+    )
+    accepted = session.runner(owner="worker").accept(
+        node_id="E0",
+        artifacts={"episode_direction": _direction_artifact()},
+        dependency_digests={"episode_facts": "1" * 64},
+    )
+    checkpoint = (
+        session.run_dir / "checkpoints" / f"{accepted.event_sequence}.json"
+    )
+    assert checkpoint.is_file()
+    forged_state = PersistentGraphState(
+        run_id=accepted.run_id,
+        outputs={},
+        accepted={},
+        event_sequence=accepted.event_sequence,
+        current_commit_id=accepted.current_commit_id,
+    ).to_dict()
+    forged_checkpoint = {
+        **forged_state,
+        "state": forged_state,
+        "state_sha256": canonical_sha256(forged_state),
+    }
+    checkpoint.write_text(
+        json.dumps(forged_checkpoint), encoding="utf-8"
+    )
+
+    restored = RunSession.open(session.run_dir, graph=graph).state()
+    assert tuple(restored.accepted) == ("E0",)
+    assert restored.outputs["episode_direction"].content_sha256 == (
+        accepted.outputs["episode_direction"].content_sha256
+    )
+
+
+def test_recovery_fails_closed_when_an_accepted_artifact_reference_no_longer_verifies(
+    tmp_path: Path,
+) -> None:
+    graph = _graph()
+    session = RunSession.create(
+        tmp_path / "runs", run_id="run-dangling-artifact", graph=graph
+    )
+    artifact = _direction_artifact()
+    session.runner(owner="worker").accept(
+        node_id="E0",
+        artifacts={"episode_direction": artifact},
+        dependency_digests={"episode_facts": "1" * 64},
+    )
+    path = (
+        session.run_dir
+        / "artifacts"
+        / artifact.artifact_kind.value
+        / f"{artifact.content_sha256}.json"
+    )
+    stored = json.loads(path.read_text(encoding="utf-8"))
+    stored["payload"]["dramatic_promise"] = "Post-acceptance mutation."
+    path.write_text(json.dumps(stored), encoding="utf-8")
+
+    with pytest.raises(RunSessionError, match="persisted artifact"):
+        RunSession.open(session.run_dir, graph=graph).state()
+
+
+def test_state_event_cannot_reuse_a_different_commits_manifest_binding(
+    tmp_path: Path,
+) -> None:
+    graph = _graph()
+    session = RunSession.create(
+        tmp_path / "runs", run_id="run-forged-event", graph=graph
+    )
+    accepted = session.runner(owner="worker").accept(
+        node_id="E0",
+        artifacts={"episode_direction": _direction_artifact()},
+        dependency_digests={"episode_facts": "1" * 64},
+    )
+    scene_ref = session.artifacts.put(_scene_intent_artifact())
+    forged = graph.apply(
+        accepted,
+        node_id="S1",
+        outputs={"scene_intent": scene_ref},
+        dependency_digests={
+            "episode_direction": accepted.outputs[
+                "episode_direction"
+            ].content_sha256,
+            "scene_facts": "2" * 64,
+        },
+        commit_id=accepted.current_commit_id,
+    )
+    event = {
+        "state": forged.to_dict(),
+        "state_sha256": canonical_sha256(forged.to_dict()),
+        "commit_id": accepted.current_commit_id,
+        "node_id": "S1",
+        "transition": {
+            "kind": "node",
+            "base_state_sha256": canonical_sha256(accepted.to_dict()),
+        },
+    }
+    with (session.run_dir / "STATE_EVENTS.jsonl").open("ab") as handle:
+        handle.write(canonical_json_bytes(event))
+        handle.write(b"\n")
+
+    with pytest.raises(RunSessionError, match="commit manifest"):
+        RunSession.open(session.run_dir, graph=graph).state()
 
 
 def test_each_output_field_rejects_an_artifact_kind_from_another_stage() -> None:

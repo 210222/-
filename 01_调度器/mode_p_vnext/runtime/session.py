@@ -9,6 +9,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from hashlib import sha256
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any, Iterator, Mapping
 
 from mode_p_vnext.concurrency_lock import LockError, SessionLock
@@ -18,7 +19,11 @@ from mode_p_vnext.domain.artifact import (
     canonical_sha256,
 )
 from mode_p_vnext.pipeline.graph import StateGraph
-from mode_p_vnext.pipeline.invalidation import FieldInvalidator, InvalidationResult
+from mode_p_vnext.pipeline.invalidation import (
+    FieldInvalidator,
+    InvalidationRecord,
+    InvalidationResult,
+)
 from mode_p_vnext.pipeline.state import (
     ArtifactRef,
     PersistentGraphState,
@@ -102,24 +107,8 @@ class RunSession:
         return NodeRunner(self, owner)
 
     def state(self) -> PersistentGraphState:
-        """Replay only state events whose referenced commit was atomically promoted."""
-        state, checkpoint_sequence = self._latest_valid_checkpoint()
-        self._validate_graph_state(state)
-        for event in self._events():
-            if int(event["state"]["event_sequence"]) <= checkpoint_sequence:
-                continue
-            commit_id = str(event.get("commit_id") or "")
-            if commit_id and not self._is_promoted_commit(commit_id, event["state_sha256"]):
-                # This is a durable prepared event.  It becomes visible only
-                # after its same-volume commit promotion succeeds.
-                continue
-            candidate = PersistentGraphState.from_dict(event["state"])
-            if candidate.event_sequence <= state.event_sequence:
-                continue
-            if candidate.event_sequence != state.event_sequence + 1:
-                raise RunSessionError("accepted state events have a sequence gap")
-            self._validate_graph_state(candidate)
-            state = candidate
+        """Replay only state transitions bound to trusted commit/event evidence."""
+        state, _ = self._replay_event_chain()
         return state
 
     def checkpoint(self) -> Path:
@@ -182,7 +171,7 @@ class RunSession:
 
     def resume_plan(self, supplied_input_digests: Mapping[str, str]) -> ResumePlan:
         """Return the accepted restart prefix after validating digest edges."""
-        state = self.state()
+        state, state_history = self._replay_event_chain()
         changed: dict[str, str] = {}
         for node_id, acceptance in state.accepted.items():
             node = self.graph.node(node_id)
@@ -191,7 +180,7 @@ class RunSession:
                     actual = supplied_input_digests[field_name]
                     if actual != expected:
                         changed[field_name] = actual
-        checkpoint_sequence = state.event_sequence
+        checkpoint_sequence = self._latest_matching_checkpoint(state_history)
         if changed:
             result = FieldInvalidator(self.graph).invalidate(
                 state,
@@ -210,13 +199,18 @@ class RunSession:
         self, *, changed_field_digests: Mapping[str, str], reason: str
     ) -> InvalidationResult:
         with self._lock("invalidation"):
+            base_state = self.state()
             result = FieldInvalidator(self.graph).invalidate(
-                self.state(),
+                base_state,
                 changed_field_digests=changed_field_digests,
                 reason=reason,
             )
             if result.invalidated_node_ids:
-                self._append_state_event(result.state, pending=None)
+                self._append_state_event(
+                    result.state,
+                    pending=None,
+                    invalidation_record=result.record,
+                )
                 self._write_current_pointer(result.state, pending=None)
                 self.checkpoint()
             return result
@@ -250,8 +244,58 @@ class RunSession:
             except (KeyError, TypeError, json.JSONDecodeError) as exc:
                 raise RunSessionError("invalid state event") from exc
 
-    def _latest_valid_checkpoint(self) -> tuple[PersistentGraphState, int]:
-        baseline = PersistentGraphState.empty(self.run_id)
+    def _replay_event_chain(
+        self,
+    ) -> tuple[PersistentGraphState, Mapping[int, PersistentGraphState]]:
+        """Replay graph transitions independently of checkpoint files.
+
+        Checkpoints are recoverable performance snapshots, not an authority
+        boundary: each is accepted only after it matches this commit-bound
+        event chain. This prevents a re-hashed standalone checkpoint from
+        becoming state authority.
+        """
+
+        state = PersistentGraphState.empty(self.run_id)
+        history: dict[int, PersistentGraphState] = {0: state}
+        for event in self._events():
+            candidate = PersistentGraphState.from_dict(event["state"])
+            if candidate.event_sequence <= state.event_sequence:
+                continue
+            if candidate.event_sequence != state.event_sequence + 1:
+                raise RunSessionError("accepted state events have a sequence gap")
+            self._validate_graph_state(candidate)
+            transition = event.get("transition")
+            if not isinstance(transition, Mapping):
+                raise RunSessionError("state event transition is missing or invalid")
+            base_state_sha256 = str(transition.get("base_state_sha256", ""))
+            if base_state_sha256 != canonical_sha256(state.to_dict()):
+                raise RunSessionError("state event base state does not match replay")
+            kind = transition.get("kind")
+            if kind == "node":
+                pending_commit_id = str(event.get("commit_id") or "")
+                legacy_manifest = (
+                    self.run_dir
+                    / "commits"
+                    / pending_commit_id
+                    / "COMMIT_MANIFEST.json"
+                )
+                if not legacy_manifest.is_file():
+                    # A durable prepared event is intentionally appended before
+                    # its staging directory is atomically promoted.
+                    continue
+            if kind == "node":
+                self._validate_node_event(state, candidate, event)
+            elif kind == "invalidation":
+                self._validate_invalidation_event(state, candidate, event)
+            else:
+                raise RunSessionError("state event has an unknown transition kind")
+            state = candidate
+            history[state.event_sequence] = state
+        return state, MappingProxyType(history)
+
+    def _latest_matching_checkpoint(
+        self, state_history: Mapping[int, PersistentGraphState]
+    ) -> int:
         checkpoint_dir = self.run_dir / CHECKPOINTS_DIRNAME
         candidates: list[tuple[int, Path]] = []
         for path in checkpoint_dir.glob("*.json"):
@@ -266,35 +310,175 @@ class RunSession:
                 if canonical_sha256(state_data) != payload["state_sha256"]:
                     continue
                 state = PersistentGraphState.from_dict(state_data)
-                if state.event_sequence == sequence:
-                    self._validate_graph_state(state)
-                    return state, sequence
+                trusted = state_history.get(sequence)
+                if (
+                    state.event_sequence == sequence
+                    and trusted is not None
+                    and canonical_sha256(state.to_dict())
+                    == canonical_sha256(trusted.to_dict())
+                ):
+                    return sequence
             except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
                 continue
-        return baseline, 0
+        return 0
 
     def _validate_graph_state(self, state: PersistentGraphState) -> None:
         try:
             self.graph.validate_state(state)
         except StateInvariantError as exc:
             raise RunSessionError(str(exc)) from exc
+        for field_name, ref in state.outputs.items():
+            if not self.artifacts.contains(ref):
+                raise RunSessionError(
+                    f"persisted artifact for '{field_name}' no longer verifies"
+                )
 
-    def _is_promoted_commit(self, commit_id: str, state_sha256: str) -> bool:
+    def _validate_node_event(
+        self,
+        state: PersistentGraphState,
+        candidate: PersistentGraphState,
+        event: Mapping[str, Any],
+    ) -> None:
+        commit_id = str(event.get("commit_id") or "")
+        node_id = str(event.get("node_id") or "")
+        if not commit_id or not node_id:
+            raise RunSessionError("node state event requires commit_id and node_id")
+        acceptance = candidate.accepted.get(node_id)
+        if acceptance is None or acceptance.commit_id != commit_id:
+            raise RunSessionError("node state event does not match node acceptance")
+        node = self.graph.node(node_id)
+        outputs = {
+            field_name: candidate.outputs[field_name]
+            for field_name in node.owns_fields
+        }
+        try:
+            expected = self.graph.apply(
+                state,
+                node_id=node_id,
+                outputs=outputs,
+                dependency_digests=acceptance.dependency_digests,
+                commit_id=commit_id,
+                cache_key=acceptance.cache_key,
+            )
+        except StateInvariantError as exc:
+            raise RunSessionError(str(exc)) from exc
+        if canonical_sha256(expected.to_dict()) != canonical_sha256(candidate.to_dict()):
+            raise RunSessionError("node state event does not reproduce its graph transition")
+        if not self._is_promoted_commit(
+            commit_id,
+            str(event["state_sha256"]),
+            node_id=node_id,
+            base_state_sha256=canonical_sha256(state.to_dict()),
+        ):
+            raise RunSessionError("prepared node write is not yet atomically promoted")
+
+    def _validate_invalidation_event(
+        self,
+        state: PersistentGraphState,
+        candidate: PersistentGraphState,
+        event: Mapping[str, Any],
+    ) -> None:
+        if str(event.get("commit_id") or "") != state.current_commit_id:
+            raise RunSessionError("invalidation event must retain the current commit")
+        if candidate.current_commit_id != state.current_commit_id:
+            raise RunSessionError("invalidation event changed the current commit")
+        raw_record = event.get("invalidation_record")
+        if not isinstance(raw_record, Mapping):
+            raise RunSessionError("invalidation event has no invalidation record")
+        try:
+            expected = FieldInvalidator(self.graph).invalidate(
+                state,
+                changed_field_digests=raw_record["changed_field_digests"],
+                reason=str(raw_record["reason"]),
+            )
+        except (KeyError, StateInvariantError) as exc:
+            raise RunSessionError("invalidation event record is invalid") from exc
+        if canonical_sha256(expected.record.to_dict()) != canonical_sha256(
+            raw_record
+        ):
+            raise RunSessionError("invalidation event record does not match graph closure")
+        if canonical_sha256(expected.state.to_dict()) != canonical_sha256(
+            candidate.to_dict()
+        ):
+            raise RunSessionError(
+                "invalidation event does not reproduce its graph transition"
+            )
+
+    def _is_promoted_commit(
+        self,
+        commit_id: str,
+        state_sha256: str,
+        *,
+        node_id: str,
+        base_state_sha256: str,
+    ) -> bool:
         commit_dir = self.run_dir / "commits" / commit_id
-        manifest_path = commit_dir / "COMMIT_MANIFEST.json"
-        # Transaction.commit validates every manifest entry before its
-        # same-volume rename. Presence of the final manifest is therefore the
-        # visibility boundary; the event state hash is checked by _events.
-        return manifest_path.is_file()
+        legacy_manifest_path = commit_dir / "COMMIT_MANIFEST.json"
+        if not commit_dir.is_dir() or not legacy_manifest_path.is_file():
+            return False
+        companion_path = commit_dir / "MANIFEST.json"
+        if not companion_path.is_file() or companion_path.is_symlink():
+            raise RunSessionError("promoted commit has no regular vNext commit manifest")
+        try:
+            legacy = json.loads(legacy_manifest_path.read_text(encoding="utf-8"))
+            companion = json.loads(companion_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise RunSessionError("commit manifest is invalid") from exc
+        metadata = legacy.get("metadata")
+        if not isinstance(metadata, Mapping):
+            raise RunSessionError("commit manifest has no transition metadata")
+        if not (
+            companion.get("schema_name") == "mode_p_vnext_commit_manifest"
+            and companion.get("schema_version") == "2.1"
+            and companion.get("commit_id") == commit_id
+            and companion.get("node_id") == node_id
+            and companion.get("base_state_sha256") == base_state_sha256
+            and companion.get("state_sha256") == state_sha256
+            and companion.get("legacy_manifest_sha256")
+            == sha256(legacy_manifest_path.read_bytes()).hexdigest()
+            and metadata.get("node_id") == node_id
+            and metadata.get("base_state_sha256") == base_state_sha256
+            and metadata.get("state_sha256") == state_sha256
+        ):
+            raise RunSessionError(
+                "commit manifest does not bind the state event transition"
+            )
+        return True
 
     def _append_state_event(
-        self, state: PersistentGraphState, pending: PendingNodeWrite | None
+        self,
+        state: PersistentGraphState,
+        pending: PendingNodeWrite | None,
+        invalidation_record: InvalidationRecord | None = None,
     ) -> None:
+        if pending is not None:
+            transition: Mapping[str, Any] = {
+                "kind": "node",
+                "base_state_sha256": pending.base_state_sha256,
+            }
+            commit_id: str | None = pending.commit_id
+            node_id: str | None = pending.node_id
+            record: Mapping[str, object] | None = None
+        else:
+            if invalidation_record is None:
+                raise RunSessionError("non-node state events require an invalidation record")
+            if not state.current_commit_id:
+                raise RunSessionError("invalidation requires an accepted current commit")
+            prior_state, _ = self._replay_event_chain()
+            transition = {
+                "kind": "invalidation",
+                "base_state_sha256": canonical_sha256(prior_state.to_dict()),
+            }
+            commit_id = state.current_commit_id
+            node_id = None
+            record = invalidation_record.to_dict()
         event = {
             "state": state.to_dict(),
             "state_sha256": canonical_sha256(state.to_dict()),
-            "commit_id": pending.commit_id if pending else None,
-            "node_id": pending.node_id if pending else None,
+            "commit_id": commit_id,
+            "node_id": node_id,
+            "transition": transition,
+            "invalidation_record": record,
         }
         with (self.run_dir / EVENTS_FILENAME).open("ab") as handle:
             handle.write(canonical_json_bytes(event))

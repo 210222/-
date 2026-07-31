@@ -1,0 +1,111 @@
+{
+  "schema_version": "2.1",
+  "record_type": "mode_p_vnext_a2_persistent_state_revalidation",
+  "task_id": "A2",
+  "run_id": "codex-a2-persistent-state-revalidation-20260731",
+  "architecture_version": "2.1",
+  "architecture_authority": {
+    "base": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
+    "normative_amendment": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md",
+    "applicable_sections": [
+      "§3 canonical artifacts",
+      "§8 persistent state graph, checkpoint, transaction, and invalidation",
+      "§14 A2"
+    ]
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/runtime/session.py",
+    "01_调度器/mode_p_vnext/runtime/transaction.py",
+    "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_PERSISTENT_STATE_REVALIDATION_003.json"
+  ],
+  "root_cause": "Recovery treated a checkpoint whose payload was internally re-hashed as authoritative without binding it to the persisted event chain. Accepted artifact references were graph-valid even after their content-addressed payload was altered or removed. A state event could also reuse a different promoted commit because promotion was proven only by the legacy manifest, while the vNext state binding was written after promotion.",
+  "repair": [
+    "Recovery now replays the persisted event chain as the authority and uses a checkpoint only when its state and digest exactly match that trusted history.",
+    "Every accepted ArtifactRef is revalidated through the content-addressed repository during recovery; an unverifiable persisted reference fails closed.",
+    "Node prepare writes and validates a vNext binding manifest inside staging before atomic promotion; promotion validates that the companion manifest moved with the commit.",
+    "Replayed node events must match an exact promoted-commit binding: commit id, node id, base-state digest, state digest, legacy-manifest digest, and legacy transition metadata.",
+    "Persisted field invalidation replays from the prior state and requires an exact canonical match for both the bounded invalidation record and resulting graph state."
+  ],
+  "checks": [
+    {
+      "name": "persistent_state_graph",
+      "exit_code": 0,
+      "evidence": "State events are replayed as an ordered digest-linked graph; node reconstruction and promoted commit bindings are checked before a recovered state is accepted."
+    },
+    {
+      "name": "checkpoint_resume",
+      "exit_code": 0,
+      "evidence": "A re-hashed checkpoint that is not bound to the event chain is ignored; only an exact state-history match is a usable recovery checkpoint."
+    },
+    {
+      "name": "pending_write_atomicity",
+      "exit_code": 0,
+      "evidence": "The vNext manifest is written and validated in transaction staging before the atomic directory promotion, so a visible commit cannot lack the state binding."
+    },
+    {
+      "name": "content_addressed_artifacts",
+      "exit_code": 0,
+      "evidence": "Recovered accepted ArtifactRef values must still verify in ArtifactRepository; altered or missing payloads fail closed."
+    },
+    {
+      "name": "field_level_invalidation",
+      "exit_code": 0,
+      "evidence": "Invalidation records are persisted as bounded graph transitions and are deterministically replayed and canonically compared during recovery."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a2_persistent_graph",
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "16 passed"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a1_domain_model_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "19 passed"
+    },
+    {
+      "name": "a0_release_control_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "13 passed"
+    },
+    {
+      "name": "rebuild_control_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_rebuild_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "31 passed"
+    },
+    {
+      "name": "v4_entrypoint_isolation",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "15 passed"
+    },
+    {
+      "name": "compile_and_patch_check",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m compileall -q mode_p_vnext/pipeline mode_p_vnext/runtime; git diff --check",
+      "exit_code": 0,
+      "result": "All touched modules compile; no patch whitespace errors."
+    }
+  ],
+  "recovery_boundary": "Before later performance work, recovery verifies the authoritative event chain before it identifies a matching checkpoint; checkpoints are recoverable performance snapshots and never bypass the state, artifact, or commit proof.",
+  "non_activation": {
+    "director_runtime_started": false,
+    "external_submission": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  }
+}

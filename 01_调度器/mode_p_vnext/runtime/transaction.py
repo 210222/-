@@ -12,12 +12,19 @@ from types import MappingProxyType
 from typing import Any, Mapping
 
 from mode_p_vnext.atomic_commit import Transaction, TransactionError, recover_scene
-from mode_p_vnext.domain.artifact import canonical_json_bytes, canonical_sha256
+from mode_p_vnext.domain.artifact import (
+    DomainValidationError,
+    canonical_json_bytes,
+    canonical_sha256,
+    require_sha256,
+)
 from mode_p_vnext.pipeline.state import ArtifactRef, PersistentGraphState, StateInvariantError
 
 
 PENDING_FILENAME = "pending.commit"
 STATE_FILENAME = "node_state.json"
+VNEXT_MANIFEST_FILENAME = "MANIFEST.json"
+LEGACY_MANIFEST_FILENAME = "COMMIT_MANIFEST.json"
 
 
 class NodeTransactionError(ValueError):
@@ -67,6 +74,11 @@ class PendingNodeWrite:
     def __post_init__(self) -> None:
         if not self.node_id.strip() or not self.commit_id.strip() or not self.generation_id.strip():
             raise NodeTransactionError("pending node identity fields must be non-empty")
+        try:
+            require_sha256(self.base_state_sha256, "base_state_sha256")
+            require_sha256(self.state_sha256, "state_sha256")
+        except DomainValidationError as exc:
+            raise NodeTransactionError(str(exc)) from exc
         if self.state_sha256 != canonical_sha256(self.next_state.to_dict()):
             raise NodeTransactionError("pending state hash does not match the state payload")
         object.__setattr__(self, "outputs", _freeze_refs(self.outputs))
@@ -179,6 +191,11 @@ class NodeTransaction:
             )
         except TransactionError as exc:
             raise NodeTransactionError(str(exc)) from exc
+        staging_dir = transaction.staging_dir
+        if staging_dir is None:
+            raise NodeTransactionError("prepared transaction has no staging directory")
+        NodeTransaction._write_vnext_manifest(staging_dir, pending)
+        NodeTransaction._validate_vnext_manifest(staging_dir, pending)
         return pending
 
     @staticmethod
@@ -209,17 +226,35 @@ class NodeTransaction:
                     )
         except TransactionError as exc:
             raise NodeTransactionError(str(exc)) from exc
-        NodeTransaction._write_vnext_manifest(Path(run_dir).resolve(), pending)
+        NodeTransaction._validate_vnext_manifest(
+            Path(run_dir).resolve() / "commits" / pending.commit_id,
+            pending,
+        )
 
     @staticmethod
-    def _write_vnext_manifest(run_dir: Path, pending: PendingNodeWrite) -> None:
-        """Write the vNext manifest after the legacy atomic promotion succeeds."""
-        commit_dir = Path(run_dir) / "commits" / pending.commit_id
-        legacy_manifest = commit_dir / "COMMIT_MANIFEST.json"
-        if not legacy_manifest.is_file():
-            raise NodeTransactionError("atomic commit did not produce COMMIT_MANIFEST.json")
-        target = commit_dir / "MANIFEST.json"
-        payload = {
+    def _vnext_manifest_payload(
+        directory: Path, pending: PendingNodeWrite
+    ) -> dict[str, str]:
+        root = Path(directory)
+        legacy_manifest = root / LEGACY_MANIFEST_FILENAME
+        if not legacy_manifest.is_file() or legacy_manifest.is_symlink():
+            raise NodeTransactionError("atomic commit has no regular COMMIT_MANIFEST.json")
+        try:
+            legacy = json.loads(legacy_manifest.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise NodeTransactionError("atomic commit manifest is invalid") from exc
+        if legacy.get("commit_id") != pending.commit_id:
+            raise NodeTransactionError("atomic commit manifest has a different commit_id")
+        metadata = legacy.get("metadata")
+        if not isinstance(metadata, Mapping) or (
+            metadata.get("node_id") != pending.node_id
+            or metadata.get("base_state_sha256") != pending.base_state_sha256
+            or metadata.get("state_sha256") != pending.state_sha256
+        ):
+            raise NodeTransactionError(
+                "atomic commit manifest does not bind the pending state transition"
+            )
+        return {
             "schema_name": "mode_p_vnext_commit_manifest",
             "schema_version": "2.1",
             "commit_id": pending.commit_id,
@@ -232,11 +267,19 @@ class NodeTransaction:
             # file-integrity digest instead of attempting canonical JSON.
             "legacy_manifest_sha256": sha256(legacy_manifest.read_bytes()).hexdigest(),
         }
-        metadata_root = Path(run_dir) / ".vnext_meta"
-        metadata_root.mkdir(parents=True, exist_ok=True)
-        temporary = metadata_root / f".{target.name}.{uuid.uuid4().hex}.tmp"
+
+    @staticmethod
+    def _write_vnext_manifest(directory: Path, pending: PendingNodeWrite) -> None:
+        """Stage the state-binding manifest before same-volume promotion."""
+
+        root = Path(directory)
+        payload = NodeTransaction._vnext_manifest_payload(root, pending)
+        target = root / VNEXT_MANIFEST_FILENAME
+        if target.exists() and (not target.is_file() or target.is_symlink()):
+            raise NodeTransactionError("vNext manifest path is not a regular file")
+        temporary = root / f".{VNEXT_MANIFEST_FILENAME}.{uuid.uuid4().hex}.tmp"
         try:
-            with temporary.open("wb") as handle:
+            with temporary.open("xb") as handle:
                 handle.write(canonical_json_bytes(payload))
                 handle.flush()
                 os.fsync(handle.fileno())
@@ -244,3 +287,23 @@ class NodeTransaction:
         finally:
             if temporary.exists():
                 temporary.unlink()
+
+    @staticmethod
+    def _validate_vnext_manifest(
+        directory: Path, pending: PendingNodeWrite
+    ) -> None:
+        """Verify the companion manifest before or after atomic promotion."""
+
+        root = Path(directory)
+        target = root / VNEXT_MANIFEST_FILENAME
+        if not target.is_file() or target.is_symlink():
+            raise NodeTransactionError("atomic commit has no regular vNext manifest")
+        try:
+            actual = json.loads(target.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise NodeTransactionError("vNext commit manifest is invalid") from exc
+        expected = NodeTransaction._vnext_manifest_payload(root, pending)
+        if actual != expected:
+            raise NodeTransactionError(
+                "vNext commit manifest does not match the pending state transition"
+            )
