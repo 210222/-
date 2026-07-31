@@ -1,0 +1,116 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A1",
+  "run_id": "codex-a1-canonical-authority-20260731",
+  "architecture_version": "2.1",
+  "architecture_authority": {
+    "base": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
+    "normative_amendment": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md",
+    "decision": "A1 freezes canonical result schemas and exact payload authority. A7 remains the sole owner of Gate 0, independent DP, media-verification, and approval behavior."
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/domain/__init__.py",
+    "01_调度器/mode_p_vnext/domain/artifact.py",
+    "01_调度器/mode_p_vnext/domain/decisions.py",
+    "01_调度器/mode_p_vnext/domain/evidence.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_CANONICAL_DOMAIN_003.json"
+  ],
+  "checks": [
+    {
+      "name": "canonical_artifact_envelope",
+      "exit_code": 0,
+      "evidence": "ArtifactEnvelope resolves every ArtifactKind to one exact canonical payload class. Generic mappings, forged classes, mismatched kinds, mutable aliases, and forged content hashes fail closed."
+    },
+    {
+      "name": "canonical_24000_tick_timebase",
+      "exit_code": 0,
+      "evidence": "CanonicalTimeline remains fixed at 24000 ticks per second; TickRange is half-open and GenerationSegmentTimeline is local zero-based time."
+    },
+    {
+      "name": "draft_artifact_separation",
+      "exit_code": 0,
+      "evidence": "Creative drafts remain separate from machine authority. Gate 0, DP review, media evidence, visual verification, owner approval, and release records are distinct immutable result types."
+    },
+    {
+      "name": "no_duplicate_domain_authority",
+      "exit_code": 0,
+      "evidence": "The mechanical registry assertion proves a bijection between all ArtifactKind values and canonical persistent payload classes. Arbitrary classes cannot self-declare authority."
+    },
+    {
+      "name": "domain_schemas_frozen_for_downstream",
+      "exit_code": 0,
+      "evidence": "DeterministicGateResult, IndependentDPReviewResult, MediaEvidence, and OwnerApprovalRecord are frozen canonical schemas with bounded enums and cross-field invariants for A2-A10."
+    },
+    {
+      "name": "legacy_read_adapter_only",
+      "exit_code": 0,
+      "evidence": "The legacy adapter test uses a self-contained historical fixture, proves byte-for-byte read-only behavior, and emits only a canonical BlockingDraft envelope without relying on an untracked CPL run."
+    }
+  ],
+  "review": {
+    "finding": "Invalidated A1 lacked persistent Gate 0 and successful independent-DP result authorities, lacked an explicit owner-approval record, and allowed untyped mappings to bypass ArtifactKind binding.",
+    "root_cause": "ArtifactEnvelope treated ARTIFACT_KIND as optional and A1 modeled review input and revision failure without modeling the successful persistent outputs required by the architecture graph.",
+    "considered_options": [
+      {
+        "option": "Reuse ReviewPacket, RevisionRequest, or ReleaseGateRecord for missing node results",
+        "decision": "rejected",
+        "reason": "They have different ownership and semantics; reuse would make successful DP review or owner approval untruthful."
+      },
+      {
+        "option": "Whitelist generic mapping payloads until A2",
+        "decision": "rejected",
+        "reason": "That is the type-authority escape identified by A2_UPSTREAM_A1_TYPED_STATE_BLOCKER_001.json."
+      },
+      {
+        "option": "Freeze explicit A1 result schemas and exact kind-to-class authority, leaving behavior to A7",
+        "decision": "accepted",
+        "reason": "It satisfies the architecture boundary without implementing a later work package."
+      }
+    ],
+    "downstream_observation": "A2's recovery fixture is correctly rejected because it uses generic mappings with SCRIPT_FACT for E0, S1, B0, and B1 outputs. That fixture remains A2-owned.",
+    "residual_risk": "A2 must bind every persistent state field to the new exact ArtifactKind authority and replace its generic kill-point fixtures. No Shadow, media invocation, owner approval, or production switch was started."
+  },
+  "informational_results": [
+    {
+      "name": "a1_local_verification",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "17 passed"
+    },
+    {
+      "name": "a0_portability_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "13 passed"
+    },
+    {
+      "name": "v4_entrypoint_isolation",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "15 passed"
+    },
+    {
+      "name": "a2_fail_closed_probe",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "exit_code": 1,
+      "result": "4 failed, 5 passed; all failures are A2's invalid generic SCRIPT_FACT mapping fixture and confirm the A1 authority escape is closed."
+    },
+    {
+      "name": "compile_and_patch_check",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m compileall -q mode_p_vnext/domain mode_p_vnext/compat; git diff --check",
+      "exit_code": 0,
+      "result": "Domain and compatibility modules compile and no whitespace errors were found."
+    }
+  ],
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

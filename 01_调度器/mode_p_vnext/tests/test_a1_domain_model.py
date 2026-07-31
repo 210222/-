@@ -41,7 +41,6 @@ from mode_p_vnext.domain.vec import (
 )
 
 
-REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 DOMAIN_ROOT = Path(__file__).resolve().parents[1] / "domain"
 
 
@@ -549,8 +548,12 @@ def test_canonical_artifact_envelope_is_hash_bound_and_machine_assembled() -> No
 def test_persistent_domain_payloads_declare_their_canonical_artifact_kind() -> None:
     from mode_p_vnext.domain.blocking import BlockingCommit
     from mode_p_vnext.domain.evidence import (
+        DeterministicGateResult,
         FrameEvidencePlan,
+        IndependentDPReviewResult,
+        MediaEvidence,
         MediaRunRecord,
+        OwnerApprovalRecord,
         ReviewPacket,
         RevisionRequest,
         VisualVerificationResult,
@@ -575,16 +578,21 @@ def test_persistent_domain_payloads_declare_their_canonical_artifact_kind() -> N
         KnowledgeSnapshot: ArtifactKind.KNOWLEDGE_SNAPSHOT,
         BlockingDraft: ArtifactKind.BLOCKING_DRAFT,
         BlockingCommit: ArtifactKind.BLOCKING_COMMIT,
+        DecisionDraft: ArtifactKind.DECISION_DRAFT,
         ExecutionDesignDraft: ArtifactKind.EXECUTION_DESIGN_DRAFT,
         VisualExecutionContract: ArtifactKind.VISUAL_EXECUTION_CONTRACT,
         ProjectionAST: ArtifactKind.PROJECTION_AST,
         ProjectionManifest: ArtifactKind.PROJECTION_MANIFEST,
         CapabilityAdaptationRecord: ArtifactKind.CAPABILITY_ADAPTATION,
+        DeterministicGateResult: ArtifactKind.GATE0_RESULT,
         ReviewPacket: ArtifactKind.REVIEW_PACKET,
+        IndependentDPReviewResult: ArtifactKind.DP_REVIEW_RESULT,
         RevisionRequest: ArtifactKind.REVISION_REQUEST,
         MediaRunRecord: ArtifactKind.MEDIA_RUN_RECORD,
         FrameEvidencePlan: ArtifactKind.FRAME_EVIDENCE_PLAN,
+        MediaEvidence: ArtifactKind.MEDIA_EVIDENCE,
         VisualVerificationResult: ArtifactKind.VISUAL_VERIFICATION_RESULT,
+        OwnerApprovalRecord: ArtifactKind.OWNER_APPROVAL_RECORD,
         ReleaseGateRecord: ArtifactKind.RELEASE_DECISION,
     }
 
@@ -592,6 +600,111 @@ def test_persistent_domain_payloads_declare_their_canonical_artifact_kind() -> N
         payload_type: payload_type.ARTIFACT_KIND
         for payload_type in expected_kinds
     } == expected_kinds
+    assert set(expected_kinds.values()) == set(ArtifactKind)
+    assert len(expected_kinds) == len(set(expected_kinds.values()))
+
+
+def test_artifact_envelope_rejects_generic_and_forged_payload_authority() -> None:
+    source = SourceRef(source_id="script:scene-1", digest="a" * 64)
+    common = {
+        "artifact_id": "script_fact:scene-1:0001",
+        "artifact_kind": ArtifactKind.SCRIPT_FACT,
+        "schema_version": "2.1",
+        "program_version": "vnext-2.1",
+        "source_refs": (source,),
+        "dependency_digests": {"script": source.digest},
+        "created_at": "2026-07-30T00:00:00Z",
+    }
+    with pytest.raises(DomainValidationError, match="payload type"):
+        ArtifactEnvelope.create(payload={"facts": ()}, **common)
+
+    @dataclasses.dataclass(frozen=True)
+    class ForgedFactPayload:
+        ARTIFACT_KIND = ArtifactKind.SCRIPT_FACT
+        facts: tuple[str, ...] = ()
+
+    with pytest.raises(DomainValidationError, match="payload type"):
+        ArtifactEnvelope.create(payload=ForgedFactPayload(), **common)
+
+
+def test_gate_dp_media_and_owner_results_are_separate_auditable_authorities() -> None:
+    from mode_p_vnext.domain.evidence import (
+        DPReviewVerdict,
+        DeterministicGateResult,
+        FrameEvidence,
+        IndependentDPReviewResult,
+        MediaEvidence,
+        OwnerApprovalDecision,
+        OwnerApprovalRecord,
+    )
+
+    evidence_ref = SourceRef(source_id="gate-log:1", digest="c" * 64)
+    gate = DeterministicGateResult(
+        result_id="gate0:scene-1",
+        target_artifact_ids=("vec:scene-1",),
+        check_ids=("schema", "tick_contiguity"),
+        failed_check_ids=(),
+        evidence_refs=(evidence_ref,),
+        passed=True,
+    )
+    dp = IndependentDPReviewResult(
+        result_id="dp:scene-1",
+        review_packet_artifact_id="review-packet:scene-1",
+        verdict=DPReviewVerdict.APPROVED,
+        finding_codes=(),
+        revision_request_artifact_ids=(),
+        independent_context_digest="d" * 64,
+    )
+    frame = FrameEvidence(
+        media_run_id="media-run:1",
+        frame_index=24,
+        observations=("screen direction remains stable",),
+        attributes={"character": "Lin Lan"},
+    )
+    media = MediaEvidence(
+        evidence_id="media-evidence:1",
+        frame_evidence_plan_artifact_id="frame-plan:1",
+        media_run_artifact_id="artifact:media-run:1",
+        media_run_id="media-run:1",
+        frame_evidence=(frame,),
+    )
+    approval = OwnerApprovalRecord(
+        approval_id="owner-approval:1",
+        visual_verification_artifact_id="visual-verification:1",
+        decision=OwnerApprovalDecision.APPROVED,
+        approved_by="owner:JT",
+        evidence_ref=SourceRef(
+            source_id="owner-action:1",
+            digest="e" * 64,
+        ),
+    )
+
+    assert gate.ARTIFACT_KIND is ArtifactKind.GATE0_RESULT
+    assert dp.ARTIFACT_KIND is ArtifactKind.DP_REVIEW_RESULT
+    assert media.ARTIFACT_KIND is ArtifactKind.MEDIA_EVIDENCE
+    assert approval.ARTIFACT_KIND is ArtifactKind.OWNER_APPROVAL_RECORD
+    assert "production_switch_authorized" not in _field_names(
+        OwnerApprovalRecord
+    )
+
+    with pytest.raises(DomainValidationError, match="passed"):
+        DeterministicGateResult(
+            result_id="gate0:scene-1",
+            target_artifact_ids=("vec:scene-1",),
+            check_ids=("schema",),
+            failed_check_ids=("schema",),
+            evidence_refs=(evidence_ref,),
+            passed=True,
+        )
+    with pytest.raises(DomainValidationError, match="finding_codes"):
+        IndependentDPReviewResult(
+            result_id="dp:scene-1",
+            review_packet_artifact_id="review-packet:scene-1",
+            verdict=DPReviewVerdict.REVISION_REQUIRED,
+            finding_codes=(),
+            revision_request_artifact_ids=(),
+            independent_context_digest="d" * 64,
+        )
 
 
 def test_id_factory_is_stable_and_drafts_cannot_carry_machine_authority() -> None:
@@ -741,14 +854,37 @@ def test_compat_is_one_way_and_never_imports_legacy_runtime_code() -> None:
     assert not violations, "\n".join(violations)
 
 
-def test_legacy_checkpoint_adapter_is_read_only_and_returns_canonical_blocking_draft() -> None:
-    checkpoint = (
-        REPOSITORY_ROOT
-        / "MODE_P_REDESIGN_PROJECT"
-        / "vnext_completion_runs"
-        / "CPL-2_UNKNOWN_TEXT_SHADOW_016"
-        / "CHECKPOINT_B0_K2.json"
+def test_legacy_checkpoint_adapter_is_read_only_and_returns_canonical_blocking_draft(
+    tmp_path: Path,
+) -> None:
+    checkpoint = tmp_path / "CHECKPOINT_B0_K2.json"
+    checkpoint.write_text(
+        """
+{
+  "blocking_commit": {
+    "scene_id": "scene-legacy-1",
+    "beats": [
+      {
+        "entry_state_id": "state-entry",
+        "exit_state_id": "state-exit",
+        "space_control": "established screen direction",
+        "dramatic_reason": "the decision becomes visible",
+        "dramatic_function": "hold the decision",
+        "character_states": [
+          {"character_id": "character:lin", "gaze_target": "prop:key"}
+        ],
+        "prop_states": [
+          {"prop_id": "prop:key", "holder": "table"}
+        ],
+        "action_paths": ["stillness -> decision"]
+      }
+    ]
+  }
+}
+""".strip(),
+        encoding="utf-8",
     )
+    original_bytes = checkpoint.read_bytes()
     envelope = read_legacy_b0_k2_checkpoint(checkpoint)
 
     assert isinstance(envelope, ArtifactEnvelope)
@@ -757,6 +893,7 @@ def test_legacy_checkpoint_adapter_is_read_only_and_returns_canonical_blocking_d
     assert envelope.payload.beats
     assert envelope.validation_status is ValidationStatus.DRAFT
     assert all(ref.source_id.startswith("legacy-checkpoint:") for ref in envelope.source_refs)
+    assert checkpoint.read_bytes() == original_bytes
     assert envelope.content_sha256 == ArtifactEnvelope.content_digest_for(
         artifact_kind=envelope.artifact_kind,
         schema_version=envelope.schema_version,

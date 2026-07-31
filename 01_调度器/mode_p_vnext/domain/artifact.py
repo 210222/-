@@ -35,12 +35,15 @@ class ArtifactKind(str, enum.Enum):
     PROJECTION_AST = "projection_ast"
     PROJECTION_MANIFEST = "projection_manifest"
     CAPABILITY_ADAPTATION = "capability_adaptation"
+    GATE0_RESULT = "gate0_result"
     REVIEW_PACKET = "review_packet"
+    DP_REVIEW_RESULT = "dp_review_result"
     REVISION_REQUEST = "revision_request"
     MEDIA_RUN_RECORD = "media_run_record"
     FRAME_EVIDENCE_PLAN = "frame_evidence_plan"
     MEDIA_EVIDENCE = "media_evidence"
     VISUAL_VERIFICATION_RESULT = "visual_verification_result"
+    OWNER_APPROVAL_RECORD = "owner_approval_record"
     RELEASE_DECISION = "release_decision"
 
 
@@ -197,6 +200,70 @@ def canonical_sha256(value: Any) -> str:
     return hashlib.sha256(canonical_json_bytes(value)).hexdigest()
 
 
+def _canonical_payload_type(artifact_kind: ArtifactKind) -> type[Any]:
+    """Return the sole v2.1 payload authority for a persistent artifact kind.
+
+    Imports stay local so the pure domain modules can declare their payload
+    classes without an import cycle at module load time.
+    """
+
+    from .blocking import BlockingCommit, BlockingDraft
+    from .decisions import DecisionDraft
+    from .direction import EpisodeDirectionDraft, SceneIntentDraft
+    from .evidence import (
+        DeterministicGateResult,
+        FrameEvidencePlan,
+        IndependentDPReviewResult,
+        MediaEvidence,
+        MediaRunRecord,
+        OwnerApprovalRecord,
+        ReviewPacket,
+        RevisionRequest,
+        VisualVerificationResult,
+    )
+    from .facts import FactRegistry
+    from .knowledge import KnowledgeCapsuleV2, KnowledgeSnapshot
+    from .projection import (
+        CapabilityAdaptationRecord,
+        ProjectionAST,
+        ProjectionManifest,
+    )
+    from .release import ReleaseGateRecord
+    from .vec import ExecutionDesignDraft, VisualExecutionContract
+
+    authorities: dict[ArtifactKind, type[Any]] = {
+        ArtifactKind.SCRIPT_FACT: FactRegistry,
+        ArtifactKind.EPISODE_DIRECTION: EpisodeDirectionDraft,
+        ArtifactKind.SCENE_INTENT: SceneIntentDraft,
+        ArtifactKind.KNOWLEDGE_CAPSULE: KnowledgeCapsuleV2,
+        ArtifactKind.KNOWLEDGE_SNAPSHOT: KnowledgeSnapshot,
+        ArtifactKind.BLOCKING_DRAFT: BlockingDraft,
+        ArtifactKind.BLOCKING_COMMIT: BlockingCommit,
+        ArtifactKind.DECISION_DRAFT: DecisionDraft,
+        ArtifactKind.EXECUTION_DESIGN_DRAFT: ExecutionDesignDraft,
+        ArtifactKind.VISUAL_EXECUTION_CONTRACT: VisualExecutionContract,
+        ArtifactKind.PROJECTION_AST: ProjectionAST,
+        ArtifactKind.PROJECTION_MANIFEST: ProjectionManifest,
+        ArtifactKind.CAPABILITY_ADAPTATION: CapabilityAdaptationRecord,
+        ArtifactKind.GATE0_RESULT: DeterministicGateResult,
+        ArtifactKind.REVIEW_PACKET: ReviewPacket,
+        ArtifactKind.DP_REVIEW_RESULT: IndependentDPReviewResult,
+        ArtifactKind.REVISION_REQUEST: RevisionRequest,
+        ArtifactKind.MEDIA_RUN_RECORD: MediaRunRecord,
+        ArtifactKind.FRAME_EVIDENCE_PLAN: FrameEvidencePlan,
+        ArtifactKind.MEDIA_EVIDENCE: MediaEvidence,
+        ArtifactKind.VISUAL_VERIFICATION_RESULT: VisualVerificationResult,
+        ArtifactKind.OWNER_APPROVAL_RECORD: OwnerApprovalRecord,
+        ArtifactKind.RELEASE_DECISION: ReleaseGateRecord,
+    }
+    try:
+        return authorities[artifact_kind]
+    except KeyError as exc:
+        raise DomainValidationError(
+            f"artifact_kind has no canonical payload authority: {artifact_kind.value}"
+        ) from exc
+
+
 @dataclass(frozen=True)
 class SourceRef:
     source_id: str
@@ -233,8 +300,14 @@ class ArtifactEnvelope(Generic[T]):
         if not isinstance(self.validation_status, ValidationStatus):
             raise DomainValidationError("validation_status must be a ValidationStatus")
         payload = _deep_freeze(self.payload, "payload")
+        expected_payload_type = _canonical_payload_type(self.artifact_kind)
+        if type(payload) is not expected_payload_type:
+            raise DomainValidationError(
+                "payload type does not match artifact_kind canonical authority: "
+                f"expected {expected_payload_type.__name__}, got {type(payload).__name__}"
+            )
         declared_kind = getattr(payload, "ARTIFACT_KIND", None)
-        if declared_kind is not None and declared_kind is not self.artifact_kind:
+        if declared_kind is not self.artifact_kind:
             raise DomainValidationError(
                 "artifact_kind does not match the payload's canonical authority"
             )

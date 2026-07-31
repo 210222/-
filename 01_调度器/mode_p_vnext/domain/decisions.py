@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import enum
 from dataclasses import dataclass
+from typing import ClassVar
 
-from .artifact import DomainValidationError
+from .artifact import ArtifactKind, DomainValidationError
 
 
 DOMAIN_SCHEMA_VERSION = "2.1"
@@ -89,6 +90,8 @@ def _validate_decision_content(
 @dataclass(frozen=True)
 class DecisionDraft:
     """The exact B1 decision shape; it carries no machine-generated ID."""
+
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.DECISION_DRAFT
 
     scope: str
     basis: DecisionBasis

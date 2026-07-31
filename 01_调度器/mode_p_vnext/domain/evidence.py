@@ -17,9 +17,15 @@ from .artifact import (
 
 DOMAIN_SCHEMA_VERSION = "2.1"
 CANONICAL_DOMAIN_TYPES = (
+    "DPReviewVerdict",
+    "DeterministicGateResult",
     "FrameEvidence",
     "FrameEvidencePlan",
+    "IndependentDPReviewResult",
+    "MediaEvidence",
     "MediaRunRecord",
+    "OwnerApprovalDecision",
+    "OwnerApprovalRecord",
     "OutcomeAttribution",
     "ReviewPacket",
     "RevisionFailureType",
@@ -35,6 +41,16 @@ class RevisionFailureType(str, enum.Enum):
     PROJECTION_DIVERGENCE = "projection_divergence"
     CAPABILITY = "capability"
     MEDIA_OUTCOME = "media_outcome"
+
+
+class DPReviewVerdict(str, enum.Enum):
+    APPROVED = "approved"
+    REVISION_REQUIRED = "revision_required"
+
+
+class OwnerApprovalDecision(str, enum.Enum):
+    APPROVED = "approved"
+    REJECTED = "rejected"
 
 
 def _require_text(value: str, field_name: str) -> None:
@@ -94,6 +110,103 @@ class ReviewPacket:
             )
         require_sha256(
             self.capability_profile_digest, "capability_profile_digest"
+        )
+
+
+@dataclass(frozen=True)
+class DeterministicGateResult:
+    """Persisted output of the zero-model deterministic Gate 0 node."""
+
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.GATE0_RESULT
+
+    result_id: str
+    target_artifact_ids: tuple[str, ...]
+    check_ids: tuple[str, ...]
+    failed_check_ids: tuple[str, ...]
+    evidence_refs: tuple[SourceRef, ...]
+    passed: bool
+
+    def __post_init__(self) -> None:
+        _require_text(self.result_id, "result_id")
+        targets = _text_tuple(
+            self.target_artifact_ids,
+            "target_artifact_ids",
+            require_items=True,
+        )
+        checks = _text_tuple(self.check_ids, "check_ids", require_items=True)
+        failed = _text_tuple(
+            self.failed_check_ids,
+            "failed_check_ids",
+            require_items=False,
+        )
+        if not set(failed).issubset(checks):
+            raise DomainValidationError(
+                "failed_check_ids must be a subset of check_ids"
+            )
+        if not isinstance(self.passed, bool):
+            raise DomainValidationError("passed must be boolean")
+        if self.passed == bool(failed):
+            raise DomainValidationError(
+                "passed must be true exactly when failed_check_ids is empty"
+            )
+        refs = tuple(self.evidence_refs)
+        if not refs or not all(isinstance(ref, SourceRef) for ref in refs):
+            raise DomainValidationError(
+                "evidence_refs must contain SourceRef values"
+            )
+        object.__setattr__(self, "target_artifact_ids", targets)
+        object.__setattr__(self, "check_ids", checks)
+        object.__setattr__(self, "failed_check_ids", failed)
+        object.__setattr__(self, "evidence_refs", refs)
+
+
+@dataclass(frozen=True)
+class IndependentDPReviewResult:
+    """Auditable result of an independent DP session.
+
+    Revision content remains in separate RevisionRequest artifacts.
+    """
+
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.DP_REVIEW_RESULT
+
+    result_id: str
+    review_packet_artifact_id: str
+    verdict: DPReviewVerdict
+    finding_codes: tuple[str, ...]
+    revision_request_artifact_ids: tuple[str, ...]
+    independent_context_digest: str
+
+    def __post_init__(self) -> None:
+        _require_text(self.result_id, "result_id")
+        _require_text(
+            self.review_packet_artifact_id,
+            "review_packet_artifact_id",
+        )
+        if not isinstance(self.verdict, DPReviewVerdict):
+            raise DomainValidationError("verdict must be a DPReviewVerdict")
+        findings = _text_tuple(
+            self.finding_codes,
+            "finding_codes",
+            require_items=self.verdict is DPReviewVerdict.REVISION_REQUIRED,
+        )
+        revisions = _text_tuple(
+            self.revision_request_artifact_ids,
+            "revision_request_artifact_ids",
+            require_items=self.verdict is DPReviewVerdict.REVISION_REQUIRED,
+        )
+        if self.verdict is DPReviewVerdict.APPROVED and (findings or revisions):
+            raise DomainValidationError(
+                "approved DP results cannot carry findings or revision requests"
+            )
+        require_sha256(
+            self.independent_context_digest,
+            "independent_context_digest",
+        )
+        object.__setattr__(self, "finding_codes", findings)
+        object.__setattr__(
+            self,
+            "revision_request_artifact_ids",
+            revisions,
         )
 
 
@@ -230,6 +343,43 @@ class FrameEvidence:
 
 
 @dataclass(frozen=True)
+class MediaEvidence:
+    """Canonical aggregate proving that frame evidence came from a media run."""
+
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.MEDIA_EVIDENCE
+
+    evidence_id: str
+    frame_evidence_plan_artifact_id: str
+    media_run_artifact_id: str
+    media_run_id: str
+    frame_evidence: tuple[FrameEvidence, ...]
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "evidence_id",
+            "frame_evidence_plan_artifact_id",
+            "media_run_artifact_id",
+            "media_run_id",
+        ):
+            _require_text(getattr(self, field_name), field_name)
+        frames = tuple(self.frame_evidence)
+        if not frames or not all(
+            isinstance(item, FrameEvidence) for item in frames
+        ):
+            raise DomainValidationError(
+                "frame_evidence must contain FrameEvidence values"
+            )
+        if any(
+            frame.media_run_id != self.media_run_id
+            for frame in frames
+        ):
+            raise DomainValidationError(
+                "all FrameEvidence must belong to media_run_id"
+            )
+        object.__setattr__(self, "frame_evidence", frames)
+
+
+@dataclass(frozen=True)
 class OutcomeAttribution:
     result_id: str
     cause: str
@@ -296,3 +446,32 @@ class VisualVerificationResult:
             )
         object.__setattr__(self, "frame_evidence", frames)
         object.__setattr__(self, "attributions", attributions)
+
+
+@dataclass(frozen=True)
+class OwnerApprovalRecord:
+    """Explicit owner decision; it never authorizes a production switch."""
+
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = (
+        ArtifactKind.OWNER_APPROVAL_RECORD
+    )
+
+    approval_id: str
+    visual_verification_artifact_id: str
+    decision: OwnerApprovalDecision
+    approved_by: str
+    evidence_ref: SourceRef
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "approval_id",
+            "visual_verification_artifact_id",
+            "approved_by",
+        ):
+            _require_text(getattr(self, field_name), field_name)
+        if not isinstance(self.decision, OwnerApprovalDecision):
+            raise DomainValidationError(
+                "decision must be an OwnerApprovalDecision"
+            )
+        if not isinstance(self.evidence_ref, SourceRef):
+            raise DomainValidationError("evidence_ref must be a SourceRef")

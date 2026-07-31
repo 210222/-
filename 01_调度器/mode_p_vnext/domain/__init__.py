@@ -22,6 +22,14 @@ from .decisions import (
 )
 from .direction import EpisodeDirectionDraft, SceneIntentDraft
 from .ids import IdFactory
+from .evidence import (
+    DPReviewVerdict,
+    DeterministicGateResult,
+    IndependentDPReviewResult,
+    MediaEvidence,
+    OwnerApprovalDecision,
+    OwnerApprovalRecord,
+)
 from .knowledge import (
     KnowledgeCapsuleV2,
     KnowledgeDecisionEntry,
@@ -63,6 +71,8 @@ __all__ = (
     "CanonicalTimeline",
     "DecisionBasis",
     "DecisionDraft",
+    "DPReviewVerdict",
+    "DeterministicGateResult",
     "DirectorDecision",
     "DomainValidationError",
     "EpisodeDirectionDraft",
@@ -70,11 +80,15 @@ __all__ = (
     "GenerationSegment",
     "GenerationSegmentTimeline",
     "IdFactory",
+    "IndependentDPReviewResult",
     "KnowledgeCapsuleV2",
     "KnowledgeDecisionEntry",
     "KnowledgeDecisionView",
     "KnowledgeSnapshot",
     "KnowledgeStage",
+    "MediaEvidence",
+    "OwnerApprovalDecision",
+    "OwnerApprovalRecord",
     "ProjectionAST",
     "ProjectionManifest",
     "ProjectionNode",
