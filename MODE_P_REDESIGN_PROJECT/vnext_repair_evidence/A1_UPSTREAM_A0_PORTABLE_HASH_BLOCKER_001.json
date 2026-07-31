@@ -1,0 +1,49 @@
+{
+  "schema_version": "2.1",
+  "task_id": "A1",
+  "classification": "UPSTREAM_A0_PORTABILITY_VERIFICATION_DEFECT",
+  "status": "FAIL_CLOSED",
+  "architecture_version": "2.1",
+  "finding": "A0 is recorded complete, but its registered architecture-bundle test hashes raw checkout bytes. On a Windows CRLF checkout it fails while ReleaseLedger's canonical LF hash audit passes. A0 therefore does not mechanically prove its required portable_canonical_hashes check across supported checkouts.",
+  "evidence": [
+    {
+      "path": "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+      "location": "test_architecture_bundle_hashes_are_locked_and_current",
+      "observation": "The test calls read_bytes() and hashlib.sha256() directly instead of the canonical text hash policy used by ReleaseLedger."
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "result": "1 failed, 12 passed",
+      "failure": "The two architecture documents have CRLF-sensitive raw-byte digests on this checkout."
+    },
+    {
+      "command": "python -m mode_p_vnext.release_control audit",
+      "result": "ok=true, issues=[]",
+      "observation": "The controller correctly validates the locked architecture bundle with canonical portable hashing."
+    }
+  ],
+  "root_cause": "The A0 controller implementation was made portable, but one A0 mechanical acceptance assertion retained the earlier raw-byte hashing method. Its prior green result depended on checkout line endings.",
+  "architecture_conflict": false,
+  "construction_plan_conflict": false,
+  "required_control_action": [
+    "Fail the active A1 claim without recording A1 completion.",
+    "Invalidate completed A0 so ReleaseLedger returns the owning work package.",
+    "Repair and revalidate A0 in its own work package before A1 can complete."
+  ],
+  "a1_working_state": {
+    "registered_test": "17 passed",
+    "completion_recorded": false,
+    "note": "A1 domain repairs remain uncommitted working state and must be revalidated after A0 is repaired."
+  },
+  "downstream_observation": {
+    "task": "A2",
+    "result": "4 failed, 5 passed",
+    "classification": "EXPECTED_INVALIDATED_DOWNSTREAM_FIXTURE",
+    "note": "A2 generic SCRIPT_FACT mapping fixtures are correctly rejected by the repaired A1 authority. They remain A2-owned and were not modified."
+  },
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}
