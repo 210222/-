@@ -1,7 +1,7 @@
 {
   "schema_version": "2.0",
-  "queue_id": "mode_p_vnext_architecture_v2_2_2026_08_01",
-  "architecture_version": "2.2",
+  "queue_id": "mode_p_vnext_architecture_v2_3_2026_08_01",
+  "architecture_version": "2.3",
   "architecture_documents": [
     {
       "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
@@ -17,12 +17,18 @@
       "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md",
       "sha256": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c",
       "role": "NORMATIVE_AMENDMENT"
+    },
+    {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md",
+      "sha256": "1191992a4fde8b73445df005c986111de1e8d2568cd4a89130af25316ddf9c30",
+      "role": "NORMATIVE_AMENDMENT"
     }
   ],
   "locked_verification_inputs": {
     "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
     "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952",
-    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c"
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md": "1191992a4fde8b73445df005c986111de1e8d2568cd4a89130af25316ddf9c30"
   },
   "status_after_all": "PRODUCTION_SWITCH_PROPOSAL_ELIGIBLE",
   "terminal_claim_ceiling": "OWNER_APPROVED_PREVIEW",
@@ -46,11 +52,12 @@
       "task_id": "A0",
       "phase": "BASELINE_REPAIR",
       "pending_status": "BASELINE_REPAIR_REQUIRED",
-      "title": "Converge construction control and freeze the architecture-v2 baseline",
+      "title": "Converge construction control and freeze the architecture-v2.3 baseline",
       "depends_on": [],
       "spec_refs": [
         "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §13, §14 A0, §17",
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §5-§6"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §5-§6",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md §1, §4"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/release_control.py",
@@ -78,7 +85,7 @@
         "bounded_control_output",
         "portable_canonical_hashes",
         "architecture_bundle_locked",
-        "architecture_v22_root_contracts_registered",
+        "architecture_v23_temporal_contracts_registered",
         "manual_release_gates",
         "construction_entry_migrated",
         "production_v4_unchanged"
@@ -139,7 +146,8 @@
       "depends_on": ["A0"],
       "spec_refs": [
         "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §3, §4, §5, §14 A1",
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2.4"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2.4",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md §2.2, §4"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/domain/**",
@@ -156,7 +164,8 @@
         "legacy_read_adapter_only",
         "typed_fact_semantics",
         "opaque_fact_ids",
-        "source_span_invariants"
+        "source_span_invariants",
+        "dialogue_anchor_contract"
       ],
       "verification_commands": [
         {
@@ -277,7 +286,8 @@
       "depends_on": ["A3"],
       "spec_refs": [
         "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §6, §14 A4",
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2.1-§2.3"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2.1-§2.3",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md §2.2, §3, §4"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/prompts/**",
@@ -294,7 +304,9 @@
         "native_windows_binary_first",
         "one_scoped_contract_repair",
         "i0_fact_extraction_signature",
-        "source_span_repair_ceiling"
+        "source_span_repair_ceiling",
+        "local_anchor_excluded_from_i0",
+        "free_text_intents_not_binding_transport"
       ],
       "verification_commands": [
         {
@@ -324,7 +336,8 @@
       "depends_on": ["A4"],
       "spec_refs": [
         "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §5.3–§5.5, §14 A5",
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2.5"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2.5",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md §2-§4"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/services/blocking_assembler.py",
@@ -341,7 +354,10 @@
         "deterministic_vec_rebuild",
         "typed_reference_binding",
         "typed_dialogue_audio_binding",
-        "no_fact_id_semantics"
+        "no_fact_id_semantics",
+        "bounded_generation_segment",
+        "anchored_dialogue_audio_placement",
+        "free_text_intents_not_bound"
       ],
       "verification_commands": [
         {
@@ -494,7 +510,8 @@
       "depends_on": ["A7"],
       "spec_refs": [
         "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §8, §14 A8",
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2, §4"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2, §4",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md §2.2, §4"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/pipeline/episode_nodes.py",
@@ -514,7 +531,8 @@
         "text_validated_claim_ceiling",
         "typed_ingest_provenance",
         "complete_v22_state_graph",
-        "run_record_digest_tamper_rejected"
+        "run_record_digest_tamper_rejected",
+        "local_dialogue_anchor_assembly"
       ],
       "verification_commands": [
         {
