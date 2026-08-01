@@ -1,0 +1,85 @@
+{
+  "task_id": "A5",
+  "title": "Separate creative drafts from deterministic Blocking, Timeline, and VEC assembly",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/blocking_assembler.py",
+    "01_调度器/mode_p_vnext/services/timeline_allocator.py",
+    "01_调度器/mode_p_vnext/services/vec_assembler.py",
+    "01_调度器/mode_p_vnext/tests/test_a5_vec_assembly.py"
+  ],
+  "artifact_hashes": {
+    "mode_p_vnext/services/blocking_assembler.py": "93700681dd204af5daf5c9a5196b2790c1ad74a57cc62d7ec59701f07466bec7",
+    "mode_p_vnext/services/timeline_allocator.py": "db07fb5e81819bace9ce9a08f28a7bb676a590ebe8c1c9f316e6c5e8be230173",
+    "mode_p_vnext/services/vec_assembler.py": "283c1ab477b3a3912cf8cdb0e9f0c78e72a790e9a74507692202fe0149456593",
+    "mode_p_vnext/tests/test_a5_vec_assembly.py": "4f8b93f44fd970a176156b7527e6599f10ff7dde287661bc8e8966af0849a414"
+  },
+  "checks": [
+    {
+      "name": "drafts_contain_creative_choices_only",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider -k 'no_machine_fields or final_vec_fields'",
+      "result": "2 passed, 25 deselected"
+    },
+    {
+      "name": "local_ids_hashes_and_ticks",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider -k 'local_ids or identical_inputs or proportional_allocation or deterministic_output'",
+      "result": "4 passed, 23 deselected"
+    },
+    {
+      "name": "local_binding_and_boundary_assembly",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider -k 'boundaries_cover or state_chain'",
+      "result": "2 passed, 25 deselected"
+    },
+    {
+      "name": "explicit_visual_beats",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider -k 'carries_visual_beats or beat_intervals'",
+      "result": "2 passed, 25 deselected"
+    },
+    {
+      "name": "deterministic_vec_rebuild",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider -k 'deterministic_vec_rebuild or rebuild_with_no_facts'",
+      "result": "2 passed, 25 deselected"
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a5_vec_assembly",
+      "exit_code": 0,
+      "command": "pytest mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider",
+      "result": "27 passed in 0.12s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "v4_isolated_regression_full",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "pytest mode_p -q -p no:cacheprovider --ignore=mode_p/regression",
+      "result": "781 passed, 8 subtests passed in 106.95s",
+      "note": "v4 production entry untouched; A5 changed_paths are all inside mode_p_vnext allowed_paths"
+    },
+    {
+      "name": "v4_entrypoint_active",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "result": "15 passed in 4.79s"
+    },
+    {
+      "name": "artifact_sha256_disk_vs_evidence",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "result": "all 4 artifact hashes match disk sha256"
+    }
+  ],
+  "test_count": 27,
+  "test_passed": 27,
+  "test_failed": 0,
+  "verification_command": "pytest mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider",
+  "verification_output": "27 passed in 0.12s",
+  "v4_regression": "781 passed, 8 subtests passed",
+  "audit_ok": true,
+  "completed_at": "2026-08-01T02:52:00.000000+00:00",
+  "owner": "claude-code-a5-20260801-r2"
+}
