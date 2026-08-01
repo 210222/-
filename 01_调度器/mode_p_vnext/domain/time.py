@@ -8,7 +8,7 @@ from fractions import Fraction
 from .artifact import DomainValidationError
 
 
-DOMAIN_SCHEMA_VERSION = "2.1"
+DOMAIN_SCHEMA_VERSION = "2.2"
 CANONICAL_DOMAIN_TYPES = ("CanonicalTimeline", "GenerationSegmentTimeline", "TickRange", "TimelinePlacement")
 TICKS_PER_SECOND = 24_000
 TIMEBASE_VERSION = "v1-24000-ticks-per-second"

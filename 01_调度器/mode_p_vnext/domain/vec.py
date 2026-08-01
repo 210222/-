@@ -16,7 +16,7 @@ from .decisions import (
 from .time import CanonicalTimeline, GenerationSegmentTimeline, TickRange
 
 
-DOMAIN_SCHEMA_VERSION = "2.1"
+DOMAIN_SCHEMA_VERSION = "2.2"
 CANONICAL_DOMAIN_TYPES = (
     "AudioEvent",
     "ExecutionDesignDraft",

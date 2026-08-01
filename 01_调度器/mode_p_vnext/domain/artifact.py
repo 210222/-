@@ -11,7 +11,7 @@ from types import MappingProxyType
 from typing import Any, Generic, Mapping, Sequence, TypeVar
 
 
-DOMAIN_SCHEMA_VERSION = "2.1"
+DOMAIN_SCHEMA_VERSION = "2.2"
 CANONICAL_DOMAIN_TYPES = ("ArtifactEnvelope", "SourceRef", "ArtifactKind", "ValidationStatus")
 _HEX = frozenset("0123456789abcdef")
 T = TypeVar("T")
@@ -201,7 +201,7 @@ def canonical_sha256(value: Any) -> str:
 
 
 def _canonical_payload_type(artifact_kind: ArtifactKind) -> type[Any]:
-    """Return the sole v2.1 payload authority for a persistent artifact kind.
+    """Return the sole v2.2 payload authority for a persistent artifact kind.
 
     Imports stay local so the pure domain modules can declare their payload
     classes without an import cycle at module load time.
@@ -295,6 +295,10 @@ class ArtifactEnvelope(Generic[T]):
         if not isinstance(self.artifact_kind, ArtifactKind):
             raise DomainValidationError("artifact_kind must be an ArtifactKind")
         _require_text(self.schema_version, "schema_version")
+        if self.schema_version != DOMAIN_SCHEMA_VERSION:
+            raise DomainValidationError(
+                f"schema_version must match canonical domain schema {DOMAIN_SCHEMA_VERSION}"
+            )
         _require_text(self.program_version, "program_version")
         _require_text(self.created_at, "created_at")
         if not isinstance(self.validation_status, ValidationStatus):

@@ -9,7 +9,7 @@ from typing import ClassVar
 from .artifact import ArtifactKind, DomainValidationError, SourceRef
 
 
-DOMAIN_SCHEMA_VERSION = "2.1"
+DOMAIN_SCHEMA_VERSION = "2.2"
 CANONICAL_DOMAIN_TYPES = ("ReleaseGateRecord", "ReleasePhase")
 
 

@@ -1,0 +1,145 @@
+{
+  "schema_version": "2.2",
+  "task_id": "A1",
+  "title": "Create the single canonical domain model and one time base",
+  "run_id": "codex-a1-v22-domain-20260801",
+  "architecture_version": "2.2",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/compat/__init__.py",
+    "01_调度器/mode_p_vnext/compat/legacy_checkpoint.py",
+    "01_调度器/mode_p_vnext/compat/legacy_facts.py",
+    "01_调度器/mode_p_vnext/domain/__init__.py",
+    "01_调度器/mode_p_vnext/domain/artifact.py",
+    "01_调度器/mode_p_vnext/domain/blocking.py",
+    "01_调度器/mode_p_vnext/domain/decisions.py",
+    "01_调度器/mode_p_vnext/domain/direction.py",
+    "01_调度器/mode_p_vnext/domain/evidence.py",
+    "01_调度器/mode_p_vnext/domain/facts.py",
+    "01_调度器/mode_p_vnext/domain/ids.py",
+    "01_调度器/mode_p_vnext/domain/knowledge.py",
+    "01_调度器/mode_p_vnext/domain/projection.py",
+    "01_调度器/mode_p_vnext/domain/release.py",
+    "01_调度器/mode_p_vnext/domain/time.py",
+    "01_调度器/mode_p_vnext/domain/vec.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py"
+  ],
+  "checks": [
+    {
+      "name": "canonical_artifact_envelope",
+      "exit_code": 0,
+      "evidence": "ArtifactEnvelope requires the exact v2.2 schema label, exact canonical payload authority, deep immutability and a locally computed canonical content digest."
+    },
+    {
+      "name": "canonical_24000_tick_timebase",
+      "exit_code": 0,
+      "evidence": "Registered tests prove the sole 24000 tick time base, half-open ranges and segment-local zero origin."
+    },
+    {
+      "name": "draft_artifact_separation",
+      "exit_code": 0,
+      "evidence": "Registered tests mechanically reject ID, hash, tick, timeline, VEC and release authority fields from creative Draft schemas."
+    },
+    {
+      "name": "no_duplicate_domain_authority",
+      "exit_code": 0,
+      "evidence": "All canonical domain types have one declaration in the domain package; ScriptFact, FactSemantic and FactRegistry are re-exported from that authority rather than redefined."
+    },
+    {
+      "name": "domain_schemas_frozen_for_downstream",
+      "exit_code": 0,
+      "evidence": "Every domain module declares schema 2.2, all canonical dataclasses are frozen, and ArtifactEnvelope rejects a v2.2 payload mislabeled as schema 2.1."
+    },
+    {
+      "name": "legacy_read_adapter_only",
+      "exit_code": 0,
+      "evidence": "Compatibility imports remain one-way and read-only. The explicit legacy fact adapter remints a local ID, defaults missing semantics to narrative, validates supplied source support and requires re-ingest for reference or dialogue use."
+    },
+    {
+      "name": "typed_fact_semantics",
+      "exit_code": 0,
+      "evidence": "FactKind now represents source authority while the independent FactSemantic enum represents narrative, character, wardrobe, prop, setting, dialogue, continuity or asset meaning. Subject and dialogue field requirements are fail-closed."
+    },
+    {
+      "name": "opaque_fact_ids",
+      "exit_code": 0,
+      "evidence": "ScriptFact accepts only local script_fact identities with an ordinal-bound SHA-256 body; semantic labels and legacy prefixes are rejected, and semantic lookup uses the typed field only."
+    },
+    {
+      "name": "source_span_invariants",
+      "exit_code": 0,
+      "evidence": "ScriptFact enforces non-empty half-open character spans and non-negative ordinals; source validation rejects BOM/CR input, out-of-bounds spans, unsupported statements and dialogue text absent from the source span. FactRegistry enforces strictly increasing unique ordinals per source document."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a1_domain_model",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "result": "23 passed in 0.21s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "failure_first_v22_contract",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 1,
+      "result": "Before implementation: 5 failed, 18 passed; missing FactSemantic, legacy fact adapter and schema 2.2 declarations were observed."
+    },
+    {
+      "name": "v4_entrypoint_isolation_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "15 passed in 5.49s"
+    },
+    {
+      "name": "domain_compat_compile_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m compileall -q mode_p_vnext/domain mode_p_vnext/compat",
+      "exit_code": 0,
+      "result": "Canonical domain and compatibility modules compiled successfully."
+    }
+  ],
+  "review": {
+    "findings": [
+      "The v2.1 ScriptFact conflated provenance with semantic meaning and omitted source spans, ordinals, subjects and spoken text.",
+      "Fact consumers therefore had no canonical semantic field and downstream code resorted to parsing fact_id prefixes.",
+      "Canonical modules declared schema 2.1 after the v2.2 breaking contract amendment, while ArtifactEnvelope accepted mismatched schema labels.",
+      "No explicit compatibility path existed for old ScriptFact records."
+    ],
+    "root_cause": "The prior A1 schema was frozen before the ingest-to-VEC semantic boundary was specified. A8 exposed that A5 depended on accidental ID naming rather than typed canonical data, requiring an upstream v2.2 domain correction.",
+    "considered_options": [
+      {
+        "option": "Keep v2.1 ScriptFact and teach A5 more ID prefixes",
+        "decision": "rejected",
+        "reason": "It preserves semantic coupling to identity strings and cannot prove source or dialogue provenance."
+      },
+      {
+        "option": "Add optional semantic fields with permissive legacy defaults in the canonical constructor",
+        "decision": "rejected",
+        "reason": "It lets new artifacts silently enter with ambiguous semantics and weakens fail-closed assembly."
+      },
+      {
+        "option": "Make the v2.2 fields mandatory and isolate old records behind an explicit read adapter",
+        "decision": "accepted",
+        "reason": "It gives every downstream consumer one typed authority while preserving read-only legacy access without semantic guessing."
+      }
+    ],
+    "remaining_risks": [
+      "Invalidated A5 code still parses legacy ID prefixes and must be replaced only when A5 becomes the unique next task.",
+      "Invalidated A6 services still duplicate projection classes and must be removed only in A6.",
+      "A4 must implement FactExtractionDraft and the deterministic assembler that calls source-span validation; A8 must prove the full ingest path."
+    ]
+  },
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

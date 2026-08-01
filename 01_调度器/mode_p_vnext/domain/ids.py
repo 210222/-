@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from .artifact import ArtifactKind, DomainValidationError, canonical_sha256, require_sha256
 
 
-DOMAIN_SCHEMA_VERSION = "2.1"
+DOMAIN_SCHEMA_VERSION = "2.2"
 CANONICAL_DOMAIN_TYPES = ("IdFactory",)
 
 

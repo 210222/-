@@ -59,6 +59,198 @@ def _field_names(domain_type: type) -> tuple[str, ...]:
     return tuple(field.name for field in dataclasses.fields(domain_type))
 
 
+def test_v22_script_fact_has_typed_semantics_and_exact_source_span_contract() -> None:
+    facts_domain = importlib.import_module("mode_p_vnext.domain.facts")
+    FactKind = facts_domain.FactKind
+    FactRegistry = facts_domain.FactRegistry
+    FactSemantic = facts_domain.FactSemantic
+    ScriptFact = facts_domain.ScriptFact
+
+    assert _field_names(ScriptFact) == (
+        "fact_id",
+        "scene_id",
+        "kind",
+        "semantic",
+        "statement",
+        "source_ref",
+        "source_start",
+        "source_end",
+        "ordinal",
+        "subject_id",
+        "spoken_text",
+    )
+
+    source_text = "陈厚坤把手机放在桌上。\n周从文说：好！"
+    source = SourceRef(source_id="script:episode-35", digest="a" * 64)
+    prop = ScriptFact(
+        fact_id="script_fact:0001:" + "b" * 64,
+        scene_id="scene:35.2",
+        kind=FactKind.SCRIPT,
+        semantic=FactSemantic.PROP,
+        statement="陈厚坤把手机放在桌上。",
+        source_ref=source,
+        source_start=0,
+        source_end=source_text.index("\n"),
+        ordinal=1,
+        subject_id="prop:phone",
+    )
+    dialogue_start = source_text.index("周从文")
+    dialogue = ScriptFact(
+        fact_id="script_fact:0002:" + "c" * 64,
+        scene_id="scene:35.2",
+        kind=FactKind.SCRIPT,
+        semantic=FactSemantic.DIALOGUE,
+        statement="周从文说：好！",
+        source_ref=source,
+        source_start=dialogue_start,
+        source_end=len(source_text),
+        ordinal=2,
+        subject_id="character:zhou-congwen",
+        spoken_text="好！",
+    )
+
+    assert prop.validate_against_normalized_source(source_text) == "陈厚坤把手机放在桌上。"
+    assert dialogue.validate_against_normalized_source(source_text) == "周从文说：好！"
+    assert FactRegistry(facts=(prop, dialogue)).by_semantic(FactSemantic.DIALOGUE) == (
+        dialogue,
+    )
+
+
+def test_v22_script_fact_rejects_invalid_semantics_subjects_and_source_spans() -> None:
+    facts_domain = importlib.import_module("mode_p_vnext.domain.facts")
+    FactKind = facts_domain.FactKind
+    FactSemantic = facts_domain.FactSemantic
+    ScriptFact = facts_domain.ScriptFact
+    source = SourceRef(source_id="script:episode-35", digest="a" * 64)
+    valid = ScriptFact(
+        fact_id="script_fact:0001:" + "b" * 64,
+        scene_id="scene:35.2",
+        kind=FactKind.SCRIPT,
+        semantic=FactSemantic.NARRATIVE,
+        statement="夜。",
+        source_ref=source,
+        source_start=0,
+        source_end=2,
+        ordinal=1,
+    )
+
+    invalid_replacements = (
+        ({"semantic": "dialogue"}, "FactSemantic"),
+        ({"fact_id": "dialogue_0001"}, "fact_id"),
+        ({"fact_id": "script_fact:0002:" + "b" * 64}, "fact_id"),
+        ({"source_start": -1}, "source_start"),
+        ({"source_start": 2, "source_end": 2}, "source span"),
+        ({"source_start": True}, "source_start"),
+        ({"ordinal": -1}, "ordinal"),
+        ({"ordinal": True}, "ordinal"),
+        ({"semantic": FactSemantic.PROP}, "subject_id"),
+        ({"semantic": FactSemantic.DIALOGUE}, "subject_id"),
+        ({"spoken_text": "不应出现"}, "spoken_text"),
+        ({"subject_id": " "}, "subject_id"),
+    )
+    for changes, message in invalid_replacements:
+        with pytest.raises(DomainValidationError, match=message):
+            dataclasses.replace(valid, **changes)
+
+    dialogue = dataclasses.replace(
+        valid,
+        semantic=FactSemantic.DIALOGUE,
+        subject_id="character:zhou-congwen",
+        spoken_text="好！",
+        statement="周从文说：好！",
+        source_start=0,
+        source_end=8,
+    )
+    with pytest.raises(DomainValidationError, match="source_end"):
+        dialogue.validate_against_normalized_source("周从文说：好！")
+    with pytest.raises(DomainValidationError, match="statement"):
+        valid.validate_against_normalized_source("白天。")
+    dialogue_without_spoken_text = dataclasses.replace(
+        dialogue,
+        statement="周从文",
+        source_end=len("周从文沉默。"),
+    )
+    with pytest.raises(DomainValidationError, match="spoken_text"):
+        dialogue_without_spoken_text.validate_against_normalized_source("周从文沉默。")
+
+
+def test_v22_fact_registry_enforces_per_source_strict_unique_ordinals() -> None:
+    facts_domain = importlib.import_module("mode_p_vnext.domain.facts")
+    FactKind = facts_domain.FactKind
+    FactRegistry = facts_domain.FactRegistry
+    FactSemantic = facts_domain.FactSemantic
+    ScriptFact = facts_domain.ScriptFact
+    source_a = SourceRef(source_id="script:a", digest="a" * 64)
+    source_b = SourceRef(source_id="script:b", digest="b" * 64)
+
+    def fact(*, fact_id: str, source: SourceRef, ordinal: int) -> object:
+        return ScriptFact(
+            fact_id=fact_id,
+            scene_id="scene:1",
+            kind=FactKind.SCRIPT,
+            semantic=FactSemantic.NARRATIVE,
+            statement="夜。",
+            source_ref=source,
+            source_start=0,
+            source_end=2,
+            ordinal=ordinal,
+        )
+
+    a1 = fact(fact_id="script_fact:0001:" + "a" * 64, source=source_a, ordinal=1)
+    a2 = fact(fact_id="script_fact:0002:" + "b" * 64, source=source_a, ordinal=2)
+    b1 = fact(fact_id="script_fact:0001:" + "c" * 64, source=source_b, ordinal=1)
+    assert FactRegistry(facts=(a1, b1, a2)).facts == (a1, b1, a2)
+    with pytest.raises(DomainValidationError, match="strictly increasing"):
+        FactRegistry(facts=(a2, a1))
+    with pytest.raises(DomainValidationError, match="strictly increasing"):
+        FactRegistry(
+            facts=(
+                a1,
+                dataclasses.replace(
+                    a2,
+                    ordinal=1,
+                    fact_id="script_fact:0001:" + "d" * 64,
+                ),
+            )
+        )
+
+
+def test_v22_fact_id_is_opaque_and_legacy_import_never_infers_semantic_prefix() -> None:
+    from mode_p_vnext.compat.legacy_facts import read_legacy_script_fact
+    from mode_p_vnext.domain.facts import FactKind, FactSemantic
+
+    source_text = "周从文说：好！"
+    source = SourceRef(source_id="legacy-script:episode-35", digest="d" * 64)
+    imported = read_legacy_script_fact(
+        {
+            "fact_id": "dialogue_0001",
+            "kind": "dialogue",
+            "statement": source_text,
+        },
+        episode_id="episode-35",
+        scene_id="scene:35.2",
+        source_ref=source,
+        source_start=0,
+        source_end=len(source_text),
+        ordinal=1,
+        source_kind=FactKind.SCRIPT,
+        normalized_source=source_text,
+    )
+
+    assert imported.fact.semantic is FactSemantic.NARRATIVE
+    assert imported.fact.fact_id != "dialogue_0001"
+    assert imported.fact.fact_id.startswith("script_fact:0001:")
+    assert imported.fact.spoken_text is None
+    assert set(imported.requires_reingest_for) == {
+        FactSemantic.CHARACTER,
+        FactSemantic.WARDROBE,
+        FactSemantic.PROP,
+        FactSemantic.SETTING,
+        FactSemantic.DIALOGUE,
+        FactSemantic.ASSET,
+    }
+
+
 def test_stage_draft_schemas_match_architecture_section_5_3_exactly() -> None:
     assert _field_names(EpisodeDirectionDraft) == (
         "dramatic_promise",
@@ -481,8 +673,8 @@ def test_nested_domain_data_is_deeply_frozen_before_hashing() -> None:
     envelope = ArtifactEnvelope.create(
         artifact_id="blocking_draft:scene-1:0001",
         artifact_kind=ArtifactKind.BLOCKING_DRAFT,
-        schema_version="2.1",
-        program_version="vnext-2.1",
+        schema_version="2.2",
+        program_version="vnext-2.2",
         payload=draft,
         source_refs=(source,),
         dependency_digests={"script": source.digest},
@@ -503,7 +695,7 @@ def test_nested_domain_data_is_deeply_frozen_before_hashing() -> None:
 def test_canonical_artifact_envelope_is_hash_bound_and_machine_assembled() -> None:
     direction = _episode_direction()
     source = SourceRef(source_id="script:episode-1", digest="a" * 64)
-    artifact_id = IdFactory(program_version="vnext-2.1").create(
+    artifact_id = IdFactory(program_version="vnext-2.2").create(
         artifact_kind=ArtifactKind.EPISODE_DIRECTION,
         episode_id="episode-1",
         scene_id=None,
@@ -514,8 +706,8 @@ def test_canonical_artifact_envelope_is_hash_bound_and_machine_assembled() -> No
     envelope = ArtifactEnvelope.create(
         artifact_id=artifact_id,
         artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-        schema_version="2.1",
-        program_version="vnext-2.1",
+        schema_version="2.2",
+        program_version="vnext-2.2",
         payload=direction,
         source_refs=(source,),
         dependency_digests={"script": source.digest},
@@ -525,8 +717,8 @@ def test_canonical_artifact_envelope_is_hash_bound_and_machine_assembled() -> No
 
     assert envelope.content_sha256 == ArtifactEnvelope.content_digest_for(
         artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-        schema_version="2.1",
-        program_version="vnext-2.1",
+        schema_version="2.2",
+        program_version="vnext-2.2",
         payload=direction,
         source_refs=(source,),
         dependency_digests={"script": source.digest},
@@ -538,12 +730,24 @@ def test_canonical_artifact_envelope_is_hash_bound_and_machine_assembled() -> No
     with pytest.raises(TypeError):
         envelope.dependency_digests["script"] = "b" * 64
 
+    with pytest.raises(DomainValidationError, match="schema_version"):
+        ArtifactEnvelope.create(
+            artifact_id=artifact_id,
+            artifact_kind=ArtifactKind.EPISODE_DIRECTION,
+            schema_version="2.1",
+            program_version="vnext-2.2",
+            payload=direction,
+            source_refs=(source,),
+            dependency_digests={"script": source.digest},
+            created_at="2026-07-30T00:00:00Z",
+        )
+
     with pytest.raises(DomainValidationError, match="content_sha256"):
         ArtifactEnvelope(
             artifact_id=artifact_id,
             artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-            schema_version="2.1",
-            program_version="vnext-2.1",
+            schema_version="2.2",
+            program_version="vnext-2.2",
             payload=direction,
             source_refs=(source,),
             dependency_digests={"script": source.digest},
@@ -555,8 +759,8 @@ def test_canonical_artifact_envelope_is_hash_bound_and_machine_assembled() -> No
         ArtifactEnvelope.create(
             artifact_id=artifact_id,
             artifact_kind=ArtifactKind.SCENE_INTENT,
-            schema_version="2.1",
-            program_version="vnext-2.1",
+            schema_version="2.2",
+            program_version="vnext-2.2",
             payload=direction,
             source_refs=(source,),
             dependency_digests={"script": source.digest},
@@ -628,8 +832,8 @@ def test_artifact_envelope_rejects_generic_and_forged_payload_authority() -> Non
     common = {
         "artifact_id": "script_fact:scene-1:0001",
         "artifact_kind": ArtifactKind.SCRIPT_FACT,
-        "schema_version": "2.1",
-        "program_version": "vnext-2.1",
+        "schema_version": "2.2",
+        "program_version": "vnext-2.2",
         "source_refs": (source,),
         "dependency_digests": {"script": source.digest},
         "created_at": "2026-07-30T00:00:00Z",
@@ -887,7 +1091,7 @@ def test_knowledge_snapshot_seals_full_candidate_accounting_and_selection_reason
         )
 
 def test_id_factory_is_stable_and_drafts_cannot_carry_machine_authority() -> None:
-    factory = IdFactory(program_version="vnext-2.1")
+    factory = IdFactory(program_version="vnext-2.2")
     kwargs = {
         "artifact_kind": ArtifactKind.SCENE_INTENT,
         "episode_id": "episode-1",
@@ -964,7 +1168,7 @@ def test_domain_schema_is_frozen_and_has_one_declared_authority_per_type() -> No
     declared_types: list[str] = []
     for module_name in module_names:
         module = importlib.import_module(f"mode_p_vnext.domain.{module_name}")
-        assert module.DOMAIN_SCHEMA_VERSION == "2.1"
+        assert module.DOMAIN_SCHEMA_VERSION == "2.2"
         authority = module.CANONICAL_DOMAIN_TYPES
         assert authority, module_name
         assert len(authority) == len(set(authority)), module_name

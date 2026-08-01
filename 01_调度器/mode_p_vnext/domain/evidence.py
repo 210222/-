@@ -15,7 +15,7 @@ from .artifact import (
 )
 
 
-DOMAIN_SCHEMA_VERSION = "2.1"
+DOMAIN_SCHEMA_VERSION = "2.2"
 CANONICAL_DOMAIN_TYPES = (
     "DPReviewVerdict",
     "DeterministicGateResult",

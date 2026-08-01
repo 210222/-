@@ -1,4 +1,4 @@
-"""Canonical, pure MODE:P vNext domain schemas (architecture v2.1)."""
+"""Canonical, pure MODE:P vNext domain schemas (architecture v2.2)."""
 
 from .artifact import (
     ArtifactEnvelope,
@@ -21,6 +21,7 @@ from .decisions import (
     VisualCurvePointDraft,
 )
 from .direction import EpisodeDirectionDraft, SceneIntentDraft
+from .facts import FactKind, FactRegistry, FactSemantic, ScriptFact
 from .ids import IdFactory
 from .evidence import (
     DPReviewVerdict,
@@ -79,6 +80,9 @@ __all__ = (
     "DomainValidationError",
     "EpisodeDirectionDraft",
     "ExecutionDesignDraft",
+    "FactKind",
+    "FactRegistry",
+    "FactSemantic",
     "GenerationSegment",
     "GenerationSegmentTimeline",
     "IdFactory",
@@ -98,6 +102,7 @@ __all__ = (
     "ProjectionNode",
     "ReferenceRequirement",
     "SceneIntentDraft",
+    "ScriptFact",
     "ShotBoundary",
     "ShotDesignDraft",
     "SourceRef",

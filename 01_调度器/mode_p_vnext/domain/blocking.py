@@ -8,7 +8,7 @@ from typing import Any, ClassVar, Mapping
 from .artifact import ArtifactKind, DomainValidationError, freeze_mapping
 
 
-DOMAIN_SCHEMA_VERSION = "2.1"
+DOMAIN_SCHEMA_VERSION = "2.2"
 CANONICAL_DOMAIN_TYPES = (
     "BlockingBeat",
     "BlockingBeatDraft",

@@ -121,7 +121,7 @@ def read_legacy_b0_k2_checkpoint(path: Path) -> ArtifactEnvelope[BlockingDraft]:
         digest=input_digest,
         locator=str(source_path),
     )
-    artifact_id = IdFactory(program_version="legacy-read-adapter-v2.1").create(
+    artifact_id = IdFactory(program_version="legacy-read-adapter-v2.2").create(
         artifact_kind=ArtifactKind.BLOCKING_DRAFT,
         episode_id="legacy",
         scene_id=scene_id,
@@ -133,7 +133,7 @@ def read_legacy_b0_k2_checkpoint(path: Path) -> ArtifactEnvelope[BlockingDraft]:
         artifact_id=artifact_id,
         artifact_kind=ArtifactKind.BLOCKING_DRAFT,
         schema_version=DOMAIN_SCHEMA_VERSION,
-        program_version="legacy-read-adapter-v2.1",
+        program_version="legacy-read-adapter-v2.2",
         payload=draft,
         source_refs=(source_ref,),
         dependency_digests={"legacy_checkpoint": input_digest},
