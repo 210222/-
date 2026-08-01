@@ -1,0 +1,83 @@
+{
+  "task_id": "A6",
+  "title": "Compile storyboard and video from one ProjectionAST",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/projection_compiler.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/__init__.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/capability.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/storyboard_adapter.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/video_adapter.py",
+    "01_调度器/mode_p_vnext/tests/test_a6_projection_compiler.py"
+  ],
+  "artifact_hashes": {
+    "01_调度器/mode_p_vnext/services/projection_compiler.py": "5292ae4ee866cf0b51ae5d09899c65e725a2a53e7c46657a6782075694190a26",
+    "01_调度器/mode_p_vnext/adapters/delivery/__init__.py": "170da163e192a8cfa7e283db5adf2e99fc0bf1eea09c9404b75760a5e9e5a5a2",
+    "01_调度器/mode_p_vnext/adapters/delivery/capability.py": "0ae025c14207ceddbb08e67f73e1bec4ea6573bb80c991b0e96cecbbdb26bc10",
+    "01_调度器/mode_p_vnext/adapters/delivery/storyboard_adapter.py": "8e26b2c8206574a4a049dae842b0f808669cac18036ea8617678f8868867d2c2",
+    "01_调度器/mode_p_vnext/adapters/delivery/video_adapter.py": "d12ae77b55e8671faef996abf07153bb390e32f5fe485ade947b4fa769b72e1d",
+    "01_调度器/mode_p_vnext/tests/test_a6_projection_compiler.py": "b857d14d55e9f28b411581b436e0dcff1d4834d9a696481cf0a81d829201c9f1"
+  },
+  "checks": [
+    {
+      "name": "single_projection_ast",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a6_projection_compiler.py -q -p no:cacheprovider -k TestSingleProjectionAST",
+      "result": "5 passed, 15 deselected"
+    },
+    {
+      "name": "storyboard_visualbeat_selection",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a6_projection_compiler.py -q -p no:cacheprovider -k TestStoryboardVisualBeatSelection",
+      "result": "4 passed, 16 deselected"
+    },
+    {
+      "name": "video_full_node_projection",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a6_projection_compiler.py -q -p no:cacheprovider -k TestVideoFullNodeProjection",
+      "result": "3 passed, 17 deselected"
+    },
+    {
+      "name": "shared_tick_state_and_bindings",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a6_projection_compiler.py -q -p no:cacheprovider -k TestSharedTickStateAndBindings",
+      "result": "4 passed, 16 deselected"
+    },
+    {
+      "name": "adapter_only_recompile",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a6_projection_compiler.py -q -p no:cacheprovider -k TestAdapterOnlyRecompile",
+      "result": "4 passed, 16 deselected"
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a6_projection_compiler",
+      "exit_code": 0,
+      "command": "pytest mode_p_vnext/tests/test_a6_projection_compiler.py -q -p no:cacheprovider",
+      "result": "20 passed in 0.18s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "neighbor_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "pytest mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "result": "60 passed in 0.51s",
+      "note": "A5/A1/A0 regression untouched by A6 changes"
+    },
+    {
+      "name": "artifact_sha256_disk",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "result": "all 6 artifact hashes computed via certutil SHA256 at evidence write time"
+    }
+  ],
+  "test_count": 20,
+  "test_passed": 20,
+  "test_failed": 0,
+  "verification_command": "pytest mode_p_vnext/tests/test_a6_projection_compiler.py -q -p no:cacheprovider",
+  "verification_output": "20 passed in 0.18s",
+  "v4_regression": "pending controller verification",
+  "audit_ok": true,
+  "completed_at": "2026-08-01T03:11:57.000000+00:00",
+  "owner": "claude-code-a6-20260801-030449-r1"
+}
