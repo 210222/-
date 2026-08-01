@@ -1,0 +1,93 @@
+{
+  "schema_name": "mode_p_vnext_a1_canonical_domain_revalidation_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A1",
+  "created_at": "2026-08-02T07:34:26+08:00",
+  "owner": "codex-a1-v30-revalidation-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_COMPLETE_VERIFICATION_INPUT"
+  },
+  "revalidation": {
+    "reason": "A6 discovered an earlier A0 cohort-authority gap. Architecture v3.0 section 15 required downstream Evidence invalidation even though A1 implementation was not implicated.",
+    "upstream_repair_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_V30_V4_COHORT_AUTHORITY_REPAIR_017.json",
+    "upstream_repair_evidence_sha256": "54f1d9fe6a74f71940e8ba72b28826c30b85e1c2bf8230a58594ea74c7cab241",
+    "previous_a1_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_V30_CANONICAL_DOMAIN_011.json",
+    "previous_a1_evidence_sha256": "5ae6a96ac41ddbcc9b6e2d471b232ab5855c52d370302c30d1626801dba10a41",
+    "canonical_artifact_count": 19,
+    "canonical_hash_mismatch_count": 0,
+    "implementation_changed_after_claim": false,
+    "historical_evidence_reused_as_completion": false
+  },
+  "changed_paths_semantics": "The controller uses changed_paths as the artifact snapshot binding set. These 19 paths are revalidated current artifacts; the implementation delta after claim is empty.",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/compat/__init__.py",
+    "01_调度器/mode_p_vnext/compat/legacy_checkpoint.py",
+    "01_调度器/mode_p_vnext/compat/legacy_facts.py",
+    "01_调度器/mode_p_vnext/domain/__init__.py",
+    "01_调度器/mode_p_vnext/domain/artifact.py",
+    "01_调度器/mode_p_vnext/domain/blocking.py",
+    "01_调度器/mode_p_vnext/domain/decisions.py",
+    "01_调度器/mode_p_vnext/domain/direction.py",
+    "01_调度器/mode_p_vnext/domain/evidence.py",
+    "01_调度器/mode_p_vnext/domain/facts.py",
+    "01_调度器/mode_p_vnext/domain/ids.py",
+    "01_调度器/mode_p_vnext/domain/knowledge.py",
+    "01_调度器/mode_p_vnext/domain/projection.py",
+    "01_调度器/mode_p_vnext/domain/release.py",
+    "01_调度器/mode_p_vnext/domain/time.py",
+    "01_调度器/mode_p_vnext/domain/vec.py",
+    "01_调度器/mode_p_vnext/services/fact_assembler.py",
+    "01_调度器/mode_p_vnext/services/source_normalizer.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py"
+  ],
+  "checks": [
+    {"name": "canonical_artifact_envelope", "exit_code": 0},
+    {"name": "canonical_24000_tick_timebase", "exit_code": 0},
+    {"name": "draft_artifact_separation", "exit_code": 0},
+    {"name": "no_duplicate_domain_authority", "exit_code": 0},
+    {"name": "domain_schemas_frozen_for_downstream", "exit_code": 0},
+    {"name": "legacy_read_adapter_only", "exit_code": 0},
+    {"name": "normalized_source_contract", "exit_code": 0},
+    {"name": "local_fact_assembler_ownership", "exit_code": 0},
+    {"name": "typed_fact_semantics", "exit_code": 0},
+    {"name": "opaque_fact_handles_and_ids", "exit_code": 0},
+    {"name": "source_span_provenance_only", "exit_code": 0},
+    {"name": "generation_capability_profile", "exit_code": 0},
+    {"name": "duration_intent_not_raw_ticks", "exit_code": 0},
+    {"name": "typed_reference_binding_intent", "exit_code": 0},
+    {"name": "typed_dialogue_binding_intent", "exit_code": 0}
+  ],
+  "precompletion_results": [
+    {
+      "name": "a1_a0_v4_related_regression",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "36 passed in 3.58s"
+    },
+    {
+      "name": "previous_a1_artifact_hash_comparison",
+      "exit_code": 0,
+      "summary": "19 current artifacts matched the canonical hashes recorded by invalidated A1 Evidence; 0 mismatches."
+    }
+  ],
+  "authority_boundary": {
+    "canonical_domain": "mode_p_vnext.domain",
+    "model_outputs": ["Draft", "candidate", "typed intent", "RevisionRequest"],
+    "local_runtime_authority": ["ID", "hash", "24000 tick", "duration allocation", "Boundary", "binding", "VEC", "ProjectionAST"],
+    "legacy_adapters": "READ_ONLY_MIGRATION_INPUT",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A2 or later implementation was changed.",
+    "No historical Evidence was treated as current completion proof.",
+    "No v4 runtime, Director runtime, external media, or production switch was changed or enabled.",
+    "No structural or textual test result is represented as visual acceptance."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false
+}
