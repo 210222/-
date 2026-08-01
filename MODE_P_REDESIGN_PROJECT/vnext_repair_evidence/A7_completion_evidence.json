@@ -1,0 +1,91 @@
+{
+  "task_id": "A7",
+  "title": "Implement deterministic Gate 0, independent DP, and media evidence boundaries",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/deterministic_gates.py",
+    "01_调度器/mode_p_vnext/services/revision_router.py",
+    "01_调度器/mode_p_vnext/pipeline/verification_nodes.py",
+    "01_调度器/mode_p_vnext/ports/media_renderer.py",
+    "01_调度器/mode_p_vnext/ports/media_verifier.py",
+    "01_调度器/mode_p_vnext/ports/approval.py",
+    "01_调度器/mode_p_vnext/adapters/media/__init__.py",
+    "01_调度器/mode_p_vnext/adapters/media/renderer.py",
+    "01_调度器/mode_p_vnext/adapters/media/verifier.py",
+    "01_调度器/mode_p_vnext/tests/test_a7_dual_loop.py"
+  ],
+  "artifact_hashes": {
+    "01_调度器/mode_p_vnext/services/deterministic_gates.py": "7d07907029a66105136107862cbb065be71ad9b2e2179f6b18f37dd540db47e7",
+    "01_调度器/mode_p_vnext/services/revision_router.py": "4c3da585098ac17c93e996b22cbf9491bee64784042621b17cd4380b0eac2e98",
+    "01_调度器/mode_p_vnext/pipeline/verification_nodes.py": "376bb25493dfc82e1ec056d50c84958969ba1886582055552eefe23f5c2c0ef2",
+    "01_调度器/mode_p_vnext/ports/media_renderer.py": "916ace525d2d1dce0cc00aba45ee1f5946eb24fe470727ac24aed5b8ff1fe651",
+    "01_调度器/mode_p_vnext/ports/media_verifier.py": "54824a1c41df8ac91febddcfec490cae1e5ef216d90a985dfee1b6bb7290aec8",
+    "01_调度器/mode_p_vnext/ports/approval.py": "8daa129c71d11b58c1d0f1975ed4fc374a9a0620aaec2e611e073d865bac0001",
+    "01_调度器/mode_p_vnext/adapters/media/__init__.py": "0482206462bc5e38ccb6b62a4287608464ec38e8ef2b9d42d9c0b66fa1474d96",
+    "01_调度器/mode_p_vnext/adapters/media/renderer.py": "d67fe033594f2b3961e9faa4a826d2640158d47bc6edb585a8bb3458df1c3755",
+    "01_调度器/mode_p_vnext/adapters/media/verifier.py": "2924e7f6502237d326a2ac95f721ec1f7798311c276d06c3ae1ee2c8c410fe59",
+    "01_调度器/mode_p_vnext/tests/test_a7_dual_loop.py": "deffd267f61c03e4b1cd601812b18a97a1fc5a63b6664ceb012886550f42ccfc"
+  },
+  "checks": [
+    {
+      "name": "deterministic_gate_zero",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider -k TestDeterministicGateZero",
+      "result": "5 passed, 18 deselected"
+    },
+    {
+      "name": "independent_dp_packet",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider -k TestIndependentDPPacket",
+      "result": "3 passed, 20 deselected"
+    },
+    {
+      "name": "bounded_revision_router",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider -k TestBoundedRevisionRouter",
+      "result": "4 passed, 19 deselected"
+    },
+    {
+      "name": "text_cannot_claim_visual_acceptance",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider -k TestTextCannotClaimVisualAcceptance",
+      "result": "6 passed, 17 deselected"
+    },
+    {
+      "name": "media_outcome_attribution",
+      "exit_code": 0,
+      "verification": "pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider -k TestMediaOutcomeAttribution",
+      "result": "5 passed, 18 deselected"
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a7_dual_loop",
+      "exit_code": 0,
+      "command": "pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider",
+      "result": "23 passed in 0.15s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "neighbor_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "pytest mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "result": "80 passed in 0.59s",
+      "note": "A6/A5/A1/A0 regression untouched by A7 changes"
+    },
+    {
+      "name": "artifact_sha256_disk",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "result": "all 10 artifact hashes computed via certutil SHA256 at evidence write time"
+    }
+  ],
+  "test_count": 23,
+  "test_passed": 23,
+  "test_failed": 0,
+  "verification_command": "pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider",
+  "verification_output": "23 passed in 0.15s",
+  "v4_regression": "pending controller verification",
+  "audit_ok": true,
+  "completed_at": "2026-08-01T03:24:58.000000+00:00",
+  "owner": "codex-a7-dual-loop-20260801"
+}
