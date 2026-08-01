@@ -82,12 +82,13 @@ Gate reports, or fixed revision-round limits as active MODE:P behavior.
 
 ## Implementation work
 
-### vNext architecture-v2.1 release gate
+### vNext architecture-v2.2 release gate
 
-vNext engineering is governed only by the architecture-v2.1 ReleaseLedger:
+vNext engineering is governed only by the architecture-v2.2 ReleaseLedger:
 
 - `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md`
 - `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md`
+- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md`
 - `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json`
 - `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_STATE.json`
 - `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md`

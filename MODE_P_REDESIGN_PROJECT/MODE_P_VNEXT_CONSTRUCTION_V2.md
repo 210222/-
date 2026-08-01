@@ -1,6 +1,6 @@
-# MODE:P vNext 架构 v2.1 施工协议
+# MODE:P vNext 架构 v2.2 施工协议
 
-> 状态：架构 v2.1 权威包的施工基线
+> 状态：架构 v2.2 权威包的施工基线
 >
 > 唯一施工入口：`/mode-p-vnext-rebuild [optional exact next A-task]`
 >
@@ -14,7 +14,7 @@
 
 ## 1. 为什么施工文件必须迁移
 
-架构 v2.1 保持并强化了“停止给旧 B1 Prompt 追加规则”的路线。如果施工仍由 R、DDO、
+架构 v2.2 保持并强化了“停止给旧 B1 Prompt 追加规则”的路线。如果施工仍由 R、DDO、
 CPL 三套队列分别选择任务，就会继续产生以下矛盾：
 
 - R 队列要求先修旧控制面；
@@ -47,9 +47,10 @@ Fable 5、Claude 系统提示词资料和旧代码库只提供双循环、状态
 施工时只按以下顺序读取：
 
 1. 用户在当前任务中的最新明确指令；
-2. 架构 v2.1 权威包：
+2. 架构 v2.2 权威包：
    `MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md` +
-   `MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md`；
+   `MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md` +
+   `MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md`；
 3. `MODE_P_VNEXT_RELEASE_TASKS.json`；
 4. `MODE_P_VNEXT_RELEASE_STATE.json`；
 5. 本施工协议；
@@ -104,6 +105,19 @@ Fable 5、Claude 系统提示词资料和旧代码库只提供双循环、状态
 Evidence 通配符重叠。后续任务发现上游缺陷时，必须先失效后继任务，再回到真正拥有
 该文件的工作包；不得在下游任务中顺手修改上游产物。A10 是验收工作包，没有实现
 代码写权限。
+
+### v2.2 根因合同边界
+
+- A1 定义带显式 `FactSemantic`、源文本跨度和不透明 ID 的唯一事实模型；
+- A4 定义 I0 `FactExtractionDraft` Signature，模型只能抽取有原文定位的事实草稿；
+- A5 只读取显式事实语义生成引用与对白音频，禁止解析 `fact_id` 前缀；
+- A6 必须直接构造 `mode_p_vnext.domain.projection` 的规范类型，服务和适配层不得定义影子 AST；
+- A7 只消费规范 Projection/Evidence/Revision 类型，并与 A6 一起运行注册的 v4 隔离回归；
+- A8 必须从 INGEST 到双投影运行一个可恢复状态图，不能把结构清单 Shadow 计为完成。
+
+上述边界的唯一规范文本是
+`MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md`。任务表中的新增检查必须由
+ReleaseLedger 注册命令真实执行，不能以文档声明替代。
 
 ### A3 规范知识权威边界
 

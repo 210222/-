@@ -1,7 +1,7 @@
 {
   "schema_version": "2.0",
-  "queue_id": "mode_p_vnext_architecture_v2_1_2026_07_30",
-  "architecture_version": "2.1",
+  "queue_id": "mode_p_vnext_architecture_v2_2_2026_08_01",
+  "architecture_version": "2.2",
   "architecture_documents": [
     {
       "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
@@ -12,11 +12,17 @@
       "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md",
       "sha256": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952",
       "role": "NORMATIVE_AMENDMENT"
+    },
+    {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md",
+      "sha256": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c",
+      "role": "NORMATIVE_AMENDMENT"
     }
   ],
   "locked_verification_inputs": {
     "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
-    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952"
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c"
   },
   "status_after_all": "PRODUCTION_SWITCH_PROPOSAL_ELIGIBLE",
   "terminal_claim_ceiling": "OWNER_APPROVED_PREVIEW",
@@ -43,7 +49,8 @@
       "title": "Converge construction control and freeze the architecture-v2 baseline",
       "depends_on": [],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §13, §14 A0, §17"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §13, §14 A0, §17",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §5-§6"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/release_control.py",
@@ -71,6 +78,7 @@
         "bounded_control_output",
         "portable_canonical_hashes",
         "architecture_bundle_locked",
+        "architecture_v22_root_contracts_registered",
         "manual_release_gates",
         "construction_entry_migrated",
         "production_v4_unchanged"
@@ -130,7 +138,8 @@
       "title": "Create the single canonical domain model and one time base",
       "depends_on": ["A0"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §3, §4, §5, §14 A1"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §3, §4, §5, §14 A1",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2.4"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/domain/**",
@@ -144,7 +153,10 @@
         "draft_artifact_separation",
         "no_duplicate_domain_authority",
         "domain_schemas_frozen_for_downstream",
-        "legacy_read_adapter_only"
+        "legacy_read_adapter_only",
+        "typed_fact_semantics",
+        "opaque_fact_ids",
+        "source_span_invariants"
       ],
       "verification_commands": [
         {
@@ -264,7 +276,8 @@
       "title": "Implement declarative stage signatures, prompt budgets, and the provider port",
       "depends_on": ["A3"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §6, §14 A4"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §6, §14 A4",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2.1-§2.3"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/prompts/**",
@@ -279,7 +292,9 @@
         "b1_prompt_under_12000_chars",
         "b1_schema_under_4500_chars",
         "native_windows_binary_first",
-        "one_scoped_contract_repair"
+        "one_scoped_contract_repair",
+        "i0_fact_extraction_signature",
+        "source_span_repair_ceiling"
       ],
       "verification_commands": [
         {
@@ -308,7 +323,8 @@
       "title": "Separate creative drafts from deterministic Blocking, Timeline, and VEC assembly",
       "depends_on": ["A4"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §5.3–§5.5, §14 A5"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §5.3–§5.5, §14 A5",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2.5"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/services/blocking_assembler.py",
@@ -322,7 +338,10 @@
         "local_ids_hashes_and_ticks",
         "local_binding_and_boundary_assembly",
         "explicit_visual_beats",
-        "deterministic_vec_rebuild"
+        "deterministic_vec_rebuild",
+        "typed_reference_binding",
+        "typed_dialogue_audio_binding",
+        "no_fact_id_semantics"
       ],
       "verification_commands": [
         {
@@ -351,7 +370,8 @@
       "title": "Compile storyboard and video from one ProjectionAST",
       "depends_on": ["A5"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §10, §14 A6"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §10, §14 A6",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §3.1-§3.2"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/services/projection_compiler.py",
@@ -364,7 +384,10 @@
         "storyboard_visualbeat_selection",
         "video_full_node_projection",
         "shared_tick_state_and_bindings",
-        "adapter_only_recompile"
+        "adapter_only_recompile",
+        "canonical_projection_type_identity",
+        "projection_envelope_roundtrip",
+        "no_duplicate_projection_authority"
       ],
       "verification_commands": [
         {
@@ -380,6 +403,20 @@
           ],
           "cwd": "01_调度器",
           "timeout_seconds": 300
+        },
+        {
+          "name": "a6_v4_isolation",
+          "argv": [
+            "{python}",
+            "-m",
+            "pytest",
+            "mode_p_vnext/tests/test_v9_4_v4_compatibility.py",
+            "-q",
+            "-p",
+            "no:cacheprovider"
+          ],
+          "cwd": "01_调度器",
+          "timeout_seconds": 240
         }
       ],
       "locked_verification_inputs": {
@@ -393,7 +430,8 @@
       "title": "Implement deterministic Gate 0, independent DP, and media evidence boundaries",
       "depends_on": ["A6"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §9, §14 A7"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §9, §14 A7",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §3.3"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/services/deterministic_gates.py",
@@ -411,7 +449,8 @@
         "independent_dp_packet",
         "bounded_revision_router",
         "text_cannot_claim_visual_acceptance",
-        "media_outcome_attribution"
+        "media_outcome_attribution",
+        "canonical_projection_and_evidence_consumption"
       ],
       "verification_commands": [
         {
@@ -427,6 +466,20 @@
           ],
           "cwd": "01_调度器",
           "timeout_seconds": 300
+        },
+        {
+          "name": "a7_v4_isolation",
+          "argv": [
+            "{python}",
+            "-m",
+            "pytest",
+            "mode_p_vnext/tests/test_v9_4_v4_compatibility.py",
+            "-q",
+            "-p",
+            "no:cacheprovider"
+          ],
+          "cwd": "01_调度器",
+          "timeout_seconds": 240
         }
       ],
       "locked_verification_inputs": {
@@ -440,7 +493,8 @@
       "title": "Run one real resumable E0-to-projection Shadow through the top-level CLI",
       "depends_on": ["A7"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §8, §14 A8"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md §8, §14 A8",
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md §2, §4"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/pipeline/episode_nodes.py",
@@ -457,7 +511,10 @@
         "unknown_script_vertical",
         "accepted_nodes_not_recalled",
         "no_golden_vec_injection",
-        "text_validated_claim_ceiling"
+        "text_validated_claim_ceiling",
+        "typed_ingest_provenance",
+        "complete_v22_state_graph",
+        "run_record_digest_tamper_rejected"
       ],
       "verification_commands": [
         {

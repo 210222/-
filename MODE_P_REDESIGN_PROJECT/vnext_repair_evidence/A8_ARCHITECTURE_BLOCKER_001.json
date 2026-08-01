@@ -1,0 +1,122 @@
+{
+  "task_id": "A8",
+  "title": "Run one real resumable E0-to-projection Shadow through the top-level CLI",
+  "status": "FAILED_CLOSED",
+  "classification": "ARCHITECTURE_CONTRACT_AND_UPSTREAM_AUTHORITY_BLOCKER",
+  "architecture_version": "2.1",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952"
+  },
+  "summary": "A8 cannot produce an architecture-v2.1-compliant real resumable E0-to-projection Shadow without changing frozen upstream work or inventing an unversioned ingest contract. Completion is therefore refused.",
+  "findings": [
+    {
+      "id": "A8-B01",
+      "severity": "CRITICAL",
+      "check": "canonical_projection_authority",
+      "result": "FAILED",
+      "evidence": [
+        "01_调度器/mode_p_vnext/domain/projection.py defines the A1 canonical ProjectionAST, ProjectionManifest, ProjectionNode, and CapabilityAdaptationRecord.",
+        "01_调度器/mode_p_vnext/services/projection_compiler.py independently defines differently shaped ProjectionAST, ProjectionManifest, and ProjectionNode classes.",
+        "01_调度器/mode_p_vnext/adapters/delivery/capability.py independently defines a differently shaped CapabilityAdaptationRecord.",
+        "Runtime identity checks returned ProjectionAST_same=False and CapabilityRecord_same=False.",
+        "01_调度器/mode_p_vnext/domain/artifact.py requires the exact canonical domain ProjectionAST type for ArtifactKind.PROJECTION_AST."
+      ],
+      "root_cause": "A6 was accepted with service and adapter data classes that duplicate A1-frozen canonical domain authority.",
+      "impact": "A8 cannot persist A6 projection output in the canonical ArtifactEnvelope and cannot satisfy ADR-016 exclusive ownership.",
+      "required_recovery": "Invalidate A6 and its dependants through ReleaseLedger, then repair A6 to construct and consume only mode_p_vnext.domain.projection types before revalidating A7 and reclaiming A8."
+    },
+    {
+      "id": "A8-B02",
+      "severity": "CRITICAL",
+      "check": "unknown_script_vertical",
+      "result": "FAILED",
+      "evidence": [
+        "01_调度器/mode_p_vnext/adapters/storage/shadow_layout.py emits only line:NNNN facts for arbitrary non-empty script lines.",
+        "01_调度器/mode_p_vnext/services/vec_assembler.py derives references only from char_, prop_, costume_, and scene_ fact-id prefixes and derives audio only from dialogue_ facts.",
+        "The v2.1 architecture bundle does not freeze a typed script-ingest encoding that defines speaker, dialogue, character, wardrobe, prop, setting, scope, or provenance mapping for arbitrary scripts."
+      ],
+      "root_cause": "A5 and the A8 draft depend on incompatible, undocumented fact-id conventions; the canonical FactRegistry records FactKind but not the semantic subtypes required by VEC assembly.",
+      "impact": "An unknown script can reach VEC assembly with zero reference requirements and missing dialogue audio, so the required real vertical path is not deterministic or schema-complete.",
+      "required_recovery": "Version an architecture amendment that defines the typed INGEST-to-FactRegistry contract and its validation ownership, then rebase affected task contracts before implementation."
+    },
+    {
+      "id": "A8-B03",
+      "severity": "CRITICAL",
+      "check": "single_real_cli_entry",
+      "result": "FAILED",
+      "evidence": [
+        "01_调度器/mode_p_vnext/cli.py still invokes mode_p_vnext.shadow_entry.run_shadow.",
+        "01_调度器/mode_p_vnext/shadow_entry.py records creative_generation_performed=false and STRUCTURAL_SHADOW_COMPLETE.",
+        "The untracked A8 episode_nodes.py, scene_nodes.py, and adapters/storage files are not wired into the top-level CLI."
+      ],
+      "root_cause": "The A8 draft added disconnected helpers instead of one top-level persistent execution graph.",
+      "impact": "The registered A8 entry does not perform E0, S1, K1, B0, K2, B1, VEC, Gate 0, DP, or dual projection.",
+      "required_recovery": "After upstream recovery, implement one CLI-owned RunSession and NodeRunner graph covering the complete architecture-v2.1 state path."
+    },
+    {
+      "id": "A8-B04",
+      "severity": "HIGH",
+      "check": "stage_signature_contract",
+      "result": "FAILED",
+      "evidence": [
+        "Both A8 _signature helpers construct StageSignature without approved_input_fields, output_semantics, output_exclusions, prompt_budget, or schema_budget.",
+        "Direct runtime probes for E0 and B0 raised TypeError before any provider call."
+      ],
+      "root_cause": "A8 reconstructs A4 signatures instead of consuming the frozen stage_signatures registry.",
+      "impact": "No real E0 or B0 call can start.",
+      "required_recovery": "Use stage_signatures()[Stage.E0/S1/B0/B1] without local signature reconstruction."
+    },
+    {
+      "id": "A8-B05",
+      "severity": "HIGH",
+      "check": "checkpoint_resume_and_integrity",
+      "result": "FAILED",
+      "evidence": [
+        "The A8 candidate does not use A2 RunSession, NodeRunner, ArtifactEnvelope, checkpoint state, or content-addressed ArtifactStore.",
+        "ShadowRunRecord writes record_sha256 but read_run_record does not validate it.",
+        "resolve_run_id hashes raw bytes while ingest_script hashes decoded and re-encoded text, permitting newline or BOM-dependent identity divergence."
+      ],
+      "root_cause": "A separate run-record format was introduced instead of integrating the A2 persistent runtime.",
+      "impact": "Accepted nodes cannot be proven reusable, corrupted records can be accepted, and run identity is not portable.",
+      "required_recovery": "Reuse A2 persistence and canonical normalized hashing; verify every stored digest before resume."
+    },
+    {
+      "id": "A8-B06",
+      "severity": "HIGH",
+      "check": "registered_verification",
+      "result": "FAILED",
+      "evidence": [
+        "The registered test file 01_调度器/mode_p_vnext/tests/test_a8_real_shadow.py does not exist.",
+        "No executable A8 evidence proves single_real_cli_entry, accepted_nodes_not_recalled, no_golden_vec_injection, or text_validated_claim_ceiling end to end."
+      ],
+      "root_cause": "Implementation was left at disconnected draft stage before its acceptance suite was created.",
+      "impact": "A8 has no admissible completion evidence.",
+      "required_recovery": "Create the registered end-to-end and adversarial tests only after the upstream contracts are repaired."
+    }
+  ],
+  "checks": [
+    {
+      "name": "release_ledger_audit",
+      "exit_code": 0,
+      "result": "ok=true; this proves ledger integrity only"
+    },
+    {
+      "name": "a8_stage_signature_runtime_probe",
+      "exit_code": 0,
+      "result": "E0 and B0 each produced the expected diagnostic TypeError for five missing frozen fields"
+    },
+    {
+      "name": "canonical_type_identity_probe",
+      "exit_code": 0,
+      "result": "ProjectionAST_same=False; CapabilityRecord_same=False"
+    }
+  ],
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A8_ARCHITECTURE_BLOCKER_001.json"
+  ],
+  "completion_claimed": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "next_action": "Do not patch around the duplicate authority. Establish a versioned ingest contract and repair A6/A7 through ReleaseLedger before retrying A8."
+}

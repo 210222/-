@@ -1,10 +1,10 @@
 ---
-description: Execute exactly one isolated MODE:P vNext engineering task from the architecture-v2.1 ReleaseLedger; never switch production.
+description: Execute exactly one isolated MODE:P vNext engineering task from the architecture-v2.2 ReleaseLedger; never switch production.
 argument-hint: [optional exact next A-task id]
 allowed-tools: Read, Glob, Grep, Write, Edit, Bash
 ---
 
-# MODE:P vNext Architecture-v2.1 Construction
+# MODE:P vNext Architecture-v2.2 Construction
 
 Execute exactly one engineering round for `$ARGUMENTS` according to:
 

@@ -1,0 +1,109 @@
+{
+  "task_id": "A0",
+  "title": "Converge construction control and freeze the architecture-v2 baseline",
+  "architecture_version": "2.2",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c"
+  },
+  "changed_paths": [
+    ".claude/commands/mode-p-vnext-rebuild.md",
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "CLAUDE.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json",
+    "MODE_P_REDESIGN_PROJECT/README.md"
+  ],
+  "checks": [
+    {
+      "name": "single_release_ledger",
+      "exit_code": 0,
+      "result": "ReleaseControl remains the sole A0-A10 task selector"
+    },
+    {
+      "name": "legacy_queues_historical",
+      "exit_code": 0,
+      "result": "R, DDO, CPL and V0-V10 remain historical only"
+    },
+    {
+      "name": "legacy_controllers_superseded",
+      "exit_code": 0,
+      "result": "legacy controllers cannot select or complete release tasks"
+    },
+    {
+      "name": "one_lock_one_next_task",
+      "exit_code": 0,
+      "result": "exclusive A0 lock and unique next task verified"
+    },
+    {
+      "name": "task_path_ownership_disjoint",
+      "exit_code": 0,
+      "result": "A0-A10 allowed path patterns remain pairwise disjoint"
+    },
+    {
+      "name": "phase_status_progression",
+      "exit_code": 0,
+      "result": "phase status derives from the next work package"
+    },
+    {
+      "name": "bounded_control_output",
+      "exit_code": 0,
+      "result": "claim summary remains bounded and omits the full manifest"
+    },
+    {
+      "name": "portable_canonical_hashes",
+      "exit_code": 0,
+      "result": "UTF-8 CRLF normalization and binary byte hashing remain verified"
+    },
+    {
+      "name": "architecture_bundle_locked",
+      "exit_code": 0,
+      "result": "all tasks lock v2.0, v2.1 and v2.2 normalized SHA-256 inputs"
+    },
+    {
+      "name": "architecture_v22_root_contracts_registered",
+      "exit_code": 0,
+      "result": "A1/A4/A5/A6/A7/A8 registry checks bind typed ingest, canonical projection identity, full graph recovery and v4 isolation"
+    },
+    {
+      "name": "manual_release_gates",
+      "exit_code": 0,
+      "result": "A10 media acceptance and owner approval remain independent hash-bound gates"
+    },
+    {
+      "name": "construction_entry_migrated",
+      "exit_code": 0,
+      "result": "README, CLAUDE guidance, construction protocol and command identify architecture v2.2"
+    },
+    {
+      "name": "production_v4_unchanged",
+      "exit_code": 0,
+      "result": "v4 active entrypoint regression passed and no production switch is authorized"
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a0_release_control",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "result": "15 passed in 0.31s"
+    },
+    {
+      "name": "a0_v4_entrypoint",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "result": "15 passed in 5.20s"
+    },
+    {
+      "name": "a0_control_regression",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_rebuild_control.py -q -p no:cacheprovider",
+      "result": "31 passed in 0.62s"
+    }
+  ],
+  "source_failure_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A8_ARCHITECTURE_BLOCKER_001.json",
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "completion_claimed": true
+}

@@ -1,4 +1,4 @@
-"""A0 freezes one architecture-v2.1 construction ledger and v4 safety."""
+"""A0 freezes one architecture-v2.2 construction ledger and v4 safety."""
 
 from __future__ import annotations
 
@@ -31,7 +31,15 @@ AMENDMENT_REL = (
     "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
     "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md"
 )
-ARCHITECTURE_BUNDLE = {ARCHITECTURE_REL, AMENDMENT_REL}
+V22_AMENDMENT_REL = (
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md"
+)
+ARCHITECTURE_BUNDLE = {
+    ARCHITECTURE_REL,
+    AMENDMENT_REL,
+    V22_AMENDMENT_REL,
+}
 
 
 def _read_json(path):
@@ -81,7 +89,7 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     control = ReleaseControl.default()
     document = _read_json(control.tasks_path)
     assert document["schema_version"] == "2.0"
-    assert document["architecture_version"] == "2.1"
+    assert document["architecture_version"] == "2.2"
     assert document["authority"] == "SOLE_VNEXT_CONSTRUCTION_LEDGER"
     assert document["terminal_claim_ceiling"] == "OWNER_APPROVED_PREVIEW"
     assert document["status_after_all"] == "PRODUCTION_SWITCH_PROPOSAL_ELIGIBLE"
@@ -123,9 +131,45 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     a4 = next(task for task in document["tasks"] if task["task_id"] == "A4")
     assert "b1_prompt_under_12000_chars" in a4["required_checks"]
     assert "b1_schema_under_4500_chars" in a4["required_checks"]
+    assert "i0_fact_extraction_signature" in a4["required_checks"]
     a5 = next(task for task in document["tasks"] if task["task_id"] == "A5")
     assert "drafts_contain_creative_choices_only" in a5["required_checks"]
     assert "deterministic_vec_rebuild" in a5["required_checks"]
+    assert "typed_reference_binding" in a5["required_checks"]
+    assert "typed_dialogue_audio_binding" in a5["required_checks"]
+    assert "no_fact_id_semantics" in a5["required_checks"]
+
+    a1 = next(task for task in document["tasks"] if task["task_id"] == "A1")
+    assert {
+        "typed_fact_semantics",
+        "opaque_fact_ids",
+        "source_span_invariants",
+    }.issubset(a1["required_checks"])
+
+    a6 = next(task for task in document["tasks"] if task["task_id"] == "A6")
+    assert {
+        "canonical_projection_type_identity",
+        "projection_envelope_roundtrip",
+        "no_duplicate_projection_authority",
+    }.issubset(a6["required_checks"])
+    assert [item["name"] for item in a6["verification_commands"]] == [
+        "a6_projection_compiler",
+        "a6_v4_isolation",
+    ]
+
+    a7 = next(task for task in document["tasks"] if task["task_id"] == "A7")
+    assert "canonical_projection_and_evidence_consumption" in a7["required_checks"]
+    assert [item["name"] for item in a7["verification_commands"]] == [
+        "a7_dual_loop",
+        "a7_v4_isolation",
+    ]
+
+    a8 = next(task for task in document["tasks"] if task["task_id"] == "A8")
+    assert {
+        "typed_ingest_provenance",
+        "complete_v22_state_graph",
+        "run_record_digest_tamper_rejected",
+    }.issubset(a8["required_checks"])
 
 
 def test_a3_exclusively_owns_legacy_knowledge_adapter_migration():
@@ -151,12 +195,28 @@ def test_architecture_bundle_hashes_are_locked_and_current():
     assert expected == actual
 
     state = control.load_state()
-    assert state["architecture_version"] == "2.1"
+    assert state["architecture_version"] == "2.2"
     assert state["architecture_documents"] == [
         {"path": item["path"], "sha256": item["sha256"]}
         for item in document["architecture_documents"]
     ]
     assert state["architecture_document"] == state["architecture_documents"][-1]
+
+
+def test_v22_root_contracts_are_explicit_and_fail_closed():
+    root = ReleaseControl.default().root
+    amendment = (root / V22_AMENDMENT_REL).read_text(encoding="utf-8")
+
+    assert "FactExtractionDraft" in amendment
+    assert "FactSemantic" in amendment
+    assert "fact_id` 是不透明身份" in amendment
+    assert "source_start/source_end" in amendment
+    assert "只从 `ScriptFact.semantic` 推导引用与 AudioEvent" in amendment
+    assert "type(payload) is mode_p_vnext.domain.projection.ProjectionAST" in amendment
+    assert "不得重新定义同名或语义等价的持久化 dataclass" in amendment
+    assert "INGEST(I0 + FactAssembler)" in amendment
+    assert "TEXT_VALIDATED" in amendment
+    assert "production_entry=v4_unchanged" in amendment
 
 
 def test_legacy_queues_are_imported_as_history_not_completion():
@@ -267,11 +327,11 @@ def test_construction_entry_and_readme_route_only_to_release_control():
     assert "MODE_P_VNEXT_RELEASE_TASKS.json" in readme
     assert "python -m mode_p_vnext.release_control" in readme
     assert "首个合法施工任务只能是 A0" in construction
-    assert "架构 v2.1 权威包" in construction
+    assert "架构 v2.2 权威包" in construction
     assert "独占写入所有权" in construction
 
     root_guidance = (root / "CLAUDE.md").read_text(encoding="utf-8")
-    assert "architecture-v2.1 ReleaseLedger" in root_guidance
+    assert "architecture-v2.2 ReleaseLedger" in root_guidance
     assert "mode_p_vnext.release_control" in root_guidance
     assert "mode_p_vnext.rebuild_control\naudit/status" not in root_guidance
 

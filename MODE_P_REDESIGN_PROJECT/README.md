@@ -2,11 +2,12 @@
 
 > vNext 重构入口：`/mode-p-vnext-rebuild [task_id]`
 >
-> vNext v2.1 权威架构包：
+> vNext v2.2 权威架构包：
 > `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md` +
-> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md`
+> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md` +
+> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md`
 >
-> vNext v2.1 工程协议：`MODE_P_VNEXT_CONSTRUCTION_V2.md`
+> vNext v2.2 工程协议：`MODE_P_VNEXT_CONSTRUCTION_V2.md`
 >
 > vNext v2 任务与状态：`MODE_P_VNEXT_RELEASE_TASKS.json`、
 > `MODE_P_VNEXT_RELEASE_STATE.json`
