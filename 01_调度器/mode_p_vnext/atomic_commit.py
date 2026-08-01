@@ -30,6 +30,7 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple
 MANIFEST_NAME = "COMMIT_MANIFEST.json"
 CURRENT_POINTER_NAME = "current.json"
 ABANDONED_NAME = "ABANDONED.json"
+VNEXT_PERSISTENCE_SCHEMA_VERSION = "2.2"
 
 
 class TransactionError(Exception):
@@ -210,7 +211,7 @@ def _is_valid_vnext_manifest(
         expected_digest = _sha256_file(commit_dir / MANIFEST_NAME)
         return (
             value.get("schema_name") == "mode_p_vnext_commit_manifest"
-            and value.get("schema_version") == "2.1"
+            and value.get("schema_version") == VNEXT_PERSISTENCE_SCHEMA_VERSION
             and value.get("commit_id") == legacy_manifest.get("commit_id")
             and value.get("legacy_manifest_sha256") == expected_digest
             and isinstance(value.get("state_sha256"), str)

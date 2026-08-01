@@ -1,0 +1,135 @@
+{
+  "schema_version": "2.2",
+  "task_id": "A2",
+  "title": "Connect the persistent state graph, checkpoints, transactions, and invalidation",
+  "run_id": "codex-a2-v22-20260801",
+  "architecture_version": "2.2",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/atomic_commit.py",
+    "01_调度器/mode_p_vnext/pipeline/graph.py",
+    "01_调度器/mode_p_vnext/pipeline/state.py",
+    "01_调度器/mode_p_vnext/runtime/session.py",
+    "01_调度器/mode_p_vnext/runtime/transaction.py",
+    "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py"
+  ],
+  "checks": [
+    {
+      "name": "persistent_state_graph",
+      "exit_code": 0,
+      "evidence": "TypedState to owned PartialState transitions reject duplicate field authority, wrong artifact kinds, stale schema labels and upstream mutation. Persistent state, pending writes and companion manifests now share the fail-closed v2.2 schema contract, while RUN.json binds its complete record, graph and directory identity by canonical digest."
+    },
+    {
+      "name": "checkpoint_resume",
+      "exit_code": 0,
+      "evidence": "Recovery replays the commit-bound state-event chain rather than trusting standalone checkpoints, accepts only matching dependency digests, verifies accepted ArtifactRefs, and now validates current.json against both the event-state digest and the promoted commit manifest. Kill-point tests cover E0, S1, B0 and B1 without recalling accepted nodes."
+    },
+    {
+      "name": "pending_write_atomicity",
+      "exit_code": 0,
+      "evidence": "Each node write is staged and schema-validated before a durable event, same-volume promotion and pointer publication. The v2.2 companion manifest is recognized by the reused atomic committer, and a second unresolved prepared write is rejected before it can create an ambiguous recovery set."
+    },
+    {
+      "name": "content_addressed_artifacts",
+      "exit_code": 0,
+      "evidence": "ArtifactEnvelope bytes are stored under artifact-kind/content-sha256 paths; references carry the canonical v2.2 domain schema; mutated payloads and dangling accepted references fail closed; persistent cache values remain ArtifactRef records rather than process objects."
+    },
+    {
+      "name": "field_level_invalidation",
+      "exit_code": 0,
+      "evidence": "Digest-edge closure invalidates only affected accepted nodes and persists a reproducible invalidation event. Independent DP state remains accepted when scene facts change, and a change with no accepted consumers is now a true no-op rather than returning a phantom event sequence."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a2_persistent_graph",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "result": "21 passed in 4.40s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "failure_first_v22_baseline",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "exit_code": 1,
+      "result": "Before implementation the registered suite had 13 failures and 3 passes because A2 still emitted v2.1 fixtures after A1 froze schema 2.2. Added tests then independently reproduced missing RUN self-digest, run-root escape, multiple pending writes, current-pointer tamper acceptance and phantom no-op invalidation sequences."
+    },
+    {
+      "name": "persistent_runtime_regression_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest test_a2_persistent_graph.py test_v6_1_session_state.py test_v6_2_atomic_commit.py test_v6_3_dependency_invalidation.py test_v6_7_concurrency_lock.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "55 passed in 5.78s"
+    },
+    {
+      "name": "a0_a1_upstream_regression_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "38 passed in 1.41s"
+    },
+    {
+      "name": "v4_entrypoint_isolation_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "15 passed in 1.77s"
+    },
+    {
+      "name": "a2_compile_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m compileall -q mode_p_vnext/pipeline mode_p_vnext/runtime mode_p_vnext/atomic_commit.py",
+      "exit_code": 0,
+      "result": "A2 pipeline, runtime and atomic-commit modules compiled successfully."
+    }
+  ],
+  "review": {
+    "findings": [
+      "The A2 registered fixtures and all three persistent record formats still declared schema 2.1 after the v2.2 architecture rebase.",
+      "RUN.json hashed only the graph descriptor; run identity and the complete record were not self-bound, and run_id '..' could create the run outside runs_root.",
+      "The reused atomic committer recognized only a v2.1 companion manifest, so a correctly upgraded v2.2 transaction was rejected as an undeclared extra file.",
+      "A second prepare could create another durable candidate from the same base state, making restart recovery ambiguous.",
+      "current.json carried state and manifest digests but state replay never verified them.",
+      "A field change with no accepted consumers returned an incremented in-memory sequence without publishing an event."
+    ],
+    "root_cause": "A2 was previously completed against the v2.1 domain boundary and treated legacy filesystem helpers as implementation details. The v2.2 rebase changed the canonical schema identity and made later A8 recovery depend on contracts that A8 is not allowed to retrofit in runtime files, exposing unbound run identity and split authority across state events, commit manifests and current pointers.",
+    "considered_options": [
+      {
+        "option": "Only update the A2 test fixtures from 2.1 to 2.2",
+        "decision": "rejected",
+        "reason": "It would hide persistent State/Pending/Manifest drift and leave A8 unable to prove RUN tamper rejection."
+      },
+      {
+        "option": "Read both v2.1 and v2.2 persistent records indefinitely",
+        "decision": "rejected",
+        "reason": "The v2.2 architecture explicitly invalidated A0-A8 pre-production records; permissive dual authority would let stale schemas silently resume under the new graph."
+      },
+      {
+        "option": "Promote one arbitrary candidate when multiple prepared writes exist",
+        "decision": "rejected",
+        "reason": "Ordering by UUID or directory name is not business authority and could publish a nondeterministic node result."
+      },
+      {
+        "option": "Freeze one v2.2 persistence schema, one unresolved write, and verify RUN/event/commit/current bindings",
+        "decision": "accepted",
+        "reason": "It preserves deterministic crash recovery, keeps the reused atomic committer, and gives A8 a runtime boundary it can consume without modifying A2-owned files."
+      }
+    ],
+    "remaining_risks": [
+      "Invalidated A3-A8 implementations have not yet been revalidated against the new A2 schema and must be updated only in their respective owner tasks.",
+      "A8 must derive the default run directory from the full normalized source SHA-256 and mechanically prove rehashed identity substitution and real CLI resume behavior.",
+      "The legacy atomic helper still records a floating-point timestamp; vNext therefore binds its raw manifest-file digest rather than treating that helper record as a canonical domain artifact."
+    ]
+  },
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

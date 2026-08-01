@@ -285,6 +285,8 @@ class StateGraph:
     ) -> tuple[PersistentGraphState, tuple[str, ...], tuple[str, ...]]:
         closure = self.invalidation_closure(changed_fields)
         node_ids = tuple(node_id for node_id in closure if node_id in state.accepted)
+        if not node_ids:
+            return state, (), ()
         invalidated_digests: list[str] = []
         next_outputs = dict(state.outputs)
         next_accepted = dict(state.accepted)

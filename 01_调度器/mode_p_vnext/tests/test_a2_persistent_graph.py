@@ -54,8 +54,8 @@ def _direction_artifact(digest_char: str = "a") -> ArtifactEnvelope[EpisodeDirec
     return ArtifactEnvelope.create(
         artifact_id=f"episode_direction:episode-1:episode:E0:0001:{digest_char * 20}",
         artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-        schema_version="2.1",
-        program_version="test-vnext-2.1",
+        schema_version="2.2",
+        program_version="test-vnext-2.2",
         payload=payload,
         source_refs=(source,),
         dependency_digests={"script": source.digest},
@@ -79,8 +79,8 @@ def _scene_intent_artifact(digest_char: str = "b") -> ArtifactEnvelope[SceneInte
     return ArtifactEnvelope.create(
         artifact_id=f"scene_intent:episode-1:scene-1:S1:0001:{digest_char * 20}",
         artifact_kind=ArtifactKind.SCENE_INTENT,
-        schema_version="2.1",
-        program_version="test-vnext-2.1",
+        schema_version="2.2",
+        program_version="test-vnext-2.2",
         payload=payload,
         source_refs=(source,),
         dependency_digests={"script": source.digest},
@@ -107,8 +107,8 @@ def _blocking_draft_artifact(digest_char: str = "c") -> ArtifactEnvelope[Blockin
     return ArtifactEnvelope.create(
         artifact_id=f"blocking_draft:episode-1:scene-1:B0:0001:{digest_char * 20}",
         artifact_kind=ArtifactKind.BLOCKING_DRAFT,
-        schema_version="2.1",
-        program_version="test-vnext-2.1",
+        schema_version="2.2",
+        program_version="test-vnext-2.2",
         payload=payload,
         source_refs=(source,),
         dependency_digests={"source": source.digest},
@@ -143,8 +143,8 @@ def _blocking_commit_artifact(digest_char: str = "d") -> ArtifactEnvelope[Blocki
     return ArtifactEnvelope.create(
         artifact_id=f"blocking_commit:episode-1:scene-1:ASSEMBLE_B0:0001:{digest_char * 20}",
         artifact_kind=ArtifactKind.BLOCKING_COMMIT,
-        schema_version="2.1",
-        program_version="test-vnext-2.1",
+        schema_version="2.2",
+        program_version="test-vnext-2.2",
         payload=payload,
         source_refs=(source,),
         dependency_digests={"source": source.digest},
@@ -207,8 +207,8 @@ def _execution_design_artifact(
     return ArtifactEnvelope.create(
         artifact_id=f"execution_design:episode-1:scene-1:B1:0001:{digest_char * 20}",
         artifact_kind=ArtifactKind.EXECUTION_DESIGN_DRAFT,
-        schema_version="2.1",
-        program_version="test-vnext-2.1",
+        schema_version="2.2",
+        program_version="test-vnext-2.2",
         payload=payload,
         source_refs=(source,),
         dependency_digests={"source": source.digest},
@@ -292,7 +292,7 @@ def _ref(field_name: str, artifact_kind: ArtifactKind, digest_char: str) -> Arti
         artifact_id=f"{field_name}:{digest_char}",
         artifact_kind=artifact_kind,
         content_sha256=digest_char * 64,
-        schema_version="2.1",
+        schema_version="2.2",
     )
 
 
@@ -778,3 +778,121 @@ def test_content_addressed_repository_rejects_a_mutated_payload(tmp_path: Path) 
             artifacts={"episode_direction": ref},
             dependency_digests={"episode_facts": "1" * 64},
         )
+
+
+def test_v22_persistence_records_are_versioned_and_run_record_is_self_hashing(
+    tmp_path: Path,
+) -> None:
+    graph = _graph()
+    session = RunSession.create(
+        tmp_path / "runs", run_id="run-v22-records", graph=graph
+    )
+    run_path = session.run_dir / "RUN.json"
+    run_record = json.loads(run_path.read_text(encoding="utf-8"))
+    assert run_record["schema_name"] == "mode_p_vnext_run"
+    assert run_record["schema_version"] == "2.2"
+    run_digest = run_record.pop("record_sha256")
+    assert canonical_sha256(run_record) == run_digest
+    assert PersistentGraphState.empty(session.run_id).to_dict()["schema_version"] == "2.2"
+
+    pending = session.runner(owner="worker").prepare(
+        node_id="E0",
+        artifacts={"episode_direction": _direction_artifact()},
+        dependency_digests={"episode_facts": "1" * 64},
+    )
+    assert pending.to_dict()["schema_version"] == "2.2"
+    manifest = json.loads(
+        (
+            session.run_dir
+            / "staging"
+            / pending.generation_id
+            / "MANIFEST.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert manifest["schema_version"] == "2.2"
+
+    tampered = json.loads(run_path.read_text(encoding="utf-8"))
+    tampered["run_id"] = "substituted-run"
+    run_path.write_text(json.dumps(tampered), encoding="utf-8")
+    with pytest.raises(RunSessionError, match="RUN record digest"):
+        RunSession.open(session.run_dir, graph=graph)
+
+
+def test_run_id_cannot_escape_or_alias_the_runs_root(tmp_path: Path) -> None:
+    graph = _graph()
+    runs_root = tmp_path / "container" / "runs"
+
+    with pytest.raises(RunSessionError, match="safe"):
+        RunSession.create(runs_root, run_id="..", graph=graph)
+
+    assert not (tmp_path / "container" / "RUN.json").exists()
+
+
+def test_second_prepare_is_rejected_until_the_pending_write_is_resolved(
+    tmp_path: Path,
+) -> None:
+    graph = _graph()
+    session = RunSession.create(
+        tmp_path / "runs", run_id="run-single-pending", graph=graph
+    )
+    first = session.runner(owner="worker-1").prepare(
+        node_id="E0",
+        artifacts={"episode_direction": _direction_artifact()},
+        dependency_digests={"episode_facts": "1" * 64},
+    )
+
+    with pytest.raises(RunSessionError, match="unresolved prepared write"):
+        session.runner(owner="worker-2").prepare(
+            node_id="E0",
+            artifacts={"episode_direction": _direction_artifact("f")},
+            dependency_digests={"episode_facts": "1" * 64},
+        )
+
+    candidates = [
+        path
+        for path in (session.run_dir / "staging").iterdir()
+        if path.is_dir() and path.name != "abandoned"
+    ]
+    assert [path.name for path in candidates] == [first.generation_id]
+
+
+def test_current_pointer_tamper_is_rejected_against_the_event_chain(
+    tmp_path: Path,
+) -> None:
+    graph = _graph()
+    session = RunSession.create(
+        tmp_path / "runs", run_id="run-current-tamper", graph=graph
+    )
+    accepted = session.runner(owner="worker").accept(
+        node_id="E0",
+        artifacts={"episode_direction": _direction_artifact()},
+        dependency_digests={"episode_facts": "1" * 64},
+    )
+    pointer_path = session.current_pointer_path
+    pointer = json.loads(pointer_path.read_text(encoding="utf-8"))
+    assert pointer["sequence"] == accepted.event_sequence
+    pointer["sequence"] += 1
+    pointer_path.write_text(json.dumps(pointer), encoding="utf-8")
+
+    with pytest.raises(RunSessionError, match="current pointer"):
+        RunSession.open(session.run_dir, graph=graph).state()
+
+
+def test_noop_invalidation_does_not_publish_a_phantom_event_sequence(
+    tmp_path: Path,
+) -> None:
+    graph = _graph()
+    session = RunSession.create(
+        tmp_path / "runs", run_id="run-noop-invalidation", graph=graph
+    )
+    before = session.state()
+
+    result = session.invalidate(
+        changed_field_digests={"unconsumed_field": "9" * 64},
+        reason="unrelated external input changed",
+    )
+
+    assert result.invalidated_node_ids == ()
+    assert result.state == before
+    assert session.state() == before
+    assert (session.run_dir / "STATE_EVENTS.jsonl").read_text(encoding="utf-8") == ""

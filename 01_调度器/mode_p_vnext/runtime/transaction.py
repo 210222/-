@@ -18,7 +18,12 @@ from mode_p_vnext.domain.artifact import (
     canonical_sha256,
     require_sha256,
 )
-from mode_p_vnext.pipeline.state import ArtifactRef, PersistentGraphState, StateInvariantError
+from mode_p_vnext.pipeline.state import (
+    PERSISTENCE_SCHEMA_VERSION,
+    ArtifactRef,
+    PersistentGraphState,
+    StateInvariantError,
+)
 
 
 PENDING_FILENAME = "pending.commit"
@@ -87,7 +92,7 @@ class PendingNodeWrite:
     def to_dict(self) -> dict[str, Any]:
         return {
             "schema_name": "mode_p_vnext_pending_node_write",
-            "schema_version": "2.1",
+            "schema_version": PERSISTENCE_SCHEMA_VERSION,
             "node_id": self.node_id,
             "commit_id": self.commit_id,
             "generation_id": self.generation_id,
@@ -103,7 +108,7 @@ class PendingNodeWrite:
         try:
             if (
                 value["schema_name"] != "mode_p_vnext_pending_node_write"
-                or value["schema_version"] != "2.1"
+                or value["schema_version"] != PERSISTENCE_SCHEMA_VERSION
             ):
                 raise NodeTransactionError("unsupported pending node write schema")
             raw_outputs = value["outputs"]
@@ -256,7 +261,7 @@ class NodeTransaction:
             )
         return {
             "schema_name": "mode_p_vnext_commit_manifest",
-            "schema_version": "2.1",
+            "schema_version": PERSISTENCE_SCHEMA_VERSION,
             "commit_id": pending.commit_id,
             "generation_id": pending.generation_id,
             "node_id": pending.node_id,

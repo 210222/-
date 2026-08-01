@@ -6,7 +6,16 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Mapping
 
-from mode_p_vnext.domain.artifact import ArtifactKind, DomainValidationError, require_sha256
+from mode_p_vnext.domain.artifact import (
+    DOMAIN_SCHEMA_VERSION,
+    ArtifactKind,
+    DomainValidationError,
+    require_sha256,
+)
+
+
+PERSISTENCE_SCHEMA_VERSION = "2.2"
+PERSISTENT_STATE_SCHEMA_NAME = "mode_p_vnext_persistent_graph_state"
 
 
 class StateInvariantError(ValueError):
@@ -51,6 +60,10 @@ class ArtifactRef:
         except DomainValidationError as exc:
             raise StateInvariantError(str(exc)) from exc
         _text(self.schema_version, "schema_version")
+        if self.schema_version != DOMAIN_SCHEMA_VERSION:
+            raise StateInvariantError(
+                f"schema_version must match canonical domain schema {DOMAIN_SCHEMA_VERSION}"
+            )
 
     def to_dict(self) -> dict[str, str]:
         return {
@@ -169,8 +182,8 @@ class PersistentGraphState:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "schema_name": "mode_p_vnext_persistent_graph_state",
-            "schema_version": "2.1",
+            "schema_name": PERSISTENT_STATE_SCHEMA_NAME,
+            "schema_version": PERSISTENCE_SCHEMA_VERSION,
             "run_id": self.run_id,
             "outputs": {field_name: ref.to_dict() for field_name, ref in self.outputs.items()},
             "accepted": {node_id: item.to_dict() for node_id, item in self.accepted.items()},
@@ -182,16 +195,33 @@ class PersistentGraphState:
     def from_dict(cls, value: Mapping[str, Any]) -> "PersistentGraphState":
         if not isinstance(value, Mapping):
             raise StateInvariantError("persistent state must be an object")
-        if value.get("schema_name") != "mode_p_vnext_persistent_graph_state" or value.get("schema_version") != "2.1":
+        expected_fields = {
+            "schema_name",
+            "schema_version",
+            "run_id",
+            "outputs",
+            "accepted",
+            "event_sequence",
+            "current_commit_id",
+        }
+        if set(value) != expected_fields:
+            raise StateInvariantError("persistent state fields do not match the schema")
+        if (
+            value.get("schema_name") != PERSISTENT_STATE_SCHEMA_NAME
+            or value.get("schema_version") != PERSISTENCE_SCHEMA_VERSION
+        ):
             raise StateInvariantError("unsupported persistent graph state schema")
         raw_outputs = value.get("outputs")
         raw_accepted = value.get("accepted")
         if not isinstance(raw_outputs, Mapping) or not isinstance(raw_accepted, Mapping):
             raise StateInvariantError("persistent state outputs and accepted must be objects")
+        event_sequence = value["event_sequence"]
+        if isinstance(event_sequence, bool) or not isinstance(event_sequence, int):
+            raise StateInvariantError("event_sequence must be a non-negative integer")
         return cls(
-            run_id=str(value.get("run_id", "")),
+            run_id=str(value["run_id"]),
             outputs={str(key): ArtifactRef.from_dict(item) for key, item in raw_outputs.items()},
             accepted={str(key): NodeAcceptance.from_dict(item) for key, item in raw_accepted.items()},
-            event_sequence=int(value.get("event_sequence", 0)),
-            current_commit_id=str(value.get("current_commit_id", "")),
+            event_sequence=event_sequence,
+            current_commit_id=str(value["current_commit_id"]),
         )

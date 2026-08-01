@@ -25,6 +25,7 @@ from mode_p_vnext.pipeline.invalidation import (
     InvalidationResult,
 )
 from mode_p_vnext.pipeline.state import (
+    PERSISTENCE_SCHEMA_VERSION,
     ArtifactRef,
     PersistentGraphState,
     StateInvariantError,
@@ -39,10 +40,29 @@ RUN_FILENAME = "RUN.json"
 EVENTS_FILENAME = "STATE_EVENTS.jsonl"
 CHECKPOINTS_DIRNAME = "checkpoints"
 CURRENT_FILENAME = "current.json"
+RUN_SCHEMA_NAME = "mode_p_vnext_run"
+RUN_RECORD_DIGEST_FIELD = "record_sha256"
 
 
 class RunSessionError(RuntimeError):
     """Raised where a run cannot be read or advanced safely."""
+
+
+def _safe_run_id(value: str) -> str:
+    """Return one unambiguous filesystem component or fail closed."""
+
+    if (
+        not isinstance(value, str)
+        or not value
+        or value in {".", ".."}
+        or "/" in value
+        or "\\" in value
+        or ":" in value
+        or value.endswith((" ", "."))
+        or any(ord(character) < 32 for character in value)
+    ):
+        raise RunSessionError("run_id must be a safe, non-empty path component")
+    return value
 
 
 @dataclass(frozen=True)
@@ -58,7 +78,10 @@ class RunSession:
     """Filesystem-backed source of truth for one vNext graph run."""
 
     def __init__(self, run_dir: Path, graph: StateGraph) -> None:
-        self.run_dir = Path(run_dir)
+        candidate = Path(run_dir)
+        if candidate.is_symlink():
+            raise RunSessionError("run directory must not be a symbolic link")
+        self.run_dir = candidate.resolve()
         self.graph = graph
         self._validate_run_record()
         self.artifacts = ArtifactRepository(self.run_dir)
@@ -68,11 +91,16 @@ class RunSession:
     def create(
         cls, runs_root: Path, *, run_id: str, graph: StateGraph
     ) -> "RunSession":
-        if not run_id or any(char in run_id for char in ("/", "\\", "\0")):
-            raise RunSessionError("run_id must be a safe, non-empty path component")
-        run_dir = Path(runs_root) / run_id
-        if run_dir.exists():
-            raise RunSessionError(f"run already exists: {run_id}")
+        safe_run_id = _safe_run_id(run_id)
+        root = Path(runs_root).resolve()
+        root.mkdir(parents=True, exist_ok=True)
+        run_dir = (root / safe_run_id).resolve()
+        if run_dir.parent != root:
+            raise RunSessionError("run_id must stay within the runs root")
+        try:
+            run_dir.mkdir()
+        except FileExistsError as exc:
+            raise RunSessionError(f"run already exists: {safe_run_id}") from exc
         for name in (
             "artifacts",
             "commits",
@@ -80,12 +108,18 @@ class RunSession:
             "projections",
             "evidence",
         ):
-            (run_dir / name).mkdir(parents=True, exist_ok=True)
-        record = {
-            "run_id": run_id,
+            (run_dir / name).mkdir()
+        record_body = {
+            "schema_name": RUN_SCHEMA_NAME,
+            "schema_version": PERSISTENCE_SCHEMA_VERSION,
+            "run_id": safe_run_id,
             "format_version": 1,
             "graph": graph.descriptor(),
             "graph_digest": canonical_sha256(graph.descriptor()),
+        }
+        record = {
+            **record_body,
+            RUN_RECORD_DIGEST_FIELD: canonical_sha256(record_body),
         }
         cls._atomic_write_json(run_dir / RUN_FILENAME, record)
         (run_dir / EVENTS_FILENAME).touch()
@@ -103,12 +137,28 @@ class RunSession:
     def current_pointer_path(self) -> Path:
         return self.run_dir / CURRENT_FILENAME
 
+    def _unresolved_staging_dirs(self) -> tuple[Path, ...]:
+        staging_root = self.run_dir / "staging"
+        if not staging_root.exists():
+            return ()
+        if not staging_root.is_dir() or staging_root.is_symlink():
+            raise RunSessionError("staging root must be a regular directory")
+        candidates: list[Path] = []
+        for path in sorted(staging_root.iterdir(), key=lambda item: item.name):
+            if path.name == "abandoned":
+                continue
+            if not path.is_dir() or path.is_symlink():
+                raise RunSessionError("staging contains an unsafe prepared-write entry")
+            candidates.append(path)
+        return tuple(candidates)
+
     def runner(self, *, owner: str) -> "NodeRunner":
         return NodeRunner(self, owner)
 
     def state(self) -> PersistentGraphState:
         """Replay only state transitions bound to trusted commit/event evidence."""
         state, _ = self._replay_event_chain()
+        self._validate_current_pointer(state)
         return state
 
     def checkpoint(self) -> Path:
@@ -124,15 +174,14 @@ class RunSession:
     def recover_pending(self, *, owner: str) -> tuple[str, ...]:
         """Promote exactly one valid prepared write at a time, without rerunning it."""
         accepted: list[str] = []
-        staging_root = self.run_dir / "staging"
         with self._lock(owner):
-            if not staging_root.is_dir():
+            candidates = self._unresolved_staging_dirs()
+            if not candidates:
                 return ()
-            candidates = [
-                path
-                for path in sorted(staging_root.iterdir(), key=lambda item: item.name)
-                if path.is_dir() and path.name != "abandoned"
-            ]
+            if len(candidates) != 1:
+                raise RunSessionError(
+                    "multiple unresolved prepared writes make recovery ambiguous"
+                )
             for staging_dir in candidates:
                 pending = NodeTransaction.read_prepared(staging_dir)
                 state = self.state()
@@ -172,6 +221,7 @@ class RunSession:
     def resume_plan(self, supplied_input_digests: Mapping[str, str]) -> ResumePlan:
         """Return the accepted restart prefix after validating digest edges."""
         state, state_history = self._replay_event_chain()
+        self._validate_current_pointer(state)
         changed: dict[str, str] = {}
         for node_id, acceptance in state.accepted.items():
             node = self.graph.node(node_id)
@@ -217,6 +267,33 @@ class RunSession:
 
     def _validate_run_record(self) -> None:
         record = self._run_record()
+        expected_fields = {
+            "schema_name",
+            "schema_version",
+            "run_id",
+            "format_version",
+            "graph",
+            "graph_digest",
+            RUN_RECORD_DIGEST_FIELD,
+        }
+        if set(record) != expected_fields:
+            raise RunSessionError("RUN record fields do not match the v2.2 schema")
+        if (
+            record.get("schema_name") != RUN_SCHEMA_NAME
+            or record.get("schema_version") != PERSISTENCE_SCHEMA_VERSION
+            or record.get("format_version") != 1
+        ):
+            raise RunSessionError("unsupported RUN record schema")
+        unsigned_record = {
+            key: value
+            for key, value in record.items()
+            if key != RUN_RECORD_DIGEST_FIELD
+        }
+        if canonical_sha256(unsigned_record) != record.get(RUN_RECORD_DIGEST_FIELD):
+            raise RunSessionError("RUN record digest is invalid")
+        stored_run_id = _safe_run_id(record.get("run_id"))
+        if stored_run_id != self.run_dir.name:
+            raise RunSessionError("RUN record identity does not match its directory")
         stored_graph = record.get("graph")
         if canonical_sha256(stored_graph) != record.get("graph_digest"):
             raise RunSessionError("RUN graph descriptor digest is invalid")
@@ -225,9 +302,67 @@ class RunSession:
 
     def _run_record(self) -> Mapping[str, Any]:
         try:
-            return json.loads((self.run_dir / RUN_FILENAME).read_text(encoding="utf-8"))
+            value = json.loads(
+                (self.run_dir / RUN_FILENAME).read_text(encoding="utf-8")
+            )
         except (OSError, UnicodeError, json.JSONDecodeError) as exc:
             raise RunSessionError("invalid RUN.json") from exc
+        if not isinstance(value, Mapping):
+            raise RunSessionError("RUN.json must contain an object")
+        return value
+
+    def _validate_current_pointer(self, state: PersistentGraphState) -> None:
+        """Bind the mutable pointer to the trusted event and commit evidence."""
+
+        path = self.current_pointer_path
+        if not state.current_commit_id:
+            if path.exists():
+                raise RunSessionError("current pointer exists without an accepted commit")
+            return
+        if not path.is_file() or path.is_symlink():
+            raise RunSessionError("current pointer must be a regular file")
+        try:
+            pointer = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise RunSessionError("current pointer is invalid") from exc
+        if not isinstance(pointer, Mapping):
+            raise RunSessionError("current pointer must contain an object")
+
+        legacy_fields = {"commit_id", "manifest_sha256", "updated_at_epoch"}
+        graph_fields = {
+            "sequence",
+            "state_sha256",
+            "commit_id",
+            "manifest_sha256",
+            "node_id",
+        }
+        fields = set(pointer)
+        if fields not in (legacy_fields, graph_fields):
+            raise RunSessionError("current pointer fields are invalid")
+        if pointer.get("commit_id") != state.current_commit_id:
+            raise RunSessionError("current pointer commit does not match the event chain")
+
+        manifest_path = (
+            self.run_dir
+            / "commits"
+            / state.current_commit_id
+            / "COMMIT_MANIFEST.json"
+        )
+        if not manifest_path.is_file() or manifest_path.is_symlink():
+            raise RunSessionError("current pointer commit manifest is missing")
+        if pointer.get("manifest_sha256") != sha256(
+            manifest_path.read_bytes()
+        ).hexdigest():
+            raise RunSessionError("current pointer manifest digest is invalid")
+
+        if fields == graph_fields:
+            if (
+                isinstance(pointer.get("sequence"), bool)
+                or pointer.get("sequence") != state.event_sequence
+                or pointer.get("state_sha256")
+                != canonical_sha256(state.to_dict())
+            ):
+                raise RunSessionError("current pointer state does not match the event chain")
 
     def _events(self) -> Iterator[Mapping[str, Any]]:
         path = self.run_dir / EVENTS_FILENAME
@@ -429,7 +564,7 @@ class RunSession:
             raise RunSessionError("commit manifest has no transition metadata")
         if not (
             companion.get("schema_name") == "mode_p_vnext_commit_manifest"
-            and companion.get("schema_version") == "2.1"
+            and companion.get("schema_version") == PERSISTENCE_SCHEMA_VERSION
             and companion.get("commit_id") == commit_id
             and companion.get("node_id") == node_id
             and companion.get("base_state_sha256") == base_state_sha256
@@ -554,6 +689,10 @@ class NodeRunner:
         dependency_digests: Mapping[str, str],
     ) -> PendingNodeWrite:
         with self.session._lock(self.owner):
+            if self.session._unresolved_staging_dirs():
+                raise RunSessionError(
+                    "run has an unresolved prepared write; accept or recover it first"
+                )
             state = self.session.state()
             if node_id in state.accepted:
                 raise StateInvariantError(f"node {node_id} is already accepted")
