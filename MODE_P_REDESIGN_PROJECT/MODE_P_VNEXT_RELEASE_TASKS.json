@@ -87,6 +87,7 @@
         "01_调度器/mode_p_vnext/release_control.py",
         "01_调度器/mode_p_vnext/rebuild_control.py",
         "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+        "01_调度器/mode_p_vnext/tests/_baseline_cohort_support.py",
         "01_调度器/mode_p/test_active_entrypoints.py",
         "01_调度器/mode_p/test_ep35_s1_pipeline.py",
         "01_调度器/mode_p_vnext/README.md",
@@ -95,6 +96,7 @@
         "MODE_P_REDESIGN_PROJECT/README.md",
         "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md",
         "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md",
+        "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json",
         "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/ARCHITECTURE_V23_REJECTION_AND_V30_REBASE_001.md",
         "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_CONSTRUCTION_PLAN_AUDIT_V3.0.md",
         "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json",
@@ -117,6 +119,7 @@
         "architecture_drift_blocks_claim",
         "manual_release_gates",
         "portable_registered_verification",
+        "current_v4_cohort_authority",
         "production_v4_unchanged"
       ],
       "verification_commands": [
@@ -129,6 +132,12 @@
         {
           "name": "a0_v4_entrypoint",
           "argv": ["{python}", "-m", "pytest", "mode_p/test_active_entrypoints.py", "-q", "-p", "no:cacheprovider"],
+          "cwd": "01_调度器",
+          "timeout_seconds": 300
+        },
+        {
+          "name": "a0_v4_cohort",
+          "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_v9_4_v4_compatibility.py", "-q", "-p", "no:cacheprovider"],
           "cwd": "01_调度器",
           "timeout_seconds": 300
         },

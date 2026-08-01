@@ -1,0 +1,91 @@
+{
+  "schema_name": "mode_p_vnext_a0_v4_cohort_authority_repair_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A0",
+  "created_at": "2026-08-02T07:01:51+08:00",
+  "owner": "codex-a0-v4-cohort-authority-repair-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a"
+  },
+  "trigger": {
+    "failed_task": "A6",
+    "failure_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A6_V30_V4_ISOLATION_BLOCKER_016.json",
+    "classification": "EARLIER_BASELINE_AUTHORITY_GAP"
+  },
+  "root_cause": "A0 commit c9750bb made the EP35 external-fixture regression portable as required by architecture v3.0 section 17 and recorded the new source hash in A0 Evidence, but the shared v4 compatibility helper continued to load the historical R3.2 repair Evidence as if it were the current cohort ledger. A6 therefore compared current source bytes against a historical snapshot. The defect was authority selection and A0 verification coverage, not ProjectionAST and not the portable v4 test source.",
+  "repair_decision": {
+    "preserved_current_source": "01_调度器/mode_p/test_ep35_s1_pipeline.py",
+    "historical_source_sha256": "c87578dbe981677bf8c68f7963664640dc144b47471573b97bed2f1cd615131b",
+    "current_source_sha256": "5bf7163355246d002e687f7bae6ec03113cd0d4cdfb8ef1293809e736ddc9216",
+    "historical_r3_2_disposition": "HISTORICAL_READ_ONLY",
+    "current_cohort_authority": "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json",
+    "helper_uses_historical_evidence_as_current_authority": false,
+    "frozen_v0_1_manifest_mutated": false,
+    "v4_runtime_or_production_entry_modified": false
+  },
+  "invalidation": {
+    "order": ["A5", "A4", "A3", "A2", "A1", "A0"],
+    "reason": "Architecture v3.0 section 15 requires an earlier persistent-contract defect discovered by A6 to invalidate downstream Evidence and be repaired by A0.",
+    "implementation_files_deleted_or_reverted": false
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/_baseline_cohort_support.py",
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json"
+  ],
+  "checks": [
+    {"name": "single_release_ledger", "exit_code": 0},
+    {"name": "legacy_queues_historical", "exit_code": 0},
+    {"name": "legacy_controllers_superseded", "exit_code": 0},
+    {"name": "one_lock_one_next_task", "exit_code": 0},
+    {"name": "task_path_ownership_disjoint", "exit_code": 0},
+    {"name": "phase_status_progression", "exit_code": 0},
+    {"name": "bounded_control_output", "exit_code": 0},
+    {"name": "portable_canonical_hashes", "exit_code": 0},
+    {"name": "single_architecture_document_locked", "exit_code": 0},
+    {"name": "v23_rejected_as_historical", "exit_code": 0},
+    {"name": "active_guidance_version_converged", "exit_code": 0},
+    {"name": "architecture_drift_blocks_claim", "exit_code": 0},
+    {"name": "manual_release_gates", "exit_code": 0},
+    {"name": "portable_registered_verification", "exit_code": 0},
+    {"name": "current_v4_cohort_authority", "exit_code": 0},
+    {"name": "production_v4_unchanged", "exit_code": 0}
+  ],
+  "precompletion_results": [
+    {
+      "name": "a0_release_control_focused",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "19 passed"
+    },
+    {
+      "name": "a0_v4_cohort_focused",
+      "command": "python -m pytest mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "6 passed"
+    },
+    {
+      "name": "a0_through_a5_related_regression",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p/test_active_entrypoints.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py mode_p_vnext/tests/test_rebuild_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "139 passed"
+    },
+    {
+      "name": "release_ledger_audit",
+      "command": "python -m mode_p_vnext.release_control audit",
+      "exit_code": 0,
+      "summary": "ok=true, issues=[]"
+    }
+  ],
+  "non_goals": [
+    "No A1-A5 implementation was changed or re-completed in this work package.",
+    "No A6 ProjectionAST implementation was started.",
+    "No historical R3.2 Evidence or frozen V0.1 manifest was rewritten.",
+    "No external media, Director runtime, production switch, or v4 production entry was enabled."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "external_submission": false
+}

@@ -1,9 +1,10 @@
-"""Test-only support for the R3.2 v4 baseline cohort reconciliation.
+"""Test-only support for the current v4 baseline cohort reconciliation.
 
-The frozen V0.1 manifest remains immutable historical evidence.  This module
-verifies that current pytest collection is fully explained by a reconstructed
-generic candidate cohort plus the explicitly registered legacy EP35 suite; it
-never upgrades the reconstructed candidate into a historical fact.
+The frozen V0.1 manifest and R3.2 repair Evidence remain immutable historical
+records.  This module reads the explicitly current cohort ledger and verifies
+that pytest collection is fully explained by a reconstructed generic candidate
+cohort plus the registered legacy EP35 suite; it never upgrades the
+reconstructed candidate into a historical fact.
 """
 
 from __future__ import annotations
@@ -21,8 +22,8 @@ MODE_P_DIR = PROJECT_ROOT / "01_调度器" / "mode_p"
 LEDGER_PATH = (
     PROJECT_ROOT
     / "MODE_P_REDESIGN_PROJECT"
-    / "vnext_repair_evidence"
-    / "R3.2_BASELINE_COHORT_RECONCILIATION_001.json"
+    / "vnext_baseline"
+    / "V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json"
 )
 
 

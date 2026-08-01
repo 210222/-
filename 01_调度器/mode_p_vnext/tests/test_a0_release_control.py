@@ -29,6 +29,14 @@ ARCHITECTURE_REL = (
 )
 ARCHITECTURE_BUNDLE = {ARCHITECTURE_REL}
 AUTHORITY_MARKER = "MODE_P_VNEXT_AUTHORITY: architecture-v3.0"
+CURRENT_COHORT_LEDGER_REL = (
+    "MODE_P_REDESIGN_PROJECT/vnext_baseline/"
+    "V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json"
+)
+HISTORICAL_COHORT_EVIDENCE_REL = (
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
+    "R3.2_BASELINE_COHORT_RECONCILIATION_001.json"
+)
 
 
 def _read_json(path):
@@ -159,7 +167,16 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     assert "v23_rejected_as_historical" in a0["required_checks"]
     assert "active_guidance_version_converged" in a0["required_checks"]
     assert "architecture_drift_blocks_claim" in a0["required_checks"]
+    assert "current_v4_cohort_authority" in a0["required_checks"]
     assert "01_调度器/mode_p/test_ep35_s1_pipeline.py" in a0["allowed_paths"]
+    assert CURRENT_COHORT_LEDGER_REL in a0["allowed_paths"]
+    assert (
+        "01_调度器/mode_p_vnext/tests/_baseline_cohort_support.py"
+        in a0["allowed_paths"]
+    )
+    assert "a0_v4_cohort" in {
+        command["name"] for command in a0["verification_commands"]
+    }
 
     a6 = next(task for task in document["tasks"] if task["task_id"] == "A6")
     assert {
@@ -219,6 +236,43 @@ def test_architecture_bundle_hashes_are_locked_and_current():
         for item in document["architecture_documents"]
     ]
     assert state["architecture_document"] == state["architecture_documents"][-1]
+
+
+def test_current_v4_cohort_ledger_is_canonical_and_history_stays_read_only():
+    root = ReleaseControl.default().root
+    helper = (
+        root
+        / "01_调度器"
+        / "mode_p_vnext"
+        / "tests"
+        / "_baseline_cohort_support.py"
+    ).read_text(encoding="utf-8")
+    assert CURRENT_COHORT_LEDGER_REL.split("/")[-1] in helper
+    assert HISTORICAL_COHORT_EVIDENCE_REL.split("/")[-1] not in helper
+
+    current = _read_json(root / CURRENT_COHORT_LEDGER_REL)
+    historical = _read_json(root / HISTORICAL_COHORT_EVIDENCE_REL)
+    assert current["authority"] == "CURRENT_V4_COLLECTION_COHORT_LEDGER"
+    assert current["historical_evidence"] == {
+        "path": HISTORICAL_COHORT_EVIDENCE_REL,
+        "disposition": "HISTORICAL_READ_ONLY",
+        "recorded_source_sha256": (
+            "c87578dbe981677bf8c68f7963664640dc144b47471573b97bed2f1cd615131b"
+        ),
+    }
+
+    current_source = current["cohorts"]["legacy_ep35_s1_post_freeze"]
+    source_path = root / current_source["source_path"]
+    actual_source_sha = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    assert actual_source_sha == current_source["source_sha256"]
+    assert current["reconciled_change"]["current_source_sha256"] == actual_source_sha
+    assert current["reconciled_change"]["node_id_set_changed"] is False
+
+    historical_source = historical["cohorts"]["legacy_ep35_s1_post_freeze"]
+    assert historical_source["source_sha256"] == (
+        current["reconciled_change"]["previous_source_sha256"]
+    )
+    assert historical_source["source_sha256"] != actual_source_sha
 
 
 def test_v30_root_contracts_are_explicit_and_fail_closed():

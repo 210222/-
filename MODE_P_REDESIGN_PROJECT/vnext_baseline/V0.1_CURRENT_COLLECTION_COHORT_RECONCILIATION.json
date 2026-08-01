@@ -1,9 +1,24 @@
 {
   "schema_name": "mode_p_vnext_v4_current_collection_cohort_reconciliation",
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "status": "CURRENT_COLLECTION_RECONCILED_HISTORICAL_EXACT_SET_UNAVAILABLE",
   "created_date": "2026-07-29",
+  "updated_at": "2026-08-02T06:58:35+08:00",
+  "authority": "CURRENT_V4_COLLECTION_COHORT_LEDGER",
   "purpose": "Explain the current 686-to-781 collection delta without mutating the frozen V0.1 manifest or claiming that a reconstructed current cohort is the historical 2026-07-22 exact test-id set.",
+  "historical_evidence": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/R3.2_BASELINE_COHORT_RECONCILIATION_001.json",
+    "disposition": "HISTORICAL_READ_ONLY",
+    "recorded_source_sha256": "c87578dbe981677bf8c68f7963664640dc144b47471573b97bed2f1cd615131b"
+  },
+  "reconciled_change": {
+    "source_path": "01_调度器/mode_p/test_ep35_s1_pipeline.py",
+    "previous_source_sha256": "c87578dbe981677bf8c68f7963664640dc144b47471573b97bed2f1cd615131b",
+    "current_source_sha256": "5bf7163355246d002e687f7bae6ec03113cd0d4cdfb8ef1293809e736ddc9216",
+    "change_commit": "c9750bbfad3c47d31315823547803f4cfd23e59c",
+    "reason": "Architecture v3.0 section 17 requires portable verification: replace the personal D-drive fixture default with a repository-or-explicit external fixture and an auditable missing-fixture skip.",
+    "node_id_set_changed": false
+  },
   "frozen_manifest": {
     "path": "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_FREEZE_MANIFEST.json",
     "sha256": "c9cd6fbe73e8200e77e326729e746f032ec25ff4a97d9fc78fa0cac2629448fd",
@@ -30,7 +45,7 @@
     "legacy_ep35_s1_post_freeze": {
       "classification": "POST_FREEZE_EXTERNAL_SCENARIO_REGRESSION",
       "source_path": "01_调度器/mode_p/test_ep35_s1_pipeline.py",
-      "source_sha256": "c87578dbe981677bf8c68f7963664640dc144b47471573b97bed2f1cd615131b",
+      "source_sha256": "5bf7163355246d002e687f7bae6ec03113cd0d4cdfb8ef1293809e736ddc9216",
       "selection": ["test_ep35_s1_pipeline.py"],
       "count": 95,
       "sorted_test_ids_sha256": "008764957adfb6c00f342398ded6f458b6b674823d1668112c7bac50453093e6",
@@ -50,6 +65,8 @@
     "unexplained_delta_count": 0
   },
   "acceptance_contract": {
+    "frozen_manifest_is_mutated": false,
+    "known_post_freeze_suite_is_deleted_or_moved": false,
     "any_future_unregistered_collection_delta_is_failure": true,
     "current_total_may_be_called_historical_v0_1_baseline": false,
     "current_generic_candidate_may_be_called_historical_v0_1_exact_ids": false,
