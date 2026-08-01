@@ -1,4 +1,4 @@
-"""Frozen declarative model-stage signatures required by architecture v2.2."""
+"""Frozen declarative model-stage signatures for the v3.0 architecture."""
 
 from __future__ import annotations
 
@@ -35,6 +35,7 @@ class StageSignature:
     prompt_budget: int
     schema_budget: int
     soft_prompt_target: int | None = None
+    approved_input_keys: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.stage, Stage):
@@ -57,12 +58,33 @@ class StageSignature:
             raise ValueError("prompt and schema budgets must be positive")
         if self.soft_prompt_target is not None and not 0 < self.soft_prompt_target <= self.prompt_budget:
             raise ValueError("soft prompt target must fit within hard prompt budget")
+        input_keys = tuple(self.approved_input_keys)
+        if not input_keys or any(
+            not isinstance(item, str) or not item or not item.isidentifier()
+            for item in input_keys
+        ):
+            raise ValueError("approved_input_keys must contain non-empty identifier keys")
+        if len(input_keys) != len(set(input_keys)):
+            raise ValueError("approved_input_keys must not contain duplicates")
+        object.__setattr__(self, "approved_input_keys", input_keys)
+
+    def assert_approved_input(self, approved_input: Mapping[str, object]) -> None:
+        """Reject undeclared transport fields before any provider invocation."""
+
+        if not isinstance(approved_input, Mapping):
+            raise TypeError("approved_input must be a mapping")
+        unexpected = set(approved_input) - set(self.approved_input_keys)
+        if unexpected:
+            raise ValueError(
+                f"{self.stage.value} approved input contains undeclared fields: "
+                + ",".join(sorted(str(item) for item in unexpected))
+            )
 
 
 _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
     Stage.I0: StageSignature(
         stage=Stage.I0,
-        version="2.2",
+        version="3.0",
         contract_name="FactExtractionDraft",
         semantic_goal=(
             "Extract only source-anchored script facts for deterministic local "
@@ -95,10 +117,16 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
         # split independent normalized-source windows rather than truncate facts.
         prompt_budget=6_000,
         schema_budget=2_500,
+        approved_input_keys=(
+            "normalized_source",
+            "source_digest",
+            "source_start",
+            "source_end",
+        ),
     ),
     Stage.E0: StageSignature(
         stage=Stage.E0,
-        version="1.0",
+        version="3.0",
         contract_name="EpisodeDirectionDraft",
         semantic_goal="Choose stable episode-level dramatic direction from approved episode facts.",
         approved_input_fields=("episode facts", "episode constraints"),
@@ -106,10 +134,16 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
         output_exclusions=("shots", "lenses", "camera movement", "final VEC", "IDs and hashes"),
         prompt_budget=6_000,
         schema_budget=2_500,
+        approved_input_keys=(
+            "episode_id",
+            "episode_facts",
+            "episode_constraints",
+            "continuity_state",
+        ),
     ),
     Stage.S1: StageSignature(
         stage=Stage.S1,
-        version="1.0",
+        version="3.0",
         contract_name="SceneIntentDraft",
         semantic_goal="Diagnose scene change, information strategy, and Director questions.",
         approved_input_fields=("scene facts", "episode direction", "continuity state"),
@@ -117,10 +151,17 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
         output_exclusions=("shots", "lenses", "camera movement", "final VEC", "IDs and hashes"),
         prompt_budget=8_000,
         schema_budget=3_500,
+        approved_input_keys=(
+            "scene_id",
+            "scene_facts",
+            "episode_direction",
+            "continuity_state",
+            "knowledge_view",
+        ),
     ),
     Stage.B0: StageSignature(
         stage=Stage.B0,
-        version="1.0",
+        version="3.0",
         contract_name="BlockingDraft",
         semantic_goal="Choose motivated character, prop, gaze, and spatial states before execution design.",
         approved_input_fields=("scene intent", "K1 decision view", "continuity state"),
@@ -128,18 +169,68 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
         output_exclusions=("shots", "lenses", "camera movement", "final VEC", "IDs and hashes"),
         prompt_budget=10_000,
         schema_budget=4_500,
+        approved_input_keys=(
+            "scene_id",
+            "scene_intent",
+            "knowledge_view",
+            "continuity_state",
+            "blocking_constraints",
+        ),
     ),
     Stage.B1: StageSignature(
         stage=Stage.B1,
-        version="1.0",
+        version="3.0",
         contract_name="ExecutionDesignDraft",
-        semantic_goal="Choose executable visual beats, alternatives, transitions, audio, references, and handoff intent after approved blocking.",
-        approved_input_fields=("compact scene intent", "blocking summary", "K2 decision view", "reference requirements"),
-        output_semantics=("visual curve points", "director decisions", "shot designs", "transition intents", "audio intents", "reference intents", "handoff intent"),
-        output_exclusions=("final VEC", "absolute ticks", "source fact hashes", "phase A fingerprint", "blocking commit copy", "contract IDs", "shot IDs", "mirror safety constants"),
+        semantic_goal=(
+            "Choose creative Shot and VisualBeat intent after approved blocking; "
+            "machine bindings may use only approved opaque handles."
+        ),
+        approved_input_fields=(
+            "compact scene intent",
+            "approved blocking summary",
+            "screened K2 decision view",
+            "capability profile",
+            "approved opaque fact handles",
+        ),
+        output_semantics=(
+            "visual curve points",
+            "director decisions",
+            "shot designs",
+            "duration intents",
+            "generation modes",
+            "visual beats",
+            "typed reference binding intents",
+            "typed dialogue binding intents",
+            "transition intents",
+            "handoff intent",
+        ),
+        output_exclusions=(
+            "final VEC",
+            "canonical IDs and hashes",
+            "absolute ticks",
+            "final timeline",
+            "source fact hashes and source-span timing",
+            "blocking commit copy",
+            "free-text reference or audio machine bindings",
+            "contract IDs, shot IDs, boundary IDs, and requirements",
+        ),
         prompt_budget=12_000,
         schema_budget=4_500,
         soft_prompt_target=9_000,
+        approved_input_keys=(
+            "scene_id",
+            "scene_intent",
+            "blocking_summary",
+            "blocking_commit",
+            "knowledge_view",
+            "capability_profile",
+            "approved_fact_handles",
+            "reference_requirements",
+            "dialogue",
+            "audio_facts",
+            "continuity_state",
+            "knowledge_conflicts",
+        ),
     ),
 })
 

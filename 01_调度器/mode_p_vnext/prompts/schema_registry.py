@@ -124,15 +124,79 @@ _SCHEMAS: Mapping[Stage, Mapping[str, Any]] = {
         },
     },
     Stage.B1: {
-        "type": "object", "title": "ExecutionDesignDraft", "additionalProperties": False,
-        "required": ["curve_points", "decisions", "shots", "transition_intents", "audio_intents", "reference_intents", "handoff_intent"],
+        "type": "object",
+        "title": "ExecutionDesignDraft",
+        "additionalProperties": False,
+        "required": [
+            "curve_points", "decisions", "shots", "transition_intents", "handoff_intent",
+        ],
         "properties": {
             "curve_points": {"type": "array", "minItems": 1, "maxItems": 24, "items": {"type": "object", "additionalProperties": False, "required": ["dramatic_beat_ordinal", "intensity", "explanation"], "properties": {"dramatic_beat_ordinal": {"type": "integer", "minimum": 1}, "intensity": {"type": "integer", "minimum": 0, "maximum": 100}, "explanation": {"type": "string", "maxLength": 240}}}},
             "decisions": {"type": "array", "minItems": 1, "maxItems": 24, "items": {"type": "object", "additionalProperties": False, "required": ["scope", "basis", "locked_by", "options", "selected_index", "rationale", "tradeoff"], "properties": {"scope": {"type": "string", "maxLength": 120}, "basis": {"enum": ["locked", "choice"]}, "locked_by": {"type": "array", "maxItems": 8, "items": {"type": "string", "maxLength": 180}}, "options": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string", "maxLength": 240}}, "selected_index": {"type": "integer", "minimum": 0, "maximum": 1}, "rationale": {"type": "string", "maxLength": 240}, "tradeoff": {"type": "string", "maxLength": 240}}}},
-            "shots": {"type": "array", "minItems": 1, "maxItems": 48, "items": {"type": "object", "additionalProperties": False, "required": ["blocking_beat_ordinal", "dramatic_function", "attention_target", "information_action", "framing_intent", "camera_pose", "camera_motion", "composition", "lighting", "performance", "duration_weight", "visual_beats"], "properties": {"blocking_beat_ordinal": {"type": "integer", "minimum": 1}, "dramatic_function": {"type": "string", "maxLength": 240}, "attention_target": {"type": "string", "maxLength": 240}, "information_action": {"type": "string", "maxLength": 240}, "framing_intent": {"type": "string", "maxLength": 240}, "camera_pose": {"type": "string", "maxLength": 240}, "camera_motion": {"type": "string", "maxLength": 240}, "composition": {"type": "string", "maxLength": 240}, "lighting": {"type": "string", "maxLength": 240}, "performance": {"type": "string", "maxLength": 240}, "duration_weight": {"type": "integer", "minimum": 1}, "visual_beats": {"type": "array", "minItems": 1, "maxItems": 4, "items": {"type": "object", "additionalProperties": False, "required": ["phase", "subject_state", "attention", "storyboard_role"], "properties": {"phase": {"enum": ["entry", "action", "reaction", "handoff"]}, "subject_state": {"type": "string", "maxLength": 240}, "attention": {"type": "string", "maxLength": 240}, "storyboard_role": {"enum": ["required", "optional", "omit"]}}}}}}},
+            "shots": {
+                "type": "array", "minItems": 1, "maxItems": 48,
+                "items": {
+                    "type": "object", "additionalProperties": False,
+                    "required": [
+                        "shot_ordinal", "blocking_beat_ordinal", "duration_intent",
+                        "generation_mode", "composition", "camera", "lighting",
+                        "performance", "visual_beats", "reference_binding_intents",
+                        "dialogue_binding_intents", "creative_notes",
+                    ],
+                    "properties": {
+                        "shot_ordinal": {"type": "integer", "minimum": 1},
+                        "blocking_beat_ordinal": {"type": "integer", "minimum": 1},
+                        "duration_intent": {"enum": ["brief", "standard", "extended"]},
+                        "generation_mode": {"enum": ["text_only", "first_last_frame", "omni_reference"]},
+                        "composition": {"type": "string", "minLength": 1, "maxLength": 240},
+                        "camera": {"type": "string", "minLength": 1, "maxLength": 240},
+                        "lighting": {"type": "string", "minLength": 1, "maxLength": 240},
+                        "performance": {"type": "string", "minLength": 1, "maxLength": 240},
+                        "visual_beats": {
+                            "type": "array", "minItems": 1, "maxItems": 4,
+                            "items": {
+                                "type": "object", "additionalProperties": False,
+                                "required": ["visual_beat_ordinal", "phase", "subject_state", "attention", "storyboard_role"],
+                                "properties": {
+                                    "visual_beat_ordinal": {"type": "integer", "minimum": 1},
+                                    "phase": {"enum": ["entry", "action", "reaction", "handoff"]},
+                                    "subject_state": {"type": "string", "minLength": 1, "maxLength": 240},
+                                    "attention": {"type": "string", "minLength": 1, "maxLength": 240},
+                                    "storyboard_role": {"enum": ["required", "optional", "omit"]},
+                                },
+                            },
+                        },
+                        "reference_binding_intents": {
+                            "type": "array", "maxItems": 16,
+                            "items": {
+                                "type": "object", "additionalProperties": False,
+                                "required": ["shot_ordinal", "visual_beat_ordinal", "fact_handle", "responsibility"],
+                                "properties": {
+                                    "shot_ordinal": {"type": "integer", "minimum": 1},
+                                    "visual_beat_ordinal": {"anyOf": [{"type": "integer", "minimum": 1}, {"type": "null"}]},
+                                    "fact_handle": {"type": "string", "pattern": "^fh:[0-9a-f]{64}$"},
+                                    "responsibility": {"enum": ["character_identity", "wardrobe_continuity", "prop_identity", "setting_continuity", "first_frame", "last_frame"]},
+                                },
+                            },
+                        },
+                        "dialogue_binding_intents": {
+                            "type": "array", "maxItems": 16,
+                            "items": {
+                                "type": "object", "additionalProperties": False,
+                                "required": ["shot_ordinal", "visual_beat_ordinal", "fact_handle", "placement_phase"],
+                                "properties": {
+                                    "shot_ordinal": {"type": "integer", "minimum": 1},
+                                    "visual_beat_ordinal": {"type": "integer", "minimum": 1},
+                                    "fact_handle": {"type": "string", "pattern": "^fh:[0-9a-f]{64}$"},
+                                    "placement_phase": {"enum": ["opening", "early", "middle", "late", "closing"]},
+                                },
+                            },
+                        },
+                        "creative_notes": {"type": "string", "minLength": 1, "maxLength": 240},
+                    },
+                },
+            },
             "transition_intents": {"type": "array", "items": {"type": "string", "maxLength": 240}},
-            "audio_intents": {"type": "array", "items": {"type": "string", "maxLength": 240}},
-            "reference_intents": {"type": "array", "items": {"type": "string", "maxLength": 240}},
             "handoff_intent": {"type": "string", "maxLength": 240},
         },
     },
@@ -195,13 +259,15 @@ def _assert_schema_node_matches_draft(
 def _assert_canonical_draft_contract(
     stage: Stage, document: Mapping[str, Any]
 ) -> None:
-    """Fail before provider I/O if the transport cannot decode its v2.2 Draft."""
+    """Fail before provider I/O if the transport cannot decode its v3.0 Draft."""
 
     from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingDraft
     from mode_p_vnext.domain.decisions import DecisionDraft, VisualCurvePointDraft
     from mode_p_vnext.domain.direction import EpisodeDirectionDraft, SceneIntentDraft
     from mode_p_vnext.domain.vec import (
         ExecutionDesignDraft,
+        DialogueBindingIntent,
+        ReferenceBindingIntent,
         ShotDesignDraft,
         VisualBeatDraft,
     )
@@ -271,6 +337,16 @@ def _assert_canonical_draft_contract(
             raise ValueError("B1 visual-beat schema must be an object")
         _assert_schema_node_matches_draft(
             visual_beats, VisualBeatDraft, "B1 visual-beat schema"
+        )
+        references = shots["properties"]["reference_binding_intents"]["items"]
+        dialogue = shots["properties"]["dialogue_binding_intents"]["items"]
+        if not isinstance(references, Mapping) or not isinstance(dialogue, Mapping):
+            raise ValueError("B1 binding schemas must be objects")
+        _assert_schema_node_matches_draft(
+            references, ReferenceBindingIntent, "B1 reference-binding schema"
+        )
+        _assert_schema_node_matches_draft(
+            dialogue, DialogueBindingIntent, "B1 dialogue-binding schema"
         )
         return
     raise ValueError(f"unsupported Draft stage: {stage.value}")

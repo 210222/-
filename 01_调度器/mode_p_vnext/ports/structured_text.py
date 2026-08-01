@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Any, Mapping, Protocol
 
@@ -9,6 +10,13 @@ from mode_p_vnext.prompts.signatures import Stage, StageSignature
 
 
 TEXT_VALIDATED = "TEXT_VALIDATED"
+_SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+_I0_SOURCE_SPAN_RE = re.compile(r"^\$\.facts\[\d+\]\.source_(?:start|end)$")
+
+
+def _require_sha256(value: str, field_name: str) -> None:
+    if not isinstance(value, str) or _SHA256_RE.fullmatch(value) is None:
+        raise ValueError(f"{field_name} must be a lowercase SHA-256 value")
 
 
 class CapabilityUnsupportedError(RuntimeError):
@@ -72,14 +80,13 @@ class TextCallEvidence:
             raise ValueError("attempt and latency must be non-negative")
         if self.accepted and self.rejection_code is not None:
             raise ValueError("accepted calls cannot contain a rejection code")
-        for value in (
-            self.schema_digest,
-            self.approved_input_digest,
-            self.request_digest,
-            self.response_digest,
+        for field_name in (
+            "schema_digest",
+            "approved_input_digest",
+            "request_digest",
+            "response_digest",
         ):
-            if len(value) != 64:
-                raise ValueError("text evidence digests must be SHA-256 values")
+            _require_sha256(getattr(self, field_name), field_name)
 
 
 @dataclass(frozen=True)
@@ -108,14 +115,20 @@ class ViolationSet:
     def __post_init__(self) -> None:
         if not isinstance(self.stage, Stage):
             raise ValueError("violation stage must be a Stage")
-        if len(self.draft_digest) != 64:
-            raise ValueError("draft_digest must be a SHA-256 value")
+        _require_sha256(self.draft_digest, "draft_digest")
         if not self.violations or not self.repair_scope:
             raise ValueError("violation set must contain violations and a repair scope")
         if any(not path.startswith("$") for path in self.repair_scope):
             raise ValueError("repair scope paths must be JSON paths")
         if len(self.repair_scope) != len(set(self.repair_scope)):
             raise ValueError("repair scope paths must be unique")
+        if self.stage is Stage.I0 and any(
+            _I0_SOURCE_SPAN_RE.fullmatch(path) is None
+            for path in self.repair_scope
+        ):
+            raise ValueError(
+                "I0 contract repair is limited to source_start/source_end fields"
+            )
 
 
 @dataclass(frozen=True)
@@ -130,8 +143,7 @@ class ContractPatch:
     def __post_init__(self) -> None:
         if not isinstance(self.stage, Stage):
             raise ValueError("contract patch stage must be a Stage")
-        if len(self.draft_digest) != 64:
-            raise ValueError("draft_digest must be a SHA-256 value")
+        _require_sha256(self.draft_digest, "draft_digest")
         scope = tuple(self.repair_scope)
         if not scope or len(scope) != len(set(scope)):
             raise ValueError("repair scope must be non-empty and unique")

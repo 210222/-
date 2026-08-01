@@ -42,6 +42,7 @@ class PromptCompiler:
     def compile(
         self, signature: StageSignature, approved_input: Mapping[str, Any]
     ) -> CompiledPrompt:
+        signature.assert_approved_input(approved_input)
         return self._compile(
             signature,
             approved_input,

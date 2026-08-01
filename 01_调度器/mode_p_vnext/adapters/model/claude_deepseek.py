@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import subprocess
 import time
 from dataclasses import dataclass
@@ -341,6 +342,21 @@ def _validate_draft_against_schema(
     registry defect rather than a reason to weaken local decoding.
     """
 
+    if "anyOf" in schema:
+        branches = schema["anyOf"]
+        if not isinstance(branches, list) or not branches:
+            raise ValueError(f"draft schema violation at {path}: invalid anyOf")
+        failures: list[ValueError] = []
+        for branch in branches:
+            if not isinstance(branch, Mapping):
+                raise ValueError(f"draft schema violation at {path}: invalid anyOf branch")
+            try:
+                _validate_draft_against_schema(value, branch, path)
+            except ValueError as exc:
+                failures.append(exc)
+            else:
+                return
+        raise ValueError(f"draft schema violation at {path}: no anyOf branch matched") from failures[-1]
     if "enum" in schema and value not in schema["enum"]:
         raise ValueError(f"draft schema violation at {path}: value is outside enum")
     expected = schema.get("type")
@@ -390,6 +406,14 @@ def _validate_draft_against_schema(
             raise ValueError(f"draft schema violation at {path}: string is too short")
         if "maxLength" in schema and len(value) > schema["maxLength"]:
             raise ValueError(f"draft schema violation at {path}: string exceeds maxLength")
+        if "pattern" in schema:
+            pattern = schema["pattern"]
+            if not isinstance(pattern, str) or re.fullmatch(pattern, value) is None:
+                raise ValueError(f"draft schema violation at {path}: string does not match pattern")
+        return
+    if expected == "null":
+        if value is not None:
+            raise ValueError(f"draft schema violation at {path}: expected null")
         return
     if expected == "integer":
         if isinstance(value, bool) or not isinstance(value, int):
