@@ -1,4 +1,4 @@
-"""A0 freezes one architecture-v2.2 construction ledger and v4 safety."""
+"""A0 freezes one architecture-v2.3 construction ledger and v4 safety."""
 
 from __future__ import annotations
 
@@ -35,10 +35,15 @@ V22_AMENDMENT_REL = (
     "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
     "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md"
 )
+V23_AMENDMENT_REL = (
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md"
+)
 ARCHITECTURE_BUNDLE = {
     ARCHITECTURE_REL,
     AMENDMENT_REL,
     V22_AMENDMENT_REL,
+    V23_AMENDMENT_REL,
 }
 
 
@@ -89,7 +94,7 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     control = ReleaseControl.default()
     document = _read_json(control.tasks_path)
     assert document["schema_version"] == "2.0"
-    assert document["architecture_version"] == "2.2"
+    assert document["architecture_version"] == "2.3"
     assert document["authority"] == "SOLE_VNEXT_CONSTRUCTION_LEDGER"
     assert document["terminal_claim_ceiling"] == "OWNER_APPROVED_PREVIEW"
     assert document["status_after_all"] == "PRODUCTION_SWITCH_PROPOSAL_ELIGIBLE"
@@ -132,19 +137,28 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     assert "b1_prompt_under_12000_chars" in a4["required_checks"]
     assert "b1_schema_under_4500_chars" in a4["required_checks"]
     assert "i0_fact_extraction_signature" in a4["required_checks"]
+    assert "local_anchor_excluded_from_i0" in a4["required_checks"]
+    assert "free_text_intents_not_binding_transport" in a4["required_checks"]
     a5 = next(task for task in document["tasks"] if task["task_id"] == "A5")
     assert "drafts_contain_creative_choices_only" in a5["required_checks"]
     assert "deterministic_vec_rebuild" in a5["required_checks"]
     assert "typed_reference_binding" in a5["required_checks"]
     assert "typed_dialogue_audio_binding" in a5["required_checks"]
     assert "no_fact_id_semantics" in a5["required_checks"]
+    assert "bounded_generation_segment" in a5["required_checks"]
+    assert "anchored_dialogue_audio_placement" in a5["required_checks"]
+    assert "free_text_intents_not_bound" in a5["required_checks"]
 
     a1 = next(task for task in document["tasks"] if task["task_id"] == "A1")
     assert {
         "typed_fact_semantics",
         "opaque_fact_ids",
         "source_span_invariants",
+        "dialogue_anchor_contract",
     }.issubset(a1["required_checks"])
+
+    a0 = next(task for task in document["tasks"] if task["task_id"] == "A0")
+    assert "architecture_v23_temporal_contracts_registered" in a0["required_checks"]
 
     a6 = next(task for task in document["tasks"] if task["task_id"] == "A6")
     assert {
@@ -169,6 +183,7 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
         "typed_ingest_provenance",
         "complete_v22_state_graph",
         "run_record_digest_tamper_rejected",
+        "local_dialogue_anchor_assembly",
     }.issubset(a8["required_checks"])
 
 
@@ -195,7 +210,7 @@ def test_architecture_bundle_hashes_are_locked_and_current():
     assert expected == actual
 
     state = control.load_state()
-    assert state["architecture_version"] == "2.2"
+    assert state["architecture_version"] == "2.3"
     assert state["architecture_documents"] == [
         {"path": item["path"], "sha256": item["sha256"]}
         for item in document["architecture_documents"]
@@ -217,6 +232,22 @@ def test_v22_root_contracts_are_explicit_and_fail_closed():
     assert "INGEST(I0 + FactAssembler)" in amendment
     assert "TEXT_VALIDATED" in amendment
     assert "production_entry=v4_unchanged" in amendment
+
+
+def test_v23_temporal_contracts_are_explicit_and_fail_closed():
+    root = ReleaseControl.default().root
+    amendment = (root / V23_AMENDMENT_REL).read_text(encoding="utf-8")
+
+    assert "MAX_GENERATION_SEGMENT_TICKS = 360000" in amendment
+    assert "MAX_SHOT_TICKS" in amendment
+    assert "deterministic largest-remainder" in amendment
+    assert "dialogue_anchor_ppm: int | None" in amendment
+    assert "I0 model contract MUST NOT return it" in amendment
+    assert "[start_tick," in amendment
+    assert "start_tick + 1)" in amendment
+    assert "reference_intents[]" in amendment
+    assert "MUST NOT be parsed or matched against facts." in amendment
+    assert "v4_unchanged" in amendment
 
 
 def test_legacy_queues_are_imported_as_history_not_completion():

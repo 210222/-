@@ -1,0 +1,39 @@
+{
+  "task_id": "A0",
+  "scope": "Architecture v2.3 authority-bundle revalidation",
+  "architecture_version": "2.3",
+  "architecture_bundle": [
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md",
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md",
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md",
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md"
+  ],
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py"
+  ],
+  "checks": [
+    {"name": "single_release_ledger", "exit_code": 0},
+    {"name": "legacy_queues_historical", "exit_code": 0},
+    {"name": "legacy_controllers_superseded", "exit_code": 0},
+    {"name": "one_lock_one_next_task", "exit_code": 0},
+    {"name": "task_path_ownership_disjoint", "exit_code": 0},
+    {"name": "phase_status_progression", "exit_code": 0},
+    {"name": "bounded_control_output", "exit_code": 0},
+    {"name": "portable_canonical_hashes", "exit_code": 0},
+    {"name": "architecture_bundle_locked", "exit_code": 0},
+    {"name": "architecture_v23_temporal_contracts_registered", "exit_code": 0},
+    {"name": "manual_release_gates", "exit_code": 0},
+    {"name": "construction_entry_migrated", "exit_code": 0},
+    {"name": "production_v4_unchanged", "exit_code": 0}
+  ],
+  "verification_results": [
+    {"name": "a0_release_control", "exit_code": 0},
+    {"name": "a0_v4_entrypoint", "exit_code": 0},
+    {"name": "a0_control_regression", "exit_code": 0}
+  ],
+  "findings": [
+    "v2.2-only test constants failed after the legitimate v2.3 authority rebase.",
+    "The repaired A0 test freezes all four document hashes and v2.3 temporal and non-binding requirements in the task registry.",
+    "The production entry remains v4_unchanged and no media or owner approval is claimed."
+  ]
+}
