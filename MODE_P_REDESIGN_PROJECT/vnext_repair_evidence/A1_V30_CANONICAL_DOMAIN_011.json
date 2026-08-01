@@ -1,0 +1,108 @@
+{
+  "task_id": "A1",
+  "kind": "MODE_P_VNEXT_A1_CANONICAL_DOMAIN_EVIDENCE",
+  "architecture_version": "3.0",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_COMPLETE_VERIFICATION_INPUT"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/compat/__init__.py",
+    "01_调度器/mode_p_vnext/compat/legacy_checkpoint.py",
+    "01_调度器/mode_p_vnext/compat/legacy_facts.py",
+    "01_调度器/mode_p_vnext/domain/__init__.py",
+    "01_调度器/mode_p_vnext/domain/artifact.py",
+    "01_调度器/mode_p_vnext/domain/blocking.py",
+    "01_调度器/mode_p_vnext/domain/decisions.py",
+    "01_调度器/mode_p_vnext/domain/direction.py",
+    "01_调度器/mode_p_vnext/domain/evidence.py",
+    "01_调度器/mode_p_vnext/domain/facts.py",
+    "01_调度器/mode_p_vnext/domain/ids.py",
+    "01_调度器/mode_p_vnext/domain/knowledge.py",
+    "01_调度器/mode_p_vnext/domain/projection.py",
+    "01_调度器/mode_p_vnext/domain/release.py",
+    "01_调度器/mode_p_vnext/domain/time.py",
+    "01_调度器/mode_p_vnext/domain/vec.py",
+    "01_调度器/mode_p_vnext/services/fact_assembler.py",
+    "01_调度器/mode_p_vnext/services/source_normalizer.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_V30_CANONICAL_DOMAIN_011.json"
+  ],
+  "checks": [
+    {"name": "canonical_artifact_envelope", "exit_code": 0},
+    {"name": "canonical_24000_tick_timebase", "exit_code": 0},
+    {"name": "draft_artifact_separation", "exit_code": 0},
+    {"name": "no_duplicate_domain_authority", "exit_code": 0},
+    {"name": "domain_schemas_frozen_for_downstream", "exit_code": 0},
+    {"name": "legacy_read_adapter_only", "exit_code": 0},
+    {"name": "normalized_source_contract", "exit_code": 0},
+    {"name": "local_fact_assembler_ownership", "exit_code": 0},
+    {"name": "typed_fact_semantics", "exit_code": 0},
+    {"name": "opaque_fact_handles_and_ids", "exit_code": 0},
+    {"name": "source_span_provenance_only", "exit_code": 0},
+    {"name": "generation_capability_profile", "exit_code": 0},
+    {"name": "duration_intent_not_raw_ticks", "exit_code": 0},
+    {"name": "typed_reference_binding_intent", "exit_code": 0},
+    {"name": "typed_dialogue_binding_intent", "exit_code": 0}
+  ],
+  "verification_results": [
+    {
+      "name": "a1_domain_model",
+      "argv": [
+        "C:\\Users\\21022\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_a1_domain_model.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "11 passed in 0.23s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_and_v4_isolation_regression",
+      "exit_code": 0,
+      "summary": "64 passed in 3.78s: A0 release control, active v4 entrypoints, and rebuild control.",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit"
+    },
+    {
+      "name": "vnext_full_regression_probe",
+      "exit_code": 1,
+      "summary": "Collection stops at three obsolete downstream consumers: A5 timeline_allocator imports removed GenerationSegmentTimeline; A5/A6/A7 vec_assembler imports removed multi-shot GenerationSegment. They are historical v2.x consumers, are not v3 authority, and must be migrated by their assigned A5/A6/A7 packages. Restoring aliases would violate one CinematicShot per GenerationUnit and is intentionally rejected.",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit"
+    }
+  ],
+  "root_cause_repairs": [
+    "Replaced the v2.2 envelope with the v3.0 canonical payload-hashed artifact envelope and one domain schema version.",
+    "Installed the raw source -> NormalizedSource -> FactExtractionDraft -> local FactAssembler -> FactRegistry chain; model drafts cannot carry IDs, handles, hashes, ordinals, or ticks.",
+    "Made source spans immutable provenance only; source character positions are absent from time allocation and audio marker semantics.",
+    "Moved persistent fact identity to opaque local id:/fh: values, with exact registry membership lookup and deterministic duplicate normalization.",
+    "Replaced Scene-level segment semantics with v3 capability profiles, DurationIntent, per-shot GenerationUnitTimeline, local 24000-tick intervals, and a SceneTimeline that may exceed fifteen seconds.",
+    "Froze typed reference and dialogue binding intents at Shot/VisualBeat scope; removed free-text audio/reference machine fields.",
+    "Froze VEC data validation for one GenerationUnit per CinematicShot, N+1 scene boundaries, typed bidirectional reference/audio binding, and marker-only audio events without fabricated duration.",
+    "Downgraded legacy fact/checkpoint adapters to explicit read-only observations that require re-ingest/reassembly and cannot mint v3 final artifacts."
+  ],
+  "authority_boundary": {
+    "canonical_domain": "mode_p_vnext.domain",
+    "historical_duplicate_definitions": "Historical v2.x islands remain migration inputs only. A0 authority state rejects their completion records; their removal/migration is assigned to later package owners and was not treated as v3 authority.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A2 state or invalidation implementation was performed.",
+    "No A4 provider, prompt, or stage transport implementation was performed.",
+    "No A5 timeline/VEC assembler implementation was performed; only its required frozen domain contract was defined.",
+    "No A6 Projection compiler implementation was performed.",
+    "No Director, DP, external media, or production runtime was started.",
+    "No visual acceptance is claimed by these structural tests."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false
+}

@@ -1,18 +1,14 @@
-"""Canonical, pure MODE:P vNext domain schemas (architecture v2.2)."""
+"""The sole canonical MODE:P vNext domain authority (architecture v3.0)."""
 
 from .artifact import (
+    DOMAIN_SCHEMA_VERSION,
     ArtifactEnvelope,
     ArtifactKind,
     DomainValidationError,
     SourceRef,
     ValidationStatus,
 )
-from .blocking import (
-    BlockingBeat,
-    BlockingBeatDraft,
-    BlockingCommit,
-    BlockingDraft,
-)
+from .blocking import BlockingBeat, BlockingBeatDraft, BlockingCommit, BlockingDraft
 from .decisions import (
     DecisionBasis,
     DecisionDraft,
@@ -21,8 +17,6 @@ from .decisions import (
     VisualCurvePointDraft,
 )
 from .direction import EpisodeDirectionDraft, SceneIntentDraft
-from .facts import FactKind, FactRegistry, FactSemantic, ScriptFact
-from .ids import IdFactory
 from .evidence import (
     DPReviewVerdict,
     DeterministicGateResult,
@@ -31,6 +25,19 @@ from .evidence import (
     OwnerApprovalDecision,
     OwnerApprovalRecord,
 )
+from .facts import (
+    FactConfidence,
+    FactExtractionDraft,
+    FactKind,
+    FactQualifiers,
+    FactRegistry,
+    FactSemantic,
+    NormalizedSource,
+    ScriptFact,
+    SourcePartition,
+    SourceSpan,
+)
+from .ids import IdFactory
 from .knowledge import (
     KnowledgeCandidateRecord,
     KnowledgeCapabilityScope,
@@ -42,16 +49,29 @@ from .knowledge import (
 )
 from .projection import ProjectionAST, ProjectionManifest, ProjectionNode
 from .time import (
+    SD20_MAX_GENERATION_TICKS,
+    TICKS_PER_SECOND,
     CanonicalTimeline,
-    GenerationSegmentTimeline,
+    DurationIntent,
+    DurationOption,
+    EpisodeTimeline,
+    GenerationCapabilityProfile,
+    GenerationUnitTimeline,
+    SceneTimeline,
+    TickMarker,
     TickRange,
     TimelinePlacement,
 )
 from .vec import (
     AudioEvent,
+    DialogueBindingIntent,
     ExecutionDesignDraft,
-    GenerationSegment,
+    GenerationMode,
+    GenerationUnit,
+    PlacementPhase,
+    ReferenceBindingIntent,
     ReferenceRequirement,
+    ReferenceResponsibility,
     ShotBoundary,
     ShotDesignDraft,
     StoryboardRole,
@@ -64,6 +84,9 @@ from .vec import (
 )
 
 __all__ = (
+    "DOMAIN_SCHEMA_VERSION",
+    "SD20_MAX_GENERATION_TICKS",
+    "TICKS_PER_SECOND",
     "ArtifactEnvelope",
     "ArtifactKind",
     "AudioEvent",
@@ -74,17 +97,26 @@ __all__ = (
     "CanonicalTimeline",
     "DecisionBasis",
     "DecisionDraft",
+    "DialogueBindingIntent",
     "DPReviewVerdict",
     "DeterministicGateResult",
     "DirectorDecision",
     "DomainValidationError",
+    "DurationIntent",
+    "DurationOption",
     "EpisodeDirectionDraft",
+    "EpisodeTimeline",
     "ExecutionDesignDraft",
+    "FactConfidence",
+    "FactExtractionDraft",
     "FactKind",
+    "FactQualifiers",
     "FactRegistry",
     "FactSemantic",
-    "GenerationSegment",
-    "GenerationSegmentTimeline",
+    "GenerationCapabilityProfile",
+    "GenerationMode",
+    "GenerationUnit",
+    "GenerationUnitTimeline",
     "IdFactory",
     "IndependentDPReviewResult",
     "KnowledgeCapsuleV2",
@@ -95,18 +127,26 @@ __all__ = (
     "KnowledgeSnapshot",
     "KnowledgeStage",
     "MediaEvidence",
+    "NormalizedSource",
     "OwnerApprovalDecision",
     "OwnerApprovalRecord",
+    "PlacementPhase",
     "ProjectionAST",
     "ProjectionManifest",
     "ProjectionNode",
+    "ReferenceBindingIntent",
     "ReferenceRequirement",
+    "ReferenceResponsibility",
     "SceneIntentDraft",
+    "SceneTimeline",
     "ScriptFact",
     "ShotBoundary",
     "ShotDesignDraft",
+    "SourcePartition",
     "SourceRef",
+    "SourceSpan",
     "StoryboardRole",
+    "TickMarker",
     "TickRange",
     "TimelinePlacement",
     "ValidationStatus",

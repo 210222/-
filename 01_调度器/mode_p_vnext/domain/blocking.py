@@ -5,10 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, ClassVar, Mapping
 
-from .artifact import ArtifactKind, DomainValidationError, freeze_mapping
-
-
-DOMAIN_SCHEMA_VERSION = "2.2"
+from .artifact import DOMAIN_SCHEMA_VERSION, ArtifactKind, DomainValidationError, freeze_mapping
 CANONICAL_DOMAIN_TYPES = (
     "BlockingBeat",
     "BlockingBeatDraft",

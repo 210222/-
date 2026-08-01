@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, ClassVar, Mapping
 
 from .artifact import (
+    DOMAIN_SCHEMA_VERSION,
     ArtifactKind,
     DomainValidationError,
     freeze_mapping,
@@ -14,7 +15,6 @@ from .artifact import (
 from .time import TickRange
 
 
-DOMAIN_SCHEMA_VERSION = "2.2"
 CANONICAL_DOMAIN_TYPES = (
     "CapabilityAdaptationRecord",
     "ProjectionAST",

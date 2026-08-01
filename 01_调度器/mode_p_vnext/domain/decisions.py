@@ -6,10 +6,7 @@ import enum
 from dataclasses import dataclass
 from typing import ClassVar
 
-from .artifact import ArtifactKind, DomainValidationError
-
-
-DOMAIN_SCHEMA_VERSION = "2.2"
+from .artifact import DOMAIN_SCHEMA_VERSION, ArtifactKind, DomainValidationError
 CANONICAL_DOMAIN_TYPES = (
     "DecisionBasis",
     "DecisionDraft",

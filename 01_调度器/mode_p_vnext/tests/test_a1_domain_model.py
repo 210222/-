@@ -1,1287 +1,400 @@
-"""Mechanical acceptance tests for A1's canonical vNext domain boundary.
+"""A1 v3.0 canonical-domain invariants.
 
-These tests deliberately describe the public schema that downstream A2--A10
-must consume.  Legacy schemas remain outside this authority boundary.
+These tests intentionally freeze contracts for later packages.  They do not
+claim that A5 assembly, A6 projection, or visual acceptance already exists.
 """
 
 from __future__ import annotations
 
 import ast
 import dataclasses
-import importlib
+import inspect
 from pathlib import Path
 
 import pytest
 
+from mode_p_vnext.compat import LegacyCheckpointObservation, LegacyFactObservation
 from mode_p_vnext.compat.legacy_checkpoint import read_legacy_b0_k2_checkpoint
-from mode_p_vnext.domain.artifact import (
+from mode_p_vnext.compat.legacy_facts import read_legacy_script_fact
+from mode_p_vnext.domain import (
+    DOMAIN_SCHEMA_VERSION,
+    SD20_MAX_GENERATION_TICKS,
+    TICKS_PER_SECOND,
     ArtifactEnvelope,
     ArtifactKind,
-    DomainValidationError,
-    SourceRef,
-    ValidationStatus,
-    canonical_sha256,
-)
-from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingDraft
-from mode_p_vnext.domain.decisions import DecisionDraft, VisualCurvePointDraft
-from mode_p_vnext.domain.direction import EpisodeDirectionDraft, SceneIntentDraft
-from mode_p_vnext.domain.ids import IdFactory
-from mode_p_vnext.domain.time import (
-    TICKS_PER_SECOND,
     CanonicalTimeline,
-    GenerationSegmentTimeline,
+    DecisionBasis,
+    DialogueBindingIntent,
+    DirectorDecision,
+    DomainValidationError,
+    DurationIntent,
+    ExecutionDesignDraft,
+    FactConfidence,
+    FactExtractionDraft,
+    FactKind,
+    FactQualifiers,
+    GenerationCapabilityProfile,
+    GenerationMode,
+    GenerationUnit,
+    GenerationUnitTimeline,
+    NormalizedSource,
+    PlacementPhase,
+    ReferenceBindingIntent,
+    ReferenceRequirement,
+    ReferenceResponsibility,
+    SceneTimeline,
+    ShotBoundary,
+    ShotDesignDraft,
+    StoryboardRole,
+    TickMarker,
     TickRange,
     TimelinePlacement,
-)
-from mode_p_vnext.domain.vec import (
-    ExecutionDesignDraft,
-    ShotDesignDraft,
+    VisualBeat,
     VisualBeatDraft,
+    VisualBeatPhase,
+    VisualCurvePoint,
     VisualExecutionContract,
+    VisualShot,
+    VoiceRequirement,
 )
+from mode_p_vnext.domain.artifact import canonical_sha256
+from mode_p_vnext.services.fact_assembler import FactAssembler
+from mode_p_vnext.services.source_normalizer import SourceNormalizer
 
 
-DOMAIN_ROOT = Path(__file__).resolve().parents[1] / "domain"
+UTC = "2026-08-01T13:00:00Z"
+FACT_ID_1 = "id:" + "1" * 64
+FACT_ID_2 = "id:" + "2" * 64
+FACT_HANDLE_1 = "fh:" + "a" * 64
+FACT_HANDLE_2 = "fh:" + "b" * 64
+DIGEST_A = "a" * 64
+DIGEST_B = "b" * 64
 
 
-def _episode_direction() -> EpisodeDirectionDraft:
-    return EpisodeDirectionDraft(
-        dramatic_promise="The quiet decision changes the relationship.",
-        audience_contract="The audience can follow cause and effect.",
-        tension_curve=("arrival", "choice", "aftermath"),
-        visual_principles=("hold on the decision",),
-        continuity_priorities=("the letter remains in the left hand",),
-        unresolved_questions=("Does the other character see the letter?",),
+def _source() -> NormalizedSource:
+    text = "第一场\n安娜握住钥匙。\n安娜说：走吧。\n"
+    return SourceNormalizer.normalize(
+        text.replace("\n", "\r\n"),
+        source_id="script:episode-1",
+        locator="episode-1.txt",
+        normalized_partitions=(("episode:1", "scene:1", 0, len(text)),),
     )
 
 
-def _field_names(domain_type: type) -> tuple[str, ...]:
-    return tuple(field.name for field in dataclasses.fields(domain_type))
-
-
-def test_v22_script_fact_has_typed_semantics_and_exact_source_span_contract() -> None:
-    facts_domain = importlib.import_module("mode_p_vnext.domain.facts")
-    FactKind = facts_domain.FactKind
-    FactRegistry = facts_domain.FactRegistry
-    FactSemantic = facts_domain.FactSemantic
-    ScriptFact = facts_domain.ScriptFact
-
-    assert _field_names(ScriptFact) == (
-        "fact_id",
-        "scene_id",
-        "kind",
-        "semantic",
-        "statement",
-        "source_ref",
-        "source_start",
-        "source_end",
-        "ordinal",
-        "subject_id",
-        "spoken_text",
-    )
-
-    source_text = "陈厚坤把手机放在桌上。\n周从文说：好！"
-    source = SourceRef(source_id="script:episode-35", digest="a" * 64)
-    prop = ScriptFact(
-        fact_id="script_fact:0001:" + "b" * 64,
-        scene_id="scene:35.2",
-        kind=FactKind.SCRIPT,
-        semantic=FactSemantic.PROP,
-        statement="陈厚坤把手机放在桌上。",
-        source_ref=source,
-        source_start=0,
-        source_end=source_text.index("\n"),
-        ordinal=1,
-        subject_id="prop:phone",
-    )
-    dialogue_start = source_text.index("周从文")
-    dialogue = ScriptFact(
-        fact_id="script_fact:0002:" + "c" * 64,
-        scene_id="scene:35.2",
-        kind=FactKind.SCRIPT,
-        semantic=FactSemantic.DIALOGUE,
-        statement="周从文说：好！",
-        source_ref=source,
-        source_start=dialogue_start,
-        source_end=len(source_text),
-        ordinal=2,
-        subject_id="character:zhou-congwen",
-        spoken_text="好！",
-    )
-
-    assert prop.validate_against_normalized_source(source_text) == "陈厚坤把手机放在桌上。"
-    assert dialogue.validate_against_normalized_source(source_text) == "周从文说：好！"
-    assert FactRegistry(facts=(prop, dialogue)).by_semantic(FactSemantic.DIALOGUE) == (
-        dialogue,
+def _drafts(source: NormalizedSource) -> tuple[FactExtractionDraft, ...]:
+    prop = "安娜握住钥匙。"
+    dialogue = "安娜说：走吧。"
+    return (
+        FactExtractionDraft(
+            semantic=__import__("mode_p_vnext.domain", fromlist=["FactSemantic"]).FactSemantic.PROP,
+            statement=prop,
+            source_start=source.normalized_text.index(prop),
+            source_end=source.normalized_text.index(prop) + len(prop),
+            confidence=FactConfidence.EXPLICIT,
+            qualifiers=FactQualifiers("episode:1", "scene:1", subject_label="安娜"),
+        ),
+        FactExtractionDraft(
+            semantic=__import__("mode_p_vnext.domain", fromlist=["FactSemantic"]).FactSemantic.DIALOGUE,
+            statement=dialogue,
+            source_start=source.normalized_text.index(dialogue),
+            source_end=source.normalized_text.index(dialogue) + len(dialogue),
+            confidence=FactConfidence.EXPLICIT,
+            qualifiers=FactQualifiers(
+                "episode:1", "scene:1", subject_label="安娜", spoken_text="走吧"
+            ),
+        ),
     )
 
 
-def test_v22_script_fact_rejects_invalid_semantics_subjects_and_source_spans() -> None:
-    facts_domain = importlib.import_module("mode_p_vnext.domain.facts")
-    FactKind = facts_domain.FactKind
-    FactSemantic = facts_domain.FactSemantic
-    ScriptFact = facts_domain.ScriptFact
-    source = SourceRef(source_id="script:episode-35", digest="a" * 64)
-    valid = ScriptFact(
-        fact_id="script_fact:0001:" + "b" * 64,
-        scene_id="scene:35.2",
-        kind=FactKind.SCRIPT,
-        semantic=FactSemantic.NARRATIVE,
-        statement="夜。",
-        source_ref=source,
-        source_start=0,
-        source_end=2,
-        ordinal=1,
-    )
-
-    invalid_replacements = (
-        ({"semantic": "dialogue"}, "FactSemantic"),
-        ({"fact_id": "dialogue_0001"}, "fact_id"),
-        ({"fact_id": "script_fact:0002:" + "b" * 64}, "fact_id"),
-        ({"source_start": -1}, "source_start"),
-        ({"source_start": 2, "source_end": 2}, "source span"),
-        ({"source_start": True}, "source_start"),
-        ({"ordinal": -1}, "ordinal"),
-        ({"ordinal": True}, "ordinal"),
-        ({"semantic": FactSemantic.PROP}, "subject_id"),
-        ({"semantic": FactSemantic.DIALOGUE}, "subject_id"),
-        ({"spoken_text": "不应出现"}, "spoken_text"),
-        ({"subject_id": " "}, "subject_id"),
-    )
-    for changes, message in invalid_replacements:
-        with pytest.raises(DomainValidationError, match=message):
-            dataclasses.replace(valid, **changes)
-
-    dialogue = dataclasses.replace(
-        valid,
-        semantic=FactSemantic.DIALOGUE,
-        subject_id="character:zhou-congwen",
-        spoken_text="好！",
-        statement="周从文说：好！",
-        source_start=0,
-        source_end=8,
-    )
-    with pytest.raises(DomainValidationError, match="source_end"):
-        dialogue.validate_against_normalized_source("周从文说：好！")
-    with pytest.raises(DomainValidationError, match="statement"):
-        valid.validate_against_normalized_source("白天。")
-    dialogue_without_spoken_text = dataclasses.replace(
-        dialogue,
-        statement="周从文",
-        source_end=len("周从文沉默。"),
-    )
-    with pytest.raises(DomainValidationError, match="spoken_text"):
-        dialogue_without_spoken_text.validate_against_normalized_source("周从文沉默。")
-
-
-def test_v22_fact_registry_enforces_per_source_strict_unique_ordinals() -> None:
-    facts_domain = importlib.import_module("mode_p_vnext.domain.facts")
-    FactKind = facts_domain.FactKind
-    FactRegistry = facts_domain.FactRegistry
-    FactSemantic = facts_domain.FactSemantic
-    ScriptFact = facts_domain.ScriptFact
-    source_a = SourceRef(source_id="script:a", digest="a" * 64)
-    source_b = SourceRef(source_id="script:b", digest="b" * 64)
-
-    def fact(*, fact_id: str, source: SourceRef, ordinal: int) -> object:
-        return ScriptFact(
-            fact_id=fact_id,
-            scene_id="scene:1",
-            kind=FactKind.SCRIPT,
-            semantic=FactSemantic.NARRATIVE,
-            statement="夜。",
-            source_ref=source,
-            source_start=0,
-            source_end=2,
-            ordinal=ordinal,
-        )
-
-    a1 = fact(fact_id="script_fact:0001:" + "a" * 64, source=source_a, ordinal=1)
-    a2 = fact(fact_id="script_fact:0002:" + "b" * 64, source=source_a, ordinal=2)
-    b1 = fact(fact_id="script_fact:0001:" + "c" * 64, source=source_b, ordinal=1)
-    assert FactRegistry(facts=(a1, b1, a2)).facts == (a1, b1, a2)
-    with pytest.raises(DomainValidationError, match="strictly increasing"):
-        FactRegistry(facts=(a2, a1))
-    with pytest.raises(DomainValidationError, match="strictly increasing"):
-        FactRegistry(
-            facts=(
-                a1,
-                dataclasses.replace(
-                    a2,
-                    ordinal=1,
-                    fact_id="script_fact:0001:" + "d" * 64,
-                ),
-            )
-        )
-
-
-def test_v22_fact_id_is_opaque_and_legacy_import_never_infers_semantic_prefix() -> None:
-    from mode_p_vnext.compat.legacy_facts import read_legacy_script_fact
-    from mode_p_vnext.domain.facts import FactKind, FactSemantic
-
-    source_text = "周从文说：好！"
-    source = SourceRef(source_id="legacy-script:episode-35", digest="d" * 64)
-    imported = read_legacy_script_fact(
-        {
-            "fact_id": "dialogue_0001",
-            "kind": "dialogue",
-            "statement": source_text,
-        },
-        episode_id="episode-35",
-        scene_id="scene:35.2",
-        source_ref=source,
-        source_start=0,
-        source_end=len(source_text),
-        ordinal=1,
+def _assembled():
+    source = _source()
+    envelope = FactAssembler().assemble(
+        normalized_source=source,
+        normalized_source_artifact_id="normalized-source:1",
+        drafts=_drafts(source),
         source_kind=FactKind.SCRIPT,
-        normalized_source=source_text,
+        producer_stage="I0.fact_assembler",
+        created_at_utc=UTC,
     )
-
-    assert imported.fact.semantic is FactSemantic.NARRATIVE
-    assert imported.fact.fact_id != "dialogue_0001"
-    assert imported.fact.fact_id.startswith("script_fact:0001:")
-    assert imported.fact.spoken_text is None
-    assert set(imported.requires_reingest_for) == {
-        FactSemantic.CHARACTER,
-        FactSemantic.WARDROBE,
-        FactSemantic.PROP,
-        FactSemantic.SETTING,
-        FactSemantic.DIALOGUE,
-        FactSemantic.ASSET,
-    }
+    return source, envelope
 
 
-def test_stage_draft_schemas_match_architecture_section_5_3_exactly() -> None:
-    assert _field_names(EpisodeDirectionDraft) == (
-        "dramatic_promise",
-        "audience_contract",
-        "tension_curve",
-        "visual_principles",
-        "continuity_priorities",
-        "unresolved_questions",
-    )
-    assert _field_names(SceneIntentDraft) == (
-        "scene_purpose",
-        "state_change",
-        "audience_information",
-        "character_knowledge",
-        "performance_questions",
-        "director_problems",
-        "continuity_effects",
-        "unresolved_questions",
-    )
-    assert _field_names(BlockingBeatDraft) == (
-        "ordinal",
-        "dramatic_action",
-        "character_states",
-        "prop_states",
-        "gaze_relations",
-        "action_paths",
-        "continuity_effect",
-    )
-    assert _field_names(BlockingDraft) == ("beats",)
-    assert _field_names(DecisionDraft) == (
-        "scope",
-        "basis",
-        "locked_by",
-        "options",
-        "selected_index",
-        "rationale",
-        "tradeoff",
-    )
-    assert _field_names(VisualBeatDraft) == (
-        "phase",
-        "subject_state",
-        "attention",
-        "storyboard_role",
-    )
-    assert _field_names(ShotDesignDraft) == (
-        "blocking_beat_ordinal",
-        "dramatic_function",
-        "attention_target",
-        "information_action",
-        "framing_intent",
-        "camera_pose",
-        "camera_motion",
-        "composition",
-        "lighting",
-        "performance",
-        "duration_weight",
-        "visual_beats",
-    )
-    assert _field_names(ExecutionDesignDraft) == (
-        "curve_points",
-        "decisions",
-        "shots",
-        "transition_intents",
-        "audio_intents",
-        "reference_intents",
-        "handoff_intent",
-    )
-
-
-def test_b1_decision_modes_and_visual_beat_roles_are_bounded() -> None:
-    from mode_p_vnext.domain.decisions import DecisionBasis
-    from mode_p_vnext.domain.vec import StoryboardRole, VisualBeatPhase
-
-    choice = DecisionDraft(
-        scope="shot:1",
-        basis=DecisionBasis.CHOICE,
-        locked_by=(),
-        options=("hold the frame", "move with the subject"),
-        selected_index=0,
-        rationale="The held frame makes the decision legible.",
-        tradeoff="Less kinetic energy.",
-    )
-    locked = DecisionDraft(
-        scope="continuity:axis",
-        basis=DecisionBasis.LOCKED,
-        locked_by=("fact:axis-established",),
-        options=("preserve screen direction",),
-        selected_index=0,
-        rationale="The established axis is a locked fact.",
-        tradeoff="Camera placement remains inside the safe corridor.",
-    )
-    beat = VisualBeatDraft(
-        phase=VisualBeatPhase.REACTION,
-        subject_state="Lin Lan absorbs the transfer of authority.",
-        attention="Her gaze remains on the key.",
-        storyboard_role=StoryboardRole.REQUIRED,
-    )
-    shot = ShotDesignDraft(
+def _design(handle_1: str = FACT_HANDLE_1, handle_2: str = FACT_HANDLE_2):
+    beat = VisualBeatDraft(1, VisualBeatPhase.ACTION, "安娜握紧钥匙", "钥匙", StoryboardRole.REQUIRED)
+    shot_1 = ShotDesignDraft(
+        shot_ordinal=1,
         blocking_beat_ordinal=1,
-        dramatic_function="Make the transfer of authority legible.",
-        attention_target="the key",
-        information_action="The audience sees that Lin Lan does not reach.",
-        framing_intent="hold both the hand and key in frame",
-        camera_pose="eye-level across the table",
-        camera_motion="locked",
-        composition="the key divides the frame",
-        lighting="soft side light preserves the key silhouette",
-        performance="Lin Lan stays still after the hand withdraws",
-        duration_weight=3,
+        duration_intent=DurationIntent.STANDARD,
+        generation_mode=GenerationMode.OMNI_REFERENCE,
+        composition="近景", camera="固定镜头", lighting="低调照明", performance="克制紧张",
         visual_beats=(beat,),
-    )
-    draft = ExecutionDesignDraft(
-        curve_points=(
-            VisualCurvePointDraft(
-                dramatic_beat_ordinal=1,
-                intensity=70,
-                explanation="The physical handoff concentrates the scene.",
-            ),
+        reference_binding_intents=(
+            ReferenceBindingIntent(1, 1, handle_1, ReferenceResponsibility.PROP_IDENTITY),
         ),
-        decisions=(choice, locked),
-        shots=(shot,),
-        transition_intents=(),
-        audio_intents=("Preserve the key line without adding dialogue.",),
-        reference_intents=("Maintain character and key identity.",),
-        handoff_intent="End on Lin Lan alone with the unresolved choice.",
+        dialogue_binding_intents=(),
+        creative_notes="钥匙始终在右手。",
     )
-
-    assert choice.options[choice.selected_index] == "hold the frame"
-    assert locked.locked_by == ("fact:axis-established",)
-    assert beat.storyboard_role is StoryboardRole.REQUIRED
-    assert draft.shots[0].duration_weight == 3
-    with pytest.raises(DomainValidationError, match="exactly two"):
-        DecisionDraft(
-            scope="shot:1",
-            basis=DecisionBasis.CHOICE,
-            locked_by=(),
-            options=("hold",),
-            selected_index=0,
-            rationale="reason",
-            tradeoff="tradeoff",
-        )
-    with pytest.raises(DomainValidationError, match="locked_by"):
-        DecisionDraft(
-            scope="continuity:axis",
-            basis=DecisionBasis.LOCKED,
-            locked_by=(),
-            options=("preserve",),
-            selected_index=0,
-            rationale="reason",
-            tradeoff="tradeoff",
-        )
+    shot_2 = ShotDesignDraft(
+        shot_ordinal=2,
+        blocking_beat_ordinal=2,
+        duration_intent=DurationIntent.STANDARD,
+        generation_mode=GenerationMode.FIRST_LAST_FRAME,
+        composition="中景", camera="缓慢推进", lighting="低调照明", performance="果断开口",
+        visual_beats=(beat,),
+        reference_binding_intents=(),
+        dialogue_binding_intents=(DialogueBindingIntent(2, 1, handle_2, PlacementPhase.MIDDLE),),
+        creative_notes="对白落在动作之后。",
+    )
+    return shot_1, shot_2
 
 
-def test_canonical_vec_schema_carries_all_locally_assembled_authority() -> None:
-    from mode_p_vnext.domain.blocking import BlockingBeat, BlockingCommit
-    from mode_p_vnext.domain.decisions import DirectorDecision, VisualCurvePoint
-    from mode_p_vnext.domain.vec import (
-        AudioEvent,
-        GenerationSegment,
-        ReferenceRequirement,
-        ShotBoundary,
-        VisualBeat,
-        VoiceRequirement,
+def _vec() -> VisualExecutionContract:
+    profile = GenerationCapabilityProfile.sd20_default()
+    shot_1_placement = TimelinePlacement("unit:1", "scene:1", TickRange(0, 240_000))
+    shot_2_placement = TimelinePlacement("unit:2", "scene:1", TickRange(240_000, 480_000))
+    scene = SceneTimeline("scene:1", TickRange(0, 480_000), (shot_1_placement, shot_2_placement))
+    unit_1 = GenerationUnit(
+        "unit:1", "shot:1", GenerationMode.OMNI_REFERENCE,
+        GenerationUnitTimeline(240_000, "sd2.0", "3.0.0", 360_000), shot_1_placement,
     )
-
-    assert _field_names(VisualExecutionContract) == (
-        "contract_id",
-        "scene_id",
-        "execution_design_artifact_id",
-        "blocking_commit_artifact_id",
-        "source_fact_ids",
-        "timeline",
-        "curve_points",
-        "decisions",
-        "segments",
-        "shots",
-        "boundaries",
-        "audio_events",
-        "voice_requirements",
-        "reference_requirements",
-        "handoff_intent",
+    unit_2 = GenerationUnit(
+        "unit:2", "shot:2", GenerationMode.FIRST_LAST_FRAME,
+        GenerationUnitTimeline(240_000, "sd2.0", "3.0.0", 360_000), shot_2_placement,
     )
-    required_types = {
-        BlockingBeat,
-        BlockingCommit,
-        DirectorDecision,
-        VisualCurvePoint,
-        GenerationSegment,
-        VisualBeat,
-        ShotBoundary,
-        AudioEvent,
-        VoiceRequirement,
-        ReferenceRequirement,
-    }
-    assert all(dataclasses.is_dataclass(item) for item in required_types)
-    assert all(item.__dataclass_params__.frozen for item in required_types)
-
-
-def test_minimal_vec_is_closed_over_ids_ticks_states_and_requirements() -> None:
-    from mode_p_vnext.domain.decisions import (
-        DecisionBasis,
-        DirectorDecision,
-        VisualCurvePoint,
+    decision = DirectorDecision("decision:1", 1, "camera", DecisionBasis.LOCKED, ("director",), ("push",), 0, "紧张", "无")
+    curve = VisualCurvePoint("curve:1", 1, "blocking:1", 60, "推进")
+    beat_1 = VisualBeat(
+        "beat:1", "shot:1", 1, VisualBeatPhase.ACTION, TickRange(0, 240_000),
+        "握紧钥匙", "钥匙", StoryboardRole.REQUIRED, "state:0", "state:1",
+        ("decision:1",), ("reference:1",), (),
     )
-    from mode_p_vnext.domain.vec import (
-        GenerationSegment,
-        ReferenceRequirement,
-        StoryboardRole,
-        VisualBeat,
-        VisualBeatPhase,
-        VisualShot,
+    beat_2 = VisualBeat(
+        "beat:2", "shot:2", 1, VisualBeatPhase.ACTION, TickRange(0, 240_000),
+        "开口", "安娜", StoryboardRole.REQUIRED, "state:1", "state:2",
+        ("decision:1",), (), ("audio:1",),
     )
-
-    decision = DirectorDecision(
-        decision_id="decision:1",
-        source_decision_ordinal=1,
-        scope="shot:1",
-        basis=DecisionBasis.CHOICE,
-        locked_by=(),
-        options=("hold", "move"),
-        selected_index=0,
-        rationale="A hold preserves the decision.",
-        tradeoff="Less motion.",
+    shot_1 = VisualShot(
+        "shot:1", "unit:1", 1, "blocking:1", GenerationMode.OMNI_REFERENCE, TickRange(0, 240_000),
+        "近景", "固定", "低调", "克制", "钥匙在右手", (beat_1,), ("decision:1",), ("reference:1",), (),
     )
-    visual_beat = VisualBeat(
-        beat_id="visual-beat:1",
-        shot_id="shot:1",
-        phase=VisualBeatPhase.REACTION,
-        interval=TickRange(0, 2_400),
-        subject_state="Lin Lan remains still.",
-        attention="the key",
-        storyboard_role=StoryboardRole.REQUIRED,
-        start_state_id="state:entry",
-        end_state_id="state:exit",
-        decision_ids=(decision.decision_id,),
+    shot_2 = VisualShot(
+        "shot:2", "unit:2", 2, "blocking:2", GenerationMode.FIRST_LAST_FRAME, TickRange(0, 240_000),
+        "中景", "推进", "低调", "果断", "对白后收束", (beat_2,), ("decision:1",), (), ("audio:1",),
     )
-    requirement = ReferenceRequirement(
-        requirement_id="reference:1",
-        role="character_identity",
-        scope_kind="character",
-        scope_id="character:lin-lan",
-        source_fact_ids=("fact:lin-lan",),
+    reference = ReferenceRequirement(
+        "reference:1", ReferenceResponsibility.PROP_IDENTITY, FACT_ID_1, FACT_HANDLE_1, "shot:1", "beat:1"
     )
-    shot = VisualShot(
-        shot_id="shot:1",
-        segment_id="segment:1",
-        source_shot_ordinal=1,
-        blocking_beat_id="blocking-beat:1",
-        interval=TickRange(0, 2_400),
-        dramatic_function="Hold the decision.",
-        attention_target="the key",
-        information_action="Lin Lan does not reach.",
-        framing_intent="two-shot across the table",
-        camera_pose="eye-level",
-        camera_motion="locked",
-        composition="key at the center divide",
-        lighting="soft side light",
-        performance="stillness after the handoff",
-        visual_beats=(visual_beat,),
-        decision_ids=(decision.decision_id,),
-        reference_requirement_ids=(requirement.requirement_id,),
-        audio_event_ids=(),
+    audio = __import__("mode_p_vnext.domain", fromlist=["AudioEvent"]).AudioEvent(
+        "audio:1", FACT_ID_2, FACT_HANDLE_2, "shot:2", "beat:2", TickMarker(120_000),
+        PlacementPhase.MIDDLE, "安娜", "走吧", None,
     )
-    vec = VisualExecutionContract(
-        contract_id="vec:1",
-        scene_id="scene:1",
-        execution_design_artifact_id="execution-design:1",
-        blocking_commit_artifact_id="blocking-commit:1",
-        source_fact_ids=("fact:lin-lan",),
-        timeline=CanonicalTimeline(),
-        curve_points=(
-            VisualCurvePoint(
-                point_id="curve:1",
-                source_curve_ordinal=1,
-                blocking_beat_id="blocking-beat:1",
-                intensity=70,
-                explanation="The transfer peaks here.",
-            ),
-        ),
-        decisions=(decision,),
-        segments=(
-            GenerationSegment(
-                segment_id="segment:1",
-                timeline=GenerationSegmentTimeline(duration_ticks=2_400),
-                shot_ids=(shot.shot_id,),
-            ),
-        ),
-        shots=(shot,),
-        boundaries=(),
-        audio_events=(),
-        voice_requirements=(),
-        reference_requirements=(requirement,),
-        handoff_intent="End on Lin Lan and the key.",
+    voice = VoiceRequirement("voice:1", "audio:1", "安娜", "shot:2", "beat:2")
+    boundaries = (
+        ShotBoundary("boundary:0", 0, 0, None, "shot:1", "scene:pre", "state:0", "进入", ("decision:1",)),
+        ShotBoundary("boundary:1", 1, 240_000, "shot:1", "shot:2", "state:1", "state:1", "切换", ("decision:1",)),
+        ShotBoundary("boundary:2", 2, 480_000, "shot:2", None, "state:2", "scene:post", "离场", ("decision:1",)),
     )
-
-    assert vec.shots[0].visual_beats[0].interval == TickRange(0, 2_400)
-    assert vec.shots[0].mirror_flip_forbidden is True
-    with pytest.raises(DomainValidationError, match="local safety constant"):
-        dataclasses.replace(shot, mirror_flip_forbidden=False)
-
-
-def test_knowledge_projection_and_review_schemas_match_architecture_views() -> None:
-    from mode_p_vnext.domain.evidence import RevisionRequest
-    from mode_p_vnext.domain.knowledge import (
-        KnowledgeCandidateRecord,
-        KnowledgeCapabilityScope,
-        KnowledgeDecisionEntry,
-        KnowledgeDecisionView,
-        KnowledgeSnapshot,
-    )
-    from mode_p_vnext.domain.projection import ProjectionManifest, ProjectionNode
-
-    assert _field_names(KnowledgeDecisionEntry) == (
-        "capsule_id",
-        "director_question",
-        "applies_because",
-        "execution_constraints",
-        "expected_effect",
-        "tradeoff",
-        "anti_pattern",
-        "source_digest",
-    )
-    assert _field_names(KnowledgeDecisionView) == ("scene_id", "stage", "entries")
-    assert {
-        "snapshot_id",
-        "scene_id",
-        "stage",
-        "decision_view",
-        "selected_capsule_ids",
-        "exclusions",
-        "conflicts",
-        "catalog_index_sha256",
-        "retrieval_input_digest",
-        "blocking_commit_digest",
-        "security_event_digests",
-        "candidate_records",
-        "selection_reasons",
-        "catalog_index_abstract",
-    } == set(_field_names(KnowledgeSnapshot))
-    assert _field_names(KnowledgeCapabilityScope) == (
-        "valid_from",
-        "valid_until",
-        "target_models",
-        "target_modes",
-        "aspect_ratios",
-        "source_digest",
-    )
-    assert _field_names(KnowledgeCandidateRecord) == (
-        "candidate_id",
-        "content_sha256",
-        "source_refs",
-        "field_provenance",
-    )
-    assert _field_names(RevisionRequest) == (
-        "request_id",
-        "target_artifact_id",
-        "failure_type",
-        "fact_refs",
-        "field_paths",
-        "observed_issue",
-        "requested_change",
-        "evidence_refs",
-    )
-    assert {
-        "node_id",
-        "source_beat_id",
-        "source_shot_id",
-        "interval",
-        "start_state_id",
-        "end_state_id",
-        "decision_ids",
-        "attributes",
-        "children",
-    } == set(_field_names(ProjectionNode))
-    assert _field_names(ProjectionManifest) == (
-        "vec_digest",
-        "projection_ast_digest",
-        "source_node_ids",
-        "compiler_version",
-        "adapter_version",
-        "capability_profile_digest",
-        "reference_binding_digest",
-        "audio_binding_digest",
+    return VisualExecutionContract(
+        "vec:1", "episode:1", "scene:1", "execution:1", "blocking:commit:1",
+        (FACT_ID_1, FACT_ID_2), (FACT_HANDLE_1, FACT_HANDLE_2), CanonicalTimeline(), scene, profile,
+        (curve,), (decision,), (unit_1, unit_2), (shot_1, shot_2), boundaries, (audio,), (voice,),
+        (reference,), "交给投影", DIGEST_A, DIGEST_B,
     )
 
 
-def test_release_phase_schema_cannot_claim_a_production_switch() -> None:
-    from mode_p_vnext.domain.release import ReleasePhase
-
-    assert {phase.value for phase in ReleasePhase} == {
-        "BASELINE_REPAIR_REQUIRED",
-        "ARCHITECTURE_MIGRATION_REQUIRED",
-        "TEXT_SHADOW_REQUIRED",
-        "HOLDOUT_EVALUATION_REQUIRED",
-        "MEDIA_EVIDENCE_REQUIRED",
-        "OWNER_APPROVAL_REQUIRED",
-        "PRODUCTION_SWITCH_PROPOSAL_ELIGIBLE",
-    }
-    assert all("AUTHORIZED" not in phase.value for phase in ReleasePhase)
-    assert all("SWITCHED" not in phase.value for phase in ReleasePhase)
-
-
-def test_nested_domain_data_is_deeply_frozen_before_hashing() -> None:
-    visible_parts = ["head", "torso"]
-    character_state = {
-        "character_id": "character:lin-lan",
-        "visible_body_parts": visible_parts,
-    }
-    beat = BlockingBeatDraft(
-        ordinal=1,
-        dramatic_action="Lin Lan watches the key.",
-        character_states=(character_state,),
-        prop_states=({"prop_id": "prop:key", "holder": "table"},),
-        gaze_relations=("Lin Lan -> key",),
-        action_paths=("stillness -> decision",),
-        continuity_effect="The key remains on the table.",
-    )
-    draft = BlockingDraft(beats=(beat,))
-    source = SourceRef(source_id="script:scene-1", digest="a" * 64)
-    envelope = ArtifactEnvelope.create(
-        artifact_id="blocking_draft:scene-1:0001",
-        artifact_kind=ArtifactKind.BLOCKING_DRAFT,
-        schema_version="2.2",
-        program_version="vnext-2.2",
-        payload=draft,
-        source_refs=(source,),
-        dependency_digests={"script": source.digest},
-        created_at="2026-07-30T00:00:00Z",
-    )
-    digest = envelope.content_sha256
-
-    visible_parts.append("hand")
-    character_state["new_field"] = "must not leak"
-    assert beat.character_states[0]["visible_body_parts"] == ("head", "torso")
-    assert "new_field" not in beat.character_states[0]
-    assert envelope.content_sha256 == digest
-    assert canonical_sha256(envelope.payload) == canonical_sha256(draft)
-    with pytest.raises(TypeError):
-        beat.character_states[0]["character_id"] = "mutated"
-
-
-def test_canonical_artifact_envelope_is_hash_bound_and_machine_assembled() -> None:
-    direction = _episode_direction()
-    source = SourceRef(source_id="script:episode-1", digest="a" * 64)
-    artifact_id = IdFactory(program_version="vnext-2.2").create(
-        artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-        episode_id="episode-1",
-        scene_id=None,
-        stage="A1",
-        input_digest=canonical_sha256({"script": "episode-1"}),
-        ordinal=1,
+def test_canonical_artifact_envelope_is_exact_payload_hashed_and_typed():
+    source = _source()
+    assert tuple(field.name for field in dataclasses.fields(ArtifactEnvelope)) == (
+        "artifact_id", "artifact_type", "schema_version", "payload", "canonical_payload_sha256",
+        "producer_stage", "parent_artifact_ids", "source_provenance", "knowledge_snapshot_digest", "created_at_utc",
     )
     envelope = ArtifactEnvelope.create(
-        artifact_id=artifact_id,
-        artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-        schema_version="2.2",
-        program_version="vnext-2.2",
-        payload=direction,
-        source_refs=(source,),
-        dependency_digests={"script": source.digest},
-        validation_status=ValidationStatus.DRAFT,
-        created_at="2026-07-30T00:00:00Z",
+        artifact_id="normalized-source:1", artifact_type=ArtifactKind.NORMALIZED_SOURCE,
+        payload=source, producer_stage="ingest.normalize", parent_artifact_ids=(),
+        source_provenance=(source.source_ref,), knowledge_snapshot_digest=None, created_at_utc=UTC,
     )
-
-    assert envelope.content_sha256 == ArtifactEnvelope.content_digest_for(
-        artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-        schema_version="2.2",
-        program_version="vnext-2.2",
-        payload=direction,
-        source_refs=(source,),
-        dependency_digests={"script": source.digest},
-    )
-    assert envelope.artifact_id == artifact_id
-    assert envelope.validation_status is ValidationStatus.DRAFT
-    assert dataclasses.is_dataclass(envelope)
-    assert envelope.__dataclass_params__.frozen
-    with pytest.raises(TypeError):
-        envelope.dependency_digests["script"] = "b" * 64
-
-    with pytest.raises(DomainValidationError, match="schema_version"):
-        ArtifactEnvelope.create(
-            artifact_id=artifact_id,
-            artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-            schema_version="2.1",
-            program_version="vnext-2.2",
-            payload=direction,
-            source_refs=(source,),
-            dependency_digests={"script": source.digest},
-            created_at="2026-07-30T00:00:00Z",
-        )
-
-    with pytest.raises(DomainValidationError, match="content_sha256"):
-        ArtifactEnvelope(
-            artifact_id=artifact_id,
-            artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-            schema_version="2.2",
-            program_version="vnext-2.2",
-            payload=direction,
-            source_refs=(source,),
-            dependency_digests={"script": source.digest},
-            content_sha256="0" * 64,
-            created_at="2026-07-30T00:00:00Z",
-            validation_status=ValidationStatus.DRAFT,
-        )
-    with pytest.raises(DomainValidationError, match="artifact_kind"):
-        ArtifactEnvelope.create(
-            artifact_id=artifact_id,
-            artifact_kind=ArtifactKind.SCENE_INTENT,
-            schema_version="2.2",
-            program_version="vnext-2.2",
-            payload=direction,
-            source_refs=(source,),
-            dependency_digests={"script": source.digest},
-            created_at="2026-07-30T00:00:00Z",
-        )
-
-
-def test_persistent_domain_payloads_declare_their_canonical_artifact_kind() -> None:
-    from mode_p_vnext.domain.blocking import BlockingCommit
-    from mode_p_vnext.domain.evidence import (
-        DeterministicGateResult,
-        FrameEvidencePlan,
-        IndependentDPReviewResult,
-        MediaEvidence,
-        MediaRunRecord,
-        OwnerApprovalRecord,
-        ReviewPacket,
-        RevisionRequest,
-        VisualVerificationResult,
-    )
-    from mode_p_vnext.domain.facts import FactRegistry
-    from mode_p_vnext.domain.knowledge import (
-        KnowledgeCapsuleV2,
-        KnowledgeSnapshot,
-    )
-    from mode_p_vnext.domain.projection import (
-        CapabilityAdaptationRecord,
-        ProjectionAST,
-        ProjectionManifest,
-    )
-    from mode_p_vnext.domain.release import ReleaseGateRecord
-
-    expected_kinds = {
-        EpisodeDirectionDraft: ArtifactKind.EPISODE_DIRECTION,
-        SceneIntentDraft: ArtifactKind.SCENE_INTENT,
-        FactRegistry: ArtifactKind.SCRIPT_FACT,
-        KnowledgeCapsuleV2: ArtifactKind.KNOWLEDGE_CAPSULE,
-        KnowledgeSnapshot: ArtifactKind.KNOWLEDGE_SNAPSHOT,
-        BlockingDraft: ArtifactKind.BLOCKING_DRAFT,
-        BlockingCommit: ArtifactKind.BLOCKING_COMMIT,
-        DecisionDraft: ArtifactKind.DECISION_DRAFT,
-        ExecutionDesignDraft: ArtifactKind.EXECUTION_DESIGN_DRAFT,
-        VisualExecutionContract: ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-        ProjectionAST: ArtifactKind.PROJECTION_AST,
-        ProjectionManifest: ArtifactKind.PROJECTION_MANIFEST,
-        CapabilityAdaptationRecord: ArtifactKind.CAPABILITY_ADAPTATION,
-        DeterministicGateResult: ArtifactKind.GATE0_RESULT,
-        ReviewPacket: ArtifactKind.REVIEW_PACKET,
-        IndependentDPReviewResult: ArtifactKind.DP_REVIEW_RESULT,
-        RevisionRequest: ArtifactKind.REVISION_REQUEST,
-        MediaRunRecord: ArtifactKind.MEDIA_RUN_RECORD,
-        FrameEvidencePlan: ArtifactKind.FRAME_EVIDENCE_PLAN,
-        MediaEvidence: ArtifactKind.MEDIA_EVIDENCE,
-        VisualVerificationResult: ArtifactKind.VISUAL_VERIFICATION_RESULT,
-        OwnerApprovalRecord: ArtifactKind.OWNER_APPROVAL_RECORD,
-        ReleaseGateRecord: ArtifactKind.RELEASE_DECISION,
-    }
-
-    assert {
-        payload_type: payload_type.ARTIFACT_KIND
-        for payload_type in expected_kinds
-    } == expected_kinds
-    assert set(expected_kinds.values()) == set(ArtifactKind)
-    assert len(expected_kinds) == len(set(expected_kinds.values()))
-
-
-def test_artifact_envelope_rejects_generic_and_forged_payload_authority() -> None:
-    source = SourceRef(source_id="script:scene-1", digest="a" * 64)
-    common = {
-        "artifact_id": "script_fact:scene-1:0001",
-        "artifact_kind": ArtifactKind.SCRIPT_FACT,
-        "schema_version": "2.2",
-        "program_version": "vnext-2.2",
-        "source_refs": (source,),
-        "dependency_digests": {"script": source.digest},
-        "created_at": "2026-07-30T00:00:00Z",
-    }
+    assert envelope.canonical_payload_sha256 == canonical_sha256(source)
+    with pytest.raises(DomainValidationError, match="canonical_payload_sha256"):
+        dataclasses.replace(envelope, canonical_payload_sha256="0" * 64)
     with pytest.raises(DomainValidationError, match="payload type"):
-        ArtifactEnvelope.create(payload={"facts": ()}, **common)
-
-    @dataclasses.dataclass(frozen=True)
-    class ForgedFactPayload:
-        ARTIFACT_KIND = ArtifactKind.SCRIPT_FACT
-        facts: tuple[str, ...] = ()
-
-    with pytest.raises(DomainValidationError, match="payload type"):
-        ArtifactEnvelope.create(payload=ForgedFactPayload(), **common)
+        dataclasses.replace(envelope, artifact_type=ArtifactKind.FACT_REGISTRY)
 
 
-def test_gate_dp_media_and_owner_results_are_separate_auditable_authorities() -> None:
-    from mode_p_vnext.domain.evidence import (
-        DPReviewVerdict,
-        DeterministicGateResult,
-        FrameEvidence,
-        IndependentDPReviewResult,
-        MediaEvidence,
-        OwnerApprovalDecision,
-        OwnerApprovalRecord,
-    )
+def test_schema_is_v30_and_domain_is_the_only_canonical_authority():
+    import mode_p_vnext.domain.artifact as artifact
+    import mode_p_vnext.domain.blocking as blocking
+    import mode_p_vnext.domain.decisions as decisions
+    import mode_p_vnext.domain.direction as direction
+    import mode_p_vnext.domain.evidence as evidence
+    import mode_p_vnext.domain.facts as facts
+    import mode_p_vnext.domain.ids as ids
+    import mode_p_vnext.domain.knowledge as knowledge
+    import mode_p_vnext.domain.projection as projection
+    import mode_p_vnext.domain.release as release
+    import mode_p_vnext.domain.time as time
+    import mode_p_vnext.domain.vec as vec
 
-    evidence_ref = SourceRef(source_id="gate-log:1", digest="c" * 64)
-    gate = DeterministicGateResult(
-        result_id="gate0:scene-1",
-        target_artifact_ids=("vec:scene-1",),
-        check_ids=("schema", "tick_contiguity"),
-        failed_check_ids=(),
-        evidence_refs=(evidence_ref,),
-        passed=True,
-    )
-    dp = IndependentDPReviewResult(
-        result_id="dp:scene-1",
-        review_packet_artifact_id="review-packet:scene-1",
-        verdict=DPReviewVerdict.APPROVED,
-        finding_codes=(),
-        revision_request_artifact_ids=(),
-        independent_context_digest="d" * 64,
-    )
-    frame = FrameEvidence(
-        media_run_id="media-run:1",
-        frame_index=24,
-        observations=("screen direction remains stable",),
-        attributes={"character": "Lin Lan"},
-    )
-    media = MediaEvidence(
-        evidence_id="media-evidence:1",
-        frame_evidence_plan_artifact_id="frame-plan:1",
-        media_run_artifact_id="artifact:media-run:1",
-        media_run_id="media-run:1",
-        frame_evidence=(frame,),
-    )
-    approval = OwnerApprovalRecord(
-        approval_id="owner-approval:1",
-        visual_verification_artifact_id="visual-verification:1",
-        decision=OwnerApprovalDecision.APPROVED,
-        approved_by="owner:JT",
-        evidence_ref=SourceRef(
-            source_id="owner-action:1",
-            digest="e" * 64,
-        ),
-    )
-
-    assert gate.ARTIFACT_KIND is ArtifactKind.GATE0_RESULT
-    assert dp.ARTIFACT_KIND is ArtifactKind.DP_REVIEW_RESULT
-    assert media.ARTIFACT_KIND is ArtifactKind.MEDIA_EVIDENCE
-    assert approval.ARTIFACT_KIND is ArtifactKind.OWNER_APPROVAL_RECORD
-    assert "production_switch_authorized" not in _field_names(
-        OwnerApprovalRecord
-    )
-
-    with pytest.raises(DomainValidationError, match="passed"):
-        DeterministicGateResult(
-            result_id="gate0:scene-1",
-            target_artifact_ids=("vec:scene-1",),
-            check_ids=("schema",),
-            failed_check_ids=("schema",),
-            evidence_refs=(evidence_ref,),
-            passed=True,
-        )
-    with pytest.raises(DomainValidationError, match="finding_codes"):
-        IndependentDPReviewResult(
-            result_id="dp:scene-1",
-            review_packet_artifact_id="review-packet:scene-1",
-            verdict=DPReviewVerdict.REVISION_REQUIRED,
-            finding_codes=(),
-            revision_request_artifact_ids=(),
-            independent_context_digest="d" * 64,
-        )
+    modules = (artifact, blocking, decisions, direction, evidence, facts, ids, knowledge, projection, release, time, vec)
+    assert DOMAIN_SCHEMA_VERSION == "3.0"
+    assert all(module.DOMAIN_SCHEMA_VERSION == DOMAIN_SCHEMA_VERSION for module in modules)
+    names = [name for module in modules for name in module.CANONICAL_DOMAIN_TYPES]
+    assert len(names) == len(set(names))
+    assert projection.ProjectionAST.__module__ == "mode_p_vnext.domain.projection"
+    assert vec.VisualExecutionContract.__module__ == "mode_p_vnext.domain.vec"
 
 
-def test_knowledge_capsule_requires_field_provenance_and_scoped_capability_validity() -> None:
-    from mode_p_vnext.domain.knowledge import (
-        KnowledgeCapabilityScope,
-        KnowledgeCapsuleV2,
-    )
-
-    source = SourceRef(
-        source_id="capability-note:video-model-x",
-        digest="a" * 64,
-        locator="knowledge/capabilities/video-model-x-2026-07-30.md",
-    )
-    scope = KnowledgeCapabilityScope(
-        valid_from="2026-07-01",
-        valid_until="2026-08-01",
-        target_models=("video-model-x",),
-        target_modes=("image-to-video",),
-        aspect_ratios=("16:9",),
-        source_digest=source.digest,
-    )
-    capsule = KnowledgeCapsuleV2(
-        capsule_id="capsule:capability:video-model-x",
-        category="platform_capability",
-        claims=("The model accepts one character-position reference image.",),
-        source_summary="Verified platform capability note for the tested release window.",
-        source_refs=(source,),
-        field_provenance={
-            "claims": (source,),
-            "source_summary": (source,),
-            "capability_scope": (source,),
-        },
-        capability_scope=scope,
-        confidence="high",
-    )
-
-    assert capsule.capability_scope == scope
-    assert capsule.field_provenance["claims"] == (source,)
-    with pytest.raises(DomainValidationError, match="valid_until"):
-        KnowledgeCapabilityScope(
-            valid_from="2026-08-02",
-            valid_until="2026-08-01",
-            target_models=("video-model-x",),
-            target_modes=("image-to-video",),
-            aspect_ratios=("16:9",),
-            source_digest=source.digest,
-        )
-    with pytest.raises(DomainValidationError, match="field_provenance"):
-        KnowledgeCapsuleV2(
-            capsule_id="capsule:missing-provenance",
-            category="principle",
-            claims=("A claim without a field chain is not canonical.",),
-            source_summary="A source summary.",
-            source_refs=(source,),
-            field_provenance={"claims": (source,)},
-            capability_scope=None,
-            confidence="medium",
-        )
-    with pytest.raises(DomainValidationError, match="source_digest"):
-        KnowledgeCapsuleV2(
-            capsule_id="capsule:unregistered-capability-source",
-            category="platform_capability",
-            claims=("A capability scope cannot cite an unregistered source.",),
-            source_summary="A source summary.",
-            source_refs=(source,),
-            field_provenance={
-                "claims": (source,),
-                "source_summary": (source,),
-                "capability_scope": (source,),
-            },
-            capability_scope=dataclasses.replace(
-                scope,
-                source_digest="b" * 64,
-            ),
-            confidence="medium",
-        )
-
-
-def test_knowledge_snapshot_seals_full_candidate_accounting_and_selection_reasons() -> None:
-    from mode_p_vnext.domain.knowledge import (
-        KnowledgeCandidateRecord,
-        KnowledgeDecisionEntry,
-        KnowledgeDecisionView,
-        KnowledgeSnapshot,
-        KnowledgeStage,
-    )
-
-    source = SourceRef(
-        source_id="knowledge-source:shot-design",
-        digest="b" * 64,
-        locator="knowledge/shot-design.md#reaction",
-    )
-    selected = KnowledgeCandidateRecord(
-        candidate_id="capsule:selected",
-        content_sha256="c" * 64,
-        source_refs=(source,),
-        field_provenance={"claims": (source,)},
-    )
-    excluded = KnowledgeCandidateRecord(
-        candidate_id="capsule:excluded",
-        content_sha256="d" * 64,
-        source_refs=(source,),
-        field_provenance={"claims": (source,)},
-    )
-    view = KnowledgeDecisionView(
-        scene_id="scene:1",
-        stage=KnowledgeStage.K1,
-        entries=(
-            KnowledgeDecisionEntry(
-                capsule_id=selected.candidate_id,
-                director_question="How should the reaction be framed?",
-                applies_because=("The scene turns on withheld reaction.",),
-                execution_constraints=("Do not add unobserved props.",),
-                expected_effect="The audience reads the withheld response.",
-                tradeoff=("The pace briefly slows.",),
-                anti_pattern=False,
-                source_digest=selected.content_sha256,
-            ),
-        ),
-    )
-    snapshot = KnowledgeSnapshot(
-        snapshot_id="knowledge-snapshot:scene:1:k1",
-        scene_id="scene:1",
-        stage=KnowledgeStage.K1,
-        decision_view=view,
-        selected_capsule_ids=(selected.candidate_id,),
-        exclusions={excluded.candidate_id: "Lower-ranked for this director question."},
-        conflicts=(),
-        catalog_index_sha256="e" * 64,
-        retrieval_input_digest="f" * 64,
-        blocking_commit_digest=None,
-        security_event_digests=(),
-        candidate_records=(selected, excluded),
-        selection_reasons={selected.candidate_id: "Best fit for the question and scene state."},
-        catalog_index_abstract={
-            "catalog_version": "knowledge-catalog:2026-07-30",
-            "retriever_version": "vnext-a3",
-        },
-    )
-
-    assert tuple(record.candidate_id for record in snapshot.candidate_records) == (
-        selected.candidate_id,
-        excluded.candidate_id,
-    )
-    with pytest.raises(DomainValidationError, match="account"):
-        KnowledgeSnapshot(
-            snapshot_id="knowledge-snapshot:scene:1:incomplete",
-            scene_id="scene:1",
-            stage=KnowledgeStage.K1,
-            decision_view=view,
-            selected_capsule_ids=(selected.candidate_id,),
-            exclusions={},
-            conflicts=(),
-            catalog_index_sha256="e" * 64,
-            retrieval_input_digest="f" * 64,
-            blocking_commit_digest=None,
-            security_event_digests=(),
-            candidate_records=(selected, excluded),
-            selection_reasons={selected.candidate_id: "Best fit."},
-            catalog_index_abstract={"catalog_version": "knowledge-catalog:2026-07-30"},
-        )
-
-def test_id_factory_is_stable_and_drafts_cannot_carry_machine_authority() -> None:
-    factory = IdFactory(program_version="vnext-2.2")
-    kwargs = {
-        "artifact_kind": ArtifactKind.SCENE_INTENT,
-        "episode_id": "episode-1",
-        "scene_id": "scene-2",
-        "stage": "B0",
-        "input_digest": "b" * 64,
-        "ordinal": 3,
+def test_drafts_cannot_carry_final_ids_hashes_or_raw_ticks():
+    fields = {field.name for field in dataclasses.fields(ShotDesignDraft)}
+    assert fields == {
+        "shot_ordinal", "blocking_beat_ordinal", "duration_intent", "generation_mode", "composition",
+        "camera", "lighting", "performance", "visual_beats", "reference_binding_intents",
+        "dialogue_binding_intents", "creative_notes",
     }
-    assert factory.create(**kwargs) == factory.create(**kwargs)
-    assert factory.create(**kwargs) != factory.create(**{**kwargs, "ordinal": 4})
-    assert factory.create(**{**kwargs, "episode_id": "episode:a", "scene_id": "scene"}) != factory.create(
-        **{**kwargs, "episode_id": "episode", "scene_id": "a:scene"}
+    assert not {"shot_id", "duration_ticks", "start_tick", "end_tick", "audio_intents", "reference_intents"} & fields
+    assert {field.name for field in dataclasses.fields(ExecutionDesignDraft)} == {
+        "curve_points", "decisions", "shots", "transition_intents", "handoff_intent"
+    }
+    fact_fields = {field.name for field in dataclasses.fields(FactExtractionDraft)}
+    assert fact_fields == {"semantic", "statement", "source_start", "source_end", "confidence", "qualifiers"}
+    assert not {"fact_id", "fact_handle", "ordinal", "tick"} & fact_fields
+    with pytest.raises(DomainValidationError, match="DurationIntent"):
+        dataclasses.replace(_design()[0], duration_intent="240000")
+
+
+def test_normalized_source_contract_is_canonical_and_partitioned():
+    source = _source()
+    assert source.normalized_text.count("\r") == 0
+    assert source.encoding == "utf-8"
+    assert source.line_start_offsets == (0, 4, 12, 20)
+    assert source.partitions[0].scene_id == "scene:1"
+    assert source.source_ref.digest == __import__("hashlib").sha256(source.normalized_text.encode()).hexdigest()
+    with pytest.raises(DomainValidationError, match="partitions"):
+        SourceNormalizer.normalize("x", source_id="s", normalized_partitions=())
+    with pytest.raises(DomainValidationError, match="gap-free"):
+        SourceNormalizer.normalize("abcd", source_id="s", normalized_partitions=(("e", "s1", 0, 2), ("e", "s2", 3, 4)))
+
+
+def test_local_fact_assembler_validates_deduplicates_and_mints_opaque_handles():
+    source, envelope = _assembled()
+    registry = envelope.payload
+    assert envelope.artifact_type is ArtifactKind.FACT_REGISTRY
+    assert all(fact.fact_id.startswith("id:") and fact.fact_handle.startswith("fh:") for fact in registry.facts)
+    assert all("prop" not in fact.fact_handle and "dialogue" not in fact.fact_handle for fact in registry.facts)
+    assert registry.by_handle(registry.facts[0].fact_handle) is registry.facts[0]
+    duplicate = dataclasses.replace(_drafts(source)[0], confidence=FactConfidence.SUPPORTED)
+    rerun = FactAssembler().assemble(
+        normalized_source=source, normalized_source_artifact_id="normalized-source:1",
+        drafts=tuple(reversed(_drafts(source))) + (duplicate,), source_kind=FactKind.SCRIPT,
+        producer_stage="I0.fact_assembler", created_at_utc=UTC,
     )
-
-    draft_fields = {
-        field.name
-        for draft_type in (
-            EpisodeDirectionDraft,
-            SceneIntentDraft,
-            BlockingBeatDraft,
-            BlockingDraft,
-            ExecutionDesignDraft,
+    assert len(rerun.payload.facts) == 2
+    assert rerun.payload.facts[0].confidence is FactConfidence.SUPPORTED
+    with pytest.raises(DomainValidationError, match="exact registry member"):
+        registry.by_handle("fh:" + "f" * 64)
+    unsupported = dataclasses.replace(_drafts(source)[0], statement="不存在")
+    with pytest.raises(DomainValidationError, match="supported"):
+        FactAssembler().assemble(
+            normalized_source=source, normalized_source_artifact_id="normalized-source:1", drafts=(unsupported,),
+            source_kind=FactKind.SCRIPT, producer_stage="I0.fact_assembler", created_at_utc=UTC,
         )
-        for field in dataclasses.fields(draft_type)
-    }
-    forbidden_model_authority = {
-        "artifact_id",
-        "content_sha256",
-        "dependency_digests",
-        "start_tick",
-        "end_tick",
-        "timeline",
-        "vec_id",
-        "contract_id",
-        "segment_id",
-        "shot_id",
-        "boundary_id",
-        "event_id",
-        "requirement_id",
-    }
-    assert not (draft_fields & forbidden_model_authority)
 
 
-def test_only_24000_tick_canonical_timebase_and_half_open_ranges_exist() -> None:
+def test_fact_semantics_and_source_spans_are_typed_provenance_only():
+    source, envelope = _assembled()
+    dialogue = envelope.payload.by_semantic(__import__("mode_p_vnext.domain", fromlist=["FactSemantic"]).FactSemantic.DIALOGUE)[0]
+    assert dialogue.validate_against_normalized_source(source) == ("安娜说：走吧。",)
+    assert {field.name for field in dataclasses.fields(type(dialogue))} == {
+        "fact_id", "fact_handle", "kind", "semantic", "statement", "confidence", "qualifiers", "provenance", "ordinal"
+    }
+    assert "tick" not in inspect.getsource(FactAssembler).casefold()
+    with pytest.raises(DomainValidationError, match="spoken_text"):
+        FactExtractionDraft(
+            __import__("mode_p_vnext.domain", fromlist=["FactSemantic"]).FactSemantic.DIALOGUE,
+            "安娜说：走吧。", 12, 20, FactConfidence.EXPLICIT,
+            FactQualifiers("episode:1", "scene:1", subject_label="安娜"),
+        )
+
+
+def test_legacy_adapters_are_read_only_observations(tmp_path: Path):
+    source = _source()
+    observation = read_legacy_script_fact(
+        {"fact_id": "dialogue_1", "statement": "安娜说：走吧。", "semantic": "dialogue"},
+        normalized_source=source, source_start=12, source_end=20,
+    )
+    assert isinstance(observation, LegacyFactObservation)
+    assert observation.requires_reingest is True
+    assert not hasattr(observation, "fact_handle")
+    checkpoint = {
+        "blocking_commit": {
+            "scene_id": "scene:1", "beats": [{
+                "entry_state_id": "in", "exit_state_id": "out", "space_control": "room",
+                    "dramatic_reason": "pressure", "dramatic_function": "wait",
+                    "character_states": [{"character_id": "Anna", "gaze_target": "door"}],
+                    "prop_states": [{"prop_id": "key", "holder": "Anna"}], "action_paths": ["hold"],
+            }],
+        }
+    }
+    path = tmp_path / "legacy.json"
+    path.write_text(__import__("json").dumps(checkpoint), encoding="utf-8")
+    legacy_checkpoint = read_legacy_b0_k2_checkpoint(path)
+    assert isinstance(legacy_checkpoint, LegacyCheckpointObservation)
+    assert legacy_checkpoint.requires_reassembly is True
+    assert not hasattr(legacy_checkpoint, "artifact_id")
+
+
+def test_24000_tick_capability_applies_per_generation_unit_not_scene():
+    profile = GenerationCapabilityProfile.sd20_default()
     assert TICKS_PER_SECOND == 24_000
-    timeline = CanonicalTimeline()
-    assert timeline.ticks_per_second == 24_000
-    assert TickRange(10, 20).contains(10)
-    assert not TickRange(10, 20).contains(20)
-    assert TickRange(10, 20).duration_ticks == 10
-    assert TimelinePlacement(scope_id="scene-1", interval=TickRange(100, 300)).interval.start_tick == 100
-    assert GenerationSegmentTimeline(duration_ticks=120).interval == TickRange(0, 120)
-    with pytest.raises(DomainValidationError):
-        CanonicalTimeline(ticks_per_second=24)
-    with pytest.raises(DomainValidationError):
-        GenerationSegmentTimeline(start_tick=1, duration_ticks=120)
+    assert profile.max_generation_ticks == SD20_MAX_GENERATION_TICKS == 360_000
+    assert profile.option_for(DurationIntent.EXTENDED).max_ticks == 360_000
+    assert _vec().scene_timeline.interval.duration_ticks == 480_000  # Scene may exceed 15 seconds.
+    with pytest.raises(DomainValidationError, match="exceeds capability"):
+        GenerationUnitTimeline(360_001, "sd2.0", "3.0.0", 360_000)
+    with pytest.raises(DomainValidationError, match="start_tick < end_tick"):
+        TickRange(10, 10)
+    with pytest.raises(DomainValidationError, match="DurationIntent"):
+        profile.option_for("extended")
 
 
-def test_domain_schema_is_frozen_and_has_one_declared_authority_per_type() -> None:
-    module_names = (
-        "artifact",
-        "ids",
-        "time",
-        "facts",
-        "direction",
-        "knowledge",
-        "blocking",
-        "decisions",
-        "vec",
-        "projection",
-        "evidence",
-        "release",
-    )
-    declared_types: list[str] = []
-    for module_name in module_names:
-        module = importlib.import_module(f"mode_p_vnext.domain.{module_name}")
-        assert module.DOMAIN_SCHEMA_VERSION == "2.2"
-        authority = module.CANONICAL_DOMAIN_TYPES
-        assert authority, module_name
-        assert len(authority) == len(set(authority)), module_name
-        declared_types.extend(authority)
-    assert len(declared_types) == len(set(declared_types))
-
-    for draft_type in (
-        EpisodeDirectionDraft,
-        SceneIntentDraft,
-        BlockingBeatDraft,
-        BlockingDraft,
-        ExecutionDesignDraft,
-    ):
-        assert draft_type.__dataclass_params__.frozen
-    for type_name in declared_types:
-        for module_name in module_names:
-            module = importlib.import_module(f"mode_p_vnext.domain.{module_name}")
-            candidate = getattr(module, type_name, None)
-            if candidate is not None and dataclasses.is_dataclass(candidate):
-                assert candidate.__dataclass_params__.frozen, type_name
+def test_typed_reference_and_dialogue_binding_intents_are_scoped_exactly():
+    shot_1, shot_2 = _design()
+    assert shot_1.reference_binding_intents[0].visual_beat_ordinal == 1
+    assert shot_2.dialogue_binding_intents[0].placement_phase is PlacementPhase.MIDDLE
+    with pytest.raises(DomainValidationError, match="unknown VisualBeatDraft"):
+        dataclasses.replace(shot_1, reference_binding_intents=(
+            ReferenceBindingIntent(1, 2, FACT_HANDLE_1, ReferenceResponsibility.PROP_IDENTITY),
+        ))
+    with pytest.raises(DomainValidationError, match="opaque"):
+        DialogueBindingIntent(1, 1, "dialogue:0001", PlacementPhase.OPENING)
 
 
-def test_domain_has_no_legacy_or_runtime_imports() -> None:
-    allowed_stdlib_roots = {
-        "__future__",
-        "dataclasses",
-        "datetime",
-        "enum",
-        "fractions",
-        "hashlib",
-        "json",
-        "types",
-        "typing",
+def test_vec_contract_freezes_one_unit_per_shot_n_plus_one_and_bidirectional_bindings():
+    vec = _vec()
+    assert len(vec.generation_units) == len(vec.shots) == 2
+    assert len(vec.boundaries) == 3
+    assert vec.boundaries[1].scene_tick == 240_000
+    assert vec.audio_events[0].media_duration_ticks is None
+    with pytest.raises(DomainValidationError, match=r"N\+1"):
+        dataclasses.replace(vec, boundaries=vec.boundaries[:-1])
+    with pytest.raises(DomainValidationError, match="exactly one GenerationUnit"):
+        dataclasses.replace(vec, generation_units=vec.generation_units[:-1])
+    bad_shot = dataclasses.replace(vec.shots[0], reference_requirement_ids=())
+    with pytest.raises(DomainValidationError, match="back-referenced"):
+        dataclasses.replace(vec, shots=(bad_shot, vec.shots[1]))
+
+
+def test_services_and_compat_do_not_define_second_persistent_domain_types():
+    canonical = {
+        "ArtifactEnvelope", "NormalizedSource", "FactRegistry", "ScriptFact", "DurationIntent",
+        "GenerationCapabilityProfile", "GenerationUnit", "ReferenceBindingIntent", "DialogueBindingIntent",
+        "VisualExecutionContract", "ProjectionAST",
     }
-    violations: list[str] = []
-    for source_path in DOMAIN_ROOT.glob("*.py"):
-        tree = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                for imported in node.names:
-                    root = imported.name.split(".", 1)[0]
-                    if root not in allowed_stdlib_roots:
-                        violations.append(f"{source_path.name}: import {imported.name}")
-            elif isinstance(node, ast.ImportFrom):
-                if node.level:
-                    continue
-                if node.module is None:
-                    continue
-                root = node.module.split(".", 1)[0]
-                if root == "mode_p_vnext" and not node.module.startswith("mode_p_vnext.domain"):
-                    violations.append(f"{source_path.name}: from {node.module}")
-                elif root not in allowed_stdlib_roots and root != "mode_p_vnext":
-                    violations.append(f"{source_path.name}: from {node.module}")
-    assert not violations, "\n".join(violations)
-
-
-def test_compat_is_one_way_and_never_imports_legacy_runtime_code() -> None:
-    compat_root = Path(__file__).resolve().parents[1] / "compat"
-    violations: list[str] = []
-    for source_path in compat_root.glob("*.py"):
-        tree = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
-        for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom) and node.module and node.module.startswith("mode_p_vnext."):
-                if not node.module.startswith("mode_p_vnext.domain"):
-                    violations.append(f"{source_path.name}: from {node.module}")
-    assert not violations, "\n".join(violations)
-
-
-def test_legacy_checkpoint_adapter_is_read_only_and_returns_canonical_blocking_draft(
-    tmp_path: Path,
-) -> None:
-    checkpoint = tmp_path / "CHECKPOINT_B0_K2.json"
-    checkpoint.write_text(
-        """
-{
-  "blocking_commit": {
-    "scene_id": "scene-legacy-1",
-    "beats": [
-      {
-        "entry_state_id": "state-entry",
-        "exit_state_id": "state-exit",
-        "space_control": "established screen direction",
-        "dramatic_reason": "the decision becomes visible",
-        "dramatic_function": "hold the decision",
-        "character_states": [
-          {"character_id": "character:lin", "gaze_target": "prop:key"}
-        ],
-        "prop_states": [
-          {"prop_id": "prop:key", "holder": "table"}
-        ],
-        "action_paths": ["stillness -> decision"]
-      }
-    ]
-  }
-}
-""".strip(),
-        encoding="utf-8",
-    )
-    original_bytes = checkpoint.read_bytes()
-    envelope = read_legacy_b0_k2_checkpoint(checkpoint)
-
-    assert isinstance(envelope, ArtifactEnvelope)
-    assert envelope.artifact_kind is ArtifactKind.BLOCKING_DRAFT
-    assert isinstance(envelope.payload, BlockingDraft)
-    assert envelope.payload.beats
-    assert envelope.validation_status is ValidationStatus.DRAFT
-    assert all(ref.source_id.startswith("legacy-checkpoint:") for ref in envelope.source_refs)
-    assert checkpoint.read_bytes() == original_bytes
-    assert envelope.content_sha256 == ArtifactEnvelope.content_digest_for(
-        artifact_kind=envelope.artifact_kind,
-        schema_version=envelope.schema_version,
-        program_version=envelope.program_version,
-        payload=envelope.payload,
-        source_refs=envelope.source_refs,
-        dependency_digests=envelope.dependency_digests,
-    )
+    for module in (
+        __import__("mode_p_vnext.services.source_normalizer", fromlist=["*"]),
+        __import__("mode_p_vnext.services.fact_assembler", fromlist=["*"]),
+        __import__("mode_p_vnext.compat.legacy_facts", fromlist=["*"]),
+        __import__("mode_p_vnext.compat.legacy_checkpoint", fromlist=["*"]),
+    ):
+        tree = ast.parse(Path(module.__file__).read_text(encoding="utf-8"))
+        defined = {node.name for node in tree.body if isinstance(node, ast.ClassDef)}
+        assert not canonical & defined

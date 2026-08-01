@@ -4,10 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .artifact import ArtifactKind, DomainValidationError, canonical_sha256, require_sha256
-
-
-DOMAIN_SCHEMA_VERSION = "2.2"
+from .artifact import DOMAIN_SCHEMA_VERSION, ArtifactKind, DomainValidationError, canonical_sha256, require_sha256
 CANONICAL_DOMAIN_TYPES = ("IdFactory",)
 
 
@@ -56,4 +53,6 @@ class IdFactory:
                 "ordinal": ordinal,
             }
         )
-        return f"{artifact_kind.value}:{ordinal:04d}:{identity_digest}"
+        # The digest contains kind, stage, scope and ordinal; the visible ID
+        # deliberately exposes none of those semantics to a model.
+        return f"id:{identity_digest}"

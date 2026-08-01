@@ -7,11 +7,12 @@ import enum
 import hashlib
 import json
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from types import MappingProxyType
 from typing import Any, Generic, Mapping, Sequence, TypeVar
 
 
-DOMAIN_SCHEMA_VERSION = "2.2"
+DOMAIN_SCHEMA_VERSION = "3.0"
 CANONICAL_DOMAIN_TYPES = ("ArtifactEnvelope", "SourceRef", "ArtifactKind", "ValidationStatus")
 _HEX = frozenset("0123456789abcdef")
 T = TypeVar("T")
@@ -22,9 +23,11 @@ class DomainValidationError(ValueError):
 
 
 class ArtifactKind(str, enum.Enum):
+    NORMALIZED_SOURCE = "normalized_source"
+    FACT_REGISTRY = "fact_registry"
     SCRIPT_FACT = "script_fact"
-    EPISODE_DIRECTION = "episode_direction"
-    SCENE_INTENT = "scene_intent"
+    EPISODE_DIRECTION_DRAFT = "episode_direction_draft"
+    SCENE_INTENT_DRAFT = "scene_intent_draft"
     KNOWLEDGE_CAPSULE = "knowledge_capsule"
     KNOWLEDGE_SNAPSHOT = "knowledge_snapshot"
     BLOCKING_DRAFT = "blocking_draft"
@@ -63,6 +66,16 @@ def _require_text(value: str, field_name: str) -> None:
 def require_sha256(value: str, field_name: str) -> None:
     if not isinstance(value, str) or len(value) != 64 or any(char not in _HEX for char in value):
         raise DomainValidationError(f"{field_name} must be a lowercase SHA-256")
+
+
+def _require_utc_timestamp(value: str, field_name: str) -> None:
+    _require_text(value, field_name)
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise DomainValidationError(f"{field_name} must be an ISO-8601 timestamp") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() != timezone.utc.utcoffset(parsed):
+        raise DomainValidationError(f"{field_name} must be timezone-aware UTC")
 
 
 def _require_deeply_immutable(
@@ -201,7 +214,7 @@ def canonical_sha256(value: Any) -> str:
 
 
 def _canonical_payload_type(artifact_kind: ArtifactKind) -> type[Any]:
-    """Return the sole v2.2 payload authority for a persistent artifact kind.
+    """Return the sole v3.0 payload authority for a persistent artifact kind.
 
     Imports stay local so the pure domain modules can declare their payload
     classes without an import cycle at module load time.
@@ -221,7 +234,7 @@ def _canonical_payload_type(artifact_kind: ArtifactKind) -> type[Any]:
         RevisionRequest,
         VisualVerificationResult,
     )
-    from .facts import FactRegistry
+    from .facts import FactRegistry, NormalizedSource
     from .knowledge import KnowledgeCapsuleV2, KnowledgeSnapshot
     from .projection import (
         CapabilityAdaptationRecord,
@@ -232,9 +245,10 @@ def _canonical_payload_type(artifact_kind: ArtifactKind) -> type[Any]:
     from .vec import ExecutionDesignDraft, VisualExecutionContract
 
     authorities: dict[ArtifactKind, type[Any]] = {
-        ArtifactKind.SCRIPT_FACT: FactRegistry,
-        ArtifactKind.EPISODE_DIRECTION: EpisodeDirectionDraft,
-        ArtifactKind.SCENE_INTENT: SceneIntentDraft,
+        ArtifactKind.NORMALIZED_SOURCE: NormalizedSource,
+        ArtifactKind.FACT_REGISTRY: FactRegistry,
+        ArtifactKind.EPISODE_DIRECTION_DRAFT: EpisodeDirectionDraft,
+        ArtifactKind.SCENE_INTENT_DRAFT: SceneIntentDraft,
         ArtifactKind.KNOWLEDGE_CAPSULE: KnowledgeCapsuleV2,
         ArtifactKind.KNOWLEDGE_SNAPSHOT: KnowledgeSnapshot,
         ArtifactKind.BLOCKING_DRAFT: BlockingDraft,
@@ -280,115 +294,83 @@ class SourceRef:
 @dataclass(frozen=True)
 class ArtifactEnvelope(Generic[T]):
     artifact_id: str
-    artifact_kind: ArtifactKind
+    artifact_type: ArtifactKind
     schema_version: str
-    program_version: str
     payload: T
-    source_refs: tuple[SourceRef, ...]
-    dependency_digests: Mapping[str, str] = field(default_factory=dict)
-    content_sha256: str = ""
-    created_at: str = ""
-    validation_status: ValidationStatus = ValidationStatus.DRAFT
+    canonical_payload_sha256: str
+    producer_stage: str
+    parent_artifact_ids: tuple[str, ...]
+    source_provenance: tuple[SourceRef, ...]
+    knowledge_snapshot_digest: str | None
+    created_at_utc: str
 
     def __post_init__(self) -> None:
         _require_text(self.artifact_id, "artifact_id")
-        if not isinstance(self.artifact_kind, ArtifactKind):
-            raise DomainValidationError("artifact_kind must be an ArtifactKind")
+        if not isinstance(self.artifact_type, ArtifactKind):
+            raise DomainValidationError("artifact_type must be an ArtifactKind")
         _require_text(self.schema_version, "schema_version")
         if self.schema_version != DOMAIN_SCHEMA_VERSION:
             raise DomainValidationError(
                 f"schema_version must match canonical domain schema {DOMAIN_SCHEMA_VERSION}"
             )
-        _require_text(self.program_version, "program_version")
-        _require_text(self.created_at, "created_at")
-        if not isinstance(self.validation_status, ValidationStatus):
-            raise DomainValidationError("validation_status must be a ValidationStatus")
+        _require_text(self.producer_stage, "producer_stage")
+        _require_utc_timestamp(self.created_at_utc, "created_at_utc")
         payload = _deep_freeze(self.payload, "payload")
-        expected_payload_type = _canonical_payload_type(self.artifact_kind)
+        expected_payload_type = _canonical_payload_type(self.artifact_type)
         if type(payload) is not expected_payload_type:
             raise DomainValidationError(
                 "payload type does not match artifact_kind canonical authority: "
                 f"expected {expected_payload_type.__name__}, got {type(payload).__name__}"
             )
         declared_kind = getattr(payload, "ARTIFACT_KIND", None)
-        if declared_kind is not self.artifact_kind:
+        if declared_kind is not self.artifact_type:
             raise DomainValidationError(
-                "artifact_kind does not match the payload's canonical authority"
+                "artifact_type does not match the payload's canonical authority"
             )
-        refs = tuple(self.source_refs)
+        parents = tuple(self.parent_artifact_ids)
+        if any(not isinstance(item, str) or not item.strip() for item in parents):
+            raise DomainValidationError("parent_artifact_ids must contain non-empty IDs")
+        if len(parents) != len(set(parents)):
+            raise DomainValidationError("parent_artifact_ids must not contain duplicates")
+        if self.artifact_id in parents:
+            raise DomainValidationError("an Artifact cannot be its own parent")
+        refs = tuple(self.source_provenance)
         if not refs or not all(isinstance(ref, SourceRef) for ref in refs):
-            raise DomainValidationError("source_refs must contain at least one SourceRef")
-        dependencies = freeze_mapping(self.dependency_digests, "dependency_digests")
-        for key, digest in dependencies.items():
-            require_sha256(digest, f"dependency_digests[{key}]")
-        object.__setattr__(self, "source_refs", refs)
-        object.__setattr__(self, "dependency_digests", dependencies)
+            raise DomainValidationError("source_provenance must contain at least one SourceRef")
+        if self.knowledge_snapshot_digest is not None:
+            require_sha256(self.knowledge_snapshot_digest, "knowledge_snapshot_digest")
+        object.__setattr__(self, "parent_artifact_ids", parents)
+        object.__setattr__(self, "source_provenance", refs)
         object.__setattr__(self, "payload", payload)
-        require_sha256(self.content_sha256, "content_sha256")
-        expected = self.content_digest_for(
-            artifact_kind=self.artifact_kind,
-            schema_version=self.schema_version,
-            program_version=self.program_version,
-            payload=payload,
-            source_refs=refs,
-            dependency_digests=dependencies,
-        )
-        if self.content_sha256 != expected:
-            raise DomainValidationError("content_sha256 does not match canonical artifact content")
-
-    @staticmethod
-    def content_digest_for(
-        *,
-        artifact_kind: ArtifactKind,
-        schema_version: str,
-        program_version: str,
-        payload: T,
-        source_refs: Sequence[SourceRef],
-        dependency_digests: Mapping[str, str],
-    ) -> str:
-        return canonical_sha256(
-            {
-                "artifact_kind": artifact_kind,
-                "schema_version": schema_version,
-                "program_version": program_version,
-                "payload": payload,
-                "source_refs": tuple(source_refs),
-                "dependency_digests": dependency_digests,
-            }
-        )
+        require_sha256(self.canonical_payload_sha256, "canonical_payload_sha256")
+        if self.canonical_payload_sha256 != canonical_sha256(payload):
+            raise DomainValidationError(
+                "canonical_payload_sha256 does not match canonical payload"
+            )
 
     @classmethod
     def create(
         cls,
         *,
         artifact_id: str,
-        artifact_kind: ArtifactKind,
-        schema_version: str,
-        program_version: str,
+        artifact_type: ArtifactKind,
         payload: T,
-        source_refs: Sequence[SourceRef],
-        dependency_digests: Mapping[str, str],
-        created_at: str,
-        validation_status: ValidationStatus = ValidationStatus.DRAFT,
+        producer_stage: str,
+        parent_artifact_ids: Sequence[str],
+        source_provenance: Sequence[SourceRef],
+        knowledge_snapshot_digest: str | None,
+        created_at_utc: str,
+        schema_version: str = DOMAIN_SCHEMA_VERSION,
     ) -> "ArtifactEnvelope[T]":
-        refs = tuple(source_refs)
-        dependencies = freeze_mapping(dependency_digests, "dependency_digests")
         return cls(
             artifact_id=artifact_id,
-            artifact_kind=artifact_kind,
+            artifact_type=artifact_type,
             schema_version=schema_version,
-            program_version=program_version,
             payload=payload,
-            source_refs=refs,
-            dependency_digests=dependencies,
-            content_sha256=cls.content_digest_for(
-                artifact_kind=artifact_kind,
-                schema_version=schema_version,
-                program_version=program_version,
-                payload=payload,
-                source_refs=refs,
-                dependency_digests=dependencies,
-            ),
-            created_at=created_at,
-            validation_status=validation_status,
+            canonical_payload_sha256=canonical_sha256(payload),
+            producer_stage=producer_stage,
+            parent_artifact_ids=tuple(parent_artifact_ids),
+            source_provenance=tuple(source_provenance),
+            knowledge_snapshot_digest=knowledge_snapshot_digest,
+            created_at_utc=created_at_utc,
         )

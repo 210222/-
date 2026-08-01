@@ -5,10 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import ClassVar
 
-from .artifact import ArtifactKind, DomainValidationError
-
-
-DOMAIN_SCHEMA_VERSION = "2.2"
+from .artifact import DOMAIN_SCHEMA_VERSION, ArtifactKind, DomainValidationError
 CANONICAL_DOMAIN_TYPES = ("EpisodeDirectionDraft", "SceneIntentDraft")
 
 
@@ -21,7 +18,7 @@ def _texts(value: tuple[str, ...], field_name: str, *, require_items: bool) -> t
 
 @dataclass(frozen=True)
 class EpisodeDirectionDraft:
-    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.EPISODE_DIRECTION
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.EPISODE_DIRECTION_DRAFT
 
     dramatic_promise: str
     audience_contract: str
@@ -49,7 +46,7 @@ class EpisodeDirectionDraft:
 
 @dataclass(frozen=True)
 class SceneIntentDraft:
-    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.SCENE_INTENT
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.SCENE_INTENT_DRAFT
 
     scene_purpose: str
     state_change: str

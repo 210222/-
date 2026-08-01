@@ -6,10 +6,7 @@ import enum
 from dataclasses import dataclass
 from typing import ClassVar
 
-from .artifact import ArtifactKind, DomainValidationError, SourceRef
-
-
-DOMAIN_SCHEMA_VERSION = "2.2"
+from .artifact import DOMAIN_SCHEMA_VERSION, ArtifactKind, DomainValidationError, SourceRef
 CANONICAL_DOMAIN_TYPES = ("ReleaseGateRecord", "ReleasePhase")
 
 

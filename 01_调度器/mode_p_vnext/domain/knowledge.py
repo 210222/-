@@ -8,15 +8,13 @@ from datetime import date
 from typing import Any, ClassVar, Mapping
 
 from .artifact import (
+    DOMAIN_SCHEMA_VERSION,
     ArtifactKind,
     DomainValidationError,
     SourceRef,
     freeze_mapping,
     require_sha256,
 )
-
-
-DOMAIN_SCHEMA_VERSION = "2.2"
 CANONICAL_DOMAIN_TYPES = (
     "KnowledgeCapsuleV2",
     "KnowledgeCandidateRecord",

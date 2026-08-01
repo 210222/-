@@ -7,20 +7,25 @@ make the canonical domain depend on legacy contracts, IDs, or timebases.
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping
 
 from mode_p_vnext.domain.artifact import (
-    ArtifactEnvelope,
-    ArtifactKind,
-    DOMAIN_SCHEMA_VERSION,
     DomainValidationError,
     SourceRef,
-    ValidationStatus,
     canonical_sha256,
 )
 from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingDraft
-from mode_p_vnext.domain.ids import IdFactory
+
+
+@dataclass(frozen=True)
+class LegacyCheckpointObservation:
+    source_ref: SourceRef
+    scene_id: str
+    candidate_draft: BlockingDraft
+    record_digest: str
+    requires_reassembly: bool = True
 
 
 def _legacy_text(value: Any, field_name: str) -> str:
@@ -69,11 +74,11 @@ def _legacy_gaze_relations(
     return tuple(relations)
 
 
-def read_legacy_b0_k2_checkpoint(path: Path) -> ArtifactEnvelope[BlockingDraft]:
-    """Read a historical checkpoint and return a canonical *draft* envelope.
+def read_legacy_b0_k2_checkpoint(path: Path) -> LegacyCheckpointObservation:
+    """Read a historical checkpoint into a non-authoritative observation.
 
-    The input is never modified, never imported as code, and never promoted to
-    a validated commit.  Its original provenance remains part of the envelope.
+    The input is never modified, imported as code, assigned new IDs, wrapped as
+    a v3 Artifact, or promoted to a validated commit.
     """
 
     source_path = Path(path)
@@ -121,22 +126,9 @@ def read_legacy_b0_k2_checkpoint(path: Path) -> ArtifactEnvelope[BlockingDraft]:
         digest=input_digest,
         locator=str(source_path),
     )
-    artifact_id = IdFactory(program_version="legacy-read-adapter-v2.2").create(
-        artifact_kind=ArtifactKind.BLOCKING_DRAFT,
-        episode_id="legacy",
+    return LegacyCheckpointObservation(
+        source_ref=source_ref,
         scene_id=scene_id,
-        stage="legacy-b0-k2-import",
-        input_digest=input_digest,
-        ordinal=1,
-    )
-    return ArtifactEnvelope.create(
-        artifact_id=artifact_id,
-        artifact_kind=ArtifactKind.BLOCKING_DRAFT,
-        schema_version=DOMAIN_SCHEMA_VERSION,
-        program_version="legacy-read-adapter-v2.2",
-        payload=draft,
-        source_refs=(source_ref,),
-        dependency_digests={"legacy_checkpoint": input_digest},
-        created_at="1970-01-01T00:00:00Z",
-        validation_status=ValidationStatus.DRAFT,
+        candidate_draft=draft,
+        record_digest=input_digest,
     )
