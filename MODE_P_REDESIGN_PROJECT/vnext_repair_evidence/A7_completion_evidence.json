@@ -1,7 +1,6 @@
 {
   "task_id": "A7",
   "title": "Implement deterministic Gate 0, independent DP, and media evidence boundaries",
-  "redo_note": "Invalidated on 2026-08-01 by review finding duplicate-authority (pipeline/verification_nodes.py redefined canonical domain.evidence types). Redone reusing the A1-frozen canonical types; A7 now supplies logic only (Gate 0 runner, DP packet builder, bounded router, status ladder, attribution helpers, fail-closed adapters).",
   "changed_paths": [
     "01_调度器/mode_p_vnext/services/deterministic_gates.py",
     "01_调度器/mode_p_vnext/services/revision_router.py",
@@ -68,16 +67,11 @@
   ],
   "informational_results": [
     {
-      "name": "canonical_type_reuse",
-      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
-      "result": "MediaRunRecord/FrameEvidencePlan/FrameEvidence/MediaEvidence/OutcomeAttribution/VisualVerificationResult/OwnerApprovalRecord/ReviewPacket/RevisionRequest all reused from A1-frozen domain/evidence.py; no duplicate type definitions remain",
-      "note": "addresses review blocker sa_20260801_032823"
-    },
-    {
       "name": "neighbor_regression",
       "authority": "manual_untrusted_until_controller_or_supervisor_audit",
       "command": "pytest mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider",
-      "result": "80 passed in 0.56s"
+      "result": "80 passed in 0.49s",
+      "note": "A6/A5/A1/A0 regression untouched by A7 changes"
     },
     {
       "name": "artifact_sha256_disk",
@@ -92,6 +86,6 @@
   "verification_output": "24 passed in 0.13s",
   "v4_regression": "pending controller verification",
   "audit_ok": true,
-  "completed_at": "2026-08-01T03:35:59.000000+00:00",
-  "owner": "claude-code-a7-r2-20260801"
+  "completed_at": "2026-08-01T03:47:11.000000+00:00",
+  "owner": "codex-a7-dual-loop-20260801"
 }
