@@ -1,6 +1,6 @@
 """Deterministic local assembly of BlockingCommit from model-authored BlockingDraft.
 
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §5.3 B0 / §5.4 / §14 A5.
+Architecture ref: frozen MODE:P vNext v3.0 authority, B0 local assembly.
 
 The model outputs only creative beat fields (ordinal, dramatic_action,
 character_states, props, gaze, action_paths, continuity_effect).  This assembler
@@ -10,14 +10,9 @@ the model is allowed to produce.
 
 from __future__ import annotations
 
-from mode_p_vnext.domain.artifact import ArtifactKind, canonical_sha256
+from mode_p_vnext.domain.artifact import DOMAIN_SCHEMA_VERSION, ArtifactKind, canonical_sha256
 from mode_p_vnext.domain.blocking import BlockingBeat, BlockingCommit, BlockingDraft
 from mode_p_vnext.domain.ids import IdFactory
-
-
-def _state_key(ordinal: int, role: str) -> str:
-    """Deterministic state label so rebuilds produce identical IDs."""
-    return f"state:beat-{ordinal:04d}:{role}"
 
 
 def assemble_blocking_commit(
@@ -27,7 +22,7 @@ def assemble_blocking_commit(
     scene_id: str,
     id_factory: IdFactory,
     program_version: str,
-    schema_version: str = "2.1",
+    schema_version: str = DOMAIN_SCHEMA_VERSION,
 ) -> BlockingCommit:
     """Produce the sole local B0 authority from a validated BlockingDraft."""
 
@@ -53,7 +48,6 @@ def assemble_blocking_commit(
     )
 
     # -- 3.  assemble validated beats with local IDs --------------------------
-    beat_count = len(draft.beats)
     beats: list[BlockingBeat] = []
 
     for index, draft_beat in enumerate(draft.beats):

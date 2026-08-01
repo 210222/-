@@ -1,59 +1,239 @@
-"""A5 acceptance tests: deterministic Blocking, Timeline, and VEC assembly.
-
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §5.3–§5.5 / §14 A5.
-"""
+"""A5 acceptance tests for the frozen v3.0 VEC assembly invariant set."""
 
 from __future__ import annotations
 
-from fractions import Fraction
+from dataclasses import replace
+import inspect
 
 import pytest
 
-from mode_p_vnext.domain.artifact import (
-    DomainValidationError,
-    SourceRef,
-)
-from mode_p_vnext.domain.blocking import (
-    BlockingBeat,
-    BlockingBeatDraft,
-    BlockingCommit,
-    BlockingDraft,
-)
+from mode_p_vnext.domain.artifact import DomainValidationError, SourceRef
+from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingDraft
 from mode_p_vnext.domain.decisions import (
     DecisionBasis,
     DecisionDraft,
     VisualCurvePointDraft,
 )
-from mode_p_vnext.domain.facts import FactKind, FactRegistry, ScriptFact
+from mode_p_vnext.domain.facts import (
+    FactConfidence,
+    FactKind,
+    FactQualifiers,
+    FactRegistry,
+    FactSemantic,
+    ScriptFact,
+    SourceSpan,
+)
 from mode_p_vnext.domain.ids import IdFactory
-from mode_p_vnext.domain.time import (
-    TICKS_PER_SECOND,
-    TickRange,
-)
+from mode_p_vnext.domain.time import DurationIntent, GenerationCapabilityProfile
 from mode_p_vnext.domain.vec import (
-    StoryboardRole,
-    VisualBeatPhase,
-    VisualBeatDraft,
+    DialogueBindingIntent,
     ExecutionDesignDraft,
+    GenerationMode,
+    PlacementPhase,
+    ReferenceBindingIntent,
+    ReferenceResponsibility,
     ShotDesignDraft,
-    VisualExecutionContract,
+    StoryboardRole,
+    VisualBeatDraft,
+    VisualBeatPhase,
 )
+from mode_p_vnext.services import vec_assembler
 from mode_p_vnext.services.blocking_assembler import assemble_blocking_commit
-from mode_p_vnext.services.timeline_allocator import (
-    MAX_SHOT_TICKS,
-    allocate_shot_ticks,
-)
+from mode_p_vnext.services.timeline_allocator import allocate_shot_timelines
 from mode_p_vnext.services.vec_assembler import assemble_vec
 
 
-# ---------------------------------------------------------------------------
-# Shared fixtures
-# ---------------------------------------------------------------------------
-
 PROGRAM_VERSION = "mode-p-vnext-a5-test"
-SCHEMA_VERSION = "2.1"
 EPISODE_ID = "EP35"
 SCENE_ID = "EP35-S2"
+SOURCE_REF = SourceRef(source_id="a5-fixture", digest="f" * 64)
+
+
+def _opaque_id(character: str) -> str:
+    return f"id:{character * 64}"
+
+
+def _opaque_handle(character: str) -> str:
+    return f"fh:{character * 64}"
+
+
+def _fact(
+    *,
+    ordinal: int,
+    character: str,
+    semantic: FactSemantic,
+    span_start: int,
+    subject_label: str | None = None,
+    spoken_text: str | None = None,
+) -> ScriptFact:
+    return ScriptFact(
+        fact_id=_opaque_id(character),
+        fact_handle=_opaque_handle(character),
+        kind=FactKind.SCRIPT,
+        semantic=semantic,
+        statement=f"fixture-{semantic.value}-{ordinal}",
+        confidence=FactConfidence.EXPLICIT,
+        qualifiers=FactQualifiers(
+            episode_id=EPISODE_ID,
+            scene_id=SCENE_ID,
+            subject_label=subject_label,
+            spoken_text=spoken_text,
+        ),
+        provenance=(
+            SourceSpan(
+                source_ref=SOURCE_REF,
+                episode_id=EPISODE_ID,
+                scene_id=SCENE_ID,
+                source_start=span_start,
+                source_end=span_start + 1,
+            ),
+        ),
+        ordinal=ordinal,
+    )
+
+
+def make_facts(*, dialogue_span_start: int = 30) -> FactRegistry:
+    return FactRegistry(
+        source_ref=SOURCE_REF,
+        facts=(
+            _fact(
+                ordinal=1,
+                character="a",
+                semantic=FactSemantic.CHARACTER,
+                span_start=10,
+                subject_label="Mira",
+            ),
+            _fact(
+                ordinal=2,
+                character="b",
+                semantic=FactSemantic.PROP,
+                span_start=20,
+                subject_label="service pistol",
+            ),
+            _fact(
+                ordinal=3,
+                character="c",
+                semantic=FactSemantic.DIALOGUE,
+                span_start=dialogue_span_start,
+                subject_label="Mira",
+                spoken_text="Don't move.",
+            ),
+            _fact(
+                ordinal=4,
+                character="d",
+                semantic=FactSemantic.SETTING,
+                span_start=40,
+                subject_label="range",
+            ),
+        ),
+    )
+
+
+def make_blocking_draft() -> BlockingDraft:
+    return BlockingDraft(
+        beats=(
+            BlockingBeatDraft(
+                ordinal=1,
+                dramatic_action="Mira enters the quiet range.",
+                character_states=({"character": "Mira", "posture": "guarded"},),
+                prop_states=(),
+                gaze_relations=(),
+                action_paths=("enter",),
+                continuity_effect="The range is established.",
+            ),
+            BlockingBeatDraft(
+                ordinal=2,
+                dramatic_action="Mira confronts the pistol.",
+                character_states=({"character": "Mira", "posture": "ready"},),
+                prop_states=({"prop": "pistol", "state": "visible"},),
+                gaze_relations=("Mira -> pistol",),
+                action_paths=("raise focus",),
+                continuity_effect="The threat escalates.",
+            ),
+        )
+    )
+
+
+def make_draft(*, include_bindings: bool = True) -> ExecutionDesignDraft:
+    references_one = (
+        ReferenceBindingIntent(
+            shot_ordinal=1,
+            visual_beat_ordinal=None,
+            fact_handle=_opaque_handle("a"),
+            responsibility=ReferenceResponsibility.CHARACTER_IDENTITY,
+        ),
+    ) if include_bindings else ()
+    references_two = (
+        ReferenceBindingIntent(
+            shot_ordinal=2,
+            visual_beat_ordinal=1,
+            fact_handle=_opaque_handle("b"),
+            responsibility=ReferenceResponsibility.PROP_IDENTITY,
+        ),
+    ) if include_bindings else ()
+    dialogue_two = (
+        DialogueBindingIntent(
+            shot_ordinal=2,
+            visual_beat_ordinal=2,
+            fact_handle=_opaque_handle("c"),
+            placement_phase=PlacementPhase.MIDDLE,
+        ),
+    ) if include_bindings else ()
+    return ExecutionDesignDraft(
+        curve_points=(
+            VisualCurvePointDraft(1, 60, "arrival tension"),
+            VisualCurvePointDraft(2, 85, "threat escalation"),
+        ),
+        decisions=(
+            DecisionDraft(
+                scope="coverage",
+                basis=DecisionBasis.CHOICE,
+                locked_by=(),
+                options=("wide", "close"),
+                selected_index=1,
+                rationale="preserve the reveal",
+                tradeoff="less environment detail",
+            ),
+        ),
+        shots=(
+            ShotDesignDraft(
+                shot_ordinal=1,
+                blocking_beat_ordinal=1,
+                duration_intent=DurationIntent.STANDARD,
+                generation_mode=GenerationMode.TEXT_ONLY,
+                composition="wide entrance",
+                camera="slow push",
+                lighting="cold practicals",
+                performance="guarded scan",
+                visual_beats=(
+                    VisualBeatDraft(1, VisualBeatPhase.ENTRY, "at door", "room", StoryboardRole.REQUIRED),
+                    VisualBeatDraft(2, VisualBeatPhase.ACTION, "steps in", "Mira", StoryboardRole.OPTIONAL),
+                ),
+                reference_binding_intents=references_one,
+                dialogue_binding_intents=(),
+                creative_notes="hold the silence",
+            ),
+            ShotDesignDraft(
+                shot_ordinal=2,
+                blocking_beat_ordinal=2,
+                duration_intent=DurationIntent.EXTENDED,
+                generation_mode=GenerationMode.OMNI_REFERENCE,
+                composition="waist-up confrontation",
+                camera="controlled settle",
+                lighting="hard side key",
+                performance="breath held",
+                visual_beats=(
+                    VisualBeatDraft(1, VisualBeatPhase.ACTION, "pistol revealed", "pistol", StoryboardRole.REQUIRED),
+                    VisualBeatDraft(2, VisualBeatPhase.REACTION, "eyes lock", "Mira", StoryboardRole.REQUIRED),
+                ),
+                reference_binding_intents=references_two,
+                dialogue_binding_intents=dialogue_two,
+                creative_notes="do not rush the line",
+            ),
+        ),
+        transition_intents=("hard cut",),
+        handoff_intent="leave on the confrontation",
+    )
 
 
 @pytest.fixture
@@ -62,792 +242,198 @@ def id_factory() -> IdFactory:
 
 
 @pytest.fixture
-def blocking_draft() -> BlockingDraft:
-    return BlockingDraft(
-        beats=(
-            BlockingBeatDraft(
-                ordinal=1,
-                dramatic_action="He arrives at the shooting range.",
-                character_states=(
-                    {"character_id": "chen", "posture": "tense"},
-                ),
-                prop_states=(),
-                gaze_relations=(),
-                action_paths=("enter the range",),
-                continuity_effect="Establishes the space.",
-            ),
-            BlockingBeatDraft(
-                ordinal=2,
-                dramatic_action="He loads the pistol.",
-                character_states=(
-                    {"character_id": "chen", "posture": "focused"},
-                ),
-                prop_states=({"prop_id": "pistol", "state": "loaded"},),
-                gaze_relations=("chen -> pistol",),
-                action_paths=("load weapon",),
-                continuity_effect="The weapon is now live.",
-            ),
-        )
-    )
-
-
-@pytest.fixture
-def blocking_commit(id_factory: IdFactory, blocking_draft: BlockingDraft) -> BlockingCommit:
+def blocking_commit(id_factory: IdFactory):
     return assemble_blocking_commit(
-        draft=blocking_draft,
+        draft=make_blocking_draft(),
         episode_id=EPISODE_ID,
         scene_id=SCENE_ID,
         id_factory=id_factory,
         program_version=PROGRAM_VERSION,
-        schema_version=SCHEMA_VERSION,
     )
 
 
-@pytest.fixture
-def execution_design_draft() -> ExecutionDesignDraft:
-    return ExecutionDesignDraft(
-        curve_points=(
-            VisualCurvePointDraft(
-                dramatic_beat_ordinal=1,
-                intensity=60,
-                explanation="arrival tension",
-            ),
-            VisualCurvePointDraft(
-                dramatic_beat_ordinal=2,
-                intensity=85,
-                explanation="weapon escalation",
-            ),
-        ),
-        decisions=(
-            DecisionDraft(
-                scope="camera distance for the loading shot",
-                basis=DecisionBasis.CHOICE,
-                locked_by=(),
-                options=("extreme close-up on hands", "medium shot with face"),
-                selected_index=0,
-                rationale="weapon detail sells the threat",
-                tradeoff="sacrifice facial reaction in this beat",
-            ),
-        ),
-        shots=(
-            ShotDesignDraft(
-                blocking_beat_ordinal=1,
-                dramatic_function="introduce the range and the protagonist's state",
-                attention_target="chen entering the space",
-                information_action="the range is empty, chen is alone",
-                framing_intent="wide establishing",
-                camera_pose="eye level",
-                camera_motion="static",
-                composition="depth layering with targets in background",
-                lighting="harsh overhead fluorescents",
-                performance="controlled breathing, deliberate steps",
-                duration_weight=4,
-                visual_beats=(
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.ENTRY,
-                        subject_state="chen at doorway, surveying",
-                        attention="the empty range",
-                        storyboard_role=StoryboardRole.REQUIRED,
-                    ),
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.ACTION,
-                        subject_state="chen steps forward",
-                        attention="the shooting lane",
-                        storyboard_role=StoryboardRole.OPTIONAL,
-                    ),
-                ),
-            ),
-            ShotDesignDraft(
-                blocking_beat_ordinal=2,
-                dramatic_function="weapon preparation as threat escalation",
-                attention_target="hands loading the pistol",
-                information_action="the pistol is ready to fire",
-                framing_intent="extreme close-up on hands and weapon",
-                camera_pose="overhead angle",
-                camera_motion="slow push-in",
-                composition="hands dominate frame, face out of focus",
-                lighting="single practical above the bench",
-                performance="precise, ritualistic movements",
-                duration_weight=6,
-                visual_beats=(
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.ENTRY,
-                        subject_state="hands reach for the case",
-                        attention="the pistol case",
-                        storyboard_role=StoryboardRole.REQUIRED,
-                    ),
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.ACTION,
-                        subject_state="magazine slides in",
-                        attention="the click of the magazine seating",
-                        storyboard_role=StoryboardRole.REQUIRED,
-                    ),
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.REACTION,
-                        subject_state="chen's breath steadies",
-                        attention="the now-live weapon",
-                        storyboard_role=StoryboardRole.OMIT,
-                    ),
-                ),
-            ),
-        ),
-        transition_intents=("hard cut on the magazine click",),
-        audio_intents=("mechanical click of magazine",),
-        reference_intents=("pistol prop reference",),
-        handoff_intent="cut to the target paper, hold 12 frames",
+def build_vec(id_factory: IdFactory, blocking_commit, *, facts: FactRegistry | None = None, draft: ExecutionDesignDraft | None = None):
+    return assemble_vec(
+        draft=draft or make_draft(),
+        blocking_commit=blocking_commit,
+        facts=facts or make_facts(),
+        episode_id=EPISODE_ID,
+        scene_id=SCENE_ID,
+        id_factory=id_factory,
+        program_version=PROGRAM_VERSION,
     )
 
 
-@pytest.fixture
-def fact_registry() -> FactRegistry:
-    return FactRegistry(
-        facts=(
-            ScriptFact(
-                fact_id="char_chen",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="Chen is the protagonist, wearing a black tactical jacket.",
-                source_ref=SourceRef(source_id="ep35_script", digest="a" * 64, locator="S2"),
-            ),
-            ScriptFact(
-                fact_id="prop_pistol",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="A standard-issue 9mm pistol sits in a foam case.",
-                source_ref=SourceRef(source_id="ep35_script", digest="b" * 64, locator="S2"),
-            ),
-            ScriptFact(
-                fact_id="costume_tactical_jacket",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="Black tactical jacket with worn leather patches on the elbows.",
-                source_ref=SourceRef(source_id="ep35_script", digest="c" * 64, locator="S2"),
-            ),
-            ScriptFact(
-                fact_id="scene_shooting_range",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="Indoor shooting range, fluorescent lighting, sound-dampening panels.",
-                source_ref=SourceRef(source_id="ep35_script", digest="d" * 64, locator="S2"),
-            ),
-            ScriptFact(
-                fact_id="dialogue_chen_muttering",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="Chen: This time I won't miss.",
-                source_ref=SourceRef(source_id="ep35_script", digest="e" * 64, locator="S2"),
-            ),
+def test_duration_intents_map_to_local_generation_units_not_a_scene_cap() -> None:
+    profile = GenerationCapabilityProfile.sd20_default()
+    scene_timeline, unit_timelines = allocate_shot_timelines(
+        scene_id=SCENE_ID,
+        generation_unit_ids=("id:" + "1" * 64, "id:" + "2" * 64),
+        duration_intents=(DurationIntent.EXTENDED, DurationIntent.EXTENDED),
+        capability_profile=profile,
+    )
+
+    assert all(timeline.duration_ticks == 312_000 for timeline in unit_timelines)
+    assert all(timeline.duration_ticks <= profile.max_generation_ticks for timeline in unit_timelines)
+    assert all(timeline.interval.start_tick == 0 for timeline in unit_timelines)
+    assert scene_timeline.interval.duration_ticks == 624_000
+    assert scene_timeline.interval.duration_ticks > profile.max_generation_ticks
+    placements = scene_timeline.generation_unit_placements
+    assert placements[0].interval.end_tick == placements[1].interval.start_tick
+
+
+def test_blocking_and_vec_are_deterministic_local_authority(id_factory, blocking_commit) -> None:
+    first = build_vec(id_factory, blocking_commit)
+    second = build_vec(id_factory, blocking_commit)
+
+    assert first == second
+    assert first.contract_id.startswith("id:")
+    assert first.canonical_input_sha256 != first.canonical_output_sha256
+    final_fields = {
+        name: getattr(first, name)
+        for name in first.__dataclass_fields__
+        if name not in {"ARTIFACT_KIND", "canonical_output_sha256"}
+    }
+    assert first.canonical_output_sha256 == vec_assembler._vec_output_digest(**final_fields)
+    assert all(unit.unit_id.startswith("id:") for unit in first.generation_units)
+    assert all(shot.shot_id.startswith("id:") for shot in first.shots)
+    assert len(first.generation_units) == len(first.shots) == 2
+    assert all(unit.timeline.interval == shot.interval for unit, shot in zip(first.generation_units, first.shots))
+
+
+def test_n_plus_one_boundaries_use_placement_cut_points_and_state_chain(id_factory, blocking_commit) -> None:
+    vec = build_vec(id_factory, blocking_commit)
+
+    assert len(vec.boundaries) == len(vec.shots) + 1
+    assert [boundary.boundary_ordinal for boundary in vec.boundaries] == [0, 1, 2]
+    assert vec.boundaries[0].before_state_id == blocking_commit.entry_state_id
+    assert vec.boundaries[-1].after_state_id == blocking_commit.exit_state_id
+    assert vec.boundaries[1].scene_tick == vec.generation_units[0].scene_placement.interval.end_tick
+    assert vec.boundaries[1].scene_tick == vec.generation_units[1].scene_placement.interval.start_tick
+    assert vec.boundaries[1].before_state_id == vec.shots[0].visual_beats[-1].end_state_id
+    assert vec.boundaries[1].after_state_id == vec.shots[1].visual_beats[0].start_state_id
+
+
+def test_explicit_visual_beats_cover_each_local_shot_timeline(id_factory, blocking_commit) -> None:
+    vec = build_vec(id_factory, blocking_commit)
+
+    for shot in vec.shots:
+        assert shot.visual_beats[0].interval.start_tick == 0
+        assert shot.visual_beats[-1].interval.end_tick == shot.interval.end_tick
+        assert all(
+            left.interval.end_tick == right.interval.start_tick
+            and left.end_state_id == right.start_state_id
+            for left, right in zip(shot.visual_beats, shot.visual_beats[1:])
         )
+
+
+def test_typed_reference_and_dialogue_bindings_are_exact_and_bidirectional(id_factory, blocking_commit) -> None:
+    vec = build_vec(id_factory, blocking_commit)
+
+    assert len(vec.reference_requirements) == 2
+    assert len(vec.audio_events) == len(vec.voice_requirements) == 1
+    character_reference, prop_reference = vec.reference_requirements
+    assert character_reference.source_fact_handle == _opaque_handle("a")
+    assert character_reference.visual_beat_id is None
+    assert prop_reference.source_fact_handle == _opaque_handle("b")
+    assert prop_reference.visual_beat_id == vec.shots[1].visual_beats[0].beat_id
+    event = vec.audio_events[0]
+    dialogue_beat = vec.shots[1].visual_beats[1]
+    assert event.source_fact_handle == _opaque_handle("c")
+    assert event.shot_id == vec.shots[1].shot_id
+    assert event.visual_beat_id == dialogue_beat.beat_id
+    assert dialogue_beat.interval.contains(event.marker.tick)
+    assert event.marker.tick == dialogue_beat.interval.start_tick + dialogue_beat.interval.duration_ticks // 2
+    assert event.event_id in vec.shots[1].audio_event_ids
+    assert event.event_id in dialogue_beat.audio_event_ids
+    assert prop_reference.requirement_id in dialogue_beat.reference_requirement_ids or prop_reference.requirement_id in vec.shots[1].visual_beats[0].reference_requirement_ids
+    assert vec.voice_requirements[0].audio_event_id == event.event_id
+
+
+def test_no_automatic_fact_binding_and_no_free_text_binding_surface(id_factory, blocking_commit) -> None:
+    vec = build_vec(id_factory, blocking_commit, draft=make_draft(include_bindings=False))
+
+    assert vec.reference_requirements == ()
+    assert vec.audio_events == ()
+    assert vec.voice_requirements == ()
+    fields = set(ShotDesignDraft.__dataclass_fields__)
+    assert "reference_binding_intents" in fields
+    assert "dialogue_binding_intents" in fields
+    assert "reference_intents" not in fields
+    assert "audio_intents" not in fields
+
+
+@pytest.mark.parametrize(
+    "intent",
+    (
+        ReferenceBindingIntent(
+            shot_ordinal=1,
+            visual_beat_ordinal=1,
+            fact_handle=_opaque_handle("b"),
+            responsibility=ReferenceResponsibility.CHARACTER_IDENTITY,
+        ),
+        ReferenceBindingIntent(
+            shot_ordinal=1,
+            visual_beat_ordinal=1,
+            fact_handle=_opaque_handle("e"),
+            responsibility=ReferenceResponsibility.CHARACTER_IDENTITY,
+        ),
+    ),
+)
+def test_reference_semantic_mismatch_or_unknown_handle_fails_closed(id_factory, blocking_commit, intent) -> None:
+    draft = make_draft()
+    first = replace(draft.shots[0], reference_binding_intents=(intent,))
+    bad_draft = replace(draft, shots=(first, draft.shots[1]))
+
+    with pytest.raises(DomainValidationError):
+        build_vec(id_factory, blocking_commit, draft=bad_draft)
+
+
+def test_dialogue_marker_is_independent_of_provenance_positions(id_factory, blocking_commit) -> None:
+    early_provenance = build_vec(id_factory, blocking_commit, facts=make_facts(dialogue_span_start=30))
+    late_provenance = build_vec(id_factory, blocking_commit, facts=make_facts(dialogue_span_start=90_000))
+
+    assert early_provenance.audio_events[0].marker == late_provenance.audio_events[0].marker
+    assert early_provenance.audio_events[0].marker.tick == (
+        early_provenance.shots[1].visual_beats[1].interval.start_tick
+        + early_provenance.shots[1].visual_beats[1].interval.duration_ticks // 2
     )
 
 
-# ===================================================================
-# BlockingAssembler
-# ===================================================================
+def test_invalid_blocking_ordinal_and_wrong_dialogue_semantic_fail_closed(id_factory, blocking_commit) -> None:
+    draft = make_draft()
+    invalid_shot = replace(draft.shots[0], blocking_beat_ordinal=99)
+    with pytest.raises(DomainValidationError):
+        build_vec(id_factory, blocking_commit, draft=replace(draft, shots=(invalid_shot, draft.shots[1])))
 
-class TestBlockingAssembler:
-    """Architecture §5.3 B0: model outputs only creative fields."""
+    character_as_dialogue = DialogueBindingIntent(
+        shot_ordinal=2,
+        visual_beat_ordinal=2,
+        fact_handle=_opaque_handle("a"),
+        placement_phase=PlacementPhase.MIDDLE,
+    )
+    second = replace(draft.shots[1], dialogue_binding_intents=(character_as_dialogue,))
+    with pytest.raises(DomainValidationError):
+        build_vec(id_factory, blocking_commit, draft=replace(draft, shots=(draft.shots[0], second)))
 
-    def test_draft_to_commit_produces_local_ids(
-        self, id_factory: IdFactory, blocking_draft: BlockingDraft
-    ) -> None:
-        commit = assemble_blocking_commit(
-            draft=blocking_draft,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-
-        assert commit.commit_id.startswith("blocking_commit:0000:")
-        assert len(commit.beats) == 2
-        for beat in commit.beats:
-            assert beat.beat_id.startswith("blocking_commit:")
-            assert beat.entry_state_id.startswith("blocking_commit:")
-            assert beat.exit_state_id.startswith("blocking_commit:")
-            # Model must not know these IDs.
-            assert beat.beat_id != ""
-            assert beat.entry_state_id != beat.exit_state_id
-
-    def test_commit_state_chain_is_contiguous(
-        self, id_factory: IdFactory, blocking_draft: BlockingDraft
-    ) -> None:
-        commit = assemble_blocking_commit(
-            draft=blocking_draft,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-
-        assert commit.entry_state_id == commit.beats[0].entry_state_id
-        assert commit.exit_state_id == commit.beats[-1].exit_state_id
-        for left, right in zip(commit.beats, commit.beats[1:]):
-            assert left.exit_state_id == right.entry_state_id
-
-    def test_identical_inputs_yield_identical_commit(
-        self, id_factory: IdFactory, blocking_draft: BlockingDraft
-    ) -> None:
-        a = assemble_blocking_commit(
-            draft=blocking_draft,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        b = assemble_blocking_commit(
-            draft=blocking_draft,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        assert a.commit_id == b.commit_id
-        assert a.entry_state_id == b.entry_state_id
-        assert a.exit_state_id == b.exit_state_id
-        for ba, bb in zip(a.beats, b.beats):
-            assert ba.beat_id == bb.beat_id
-
-    def test_creative_fields_are_preserved(
-        self, id_factory: IdFactory, blocking_draft: BlockingDraft
-    ) -> None:
-        commit = assemble_blocking_commit(
-            draft=blocking_draft,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        for draft_beat, commit_beat in zip(blocking_draft.beats, commit.beats):
-            assert commit_beat.dramatic_action == draft_beat.dramatic_action
-            assert commit_beat.action_paths == draft_beat.action_paths
-            assert commit_beat.continuity_effect == draft_beat.continuity_effect
-
-
-# ===================================================================
-# TimelineAllocator
-# ===================================================================
-
-class TestTimelineAllocator:
-    """Architecture §5.2 / §5.4: local tick allocation from weight hints."""
-
-    def test_proportional_allocation_sums_to_segment_duration(self) -> None:
-        weights = (4, 6)
-        timeline, ranges = allocate_shot_ticks(weights)
-
-        assert timeline.duration_ticks == sum(r.duration_ticks for r in ranges)
-        assert timeline.duration_ticks > 0
-
-    def test_shot_ranges_are_adjacent_and_cover_segment(self) -> None:
-        weights = (4, 6)
-        timeline, ranges = allocate_shot_ticks(weights)
-
-        assert ranges[0].start_tick == 0
-        for left, right in zip(ranges, ranges[1:]):
-            assert left.end_tick == right.start_tick
-        assert ranges[-1].end_tick == timeline.duration_ticks
-
-    def test_no_shot_exceeds_max_15_seconds(self) -> None:
-        weights = (1, 100, 1)
-        _, ranges = allocate_shot_ticks(weights)
-        for r in ranges:
-            assert r.duration_ticks <= MAX_SHOT_TICKS
-
-    def test_every_shot_gets_at_least_one_tick(self) -> None:
-        weights = (1, 1, 1)
-        _, ranges = allocate_shot_ticks(weights)
-        for r in ranges:
-            assert r.duration_ticks >= 1
-
-    def test_deterministic_output(self) -> None:
-        a_timeline, a_ranges = allocate_shot_ticks((3, 7))
-        b_timeline, b_ranges = allocate_shot_ticks((3, 7))
-        assert a_timeline.duration_ticks == b_timeline.duration_ticks
-        for ra, rb in zip(a_ranges, b_ranges):
-            assert ra.start_tick == rb.start_tick
-            assert ra.end_tick == rb.end_tick
-
-    def test_empty_weights_rejected(self) -> None:
-        with pytest.raises(DomainValidationError, match="at least one"):
-            allocate_shot_ticks(())
-
-    def test_negative_weight_rejected(self) -> None:
-        with pytest.raises(DomainValidationError, match="positive integer"):
-            allocate_shot_ticks((-1, 5))  # type: ignore[arg-type]
-
-
-# ===================================================================
-# VECAssembler
-# ===================================================================
-
-class TestVECAssembler:
-    """Architecture §5.3–§5.5: deterministic VEC from creative drafts."""
-
-    def test_full_assembly_produces_valid_vec(
-        self,
-        id_factory: IdFactory,
-        blocking_commit: BlockingCommit,
-        execution_design_draft: ExecutionDesignDraft,
-        fact_registry: FactRegistry,
-    ) -> None:
-        vec = assemble_vec(
-            draft=execution_design_draft,
+    with pytest.raises(DomainValidationError):
+        assemble_vec(
+            draft=draft,
             blocking_commit=blocking_commit,
-            facts=fact_registry,
+            facts=make_facts(),
             episode_id=EPISODE_ID,
             scene_id=SCENE_ID,
-            id_factory=id_factory,
+            id_factory=IdFactory(program_version="different-approved-program"),
             program_version=PROGRAM_VERSION,
         )
 
-        assert vec.contract_id.startswith("visual_execution_contract:0000:")
-        assert vec.scene_id == SCENE_ID
-        assert vec.handoff_intent == execution_design_draft.handoff_intent
 
-    def test_contract_has_exactly_one_segment(self, id_factory, blocking_commit, execution_design_draft, fact_registry):
-        vec = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        assert len(vec.segments) == 1
+def test_assembler_has_no_legacy_fact_or_timing_inference_path() -> None:
+    assembler_source = inspect.getsource(vec_assembler)
+    allocator_source = inspect.getsource(allocate_shot_timelines)
 
-    def test_shots_are_covered_by_segment(self, id_factory, blocking_commit, execution_design_draft, fact_registry):
-        vec = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        segment = vec.segments[0]
-        assert set(segment.shot_ids) == {s.shot_id for s in vec.shots}
-
-    def test_boundaries_cover_every_adjacent_shot_pair(
-        self, id_factory, blocking_commit, execution_design_draft, fact_registry
-    ):
-        vec = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        # 2 shots → 1 boundary
-        assert len(vec.boundaries) == 1
-        assert vec.boundaries[0].from_shot_id == vec.shots[0].shot_id
-        assert vec.boundaries[0].to_shot_id == vec.shots[1].shot_id
-
-    def test_curve_points_resolve_to_blocking_beats(
-        self, id_factory, blocking_commit, execution_design_draft, fact_registry
-    ):
-        vec = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        beat_ids = {b.beat_id for b in blocking_commit.beats}
-        for cp in vec.curve_points:
-            assert cp.blocking_beat_id in beat_ids
-
-    def test_every_shot_carries_visual_beats(
-        self, id_factory, blocking_commit, execution_design_draft, fact_registry
-    ):
-        vec = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        for shot in vec.shots:
-            assert len(shot.visual_beats) >= 1
-            for beat in shot.visual_beats:
-                assert beat.shot_id == shot.shot_id
-
-    def test_visual_beat_intervals_are_adjacent_and_cover_shot(
-        self, id_factory, blocking_commit, execution_design_draft, fact_registry
-    ):
-        vec = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        for shot in vec.shots:
-            beats = shot.visual_beats
-            assert beats[0].interval.start_tick == shot.interval.start_tick
-            assert beats[-1].interval.end_tick == shot.interval.end_tick
-            for left, right in zip(beats, beats[1:]):
-                assert left.interval.end_tick == right.interval.start_tick
-
-    def test_safety_constant_mirror_flip_is_enforced(
-        self, id_factory, blocking_commit, execution_design_draft, fact_registry
-    ):
-        vec = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        for shot in vec.shots:
-            assert shot.mirror_flip_forbidden is True
-
-    def test_reference_requirements_derived_from_facts(
-        self, id_factory, blocking_commit, execution_design_draft, fact_registry
-    ):
-        vec = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        # char_chen, prop_pistol, costume_tactical_jacket, scene_shooting_range → 4 refs
-        assert len(vec.reference_requirements) == 4
-        roles = {r.role for r in vec.reference_requirements}
-        assert roles == {"character", "prop", "costume", "scene"}
-
-    def test_audio_events_generated_from_dialogue_facts(
-        self, id_factory, blocking_commit, execution_design_draft, fact_registry
-    ):
-        vec = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        assert len(vec.audio_events) == 1
-        assert len(vec.voice_requirements) == 1
-        assert vec.voice_requirements[0].audio_event_id == vec.audio_events[0].event_id
-
-    def test_deterministic_vec_rebuild(
-        self, id_factory, blocking_commit, execution_design_draft, fact_registry
-    ):
-        a = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        b = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        assert a.contract_id == b.contract_id
-        assert len(a.shots) == len(b.shots)
-        for sa, sb in zip(a.shots, b.shots):
-            assert sa.shot_id == sb.shot_id
-
-    def test_b1_ordinal_not_in_blocking_commit_is_rejected(
-        self, id_factory, blocking_commit, execution_design_draft, fact_registry
-    ):
-        from mode_p_vnext.domain.vec import ShotDesignDraft
-
-        bad_draft = ExecutionDesignDraft(
-            curve_points=execution_design_draft.curve_points,
-            decisions=execution_design_draft.decisions,
-            shots=(
-                ShotDesignDraft(
-                    blocking_beat_ordinal=99,  # does not exist
-                    dramatic_function="test",
-                    attention_target="test",
-                    information_action="test",
-                    framing_intent="test",
-                    camera_pose="test",
-                    camera_motion="test",
-                    composition="test",
-                    lighting="test",
-                    performance="test",
-                    duration_weight=5,
-                    visual_beats=(
-                        VisualBeatDraft(
-                            phase=VisualBeatPhase.ENTRY,
-                            subject_state="test",
-                            attention="test",
-                            storyboard_role=StoryboardRole.REQUIRED,
-                        ),
-                    ),
-                ),
-            ),
-            transition_intents=(),
-            audio_intents=(),
-            reference_intents=(),
-            handoff_intent="test handoff",
-        )
-        with pytest.raises(DomainValidationError, match="blocking ordinal"):
-            assemble_vec(
-                draft=bad_draft,
-                blocking_commit=blocking_commit,
-                facts=fact_registry,
-                episode_id=EPISODE_ID,
-                scene_id=SCENE_ID,
-                id_factory=id_factory,
-                program_version=PROGRAM_VERSION,
-            )
-
-
-# ===================================================================
-# Cross-cutting invariants (architecture §14 A5)
-# ===================================================================
-
-class TestModelOutputPurity:
-    """The model must not produce final VEC fields, IDs, or hashes."""
-
-    def test_blocking_draft_has_no_machine_fields(self) -> None:
-        """BlockingDraft carries only creative fields, no local IDs."""
-        # Verify by construction: BlockingDraft.__init__ accepts no ID fields.
-        draft = BlockingDraft(
-            beats=(
-                BlockingBeatDraft(
-                    ordinal=1,
-                    dramatic_action="Enter.",
-                    character_states=({"character_id": "a", "state": "ready"},),
-                    prop_states=(),
-                    gaze_relations=(),
-                    action_paths=("walk",),
-                    continuity_effect="none",
-                ),
-            )
-        )
-        # The domain model itself rejects machine fields in the draft.
-        assert not hasattr(draft, "commit_id")
-        assert not hasattr(draft, "fingerprint")
-
-    def test_execution_design_draft_has_no_final_vec_fields(self) -> None:
-        """B1 draft must not contain final VEC fields like absolute ticks."""
-        draft = ExecutionDesignDraft(
-            curve_points=(
-                VisualCurvePointDraft(
-                    dramatic_beat_ordinal=1, intensity=50, explanation="test"
-                ),
-            ),
-            decisions=(
-                DecisionDraft(
-                    scope="test",
-                    basis=DecisionBasis.LOCKED,
-                    locked_by=("rule",),
-                    options=("single option",),
-                    selected_index=0,
-                    rationale="test",
-                    tradeoff="none",
-                ),
-            ),
-            shots=(
-                ShotDesignDraft(
-                    blocking_beat_ordinal=1,
-                    dramatic_function="test",
-                    attention_target="test",
-                    information_action="test",
-                    framing_intent="test",
-                    camera_pose="test",
-                    camera_motion="test",
-                    composition="test",
-                    lighting="test",
-                    performance="test",
-                    duration_weight=3,
-                    visual_beats=(
-                        VisualBeatDraft(
-                            phase=VisualBeatPhase.ENTRY,
-                            subject_state="test",
-                            attention="test",
-                            storyboard_role=StoryboardRole.REQUIRED,
-                        ),
-                    ),
-                ),
-            ),
-            transition_intents=(),
-            audio_intents=(),
-            reference_intents=(),
-            handoff_intent="test",
-        )
-        # B1 draft must not expose absolute ticks, contract IDs, or hashes.
-        assert not hasattr(draft, "contract_id")
-        assert not hasattr(draft, "source_fact_hashes")
-        assert not hasattr(draft, "phase_a_fingerprint")
-        assert not hasattr(draft, "blocking_commit")
-        assert not hasattr(draft, "mirror_flip_forbidden")
-
-
-class TestDeterministicRebuild:
-    """Same inputs → same VEC (architecture invariant)."""
-
-    def test_rebuild_with_no_facts_still_deterministic(
-        self, id_factory, blocking_commit, execution_design_draft
-    ):
-        empty_facts = FactRegistry(
-            facts=(
-                ScriptFact(
-                    fact_id="char_x",
-                    scene_id=SCENE_ID,
-                    kind=FactKind.SCRIPT,
-                    statement="placeholder",
-                    source_ref=SourceRef(source_id="s", digest="f" * 64),
-                ),
-            )
-        )
-        a = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=empty_facts,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        b = assemble_vec(
-            draft=execution_design_draft,
-            blocking_commit=blocking_commit,
-            facts=empty_facts,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        assert a.contract_id == b.contract_id
-
-    def test_different_model_drafts_produce_different_vec_ids(
-        self, id_factory, blocking_commit, fact_registry
-    ):
-        draft_a = ExecutionDesignDraft(
-            curve_points=(
-                VisualCurvePointDraft(
-                    dramatic_beat_ordinal=1, intensity=10, explanation="low"
-                ),
-            ),
-            decisions=(
-                DecisionDraft(
-                    scope="a",
-                    basis=DecisionBasis.LOCKED,
-                    locked_by=("x",),
-                    options=("one",),
-                    selected_index=0,
-                    rationale="r",
-                    tradeoff="t",
-                ),
-            ),
-            shots=(
-                ShotDesignDraft(
-                    blocking_beat_ordinal=1,
-                    dramatic_function="a",
-                    attention_target="a",
-                    information_action="a",
-                    framing_intent="a",
-                    camera_pose="a",
-                    camera_motion="a",
-                    composition="a",
-                    lighting="a",
-                    performance="a",
-                    duration_weight=1,
-                    visual_beats=(
-                        VisualBeatDraft(
-                            phase=VisualBeatPhase.ENTRY,
-                            subject_state="a",
-                            attention="a",
-                            storyboard_role=StoryboardRole.REQUIRED,
-                        ),
-                    ),
-                ),
-            ),
-            transition_intents=(),
-            audio_intents=(),
-            reference_intents=(),
-            handoff_intent="a",
-        )
-        draft_b = ExecutionDesignDraft(
-            curve_points=(
-                VisualCurvePointDraft(
-                    dramatic_beat_ordinal=1, intensity=90, explanation="high"
-                ),
-            ),
-            decisions=(
-                DecisionDraft(
-                    scope="b",
-                    basis=DecisionBasis.LOCKED,
-                    locked_by=("y",),
-                    options=("two",),
-                    selected_index=0,
-                    rationale="r",
-                    tradeoff="t",
-                ),
-            ),
-            shots=(
-                ShotDesignDraft(
-                    blocking_beat_ordinal=1,
-                    dramatic_function="b",
-                    attention_target="b",
-                    information_action="b",
-                    framing_intent="b",
-                    camera_pose="b",
-                    camera_motion="b",
-                    composition="b",
-                    lighting="b",
-                    performance="b",
-                    duration_weight=2,
-                    visual_beats=(
-                        VisualBeatDraft(
-                            phase=VisualBeatPhase.ENTRY,
-                            subject_state="b",
-                            attention="b",
-                            storyboard_role=StoryboardRole.REQUIRED,
-                        ),
-                    ),
-                ),
-            ),
-            transition_intents=(),
-            audio_intents=(),
-            reference_intents=(),
-            handoff_intent="b",
-        )
-        vec_a = assemble_vec(
-            draft=draft_a,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        vec_b = assemble_vec(
-            draft=draft_b,
-            blocking_commit=blocking_commit,
-            facts=fact_registry,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-        )
-        assert vec_a.contract_id != vec_b.contract_id
+    assert ".statement" not in assembler_source
+    assert ".source_start" not in assembler_source
+    assert ".source_end" not in assembler_source
+    assert "duration_weight" not in allocator_source
+    assert "allocate_shot_ticks" not in allocator_source

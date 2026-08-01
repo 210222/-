@@ -1,102 +1,159 @@
-"""Deterministic local assembly of VisualExecutionContract from model drafts.
+"""Assemble the v3.0 Visual Execution Contract from typed creative Drafts.
 
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §5.3–§5.5 / §14 A5.
-
-The model produces only an ExecutionDesignDraft (B1).  This assembler performs
-every machine step — IDs, hashes, ticks, boundaries, reference derivation,
-audio synthesis, safety constants, and invariant validation — so the final
-VisualExecutionContract carries zero model-generated machine fields.
+The director Draft is deliberately non-executable: it contains creative
+choices, duration intents, and opaque typed binding handles only.  This module
+is the sole authority that creates local IDs, hashes, ticks, placements,
+boundaries, resolved fact bindings, and the final VEC graph.
 """
 
 from __future__ import annotations
 
-from mode_p_vnext.domain.artifact import (
-    ArtifactKind,
-    DomainValidationError,
-    canonical_sha256,
-)
+from mode_p_vnext.domain.artifact import ArtifactKind, DomainValidationError, canonical_sha256
 from mode_p_vnext.domain.blocking import BlockingCommit
-from mode_p_vnext.domain.decisions import (
-    DecisionDraft,
-    DirectorDecision,
-    VisualCurvePoint,
-    VisualCurvePointDraft,
-)
-from mode_p_vnext.domain.facts import FactRegistry, ScriptFact
+from mode_p_vnext.domain.decisions import DirectorDecision, VisualCurvePoint
+from mode_p_vnext.domain.facts import FactRegistry, FactSemantic, ScriptFact
 from mode_p_vnext.domain.ids import IdFactory
-from mode_p_vnext.domain.time import CanonicalTimeline, TickRange
+from mode_p_vnext.domain.time import (
+    CanonicalTimeline,
+    GenerationCapabilityProfile,
+    TickMarker,
+    TickRange,
+)
 from mode_p_vnext.domain.vec import (
     AudioEvent,
     ExecutionDesignDraft,
-    GenerationSegment,
+    GenerationUnit,
+    PlacementPhase,
     ReferenceRequirement,
+    ReferenceResponsibility,
     ShotBoundary,
-    ShotDesignDraft,
-    StoryboardRole,
     VisualBeat,
-    VisualBeatDraft,
-    VisualBeatPhase,
     VisualExecutionContract,
     VisualShot,
     VoiceRequirement,
 )
-from mode_p_vnext.services.timeline_allocator import allocate_shot_ticks
+from mode_p_vnext.services.timeline_allocator import allocate_shot_timelines
 
 
-# ---------------------------------------------------------------------------
-# Fact categorisation (deterministic, convention-based)
-# ---------------------------------------------------------------------------
+_REFERENCE_SEMANTICS: dict[ReferenceResponsibility, frozenset[FactSemantic]] = {
+    ReferenceResponsibility.CHARACTER_IDENTITY: frozenset({FactSemantic.CHARACTER}),
+    ReferenceResponsibility.WARDROBE_CONTINUITY: frozenset({FactSemantic.WARDROBE}),
+    ReferenceResponsibility.PROP_IDENTITY: frozenset({FactSemantic.PROP}),
+    ReferenceResponsibility.SETTING_CONTINUITY: frozenset({FactSemantic.SETTING}),
+    ReferenceResponsibility.FIRST_FRAME: frozenset(
+        {
+            FactSemantic.CHARACTER,
+            FactSemantic.WARDROBE,
+            FactSemantic.PROP,
+            FactSemantic.SETTING,
+            FactSemantic.ASSET,
+        }
+    ),
+    ReferenceResponsibility.LAST_FRAME: frozenset(
+        {
+            FactSemantic.CHARACTER,
+            FactSemantic.WARDROBE,
+            FactSemantic.PROP,
+            FactSemantic.SETTING,
+            FactSemantic.ASSET,
+        }
+    ),
+}
 
-def _fact_scope_kind(fact: ScriptFact) -> str | None:
-    """Return 'character' | 'prop' | 'costume' | 'scene' | None.
 
-    Uses the fact_id prefix convention:
-        char_*     → character
-        prop_*     → prop
-        costume_*  → costume
-        scene_*    → scene / setting
-    """
-    prefixes = {
-        "char_": "character",
-        "prop_": "prop",
-        "costume_": "costume",
-        "scene_": "scene",
+def _local_id(
+    factory: IdFactory,
+    *,
+    episode_id: str,
+    scene_id: str,
+    stage: str,
+    input_digest: str,
+    ordinal: int,
+) -> str:
+    return factory.create(
+        artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
+        episode_id=episode_id,
+        scene_id=scene_id,
+        stage=stage,
+        input_digest=input_digest,
+        ordinal=ordinal,
+    )
+
+
+def _require_text(value: str | None, field_name: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise DomainValidationError(f"{field_name} must be non-empty")
+    return value
+
+
+def _require_fact_scope(facts: FactRegistry, *, episode_id: str, scene_id: str) -> None:
+    for fact in facts.facts:
+        if (
+            fact.qualifiers.episode_id != episode_id
+            or fact.qualifiers.scene_id != scene_id
+        ):
+            raise DomainValidationError("every resolved fact must belong to the VEC episode and scene")
+
+
+def _resolve_reference_fact(
+    facts: FactRegistry,
+    *,
+    fact_handle: str,
+    responsibility: ReferenceResponsibility,
+) -> ScriptFact:
+    fact = facts.by_handle(fact_handle)
+    if fact.semantic not in _REFERENCE_SEMANTICS[responsibility]:
+        raise DomainValidationError(
+            "typed reference responsibility is incompatible with the resolved fact semantic"
+        )
+    return fact
+
+
+def _resolve_dialogue_fact(facts: FactRegistry, *, fact_handle: str) -> ScriptFact:
+    fact = facts.by_handle(fact_handle)
+    if fact.semantic is not FactSemantic.DIALOGUE:
+        raise DomainValidationError("DialogueBindingIntent must resolve a dialogue fact")
+    _require_text(fact.qualifiers.subject_label, "dialogue subject_label")
+    _require_text(fact.qualifiers.spoken_text, "dialogue spoken_text")
+    return fact
+
+
+def _marker_for(phase: PlacementPhase, interval: TickRange) -> TickMarker:
+    """Place dialogue only from the target VisualBeat's local tick interval."""
+
+    duration = interval.duration_ticks
+    offsets = {
+        PlacementPhase.OPENING: 0,
+        PlacementPhase.EARLY: duration // 4,
+        PlacementPhase.MIDDLE: duration // 2,
+        PlacementPhase.LATE: (duration * 3) // 4,
+        PlacementPhase.CLOSING: duration - 1,
     }
-    for prefix, kind in prefixes.items():
-        if fact.fact_id.startswith(prefix):
-            return kind
-    return None
+    return TickMarker(interval.start_tick + offsets[phase])
 
 
-def _is_dialogue_fact(fact: ScriptFact) -> bool:
-    """Return True when the fact carries script dialogue."""
-    return fact.fact_id.startswith("dialogue_")
+def _partition_visual_beats(duration_ticks: int, beat_count: int) -> tuple[TickRange, ...]:
+    if beat_count < 1 or beat_count > duration_ticks:
+        raise DomainValidationError("VisualBeats must fit as non-empty local tick intervals")
+    base, remainder = divmod(duration_ticks, beat_count)
+    cursor = 0
+    intervals: list[TickRange] = []
+    for index in range(beat_count):
+        size = base + (1 if index < remainder else 0)
+        intervals.append(TickRange(cursor, cursor + size))
+        cursor += size
+    return tuple(intervals)
 
 
-def _speaker_from_dialogue(fact: ScriptFact) -> str:
-    """Extract a speaker label from a dialogue fact's statement.
+def _vec_output_digest(**fields: object) -> str:
+    """Hash the complete final VEC projection excluding this digest itself.
 
-    Expects statements like 'CHAR_NAME: ...' or '角色名：...'.
+    Excluding only ``canonical_output_sha256`` avoids a self-referential hash
+    while preserving a reproducible digest of every other final contract field.
     """
-    statement = fact.statement
-    for sep in (":", "：", "—"):
-        if sep in statement:
-            return statement.split(sep, 1)[0].strip()
-    return "unknown"
 
+    return canonical_sha256(fields)
 
-def _dialogue_text(fact: ScriptFact) -> str:
-    """Extract the spoken text from a dialogue fact's statement."""
-    statement = fact.statement
-    for sep in (":", "：", "—"):
-        if sep in statement:
-            return statement.split(sep, 1)[1].strip()
-    return statement
-
-
-# ---------------------------------------------------------------------------
-# VEC assembly
-# ---------------------------------------------------------------------------
 
 def assemble_vec(
     *,
@@ -107,34 +164,68 @@ def assemble_vec(
     scene_id: str,
     id_factory: IdFactory,
     program_version: str,
-    schema_version: str = "2.1",
-    execution_design_artifact_id: str = "",
-    blocking_commit_artifact_id: str = "",
+    capability_profile: GenerationCapabilityProfile | None = None,
+    execution_design_artifact_id: str | None = None,
+    blocking_commit_artifact_id: str | None = None,
 ) -> VisualExecutionContract:
-    """Produce the sole machine-readable creative authority for both projections.
+    """Create the sole local executable authority from approved typed inputs.
 
-    The model's ExecutionDesignDraft supplies creative choices only.
-    Everything else — IDs, ticks, boundaries, references, audio, safety
-    constants — is assembled deterministically here so that identical
-    inputs always produce an identical VisualExecutionContract.
+    No legacy compatibility surface is retained.  Callers must supply v3
+    domain values; invalid scope, handle, semantic, or graph relationships fail
+    before a VEC is emitted.
     """
 
-    # -- 0.  stable input digest for rebuild determinism ----------------------
+    if not isinstance(draft, ExecutionDesignDraft):
+        raise DomainValidationError("draft must be an ExecutionDesignDraft")
+    if not isinstance(blocking_commit, BlockingCommit):
+        raise DomainValidationError("blocking_commit must be a BlockingCommit")
+    if not isinstance(facts, FactRegistry):
+        raise DomainValidationError("facts must be a FactRegistry")
+    if not isinstance(id_factory, IdFactory):
+        raise DomainValidationError("id_factory must be an IdFactory")
+    _require_text(episode_id, "episode_id")
+    _require_text(scene_id, "scene_id")
+    _require_text(program_version, "program_version")
+    if id_factory.program_version != program_version:
+        raise DomainValidationError("id_factory program_version must match the approved VEC program_version")
+    if blocking_commit.scene_id != scene_id:
+        raise DomainValidationError("blocking_commit scene_id must match the VEC scene")
+    _require_fact_scope(facts, episode_id=episode_id, scene_id=scene_id)
+
+    profile = capability_profile or GenerationCapabilityProfile.sd20_default()
+    if not isinstance(profile, GenerationCapabilityProfile):
+        raise DomainValidationError("capability_profile must be canonical")
+    supplied_execution_id = execution_design_artifact_id
+    supplied_blocking_id = blocking_commit_artifact_id
+    if supplied_execution_id is not None:
+        _require_text(supplied_execution_id, "execution_design_artifact_id")
+    if supplied_blocking_id is not None:
+        _require_text(supplied_blocking_id, "blocking_commit_artifact_id")
+
     input_digest = canonical_sha256(
         {
-            "draft_payload": draft,
-            "blocking_commit_payload": blocking_commit,
-            "facts_payload": facts,
+            "draft": draft,
+            "blocking_commit": blocking_commit,
+            "facts": facts,
             "episode_id": episode_id,
             "scene_id": scene_id,
             "program_version": program_version,
-            "schema_version": schema_version,
+            "capability_profile": profile,
+            "execution_design_artifact_id": supplied_execution_id,
+            "blocking_commit_artifact_id": supplied_blocking_id,
         }
     )
-
-    # -- 1.  contract and dependency artifact identities ----------------------
-    contract_id = id_factory.create(
-        artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
+    execution_id = supplied_execution_id or _local_id(
+        id_factory,
+        episode_id=episode_id,
+        scene_id=scene_id,
+        stage="B1:execution-design",
+        input_digest=input_digest,
+        ordinal=0,
+    )
+    blocking_id = supplied_blocking_id or blocking_commit.commit_id
+    contract_id = _local_id(
+        id_factory,
         episode_id=episode_id,
         scene_id=scene_id,
         stage="B1:vec",
@@ -142,523 +233,329 @@ def assemble_vec(
         ordinal=0,
     )
 
-    if not execution_design_artifact_id:
-        execution_design_artifact_id = id_factory.create(
-            artifact_kind=ArtifactKind.EXECUTION_DESIGN_DRAFT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1",
-            input_digest=input_digest,
-            ordinal=0,
-        )
-
-    if not blocking_commit_artifact_id:
-        blocking_commit_artifact_id = id_factory.create(
-            artifact_kind=ArtifactKind.BLOCKING_COMMIT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B0",
-            input_digest=canonical_sha256(blocking_commit),
-            ordinal=0,
-        )
-
-    # -- 2.  resolve blocking beat ordinals → IDs -----------------------------
-    beat_by_ordinal: dict[int, str] = {
-        beat.source_ordinal: beat.beat_id for beat in blocking_commit.beats
-    }
-
-    def _resolve_beat(ordinal: int) -> str:
-        if ordinal not in beat_by_ordinal:
-            raise DomainValidationError(
-                f"B1 shot references blocking ordinal {ordinal} "
-                f"which does not exist in the BlockingCommit"
-            )
-        return beat_by_ordinal[ordinal]
-
-    # -- 3.  curve points -----------------------------------------------------
-    curve_points = _assemble_curve_points(
-        draft.curve_points,
-        beat_by_ordinal,
-        id_factory,
-        episode_id,
-        scene_id,
-        input_digest,
-    )
-
-    # -- 4.  decisions --------------------------------------------------------
-    decisions = _assemble_decisions(
-        draft.decisions,
-        id_factory,
-        episode_id,
-        scene_id,
-        input_digest,
-    )
-
-    # -- 5.  timeline allocation ----------------------------------------------
-    weights = tuple(shot.duration_weight for shot in draft.shots)
-    segment_timeline, shot_ranges = allocate_shot_ticks(weights)
-
-    # -- 6.  one generation segment per scene ---------------------------------
-    segment_id = id_factory.create(
-        artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-        episode_id=episode_id,
-        scene_id=scene_id,
-        stage="B1:segment",
-        input_digest=input_digest,
-        ordinal=1,
-    )
-
-    # -- 7.  visual shots -----------------------------------------------------
-    shots, shot_ids = _assemble_shots(
-        draft.shots,
-        shot_ranges,
-        beat_by_ordinal,
-        segment_id,
-        decisions,
-        id_factory,
-        episode_id,
-        scene_id,
-        input_digest,
-    )
-
-    segment = GenerationSegment(
-        segment_id=segment_id,
-        timeline=segment_timeline,
-        shot_ids=shot_ids,
-    )
-
-    # -- 8.  shot boundaries (N shots → N-1 boundaries) -----------------------
-    boundaries = _assemble_boundaries(
-        draft.transition_intents,
-        shots,
-        segment_id,
-        decisions,
-        id_factory,
-        episode_id,
-        scene_id,
-        input_digest,
-    )
-
-    # -- 9.  reference requirements -------------------------------------------
-    reference_requirements = _derive_references(
-        facts,
-        id_factory,
-        episode_id,
-        scene_id,
-        input_digest,
-    )
-
-    # -- 10.  audio events + voice requirements -------------------------------
-    audio_events, voice_requirements = _derive_audio(
-        facts,
-        segment_id,
-        id_factory,
-        episode_id,
-        scene_id,
-        input_digest,
-    )
-
-    # -- 11.  handoff ---------------------------------------------------------
-    handoff_intent = draft.handoff_intent
-
-    # -- 12.  source fact ids -------------------------------------------------
-    source_fact_ids = tuple(fact.fact_id for fact in facts.facts)
-
-    # -- 13.  publish (domain __post_init__ runs full invariant validation) ---
-    return VisualExecutionContract(
-        contract_id=contract_id,
-        scene_id=scene_id,
-        execution_design_artifact_id=execution_design_artifact_id,
-        blocking_commit_artifact_id=blocking_commit_artifact_id,
-        source_fact_ids=source_fact_ids,
-        timeline=CanonicalTimeline(),
-        curve_points=curve_points,
-        decisions=decisions,
-        segments=(segment,),
-        shots=shots,
-        boundaries=boundaries,
-        audio_events=audio_events,
-        voice_requirements=voice_requirements,
-        reference_requirements=reference_requirements,
-        handoff_intent=handoff_intent,
-    )
-
-
-# ---------------------------------------------------------------------------
-# Internal helpers
-# ---------------------------------------------------------------------------
-
-def _assemble_curve_points(
-    drafts: tuple[VisualCurvePointDraft, ...],
-    beat_by_ordinal: dict[int, str],
-    id_factory: IdFactory,
-    episode_id: str,
-    scene_id: str,
-    input_digest: str,
-) -> tuple[VisualCurvePoint, ...]:
-    points: list[VisualCurvePoint] = []
-    for i, d in enumerate(drafts, start=1):
-        blocking_beat_id = beat_by_ordinal.get(d.dramatic_beat_ordinal)
-        if blocking_beat_id is None:
-            raise DomainValidationError(
-                f"curve point {i} references blocking ordinal "
-                f"{d.dramatic_beat_ordinal} which does not exist"
-            )
-        point_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1:curve",
-            input_digest=input_digest,
-            ordinal=i,
-        )
-        points.append(
+    blocking_by_ordinal = {beat.source_ordinal: beat for beat in blocking_commit.beats}
+    curve_points: list[VisualCurvePoint] = []
+    for ordinal, point in enumerate(draft.curve_points, start=1):
+        try:
+            blocking_beat = blocking_by_ordinal[point.dramatic_beat_ordinal]
+        except KeyError as exc:
+            raise DomainValidationError("VisualCurvePointDraft references an unknown BlockingBeat") from exc
+        curve_points.append(
             VisualCurvePoint(
-                point_id=point_id,
-                source_curve_ordinal=i,
-                blocking_beat_id=blocking_beat_id,
-                intensity=d.intensity,
-                explanation=d.explanation,
+                point_id=_local_id(
+                    id_factory,
+                    episode_id=episode_id,
+                    scene_id=scene_id,
+                    stage="B1:curve-point",
+                    input_digest=input_digest,
+                    ordinal=ordinal,
+                ),
+                source_curve_ordinal=ordinal,
+                blocking_beat_id=blocking_beat.beat_id,
+                intensity=point.intensity,
+                explanation=point.explanation,
             )
         )
-    return tuple(points)
 
-
-def _assemble_decisions(
-    drafts: tuple[DecisionDraft, ...],
-    id_factory: IdFactory,
-    episode_id: str,
-    scene_id: str,
-    input_digest: str,
-) -> tuple[DirectorDecision, ...]:
     decisions: list[DirectorDecision] = []
-    for i, d in enumerate(drafts, start=1):
-        decision_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1:decision",
-            input_digest=input_digest,
-            ordinal=i,
-        )
+    for ordinal, decision in enumerate(draft.decisions, start=1):
         decisions.append(
             DirectorDecision(
-                decision_id=decision_id,
-                source_decision_ordinal=i,
-                scope=d.scope,
-                basis=d.basis,
-                locked_by=d.locked_by,
-                options=d.options,
-                selected_index=d.selected_index,
-                rationale=d.rationale,
-                tradeoff=d.tradeoff,
+                decision_id=_local_id(
+                    id_factory,
+                    episode_id=episode_id,
+                    scene_id=scene_id,
+                    stage="B1:decision",
+                    input_digest=input_digest,
+                    ordinal=ordinal,
+                ),
+                source_decision_ordinal=ordinal,
+                scope=decision.scope,
+                basis=decision.basis,
+                locked_by=decision.locked_by,
+                options=decision.options,
+                selected_index=decision.selected_index,
+                rationale=decision.rationale,
+                tradeoff=decision.tradeoff,
             )
         )
-    return tuple(decisions)
+    decision_ids = tuple(item.decision_id for item in decisions)
 
-
-def _assemble_shots(
-    shot_drafts: tuple[ShotDesignDraft, ...],
-    shot_ranges: tuple[TickRange, ...],
-    beat_by_ordinal: dict[int, str],
-    segment_id: str,
-    decisions: tuple[DirectorDecision, ...],
-    id_factory: IdFactory,
-    episode_id: str,
-    scene_id: str,
-    input_digest: str,
-) -> tuple[tuple[VisualShot, ...], tuple[str, ...]]:
-    decision_ids = tuple(d.decision_id for d in decisions)
-
-    shots: list[VisualShot] = []
-    shot_ids: list[str] = []
-
-    for i, (draft, tick_range) in enumerate(zip(shot_drafts, shot_ranges), start=1):
-        shot_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
+    shot_ids = tuple(
+        _local_id(
+            id_factory,
             episode_id=episode_id,
             scene_id=scene_id,
             stage="B1:shot",
             input_digest=input_digest,
-            ordinal=i,
+            ordinal=shot.shot_ordinal,
         )
-
-        blocking_beat_id = beat_by_ordinal.get(draft.blocking_beat_ordinal)
-        if blocking_beat_id is None:
-            raise DomainValidationError(
-                f"shot {i} references blocking ordinal "
-                f"{draft.blocking_beat_ordinal} which does not exist"
-            )
-
-        visual_beats = _assemble_visual_beats(
-            draft.visual_beats,
-            shot_id,
-            tick_range,
+        for shot in draft.shots
+    )
+    unit_ids = tuple(
+        _local_id(
             id_factory,
-            episode_id,
-            scene_id,
-            input_digest,
-            i,
+            episode_id=episode_id,
+            scene_id=scene_id,
+            stage="B1:generation-unit",
+            input_digest=input_digest,
+            ordinal=shot.shot_ordinal,
         )
+        for shot in draft.shots
+    )
+    scene_timeline, unit_timelines = allocate_shot_timelines(
+        scene_id=scene_id,
+        generation_unit_ids=unit_ids,
+        duration_intents=tuple(shot.duration_intent for shot in draft.shots),
+        capability_profile=profile,
+    )
+    placement_by_unit = {
+        placement.scope_id: placement
+        for placement in scene_timeline.generation_unit_placements
+    }
+    generation_units = tuple(
+        GenerationUnit(
+            unit_id=unit_id,
+            shot_id=shot_id,
+            generation_mode=shot.generation_mode,
+            timeline=unit_timeline,
+            scene_placement=placement_by_unit[unit_id],
+        )
+        for shot_id, unit_id, shot, unit_timeline in zip(
+            shot_ids, unit_ids, draft.shots, unit_timelines
+        )
+    )
 
-        shots.append(
-            VisualShot(
-                shot_id=shot_id,
-                segment_id=segment_id,
-                source_shot_ordinal=i,
-                blocking_beat_id=blocking_beat_id,
-                interval=tick_range,
-                dramatic_function=draft.dramatic_function,
-                attention_target=draft.attention_target,
-                information_action=draft.information_action,
-                framing_intent=draft.framing_intent,
-                camera_pose=draft.camera_pose,
-                camera_motion=draft.camera_motion,
-                composition=draft.composition,
-                lighting=draft.lighting,
-                performance=draft.performance,
-                visual_beats=visual_beats,
-                decision_ids=decision_ids,
-                reference_requirement_ids=(),
-                audio_event_ids=(),
+    shots: list[VisualShot] = []
+    audio_events: list[AudioEvent] = []
+    voice_requirements: list[VoiceRequirement] = []
+    reference_requirements: list[ReferenceRequirement] = []
+    for shot_draft, shot_id, unit_id, unit_timeline in zip(
+        draft.shots, shot_ids, unit_ids, unit_timelines
+    ):
+        try:
+            blocking_beat = blocking_by_ordinal[shot_draft.blocking_beat_ordinal]
+        except KeyError as exc:
+            raise DomainValidationError("ShotDesignDraft references an unknown BlockingBeat") from exc
+
+        intervals = _partition_visual_beats(
+            unit_timeline.duration_ticks, len(shot_draft.visual_beats)
+        )
+        beat_ids = tuple(
+            _local_id(
+                id_factory,
+                episode_id=episode_id,
+                scene_id=scene_id,
+                stage=f"B1:shot-{shot_draft.shot_ordinal}:visual-beat",
+                input_digest=input_digest,
+                ordinal=beat_draft.visual_beat_ordinal,
             )
+            for beat_draft in shot_draft.visual_beats
         )
-        shot_ids.append(shot_id)
-
-    return tuple(shots), tuple(shot_ids)
-
-
-def _assemble_visual_beats(
-    beat_drafts: tuple[VisualBeatDraft, ...],
-    shot_id: str,
-    shot_range: TickRange,
-    id_factory: IdFactory,
-    episode_id: str,
-    scene_id: str,
-    input_digest: str,
-    shot_ordinal: int,
-) -> tuple[VisualBeat, ...]:
-    total_duration = shot_range.duration_ticks
-    beat_count = len(beat_drafts)
-
-    beats: list[VisualBeat] = []
-    cursor = shot_range.start_tick
-
-    for j, draft in enumerate(beat_drafts):
-        # Divide remaining ticks equally among remaining beats.
-        remaining_beats = beat_count - j
-        beat_duration = max(1, (shot_range.end_tick - cursor) // remaining_beats)
-        beat_end = cursor + beat_duration
-        if j == beat_count - 1:
-            # Last beat consumes the rest.
-            beat_end = shot_range.end_tick
-
-        beat_interval = TickRange(start_tick=cursor, end_tick=beat_end)
-
-        beat_ordinal = shot_ordinal * 100 + j
-        beat_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1:visual_beat",
-            input_digest=input_digest,
-            ordinal=beat_ordinal,
+        state_ids = tuple(
+            _local_id(
+                id_factory,
+                episode_id=episode_id,
+                scene_id=scene_id,
+                stage=f"B1:shot-{shot_draft.shot_ordinal}:state",
+                input_digest=input_digest,
+                ordinal=ordinal,
+            )
+            for ordinal in range(0, len(shot_draft.visual_beats) + 1)
         )
+        reference_ids_by_beat: dict[str, list[str]] = {beat_id: [] for beat_id in beat_ids}
+        audio_ids_by_beat: dict[str, list[str]] = {beat_id: [] for beat_id in beat_ids}
+        shot_reference_ids: list[str] = []
+        shot_audio_ids: list[str] = []
 
-        start_state_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1:beat_state",
-            input_digest=input_digest,
-            ordinal=beat_ordinal * 2,
-        )
-        end_state_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1:beat_state",
-            input_digest=input_digest,
-            ordinal=beat_ordinal * 2 + 1,
-        )
+        for ordinal, intent in enumerate(shot_draft.reference_binding_intents, start=1):
+            fact = _resolve_reference_fact(
+                facts,
+                fact_handle=intent.fact_handle,
+                responsibility=intent.responsibility,
+            )
+            target_beat_id = (
+                None
+                if intent.visual_beat_ordinal is None
+                else beat_ids[intent.visual_beat_ordinal - 1]
+            )
+            requirement_id = _local_id(
+                id_factory,
+                episode_id=episode_id,
+                scene_id=scene_id,
+                stage=f"B1:shot-{shot_draft.shot_ordinal}:reference",
+                input_digest=input_digest,
+                ordinal=ordinal,
+            )
+            reference_requirements.append(
+                ReferenceRequirement(
+                    requirement_id=requirement_id,
+                    responsibility=intent.responsibility,
+                    source_fact_id=fact.fact_id,
+                    source_fact_handle=fact.fact_handle,
+                    shot_id=shot_id,
+                    visual_beat_id=target_beat_id,
+                )
+            )
+            shot_reference_ids.append(requirement_id)
+            if target_beat_id is not None:
+                reference_ids_by_beat[target_beat_id].append(requirement_id)
 
-        beats.append(
+        for ordinal, intent in enumerate(shot_draft.dialogue_binding_intents, start=1):
+            fact = _resolve_dialogue_fact(facts, fact_handle=intent.fact_handle)
+            target_beat_id = beat_ids[intent.visual_beat_ordinal - 1]
+            target_interval = intervals[intent.visual_beat_ordinal - 1]
+            event_id = _local_id(
+                id_factory,
+                episode_id=episode_id,
+                scene_id=scene_id,
+                stage=f"B1:shot-{shot_draft.shot_ordinal}:audio-event",
+                input_digest=input_digest,
+                ordinal=ordinal,
+            )
+            audio_events.append(
+                AudioEvent(
+                    event_id=event_id,
+                    source_fact_id=fact.fact_id,
+                    source_fact_handle=fact.fact_handle,
+                    shot_id=shot_id,
+                    visual_beat_id=target_beat_id,
+                    marker=_marker_for(intent.placement_phase, target_interval),
+                    placement_phase=intent.placement_phase,
+                    character_label=_require_text(fact.qualifiers.subject_label, "dialogue subject_label"),
+                    text=_require_text(fact.qualifiers.spoken_text, "dialogue spoken_text"),
+                )
+            )
+            voice_requirements.append(
+                VoiceRequirement(
+                    requirement_id=_local_id(
+                        id_factory,
+                        episode_id=episode_id,
+                        scene_id=scene_id,
+                        stage=f"B1:shot-{shot_draft.shot_ordinal}:voice-requirement",
+                        input_digest=input_digest,
+                        ordinal=ordinal,
+                    ),
+                    audio_event_id=event_id,
+                    character_label=_require_text(fact.qualifiers.subject_label, "dialogue subject_label"),
+                    shot_id=shot_id,
+                    visual_beat_id=target_beat_id,
+                )
+            )
+            shot_audio_ids.append(event_id)
+            audio_ids_by_beat[target_beat_id].append(event_id)
+
+        visual_beats = tuple(
             VisualBeat(
                 beat_id=beat_id,
                 shot_id=shot_id,
-                phase=draft.phase,
-                interval=beat_interval,
-                subject_state=draft.subject_state,
-                attention=draft.attention,
-                storyboard_role=draft.storyboard_role,
-                start_state_id=start_state_id,
-                end_state_id=end_state_id,
-                decision_ids=(),
+                source_visual_beat_ordinal=beat_draft.visual_beat_ordinal,
+                phase=beat_draft.phase,
+                interval=interval,
+                subject_state=beat_draft.subject_state,
+                attention=beat_draft.attention,
+                storyboard_role=beat_draft.storyboard_role,
+                start_state_id=state_ids[index],
+                end_state_id=state_ids[index + 1],
+                decision_ids=decision_ids,
+                reference_requirement_ids=tuple(reference_ids_by_beat[beat_id]),
+                audio_event_ids=tuple(audio_ids_by_beat[beat_id]),
+            )
+            for index, (beat_draft, beat_id, interval) in enumerate(
+                zip(shot_draft.visual_beats, beat_ids, intervals)
             )
         )
-        cursor = beat_end
-
-    # Chain state adjacency so domain validation passes.
-    chained: list[VisualBeat] = []
-    for k, beat in enumerate(beats):
-        if k == 0:
-            chained.append(beat)
-        else:
-            prev_end = chained[k - 1].end_state_id
-            chained.append(
-                VisualBeat(
-                    beat_id=beat.beat_id,
-                    shot_id=beat.shot_id,
-                    phase=beat.phase,
-                    interval=beat.interval,
-                    subject_state=beat.subject_state,
-                    attention=beat.attention,
-                    storyboard_role=beat.storyboard_role,
-                    start_state_id=prev_end,
-                    end_state_id=beat.end_state_id,
-                    decision_ids=beat.decision_ids,
-                )
+        shots.append(
+            VisualShot(
+                shot_id=shot_id,
+                generation_unit_id=unit_id,
+                source_shot_ordinal=shot_draft.shot_ordinal,
+                blocking_beat_id=blocking_beat.beat_id,
+                generation_mode=shot_draft.generation_mode,
+                interval=unit_timeline.interval,
+                composition=shot_draft.composition,
+                camera=shot_draft.camera,
+                lighting=shot_draft.lighting,
+                performance=shot_draft.performance,
+                creative_notes=shot_draft.creative_notes,
+                visual_beats=visual_beats,
+                decision_ids=decision_ids,
+                reference_requirement_ids=tuple(shot_reference_ids),
+                audio_event_ids=tuple(shot_audio_ids),
             )
+        )
 
-    return tuple(chained)
-
-
-def _assemble_boundaries(
-    transition_intents: tuple[str, ...],
-    shots: tuple[VisualShot, ...],
-    segment_id: str,
-    decisions: tuple[DirectorDecision, ...],
-    id_factory: IdFactory,
-    episode_id: str,
-    scene_id: str,
-    input_digest: str,
-) -> tuple[ShotBoundary, ...]:
-    if len(shots) < 2:
-        return ()
-
-    decision_ids = tuple(d.decision_id for d in decisions)
     boundaries: list[ShotBoundary] = []
-
-    for i, (left, right) in enumerate(zip(shots, shots[1:]), start=1):
-        boundary_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1:boundary",
-            input_digest=input_digest,
-            ordinal=i,
-        )
-        intent = (
-            transition_intents[i - 1]
-            if i - 1 < len(transition_intents)
-            else "cut"
-        )
+    for ordinal in range(0, len(shots) + 1):
+        if ordinal == 0:
+            from_shot_id = None
+            to_shot_id = shots[0].shot_id
+            scene_tick = generation_units[0].scene_placement.interval.start_tick
+            before_state_id = blocking_commit.entry_state_id
+            after_state_id = shots[0].visual_beats[0].start_state_id
+            transition_intent = "scene entrance"
+        elif ordinal == len(shots):
+            from_shot_id = shots[-1].shot_id
+            to_shot_id = None
+            scene_tick = generation_units[-1].scene_placement.interval.end_tick
+            before_state_id = shots[-1].visual_beats[-1].end_state_id
+            after_state_id = blocking_commit.exit_state_id
+            transition_intent = "scene exit"
+        else:
+            from_shot_id = shots[ordinal - 1].shot_id
+            to_shot_id = shots[ordinal].shot_id
+            scene_tick = generation_units[ordinal - 1].scene_placement.interval.end_tick
+            before_state_id = shots[ordinal - 1].visual_beats[-1].end_state_id
+            after_state_id = shots[ordinal].visual_beats[0].start_state_id
+            transition_intent = (
+                draft.transition_intents[ordinal - 1]
+                if ordinal - 1 < len(draft.transition_intents)
+                else "cut"
+            )
         boundaries.append(
             ShotBoundary(
-                boundary_id=boundary_id,
-                segment_id=segment_id,
-                from_shot_id=left.shot_id,
-                to_shot_id=right.shot_id,
-                transition_intent=intent,
+                boundary_id=_local_id(
+                    id_factory,
+                    episode_id=episode_id,
+                    scene_id=scene_id,
+                    stage="B1:boundary",
+                    input_digest=input_digest,
+                    ordinal=ordinal,
+                ),
+                boundary_ordinal=ordinal,
+                scene_tick=scene_tick,
+                from_shot_id=from_shot_id,
+                to_shot_id=to_shot_id,
+                before_state_id=before_state_id,
+                after_state_id=after_state_id,
+                transition_intent=transition_intent,
                 decision_ids=decision_ids,
             )
         )
 
-    return tuple(boundaries)
-
-
-def _derive_references(
-    facts: FactRegistry,
-    id_factory: IdFactory,
-    episode_id: str,
-    scene_id: str,
-    input_digest: str,
-) -> tuple[ReferenceRequirement, ...]:
-    """Derive ReferenceRequirements from character/prop/costume/scene facts."""
-    refs: list[ReferenceRequirement] = []
-    ordinal = 0
-
-    for fact in facts.facts:
-        scope_kind = _fact_scope_kind(fact)
-        if scope_kind is None:
-            continue
-        ordinal += 1
-        req_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1:reference",
-            input_digest=input_digest,
-            ordinal=ordinal,
-        )
-        refs.append(
-            ReferenceRequirement(
-                requirement_id=req_id,
-                role=scope_kind,
-                scope_kind=scope_kind,
-                scope_id=fact.fact_id,
-                source_fact_ids=(fact.fact_id,),
-            )
-        )
-
-    return tuple(refs)
-
-
-def _derive_audio(
-    facts: FactRegistry,
-    segment_id: str,
-    id_factory: IdFactory,
-    episode_id: str,
-    scene_id: str,
-    input_digest: str,
-) -> tuple[tuple[AudioEvent, ...], tuple[VoiceRequirement, ...]]:
-    """Generate AudioEvents from dialogue facts, each with a VoiceRequirement."""
-    audio_events: list[AudioEvent] = []
-    voice_reqs: list[VoiceRequirement] = []
-    ordinal = 0
-
-    for fact in facts.facts:
-        if not _is_dialogue_fact(fact):
-            continue
-        ordinal += 1
-        character_id = _speaker_from_dialogue(fact)
-        text = _dialogue_text(fact)
-
-        event_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1:audio_event",
-            input_digest=input_digest,
-            ordinal=ordinal,
-        )
-        # Dialogue events span a nominal range; the exact placement is
-        # refined by the projection layer.
-        audio_events.append(
-            AudioEvent(
-                event_id=event_id,
-                segment_id=segment_id,
-                interval=TickRange(start_tick=0, end_tick=1),
-                source_fact_id=fact.fact_id,
-                character_id=character_id,
-                text=text,
-            )
-        )
-
-        voice_id = id_factory.create(
-            artifact_kind=ArtifactKind.VISUAL_EXECUTION_CONTRACT,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage="B1:voice",
-            input_digest=input_digest,
-            ordinal=ordinal,
-        )
-        voice_reqs.append(
-            VoiceRequirement(
-                requirement_id=voice_id,
-                audio_event_id=event_id,
-                character_id=character_id,
-            )
-        )
-
-    return tuple(audio_events), tuple(voice_reqs)
+    final_fields = {
+        "contract_id": contract_id,
+        "episode_id": episode_id,
+        "scene_id": scene_id,
+        "execution_design_artifact_id": execution_id,
+        "blocking_commit_artifact_id": blocking_id,
+        "source_fact_ids": tuple(fact.fact_id for fact in facts.facts),
+        "approved_fact_handles": tuple(fact.fact_handle for fact in facts.facts),
+        "timeline": CanonicalTimeline(),
+        "scene_timeline": scene_timeline,
+        "capability_profile": profile,
+        "curve_points": tuple(curve_points),
+        "decisions": tuple(decisions),
+        "generation_units": generation_units,
+        "shots": tuple(shots),
+        "boundaries": tuple(boundaries),
+        "audio_events": tuple(audio_events),
+        "voice_requirements": tuple(voice_requirements),
+        "reference_requirements": tuple(reference_requirements),
+        "handoff_intent": draft.handoff_intent,
+        "canonical_input_sha256": input_digest,
+    }
+    return VisualExecutionContract(
+        **final_fields,
+        canonical_output_sha256=_vec_output_digest(**final_fields),
+    )

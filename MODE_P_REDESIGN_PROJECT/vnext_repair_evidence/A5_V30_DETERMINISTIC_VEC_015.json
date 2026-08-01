@@ -1,0 +1,176 @@
+{
+  "schema_version": "3.0",
+  "record_type": "mode_p_vnext_a5_deterministic_vec",
+  "task_id": "A5",
+  "run_id": "codex-a5-v30-vec-20260801",
+  "architecture_version": "3.0",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "SOLE_NORMATIVE_BASELINE",
+    "applicable_sections": [
+      "section 7 BlockingCommit and local state authority",
+      "section 8 Draft/intent boundary and typed bindings",
+      "section 9 VEC, time, boundary, and generation-unit invariants",
+      "section 15 A5",
+      "section 16 acceptance invariants"
+    ]
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/blocking_assembler.py",
+    "01_调度器/mode_p_vnext/services/timeline_allocator.py",
+    "01_调度器/mode_p_vnext/services/vec_assembler.py",
+    "01_调度器/mode_p_vnext/tests/test_a5_vec_assembly.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A5_V30_DETERMINISTIC_VEC_015.json"
+  ],
+  "root_cause": "The former A5 implementation was a v2.0 consumer of removed GenerationSegmentTimeline and GenerationSegment types. It allowed model-authored duration weights, inferred reference and dialogue bindings from fact-ID prefixes and narrative text, and modeled a whole scene as one bounded segment. Those mechanisms contradict the frozen v3.0 contract where Drafts carry only creative choices and local deterministic code owns IDs, hashes, per-shot time, boundaries, binding resolution, and VEC assembly.",
+  "alternatives_considered": [
+    {
+      "option": "Restore v2 GenerationSegment or GenerationSegmentTimeline aliases.",
+      "decision": "rejected",
+      "reason": "Aliases would create a second time/domain authority and reintroduce scene-wide generation semantics prohibited by v3.0."
+    },
+    {
+      "option": "Keep duration_weight as a compatibility input and translate it locally.",
+      "decision": "rejected",
+      "reason": "It preserves a model-controlled numeric timing surface instead of the frozen DurationIntent plus GenerationCapabilityProfile authority."
+    },
+    {
+      "option": "Automatically bind every fact or infer bindings from fact IDs or descriptive text.",
+      "decision": "rejected",
+      "reason": "A fact registry is provenance, not an execution binding instruction. Only explicit typed intents with approved opaque handles may create a reference or audio requirement."
+    },
+    {
+      "option": "Limit every Scene to the 15-second generator maximum.",
+      "decision": "rejected",
+      "reason": "The v3.0 cap belongs to each GenerationUnit/shot; SceneTimeline must be able to place multiple adjacent units beyond that cap."
+    }
+  ],
+  "repair": [
+    "Replaced the duration-weight allocator with DurationIntent-to-GenerationCapabilityProfile mapping. Each local GenerationUnit starts at tick zero, observes its own capability maximum, and receives one deterministic adjacent SceneTimeline placement.",
+    "Replaced the former segment-based VEC assembler with a v3.0-only assembler. It creates opaque local IDs, input and structural output digests, one GenerationUnit per shot, local VisualBeat intervals, N+1 scene boundaries, and local state chains.",
+    "Resolved references only from ReferenceBindingIntent and dialogue only from DialogueBindingIntent. Both paths require an exact approved opaque fact handle; reference responsibility is checked against typed fact semantic, and dialogue uses only typed dialogue qualifiers.",
+    "Derived dialogue markers solely from the local target VisualBeat interval and PlacementPhase. Source provenance never participates in timing.",
+    "Kept BlockingCommit as local B0 authority, rebased its default schema marker to the canonical v3.0 domain version, and rejected an IdFactory program-version mismatch before assembly.",
+    "Removed the old A5 acceptance surface and replaced it with v3.0 invariants covering deterministic rebuilds, structural output hashes, per-shot caps, multi-unit scene duration, explicit VisualBeats, typed bindings, no automatic requirements, fail-closed semantic/handle errors, and absence of legacy inference paths."
+  ],
+  "checks": [
+    {
+      "name": "drafts_contain_creative_choices_only",
+      "exit_code": 0,
+      "evidence": "A5 accepts ExecutionDesignDraft/BlockingDraft fields only; duration selection is the DurationIntent enum and final IDs, ticks, placements, requirements, and boundaries are all created locally."
+    },
+    {
+      "name": "local_ids_hashes_and_ticks",
+      "exit_code": 0,
+      "evidence": "IdFactory produces all VEC entity IDs, the assembler calculates canonical input and structural output SHA-256 values, and tests recompute the output digest excluding only its self-reference."
+    },
+    {
+      "name": "local_binding_and_boundary_assembly",
+      "exit_code": 0,
+      "evidence": "The assembler resolves typed handles through FactRegistry and creates scene entrance, every cut, and scene exit boundaries locally with deterministic state linkage."
+    },
+    {
+      "name": "explicit_visual_beats",
+      "exit_code": 0,
+      "evidence": "Every ShotDesignDraft visual beat becomes a non-empty adjacent local VisualBeat interval that covers exactly its GenerationUnit timeline."
+    },
+    {
+      "name": "deterministic_vec_rebuild",
+      "exit_code": 0,
+      "evidence": "Two assemblies from identical approved inputs compare equal, including local IDs, timelines, graph fields, and canonical hashes."
+    },
+    {
+      "name": "typed_reference_binding",
+      "exit_code": 0,
+      "evidence": "ReferenceRequirement is emitted only for a typed ReferenceBindingIntent whose opaque handle resolves exactly and whose FactSemantic is compatible with its responsibility."
+    },
+    {
+      "name": "typed_dialogue_audio_binding",
+      "exit_code": 0,
+      "evidence": "AudioEvent and one matching VoiceRequirement are emitted only for DialogueBindingIntent resolving a typed DIALOGUE fact with typed speaker and spoken-text qualifiers."
+    },
+    {
+      "name": "no_fact_id_or_statement_parsing",
+      "exit_code": 0,
+      "evidence": "A5 static acceptance inspection rejects any assembler fact-ID prefix or statement access; resolution uses FactRegistry.by_handle and FactSemantic/FactQualifiers only."
+    },
+    {
+      "name": "per_shot_generation_cap",
+      "exit_code": 0,
+      "evidence": "GenerationUnitTimeline receives target ticks from GenerationCapabilityProfile and enforces its own max_generation_ticks."
+    },
+    {
+      "name": "scene_duration_not_capped_at_15s",
+      "exit_code": 0,
+      "evidence": "Two extended units deterministically form a 624000-tick SceneTimeline while each remains under the 360000-tick per-unit capability cap."
+    },
+    {
+      "name": "dialogue_phase_tick_placement",
+      "exit_code": 0,
+      "evidence": "OPENING/EARLY/MIDDLE/LATE/CLOSING map deterministically inside the target VisualBeat; the MIDDLE test proves the resulting marker."
+    },
+    {
+      "name": "source_span_never_used_as_timing",
+      "exit_code": 0,
+      "evidence": "Changing only dialogue provenance positions leaves the local dialogue marker unchanged; static acceptance rejects source-span member access in the assembler."
+    },
+    {
+      "name": "requirements_bound_to_shot_or_beat",
+      "exit_code": 0,
+      "evidence": "References resolve to the declared shot or declared beat, while audio and voice requirements resolve to one declared shot and one declared beat with bidirectional VEC back-references."
+    },
+    {
+      "name": "free_text_intents_not_bound",
+      "exit_code": 0,
+      "evidence": "With no typed binding intents, a populated FactRegistry creates zero reference, audio, or voice requirements; retired free-text audio/reference draft fields do not exist."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a5_vec_assembly",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_a5_vec_assembly.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "11 passed in 0.24s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_a5_registered_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "exit_code": 0,
+      "summary": "86 passed in 5.96s across A0 release control, A1 domain, A2 persistent graph, A3 knowledge flow, A4 provider, and A5 VEC assembly."
+    },
+    {
+      "name": "a5_static_legacy_and_patch_check",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "exit_code": 0,
+      "summary": "A5 service sources contain no removed segment imports, duration_weight allocation, fact-ID prefix inference, statement parsing, or source-span timing access; git diff --check passed."
+    }
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_调度器/mode_p_vnext/services/blocking_assembler.py": "1989ec44313895397827fdaffecc6d03eaf0c293073b8db0f7c1103e3c5ec324",
+    "01_调度器/mode_p_vnext/services/timeline_allocator.py": "b269e9b74d5902906d3b0134f85b173f6d518bebf8af5788ce0ea04d34f93590",
+    "01_调度器/mode_p_vnext/services/vec_assembler.py": "3d46a268780d0400db909b4f7309e651baa39546720f4d905d7c6163d5960f3b",
+    "01_调度器/mode_p_vnext/tests/test_a5_vec_assembly.py": "f869233ab18d111ef27da1611e64506f8d1999f98a38d6589987df42f46c1bf6"
+  },
+  "authority_boundary": {
+    "model_authority": "Draft and intent only; deterministic local code owns IDs, hashes, time, placements, boundaries, resolved bindings, GenerationUnits, and the VEC.",
+    "binding_authority": "Only typed ReferenceBindingIntent and DialogueBindingIntent with exact approved opaque handles establish requirements. Free text and unbound facts never establish a binding.",
+    "time_authority": "GenerationCapabilityProfile maps DurationIntent to per-unit ticks. SceneTimeline is a local placement graph and never applies a scene-wide generator cap.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No ProjectionAST, delivery adapter, media, A6, A7, A8, A9, or A10 work was started.",
+    "No v4 production path, production switch, external runtime, or external media invocation was modified or enabled.",
+    "No user-owned pre-existing worktree change outside the A5 allowed paths was modified or staged."
+  ],
+  "director_runtime_started": false,
+  "external_submission": false,
+  "media_visual_acceptance": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false
+}
