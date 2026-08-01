@@ -2,7 +2,7 @@
 
 The legacy retrieval module is intentionally used only as a metadata search
 adapter.  This service is the sole K1/K2 boundary: it converts candidates into
-the v2.1 domain types, seals the complete selection in an ArtifactEnvelope,
+the v2.2 domain types, seals the complete selection in an ArtifactEnvelope,
 and never lets raw source text or retriever-side conflict resolution enter the
 Director view.
 """
@@ -14,6 +14,7 @@ from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
 from mode_p_vnext.domain.artifact import (
+    DOMAIN_SCHEMA_VERSION,
     ArtifactEnvelope,
     ArtifactKind,
     DomainValidationError,
@@ -40,8 +41,8 @@ from mode_p_vnext.knowledge_flow import (
 from mode_p_vnext.schema.scene_diagnosis import SceneDiagnosis
 
 
-_SCHEMA_VERSION = "2.1"
-_PROGRAM_VERSION = "mode-p-vnext-2.1"
+_SCHEMA_VERSION = DOMAIN_SCHEMA_VERSION
+_PROGRAM_VERSION = f"mode-p-vnext-{_SCHEMA_VERSION}"
 
 
 class KnowledgePromotionError(ValueError):
@@ -86,6 +87,24 @@ class VerifiedBlockingCommit:
         _non_empty_text(self.artifact_id, "artifact_id")
         require_sha256(self.content_sha256, "content_sha256")
         require_sha256(self.verification_digest, "verification_digest")
+
+    @property
+    def binding_digest(self) -> str:
+        """Hash every identity field that proves the K2 transition boundary.
+
+        ``content_sha256`` alone is insufficient: two accepted artifacts can
+        have identical payload bytes while differing in artifact identity or
+        verification evidence.  The K2 snapshot must bind all three values.
+        """
+
+        return canonical_sha256(
+            {
+                "scene_id": self.scene_id,
+                "artifact_id": self.artifact_id,
+                "content_sha256": self.content_sha256,
+                "verification_digest": self.verification_digest,
+            }
+        )
 
 
 @dataclass(frozen=True)
@@ -350,6 +369,7 @@ def _retrieval_input_digest(
     catalog: KnowledgeCatalog,
     policy: RetrievalPolicy,
     blocking_commit_digest: str | None,
+    blocking_commit_binding_digest: str | None,
     k1_principles: Sequence[str],
 ) -> str:
     return canonical_sha256(
@@ -374,6 +394,7 @@ def _retrieval_input_digest(
                 "ranking_version": policy.ranking_version,
             },
             "blocking_commit_digest": blocking_commit_digest,
+            "blocking_commit_binding_digest": blocking_commit_binding_digest,
             "k1_principles": tuple(k1_principles),
         }
     )
@@ -398,6 +419,11 @@ def _verify_snapshot_envelope(snapshot: ArtifactEnvelope[KnowledgeSnapshot]) -> 
         return False
     if snapshot.artifact_kind is not ArtifactKind.KNOWLEDGE_SNAPSHOT:
         return False
+    if (
+        snapshot.schema_version != _SCHEMA_VERSION
+        or snapshot.program_version != _PROGRAM_VERSION
+    ):
+        return False
     if type(snapshot.payload) is not KnowledgeSnapshot:
         return False
     try:
@@ -419,7 +445,7 @@ class KnowledgeRetriever:
 
     Searching remains a metadata-only adapter.  The adapter cannot become a
     second knowledge authority: all Director-visible values and replayable
-    state are instantiated from the v2.1 domain module below.
+    state are instantiated from the v2.2 domain module below.
     """
 
     def __init__(self, *, policy: RetrievalPolicy | None = None) -> None:
@@ -544,6 +570,9 @@ class KnowledgeRetriever:
             ),
         )
         blocking_digest = blocking_commit.content_sha256 if blocking_commit else None
+        blocking_binding_digest = (
+            blocking_commit.binding_digest if blocking_commit else None
+        )
         retrieval_input_digest = _retrieval_input_digest(
             diagnosis=diagnosis,
             context=context,
@@ -551,6 +580,7 @@ class KnowledgeRetriever:
             catalog=catalog,
             policy=self._policy,
             blocking_commit_digest=blocking_digest,
+            blocking_commit_binding_digest=blocking_binding_digest,
             k1_principles=k1_principles,
         )
         security_event_digests = _unique_text(
@@ -588,6 +618,7 @@ class KnowledgeRetriever:
         }
         if blocking_digest is not None:
             dependencies["blocking_commit"] = blocking_digest
+            dependencies["blocking_commit_binding"] = blocking_binding_digest
         snapshot = ArtifactEnvelope.create(
             artifact_id=f"artifact:{snapshot_id}",
             artifact_kind=ArtifactKind.KNOWLEDGE_SNAPSHOT,
@@ -653,9 +684,11 @@ class KnowledgeRetriever:
                 {
                     "proposal_id": proposal.proposal_id,
                     "capsule_id": proposal.capsule.capsule_id,
+                    "capsule_digest": canonical_sha256(proposal.capsule),
                     "evidence_digests": proposal.evidence_digests,
                     "verifier_id": proposal.verifier_id,
                     "human_reviewer_id": proposal.human_reviewer_id,
+                    "human_approved": proposal.human_approved,
                     "media_observation_digests": proposal.media_observation_digests,
                     "outcome_attribution_digest": proposal.outcome_attribution_digest,
                     "pattern_candidate_digest": proposal.pattern_candidate_digest,

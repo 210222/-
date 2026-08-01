@@ -1,0 +1,115 @@
+{
+  "schema_version": "2.2",
+  "task_id": "A3",
+  "title": "Unify K1/K2 retrieval, snapshots, conflicts, and knowledge promotion",
+  "run_id": "codex-a3-v22-20260801",
+  "architecture_version": "2.2",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/knowledge_retriever.py",
+    "01_调度器/mode_p_vnext/tests/test_a3_knowledge_flow.py"
+  ],
+  "checks": [
+    {
+      "name": "single_k1_k2_implementation",
+      "exit_code": 0,
+      "evidence": "KnowledgeRetriever remains the sole canonical K1/K2 boundary and re-exports the A1 domain KnowledgeStage, KnowledgeDecisionView and KnowledgeSnapshot. knowledge_flow and knowledge_snapshot remain compatibility-only metadata receipt/archive adapters; the A3 AST test confirms neither declares a second runtime KnowledgeSnapshot."
+    },
+    {
+      "name": "replayable_snapshot",
+      "exit_code": 0,
+      "evidence": "Each canonical KnowledgeSnapshot is sealed in an ArtifactEnvelope using the current v2.2 domain schema and a program version derived from that schema. Replay recomputes the envelope digest and now rejects a deliberately rehashed obsolete v2.1 envelope. K2 retrieval input and dependencies bind content SHA-256 plus a deterministic digest of scene, artifact identity and verification evidence."
+    },
+    {
+      "name": "untrusted_text_isolation",
+      "exit_code": 0,
+      "evidence": "The metadata adapter scans candidate raw evidence and reviewed claims at activation, excludes quarantined candidates, and the canonical service records only opaque quarantine provenance/security digests. A3 regression proves injection text and external source identity are absent from both Director view and sealed snapshot."
+    },
+    {
+      "name": "director_conflict_ownership",
+      "exit_code": 0,
+      "evidence": "Conflicting candidates are represented as bounded conflict records with requires_director_decision=true and are excluded from selected capsules; no retriever ranking path selects a creative winner."
+    },
+    {
+      "name": "evidence_gated_promotion",
+      "exit_code": 0,
+      "evidence": "Promotion requires a complete MediaObservation -> OutcomeAttribution -> PatternCandidate -> corroboration/counterexample/applicability chain, verified evidence digests and an explicit human approval record. The resulting promotion digest binds the full canonical capsule, reviewer, approval boolean and every chain digest."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a3_knowledge_flow",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a3_knowledge_flow.py -q -p no:cacheprovider",
+      "result": "14 passed in 0.25s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "failure_first_v22_baseline",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a3_knowledge_flow.py -q -p no:cacheprovider",
+      "exit_code": 1,
+      "result": "Before the A3 implementation change, 8 tests failed and 4 passed because the sole canonical snapshot writer still emitted schema 2.1 after A1 froze ArtifactEnvelope at schema 2.2."
+    },
+    {
+      "name": "a0_to_a3_and_v4_regression_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "88 passed in 6.40s; v4 remains the unchanged production entrypoint."
+    },
+    {
+      "name": "scope_and_diff_hygiene_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "git diff --check -- 01_调度器/mode_p_vnext/services/knowledge_retriever.py 01_调度器/mode_p_vnext/tests/test_a3_knowledge_flow.py",
+      "exit_code": 0,
+      "result": "No whitespace errors; changes are limited to A3-owned retrieval and A3 test paths. The only old-schema literals remaining in the A3 test are a deliberate negative replay fixture."
+    }
+  ],
+  "review": {
+    "findings": [
+      "A3's only canonical snapshot writer still declared schema_version and program_version as 2.1, so every normal retrieval was rejected by the A1 v2.2 ArtifactEnvelope invariant.",
+      "K2 persisted only BlockingCommit content SHA-256; artifact identity and verification digest did not influence snapshot identity, allowing distinct accepted-boundary assertions to alias.",
+      "Replay recomputed integrity but did not reject a rehashed obsolete schema envelope.",
+      "Promotion digest bound only capsule_id and omitted both full capsule content and the human_approved fact."
+    ],
+    "root_cause": "The earlier A3 implementation was completed against the v2.1 domain boundary. The v2.2 rebase invalidated it but left its service constants and digest composition unchanged, treating canonical schema and verification evidence as incidental metadata rather than inputs to a replay-safe authority boundary.",
+    "considered_options": [
+      {
+        "option": "Only change the two literal version strings",
+        "decision": "rejected",
+        "reason": "It restores test execution but leaves K2 identity aliasing, stale-schema replay and promotion digest omissions unaddressed."
+      },
+      {
+        "option": "Accept any self-consistent schema version during replay",
+        "decision": "rejected",
+        "reason": "v2.2 explicitly invalidated pre-production dependent records; permissive replay would reintroduce stale schema authority."
+      },
+      {
+        "option": "Bind only BlockingCommit content hash",
+        "decision": "rejected",
+        "reason": "Artifact envelopes intentionally content-address payloads, so identity and acceptance/verification evidence can differ while content remains equal."
+      },
+      {
+        "option": "Derive the current schema from the canonical domain and bind full K2 and promotion evidence",
+        "decision": "accepted",
+        "reason": "This preserves one current domain authority, deterministic replay, K2 boundary traceability and evidence-gated knowledge promotion without modifying A1/A2-owned contracts."
+      }
+    ],
+    "remaining_risks": [
+      "A3 defines and seals the typed K2 binding; A8 must obtain VerifiedBlockingCommit only from the A2-accepted BlockingCommit node, rather than constructing it from untrusted runtime text.",
+      "A3 has no authority to run media or create a user approval; the promotion object records the required evidence and human-review preconditions but does not assert that a production gate was granted.",
+      "Legacy knowledge adapters remain readable for historical callers and must not be imported by the future A8 runtime path."
+    ]
+  },
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

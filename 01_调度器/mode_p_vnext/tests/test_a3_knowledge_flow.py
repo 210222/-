@@ -8,7 +8,12 @@ import inspect
 
 import pytest
 
-from mode_p_vnext.domain.artifact import ArtifactEnvelope, SourceRef, canonical_sha256
+from mode_p_vnext.domain.artifact import (
+    DOMAIN_SCHEMA_VERSION,
+    ArtifactEnvelope,
+    SourceRef,
+    canonical_sha256,
+)
 from mode_p_vnext.domain.knowledge import (
     KnowledgeCapsuleV2,
     KnowledgeDecisionView,
@@ -146,6 +151,52 @@ def test_single_k1_k2_entry_enforces_verified_blocking_commit() -> None:
     assert k2.stage is KnowledgeStage.K2
     assert k2.blocking_commit_digest == binding.content_sha256
     assert k2.decision_view.capsule_ids == ("K2-EXECUTION",)
+    assert k2.snapshot.dependency_digests["blocking_commit"] == (
+        binding.content_sha256
+    )
+    assert k2.snapshot.dependency_digests["blocking_commit_binding"] == (
+        binding.binding_digest
+    )
+
+
+def test_k2_snapshot_binds_the_full_verified_blocking_commit_identity() -> None:
+    """A K2 replay must not alias distinct accepted BlockingCommit evidence."""
+
+    retriever = KnowledgeRetriever()
+    catalog = KnowledgeCatalog((_candidate("K2-EXECUTION", stage="execution"),))
+    first = VerifiedBlockingCommit(
+        scene_id="EP1-S1",
+        artifact_id="blocking_commit:EP1:S1:B1:0001",
+        content_sha256="a" * 64,
+        verification_digest="b" * 64,
+    )
+    second = VerifiedBlockingCommit(
+        scene_id="EP1-S1",
+        artifact_id="blocking_commit:EP1:S1:B1:0002",
+        content_sha256="a" * 64,
+        verification_digest="c" * 64,
+    )
+
+    first_result = retriever.retrieve(
+        diagnosis=_diagnosis(),
+        catalog=catalog,
+        context=_context(),
+        stage=KnowledgeStage.K2,
+        blocking_commit=first,
+    )
+    second_result = retriever.retrieve(
+        diagnosis=_diagnosis(),
+        catalog=catalog,
+        context=_context(),
+        stage=KnowledgeStage.K2,
+        blocking_commit=second,
+    )
+
+    assert first.binding_digest != second.binding_digest
+    assert first_result.snapshot.payload.retrieval_input_digest != (
+        second_result.snapshot.payload.retrieval_input_digest
+    )
+    assert first_result.snapshot.content_sha256 != second_result.snapshot.content_sha256
 
 
 def test_snapshot_replays_selection_without_searching_catalog_again() -> None:
@@ -318,6 +369,36 @@ def test_snapshot_integrity_fails_closed_after_tampering() -> None:
         retriever.replay(result.snapshot)
 
 
+def test_replay_rejects_a_rehashed_obsolete_schema_snapshot() -> None:
+    """A syntactically rehashed pre-v2.2 envelope cannot regain authority."""
+
+    retriever = KnowledgeRetriever()
+    result = retriever.retrieve(
+        diagnosis=_diagnosis(),
+        catalog=KnowledgeCatalog((_candidate("K1-ATTENTION"),)),
+        context=_context(),
+        stage=KnowledgeStage.K1,
+    )
+    assert result.snapshot.schema_version == DOMAIN_SCHEMA_VERSION
+
+    object.__setattr__(result.snapshot, "schema_version", "2.1")
+    object.__setattr__(result.snapshot, "program_version", "mode-p-vnext-2.1")
+    object.__setattr__(
+        result.snapshot,
+        "content_sha256",
+        ArtifactEnvelope.content_digest_for(
+            artifact_kind=result.snapshot.artifact_kind,
+            schema_version=result.snapshot.schema_version,
+            program_version=result.snapshot.program_version,
+            payload=result.snapshot.payload,
+            source_refs=result.snapshot.source_refs,
+            dependency_digests=result.snapshot.dependency_digests,
+        ),
+    )
+    with pytest.raises(ValueError, match="integrity"):
+        retriever.replay(result.snapshot)
+
+
 def test_knowledge_promotion_requires_verified_evidence_and_human_approval() -> None:
     retriever = KnowledgeRetriever()
     source = SourceRef("media-run-1", "c" * 64)
@@ -369,8 +450,10 @@ def test_knowledge_promotion_requires_verified_evidence_and_human_approval() -> 
         {
             "proposal_id": "KP-3",
             "capsule_id": "K-CANDIDATE-1",
+            "capsule_digest": canonical_sha256(capsule),
             "verifier_id": "gate-0",
             "human_reviewer_id": "director",
+            "human_approved": True,
             **approved_chain,
         }
     )
