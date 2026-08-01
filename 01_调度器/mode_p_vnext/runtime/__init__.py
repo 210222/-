@@ -1,7 +1,7 @@
 """Persistent runtime ports for the canonical vNext node graph."""
 
 from .cache import NodeCacheKey, PersistentNodeCache
-from .session import ResumePlan, RunSession
+from .session import ExecutionSnapshot, ResumePlan, RunSession
 from .transaction import NodeTransaction, PendingNodeWrite
 
 __all__ = (
@@ -9,6 +9,7 @@ __all__ = (
     "NodeTransaction",
     "PendingNodeWrite",
     "PersistentNodeCache",
+    "ExecutionSnapshot",
     "ResumePlan",
     "RunSession",
 )

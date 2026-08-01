@@ -1,18 +1,14 @@
-"""Immutable content-addressed ArtifactEnvelope repository."""
+"""Immutable content-addressed storage for canonical v3.0 envelopes."""
 
 from __future__ import annotations
 
-import os
 import json
+import os
 import uuid
 from pathlib import Path
-from typing import TypeVar
+from typing import Any, Mapping, TypeVar
 
-from mode_p_vnext.domain.artifact import (
-    ArtifactEnvelope,
-    canonical_json_bytes,
-    canonical_sha256,
-)
+from mode_p_vnext.domain.artifact import ArtifactEnvelope, canonical_json_bytes, canonical_sha256
 from mode_p_vnext.pipeline.state import ArtifactRef
 
 
@@ -20,27 +16,31 @@ T = TypeVar("T")
 
 
 class ArtifactStoreError(ValueError):
-    """Raised when an immutable artifact cannot be safely persisted."""
+    """Raised when an immutable canonical artifact cannot be verified."""
 
 
 def _atomic_write_if_absent(path: Path, payload: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists():
-        if not path.is_file() or path.is_symlink():
-            raise ArtifactStoreError(f"artifact path is not a regular file: {path}")
+        if not path.is_file() or path.is_symlink() or path.read_bytes() != payload:
+            raise ArtifactStoreError("content-addressed artifact path conflicts with canonical bytes")
         return
     temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
     try:
-        with open(temporary, "xb") as handle:
+        with temporary.open("xb") as handle:
             handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
         try:
             os.link(temporary, path)
         except FileExistsError:
-            pass
+            if path.read_bytes() != payload:
+                raise ArtifactStoreError("concurrent artifact write has different canonical bytes")
         except OSError:
-            if not path.exists():
+            if path.exists():
+                if path.read_bytes() != payload:
+                    raise ArtifactStoreError("concurrent artifact write has different canonical bytes")
+            else:
                 os.replace(temporary, path)
     finally:
         if temporary.exists():
@@ -48,65 +48,60 @@ def _atomic_write_if_absent(path: Path, payload: bytes) -> None:
 
 
 class ArtifactRepository:
+    """Stores full immutable envelopes and exposes only reference metadata."""
+
     def __init__(self, run_dir: Path):
         self.run_dir = Path(run_dir).resolve()
 
     def path_for(self, artifact: ArtifactEnvelope[T]) -> Path:
-        return self.run_dir / "artifacts" / artifact.artifact_kind.value / f"{artifact.content_sha256}.json"
+        digest = canonical_sha256(artifact)
+        return self.run_dir / "artifacts" / artifact.artifact_type.value / f"{digest}.json"
 
     def put(self, artifact: ArtifactEnvelope[T]) -> ArtifactRef:
-        _atomic_write_if_absent(self.path_for(artifact), canonical_json_bytes(artifact))
+        if not isinstance(artifact, ArtifactEnvelope):
+            raise ArtifactStoreError("ArtifactRepository accepts only canonical ArtifactEnvelope values")
+        payload = canonical_json_bytes(artifact)
+        artifact_digest = canonical_sha256(artifact)
+        _atomic_write_if_absent(self.path_for(artifact), payload)
         ref = ArtifactRef(
             artifact_id=artifact.artifact_id,
-            artifact_kind=artifact.artifact_kind,
-            content_sha256=artifact.content_sha256,
+            artifact_type=artifact.artifact_type,
             schema_version=artifact.schema_version,
+            canonical_payload_sha256=artifact.canonical_payload_sha256,
+            artifact_digest=artifact_digest,
         )
         if not self.contains(ref):
-            raise ArtifactStoreError(
-                "content-addressed artifact path does not verify its canonical digest"
-            )
+            raise ArtifactStoreError("stored ArtifactEnvelope does not verify against its reference")
         return ref
 
+    def _path_for_ref(self, ref: ArtifactRef) -> Path:
+        return self.run_dir / "artifacts" / ref.artifact_type.value / f"{ref.artifact_digest}.json"
+
     def contains(self, ref: ArtifactRef) -> bool:
-        """Check that an ArtifactRef resolves to its immutable stored envelope."""
         if not isinstance(ref, ArtifactRef):
             raise ArtifactStoreError("contains requires an ArtifactRef")
-        path = (
-            self.run_dir
-            / "artifacts"
-            / ref.artifact_kind.value
-            / f"{ref.content_sha256}.json"
-        )
+        path = self._path_for_ref(ref)
         if not path.is_file() or path.is_symlink():
             return False
         try:
-            stored = json.loads(path.read_text(encoding="utf-8"))
-            if not isinstance(stored, dict):
+            raw = path.read_bytes()
+            if canonical_sha256(json.loads(raw.decode("utf-8"))) != ref.artifact_digest:
                 return False
-            if not (
-                stored.get("artifact_id") == ref.artifact_id
-                and stored.get("artifact_kind") == ref.artifact_kind.value
-                and stored.get("schema_version") == ref.schema_version
-                and stored.get("content_sha256") == ref.content_sha256
-            ):
+            stored: Any = json.loads(raw.decode("utf-8"))
+            if not isinstance(stored, Mapping):
                 return False
-            canonical_content = {
-                "artifact_kind": stored["artifact_kind"],
-                "schema_version": stored["schema_version"],
-                "program_version": stored["program_version"],
-                "payload": stored["payload"],
-                "source_refs": stored["source_refs"],
-                "dependency_digests": stored["dependency_digests"],
+            expected_fields = {
+                "artifact_id", "artifact_type", "schema_version", "payload",
+                "canonical_payload_sha256", "producer_stage", "parent_artifact_ids",
+                "source_provenance", "knowledge_snapshot_digest", "created_at_utc",
             }
-            return canonical_sha256(canonical_content) == ref.content_sha256
-        except (
-            KeyError,
-            OSError,
-            UnicodeError,
-            TypeError,
-            ValueError,
-            json.JSONDecodeError,
-            AttributeError,
-        ):
+            return (
+                set(stored) == expected_fields
+                and stored.get("artifact_id") == ref.artifact_id
+                and stored.get("artifact_type") == ref.artifact_type.value
+                and stored.get("schema_version") == ref.schema_version
+                and stored.get("canonical_payload_sha256") == ref.canonical_payload_sha256
+                and canonical_sha256(stored.get("payload")) == ref.canonical_payload_sha256
+            )
+        except (OSError, UnicodeError, ValueError, TypeError, json.JSONDecodeError):
             return False

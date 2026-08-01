@@ -1,4 +1,4 @@
-"""A2 acceptance tests for the canonical persistent node-runner boundary."""
+"""A2 acceptance tests for the frozen MODE:P v3.0 runtime ledger."""
 
 from __future__ import annotations
 
@@ -7,892 +7,406 @@ from pathlib import Path
 
 import pytest
 
-from mode_p_vnext.domain.artifact import (
-    ArtifactEnvelope,
-    ArtifactKind,
-    SourceRef,
-    ValidationStatus,
-    canonical_json_bytes,
-    canonical_sha256,
-)
-from mode_p_vnext.domain.blocking import (
-    BlockingBeat,
-    BlockingBeatDraft,
-    BlockingCommit,
-    BlockingDraft,
-)
-from mode_p_vnext.domain.decisions import (
-    DecisionBasis,
-    DecisionDraft,
-    VisualCurvePointDraft,
-)
+from mode_p_vnext.domain.artifact import ArtifactEnvelope, ArtifactKind, SourceRef, canonical_sha256
 from mode_p_vnext.domain.direction import EpisodeDirectionDraft, SceneIntentDraft
-from mode_p_vnext.domain.vec import (
-    ExecutionDesignDraft,
-    ShotDesignDraft,
-    StoryboardRole,
-    VisualBeatDraft,
-    VisualBeatPhase,
-)
+from mode_p_vnext.domain.facts import NormalizedSource, SourcePartition, normalized_text_sha256
+from mode_p_vnext.domain.ids import IdFactory
 from mode_p_vnext.pipeline.graph import NodeSpec, StateGraph
-from mode_p_vnext.pipeline.invalidation import FieldInvalidator
 from mode_p_vnext.pipeline.state import ArtifactRef, PersistentGraphState, StateInvariantError
 from mode_p_vnext.runtime.cache import NodeCacheKey
 from mode_p_vnext.runtime.session import RunSession, RunSessionError
+from mode_p_vnext.runtime.transaction import NodeTransaction
 
 
-def _direction_artifact(digest_char: str = "a") -> ArtifactEnvelope[EpisodeDirectionDraft]:
-    source = SourceRef("script:episode-1", digest_char * 64)
-    payload = EpisodeDirectionDraft(
-        dramatic_promise="A choice reshapes the relationship.",
-        audience_contract="The cause of every change remains legible.",
-        tension_curve=("arrival", "choice"),
-        visual_principles=("preserve the decision line",),
-        continuity_priorities=("the key remains visible",),
-        unresolved_questions=(),
-    )
-    return ArtifactEnvelope.create(
-        artifact_id=f"episode_direction:episode-1:episode:E0:0001:{digest_char * 20}",
-        artifact_kind=ArtifactKind.EPISODE_DIRECTION,
-        schema_version="2.2",
-        program_version="test-vnext-2.2",
-        payload=payload,
-        source_refs=(source,),
-        dependency_digests={"script": source.digest},
-        created_at="2026-07-30T00:00:00Z",
-        validation_status=ValidationStatus.DRAFT,
-    )
+def _digest(character: str) -> str:
+    return character * 64
 
 
-def _scene_intent_artifact(digest_char: str = "b") -> ArtifactEnvelope[SceneIntentDraft]:
-    source = SourceRef("script:scene-1", digest_char * 64)
-    payload = SceneIntentDraft(
-        scene_purpose="Transfer visible responsibility.",
-        state_change="The subordinate must decide alone.",
-        audience_information=("The key is now between them.",),
-        character_knowledge=("Only the director knows the wider consequence.",),
-        performance_questions=("Does the pause read as acceptance?",),
-        director_problems=("Keep the key as the only consequential object.",),
-        continuity_effects=("The key stays on the table.",),
-        unresolved_questions=(),
-    )
-    return ArtifactEnvelope.create(
-        artifact_id=f"scene_intent:episode-1:scene-1:S1:0001:{digest_char * 20}",
-        artifact_kind=ArtifactKind.SCENE_INTENT,
-        schema_version="2.2",
-        program_version="test-vnext-2.2",
-        payload=payload,
-        source_refs=(source,),
-        dependency_digests={"script": source.digest},
-        created_at="2026-07-30T00:00:00Z",
-        validation_status=ValidationStatus.DRAFT,
-    )
+def _source_ref(label: str) -> SourceRef:
+    text = f"source for {label}"
+    return SourceRef(source_id=f"source:{label}", digest=normalized_text_sha256(text))
 
 
-def _blocking_draft_artifact(digest_char: str = "c") -> ArtifactEnvelope[BlockingDraft]:
-    source = SourceRef("script:scene-1", digest_char * 64)
-    payload = BlockingDraft(
-        beats=(
-            BlockingBeatDraft(
-                ordinal=1,
-                dramatic_action="The lead retains the key while the decision lands.",
-                character_states=({"character_id": "lead", "state": "still"},),
-                prop_states=({"prop_id": "key", "state": "on_table"},),
-                gaze_relations=("lead watches the key",),
-                action_paths=("lead holds position",),
-                continuity_effect="The key remains visible at the scene boundary.",
-            ),
+def _artifact(kind: ArtifactKind, label: str, *, parents: tuple[str, ...] = ()) -> ArtifactEnvelope[object]:
+    source = _source_ref(label)
+    text = f"source for {label}"
+    if kind is ArtifactKind.NORMALIZED_SOURCE:
+        payload: object = NormalizedSource(
+            source_ref=source,
+            normalized_text=text,
+            encoding="utf-8",
+            character_count=len(text),
+            line_start_offsets=(0,),
+            partitions=(SourcePartition("episode-1", "scene-1", 0, len(text)),),
         )
-    )
-    return ArtifactEnvelope.create(
-        artifact_id=f"blocking_draft:episode-1:scene-1:B0:0001:{digest_char * 20}",
-        artifact_kind=ArtifactKind.BLOCKING_DRAFT,
-        schema_version="2.2",
-        program_version="test-vnext-2.2",
-        payload=payload,
-        source_refs=(source,),
-        dependency_digests={"source": source.digest},
-        created_at="2026-07-30T00:00:00Z",
-        validation_status=ValidationStatus.DRAFT,
-    )
-
-
-def _blocking_commit_artifact(digest_char: str = "d") -> ArtifactEnvelope[BlockingCommit]:
-    source = SourceRef("script:scene-1", digest_char * 64)
-    payload = BlockingCommit(
-        commit_id=f"blocking-commit-{digest_char}",
+    elif kind is ArtifactKind.EPISODE_DIRECTION_DRAFT:
+        payload = EpisodeDirectionDraft(
+            dramatic_promise="A visible choice changes the relationship.",
+            audience_contract="Every visual change remains traceable.",
+            tension_curve=("arrival", "choice"),
+            visual_principles=("hold the decisive object in view",),
+            continuity_priorities=("preserve the entry state",),
+            unresolved_questions=(),
+        )
+    elif kind is ArtifactKind.SCENE_INTENT_DRAFT:
+        payload = SceneIntentDraft(
+            scene_purpose="Make the choice legible.",
+            state_change="Responsibility changes hands.",
+            audience_information=("The transfer is visible.",),
+            character_knowledge=("The lead knows the cost.",),
+            performance_questions=("Does the pause read as resolve?",),
+            director_problems=("Keep the object on the decision line.",),
+            continuity_effects=("The object remains in frame.",),
+            unresolved_questions=(),
+        )
+    else:  # The test graph deliberately uses only A1-frozen payload authorities.
+        raise AssertionError(f"unsupported test artifact type: {kind}")
+    artifact_id = IdFactory("a2-test-v3").create(
+        artifact_kind=kind,
+        episode_id="episode-1",
         scene_id="scene-1",
-        blocking_draft_artifact_id="blocking_draft:episode-1:scene-1:B0:0001",
-        beats=(
-            BlockingBeat(
-                beat_id=f"blocking-beat-{digest_char}",
-                source_ordinal=1,
-                dramatic_action="The lead retains the key while the decision lands.",
-                character_states=({"character_id": "lead", "state": "still"},),
-                prop_states=({"prop_id": "key", "state": "on_table"},),
-                gaze_relations=("lead watches the key",),
-                action_paths=("lead holds position",),
-                continuity_effect="The key remains visible at the scene boundary.",
-                entry_state_id="state-entry",
-                exit_state_id="state-exit",
-            ),
-        ),
-        entry_state_id="state-entry",
-        exit_state_id="state-exit",
+        stage="A2_TEST",
+        input_digest=source.digest,
+        ordinal=ord(label[0]),
     )
     return ArtifactEnvelope.create(
-        artifact_id=f"blocking_commit:episode-1:scene-1:ASSEMBLE_B0:0001:{digest_char * 20}",
-        artifact_kind=ArtifactKind.BLOCKING_COMMIT,
-        schema_version="2.2",
-        program_version="test-vnext-2.2",
+        artifact_id=artifact_id,
+        artifact_type=kind,
         payload=payload,
-        source_refs=(source,),
-        dependency_digests={"source": source.digest},
-        created_at="2026-07-30T00:00:00Z",
-        validation_status=ValidationStatus.TEXT_VALIDATED,
+        producer_stage="A2_TEST",
+        parent_artifact_ids=parents,
+        source_provenance=(source,),
+        knowledge_snapshot_digest=None,
+        created_at_utc="2026-08-01T00:00:00Z",
     )
 
 
-def _execution_design_artifact(
-    digest_char: str = "e",
-) -> ArtifactEnvelope[ExecutionDesignDraft]:
-    source = SourceRef("script:scene-1", digest_char * 64)
-    payload = ExecutionDesignDraft(
-        curve_points=(
-            VisualCurvePointDraft(
-                dramatic_beat_ordinal=1,
-                intensity=55,
-                explanation="Keep the handoff tension legible.",
-            ),
-        ),
-        decisions=(
-            DecisionDraft(
-                scope="camera framing",
-                basis=DecisionBasis.LOCKED,
-                locked_by=("blocking_commit",),
-                options=("Retain the key in the composition.",),
-                selected_index=0,
-                rationale="The object carries the scene state.",
-                tradeoff="The frame remains deliberately restrained.",
-            ),
-        ),
-        shots=(
-            ShotDesignDraft(
-                blocking_beat_ordinal=1,
-                dramatic_function="Reveal the handoff decision.",
-                attention_target="the key",
-                information_action="keep the transfer state visible",
-                framing_intent="medium two-shot",
-                camera_pose="eye level",
-                camera_motion="locked-off",
-                composition="lead and key on the decision line",
-                lighting="consistent soft key",
-                performance="contained hesitation",
-                duration_weight=1,
-                visual_beats=(
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.ACTION,
-                        subject_state="lead holds the key",
-                        attention="the key remains central",
-                        storyboard_role=StoryboardRole.REQUIRED,
-                    ),
-                ),
-            ),
-        ),
-        transition_intents=("cut after the resolved handoff",),
-        audio_intents=(),
-        reference_intents=(),
-        handoff_intent="Preserve the key state into the following segment.",
-    )
-    return ArtifactEnvelope.create(
-        artifact_id=f"execution_design:episode-1:scene-1:B1:0001:{digest_char * 20}",
-        artifact_kind=ArtifactKind.EXECUTION_DESIGN_DRAFT,
-        schema_version="2.2",
-        program_version="test-vnext-2.2",
-        payload=payload,
-        source_refs=(source,),
-        dependency_digests={"source": source.digest},
-        created_at="2026-07-30T00:00:00Z",
-        validation_status=ValidationStatus.DRAFT,
-    )
+KNOWLEDGE_A = _digest("a")
+KNOWLEDGE_B = _digest("b")
+CAPABILITY_A = _digest("c")
+CAPABILITY_B = _digest("d")
 
 
 def _graph() -> StateGraph:
     return StateGraph(
         (
+            NodeSpec("I0", "3.0", {"source": ArtifactKind.NORMALIZED_SOURCE}, ("raw_source",)),
             NodeSpec(
-                node_id="E0",
-                node_version="1",
-                output_kinds={"episode_direction": ArtifactKind.EPISODE_DIRECTION},
-                input_fields=("episode_facts",),
+                "E0",
+                "3.0",
+                {"direction": ArtifactKind.EPISODE_DIRECTION_DRAFT},
+                ("source",),
+                uses_knowledge_snapshot=True,
             ),
             NodeSpec(
-                node_id="S1",
-                node_version="1",
-                output_kinds={"scene_intent": ArtifactKind.SCENE_INTENT},
-                input_fields=("episode_direction", "scene_facts"),
+                "B1",
+                "3.0",
+                {"execution": ArtifactKind.SCENE_INTENT_DRAFT},
+                ("direction",),
+                uses_capability_profile=True,
             ),
             NodeSpec(
-                node_id="B0",
-                node_version="1",
-                output_kinds={"blocking_draft": ArtifactKind.BLOCKING_DRAFT},
-                input_fields=("scene_intent",),
+                "STORYBOARD",
+                "3.0",
+                {"storyboard_delivery": ArtifactKind.SCENE_INTENT_DRAFT},
+                ("execution", "storyboard_adapter"),
             ),
             NodeSpec(
-                node_id="DP",
-                node_version="1",
-                output_kinds={"dp_review": ArtifactKind.DP_REVIEW_RESULT},
-                input_fields=("dp_rules",),
-            ),
-        )
-    )
-
-
-def _recovery_graph() -> StateGraph:
-    return StateGraph(
-        (
-            NodeSpec(
-                node_id="E0",
-                node_version="1",
-                output_kinds={"episode_direction": ArtifactKind.EPISODE_DIRECTION},
-                input_fields=("episode_facts",),
-            ),
-            NodeSpec(
-                node_id="S1",
-                node_version="1",
-                output_kinds={"scene_intent": ArtifactKind.SCENE_INTENT},
-                input_fields=("episode_direction", "scene_facts"),
-            ),
-            NodeSpec(
-                node_id="B0",
-                node_version="1",
-                output_kinds={"blocking_draft": ArtifactKind.BLOCKING_DRAFT},
-                input_fields=("scene_intent",),
-            ),
-            NodeSpec(
-                node_id="ASSEMBLE_B0",
-                node_version="1",
-                output_kinds={"blocking_commit": ArtifactKind.BLOCKING_COMMIT},
-                input_fields=("blocking_draft",),
-            ),
-            NodeSpec(
-                node_id="B1",
-                node_version="1",
-                output_kinds={
-                    "execution_design": ArtifactKind.EXECUTION_DESIGN_DRAFT,
-                },
-                input_fields=("blocking_commit",),
+                "VIDEO",
+                "3.0",
+                {"video_delivery": ArtifactKind.SCENE_INTENT_DRAFT},
+                ("execution", "video_adapter"),
             ),
         )
     )
 
 
-def _ref(field_name: str, artifact_kind: ArtifactKind, digest_char: str) -> ArtifactRef:
-    return ArtifactRef(
-        artifact_id=f"{field_name}:{digest_char}",
-        artifact_kind=artifact_kind,
-        content_sha256=digest_char * 64,
-        schema_version="2.2",
+def _execute(
+    session: RunSession,
+    node_id: str,
+    artifact: ArtifactEnvelope[object],
+    input_digests: dict[str, str],
+    *,
+    knowledge_snapshot_digest: str | None = None,
+    capability_profile_digest: str | None = None,
+) -> PersistentGraphState:
+    snapshot = session.capture_execution_snapshot()
+    field = {
+        "I0": "source",
+        "E0": "direction",
+        "B1": "execution",
+        "STORYBOARD": "storyboard_delivery",
+        "VIDEO": "video_delivery",
+    }[node_id]
+    return session.runner(owner=f"worker-{node_id}").execute(
+        node_id,
+        artifacts={field: artifact},
+        input_digests=input_digests,
+        base_state_sha256=snapshot.base_state_sha256,
+        knowledge_snapshot_digest=knowledge_snapshot_digest,
+        capability_profile_digest=capability_profile_digest,
     )
 
 
-def _artifact_for(field_name: str, digest_char: str) -> ArtifactEnvelope[object]:
-    factories = {
-        "episode_direction": _direction_artifact,
-        "scene_intent": _scene_intent_artifact,
-        "blocking_draft": _blocking_draft_artifact,
-        "blocking_commit": _blocking_commit_artifact,
-        "execution_design": _execution_design_artifact,
-    }
-    return factories[field_name](digest_char)  # type: ignore[return-value]
-
-
-def test_typed_state_graph_allows_only_owned_partial_state_and_preserves_upstream() -> None:
-    graph = _graph()
-    state = PersistentGraphState.empty("run-graph")
-    state = graph.apply(
-        state,
-        node_id="E0",
-        outputs={
-            "episode_direction": _ref(
-                "episode_direction", ArtifactKind.EPISODE_DIRECTION, "a"
-            )
+def _complete(session: RunSession) -> PersistentGraphState:
+    source = _artifact(ArtifactKind.NORMALIZED_SOURCE, "source")
+    state = _execute(session, "I0", source, {"raw_source": source.source_provenance[0].digest})
+    direction = _artifact(ArtifactKind.EPISODE_DIRECTION_DRAFT, "direction", parents=(source.artifact_id,))
+    state = _execute(
+        session,
+        "E0",
+        direction,
+        {"source": state.outputs["source"].artifact_digest},
+        knowledge_snapshot_digest=KNOWLEDGE_A,
+    )
+    execution = _artifact(ArtifactKind.SCENE_INTENT_DRAFT, "execution", parents=(direction.artifact_id,))
+    state = _execute(
+        session,
+        "B1",
+        execution,
+        {"direction": state.outputs["direction"].artifact_digest},
+        capability_profile_digest=CAPABILITY_A,
+    )
+    storyboard = _artifact(ArtifactKind.SCENE_INTENT_DRAFT, "storyboard", parents=(execution.artifact_id,))
+    state = _execute(
+        session,
+        "STORYBOARD",
+        storyboard,
+        {
+            "execution": state.outputs["execution"].artifact_digest,
+            "storyboard_adapter": _digest("e"),
         },
-        dependency_digests={"episode_facts": "1" * 64},
     )
-    assert state.outputs["episode_direction"].content_sha256 == "a" * 64
-    assert state.accepted["E0"].dependency_digests["episode_facts"] == "1" * 64
-
-    with pytest.raises(StateInvariantError, match="owns"):
-        graph.apply(
-            state,
-            node_id="S1",
-            outputs={
-                "episode_direction": _ref(
-                    "episode_direction", ArtifactKind.EPISODE_DIRECTION, "b"
-                )
-            },
-            dependency_digests={"scene_facts": "2" * 64},
-        )
-    with pytest.raises(StateInvariantError, match="accepted"):
-        graph.apply(
-            state,
-            node_id="E0",
-            outputs={
-                "episode_direction": _ref(
-                    "episode_direction", ArtifactKind.EPISODE_DIRECTION, "b"
-                )
-            },
-            dependency_digests={"episode_facts": "1" * 64},
-        )
-
-
-def test_pending_transaction_recovers_without_reexecuting_an_accepted_node(tmp_path: Path) -> None:
-    graph = _graph()
-    session = RunSession.create(tmp_path / "runs", run_id="run-recover", graph=graph)
-    runner = session.runner(owner="test-worker")
-    artifact = _direction_artifact()
-
-    pending = runner.prepare(
-        node_id="E0",
-        artifacts={"episode_direction": artifact},
-        dependency_digests={"episode_facts": "1" * 64},
+    video = _artifact(ArtifactKind.SCENE_INTENT_DRAFT, "video", parents=(execution.artifact_id,))
+    return _execute(
+        session,
+        "VIDEO",
+        video,
+        {
+            "execution": state.outputs["execution"].artifact_digest,
+            "video_adapter": _digest("f"),
+        },
     )
-    assert pending.node_id == "E0"
+
+
+def test_persistent_state_graph_records_only_canonical_refs_and_full_context(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-1", graph=_graph(), write_scope="episode-1:scene-1")
+    state = _complete(session)
+    direction = state.accepted["E0"]
+    assert direction.stage_signature == _graph().node("E0").stage_signature
+    assert direction.input_artifacts["source"].artifact_id == state.outputs["source"].artifact_id
+    assert direction.input_digests["source"] == state.outputs["source"].artifact_digest
+    assert direction.knowledge_snapshot_digest == KNOWLEDGE_A
+    assert state.accepted["B1"].capability_profile_digest == CAPABILITY_A
+    assert all(not hasattr(ref, "payload") for ref in state.outputs.values())
+    assert session.artifacts.contains(state.outputs["execution"])
+    reopened = RunSession.open(session.run_dir, graph=_graph())
+    assert reopened.state().to_dict() == state.to_dict()
+
+
+def test_checkpoint_resume_uses_committed_chain_not_a_path_guess(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-2", graph=_graph())
+    state = _complete(session)
+    checkpoint = session.checkpoint()
+    assert checkpoint.is_file()
+    reopened = RunSession.open(session.run_dir, graph=_graph())
+    plan = reopened.resume_plan({})
+    assert plan.checkpoint_sequence == state.event_sequence
+    assert plan.accepted_node_ids == ("I0", "E0", "B1", "STORYBOARD", "VIDEO")
+    assert plan.runnable_node_ids == ()
+    payload = json.loads(checkpoint.read_text(encoding="utf-8"))
+    payload["state"]["run_id"] = "forged"
+    checkpoint.write_text(json.dumps(payload), encoding="utf-8")
+    assert reopened.state().run_id == "run-2"
+    assert reopened.resume_plan({}).checkpoint_sequence == 0
+
+
+def test_pending_write_is_never_recovered_but_committed_crash_boundary_is(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-3", graph=_graph())
+    source = _artifact(ArtifactKind.NORMALIZED_SOURCE, "pending")
+    snapshot = session.capture_execution_snapshot()
+    pending = session.runner(owner="writer").prepare(
+        "I0",
+        artifacts={"source": source},
+        input_digests={"raw_source": source.source_provenance[0].digest},
+        base_state_sha256=snapshot.base_state_sha256,
+    )
     assert not session.state().accepted
-    assert not session.current_pointer_path.exists()
-    assert (session.run_dir / "staging" / pending.generation_id).is_dir()
-    staged_manifest = (
-        session.run_dir / "staging" / pending.generation_id / "MANIFEST.json"
+    resumed = RunSession.open(session.run_dir, graph=_graph())
+    assert resumed.recover_pending(owner="recovery") == ()
+    assert not resumed.state().accepted
+    assert (resumed.run_dir / "quarantine" / pending.generation_id).is_dir()
+
+    committed = RunSession.create(tmp_path / "runs", run_id="run-4", graph=_graph())
+    source = _artifact(ArtifactKind.NORMALIZED_SOURCE, "committed")
+    pending = committed.runner(owner="writer").prepare(
+        "I0",
+        artifacts={"source": source},
+        input_digests={"raw_source": source.source_provenance[0].digest},
+        base_state_sha256=committed.capture_execution_snapshot().base_state_sha256,
     )
-    assert staged_manifest.is_file()
-    assert json.loads(staged_manifest.read_text(encoding="utf-8"))["state_sha256"] == (
-        pending.state_sha256
-    )
-
-    resumed = RunSession.open(session.run_dir, graph=graph)
-    assert resumed.recover_pending(owner="recovery-worker") == ("E0",)
-    recovered_state = resumed.state()
-    assert tuple(recovered_state.accepted) == ("E0",)
-    assert recovered_state.accepted["E0"].commit_id == pending.commit_id
-    assert recovered_state.outputs["episode_direction"].content_sha256 == artifact.content_sha256
-    assert resumed.resume_plan({"episode_facts": "1" * 64}).accepted_node_ids == ("E0",)
-    assert resumed.resume_plan({"episode_facts": "1" * 64}).runnable_node_ids == ("S1", "DP")
-    assert resumed.resume_plan({"episode_facts": "9" * 64}).accepted_node_ids == ()
-    assert resumed.current_pointer_path.is_file()
-    assert (resumed.run_dir / "commits" / pending.commit_id / "MANIFEST.json").is_file()
-
-    with pytest.raises(StateInvariantError, match="accepted"):
-        resumed.runner(owner="test-worker").prepare(
-            node_id="E0",
-            artifacts={"episode_direction": artifact},
-            dependency_digests={"episode_facts": "1" * 64},
-        )
+    NodeTransaction.promote(committed.run_dir, pending)  # crash after atomic rename, before pointer publication
+    resumed = RunSession.open(committed.run_dir, graph=_graph())
+    assert resumed.recover_pending(owner="recovery") == ("I0",)
+    assert tuple(resumed.state().accepted) == ("I0",)
 
 
-@pytest.mark.parametrize("recovery_node", ("E0", "S1", "B0", "B1"))
-def test_recovery_accepts_each_required_kill_point_without_rerun(
-    tmp_path: Path, recovery_node: str
-) -> None:
-    graph = _recovery_graph()
-    session = RunSession.create(
-        tmp_path / "runs",
-        run_id=f"run-kill-{recovery_node.lower()}",
-        graph=graph,
-    )
-    workflow = (
-        ("E0", "episode_direction", "a"),
-        ("S1", "scene_intent", "b"),
-        ("B0", "blocking_draft", "c"),
-        ("ASSEMBLE_B0", "blocking_commit", "d"),
-        ("B1", "execution_design", "e"),
-    )
-    for node_id, field_name, digest_char in workflow:
-        state = session.state()
-        dependency_digests: dict[str, str]
-        if node_id == "E0":
-            dependency_digests = {"episode_facts": "1" * 64}
-        elif node_id == "S1":
-            dependency_digests = {
-                "episode_direction": state.outputs["episode_direction"].content_sha256,
-                "scene_facts": "2" * 64,
-            }
-        elif node_id == "B0":
-            dependency_digests = {
-                "scene_intent": state.outputs["scene_intent"].content_sha256,
-            }
-        elif node_id == "ASSEMBLE_B0":
-            dependency_digests = {
-                "blocking_draft": state.outputs["blocking_draft"].content_sha256,
-            }
-        else:
-            dependency_digests = {
-                "blocking_commit": state.outputs["blocking_commit"].content_sha256,
-            }
-        artifact = _artifact_for(field_name, digest_char)
-        runner = session.runner(owner=f"worker-{node_id}")
-        if node_id != recovery_node:
-            runner.accept(
-                node_id=node_id,
-                artifacts={field_name: artifact},
-                dependency_digests=dependency_digests,
-            )
-            continue
-        pending = runner.prepare(
-            node_id=node_id,
-            artifacts={field_name: artifact},
-            dependency_digests=dependency_digests,
-        )
-        assert node_id not in session.state().accepted
-        resumed = RunSession.open(session.run_dir, graph=graph)
-        assert resumed.recover_pending(owner=f"recovery-{node_id}") == (node_id,)
-        restored = resumed.state()
-        assert node_id in restored.accepted
-        assert restored.accepted[node_id].commit_id == pending.commit_id
-        with pytest.raises(StateInvariantError, match="accepted"):
-            resumed.runner(owner=f"retry-{node_id}").prepare(
-                node_id=node_id,
-                artifacts={field_name: artifact},
-                dependency_digests=dependency_digests,
-            )
-        break
-
-
-def test_content_addressed_artifacts_and_persistent_cache_store_refs_not_process_objects(tmp_path: Path) -> None:
-    graph = _graph()
-    session = RunSession.create(tmp_path / "runs", run_id="run-cache", graph=graph)
-    artifact = _direction_artifact()
-    session.runner(owner="test-worker").accept(
-        node_id="E0",
-        artifacts={"episode_direction": artifact},
-        dependency_digests={"episode_facts": "1" * 64},
-    )
-    ref = session.state().outputs["episode_direction"]
-    artifact_path = session.run_dir / "artifacts" / artifact.artifact_kind.value / f"{artifact.content_sha256}.json"
-    assert artifact_path.is_file()
-    stored = json.loads(artifact_path.read_text(encoding="utf-8"))
-    assert stored["content_sha256"] == artifact.content_sha256
-    assert ref.content_sha256 == artifact.content_sha256
-
+def test_content_addressed_artifacts_and_cache_reject_mutation(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-5", graph=_graph())
+    source = _artifact(ArtifactKind.NORMALIZED_SOURCE, "content")
+    state = _execute(session, "I0", source, {"raw_source": source.source_provenance[0].digest})
+    ref = state.outputs["source"]
+    assert session.artifacts.path_for(source).name == f"{ref.artifact_digest}.json"
     key = NodeCacheKey(
-        node_kind="E0",
-        node_version="1",
-        signature_version="1",
-        schema_digest="2" * 64,
-        approved_input_digests={"episode_facts": "1" * 64},
-        knowledge_snapshot_digest="3" * 64,
-        requested_model="draft-model",
-        resolved_provider_config="provider-config-v1",
-        generation_policy="deterministic",
+        node_id="I0",
+        stage_signature=_graph().node("I0").stage_signature,
+        input_digests={"raw_source": source.source_provenance[0].digest},
+        knowledge_snapshot_digest=None,
+        capability_profile_digest=None,
     )
     session.cache.put(key, ref)
-    reopened = RunSession.open(session.run_dir, graph=graph)
-    assert reopened.cache.get(key) == ref
-    assert not hasattr(reopened.cache.get(key), "payload")
-    assert (reopened.run_dir / "cache" / f"{key.digest}.json").is_file()
+    assert session.cache.get(key) == ref
+    assert not hasattr(session.cache.get(key), "payload")
+    artifact_path = session.artifacts.path_for(source)
+    forged = json.loads(artifact_path.read_text(encoding="utf-8"))
+    forged["producer_stage"] = "forged"
+    artifact_path.write_text(json.dumps(forged), encoding="utf-8")
+    with pytest.raises(RunSessionError, match="no longer verifies"):
+        RunSession.open(session.run_dir, graph=_graph()).state()
 
 
-def test_field_level_invalidation_is_digest_edge_scoped_and_keeps_unrelated_nodes() -> None:
-    graph = _graph()
-    state = PersistentGraphState.empty("run-invalidation")
-    state = graph.apply(
-        state,
-        node_id="E0",
-        outputs={
-            "episode_direction": _ref(
-                "episode_direction", ArtifactKind.EPISODE_DIRECTION, "a"
-            )
-        },
-        dependency_digests={"episode_facts": "1" * 64},
+def test_field_invalidation_is_minimal_and_adapter_scoped(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-6", graph=_graph())
+    _complete(session)
+    result = session.invalidate(
+        changed_field_digests={"storyboard_adapter": _digest("9")},
+        reason="storyboard adapter changed",
     )
-    state = graph.apply(
-        state,
-        node_id="S1",
-        outputs={"scene_intent": _ref("scene_intent", ArtifactKind.SCENE_INTENT, "b")},
-        dependency_digests={"episode_direction": "a" * 64, "scene_facts": "2" * 64},
-    )
-    state = graph.apply(
-        state,
-        node_id="B0",
-        outputs={
-            "blocking_draft": _ref(
-                "blocking_draft", ArtifactKind.BLOCKING_DRAFT, "c"
-            )
-        },
-        dependency_digests={"scene_intent": "b" * 64},
-    )
-    state = graph.apply(
-        state,
-        node_id="DP",
-        outputs={
-            "dp_review": _ref("dp_review", ArtifactKind.DP_REVIEW_RESULT, "d")
-        },
-        dependency_digests={"dp_rules": "3" * 64},
-    )
-
-    invalidated = FieldInvalidator(graph).invalidate(
-        state,
-        changed_field_digests={"scene_facts": "9" * 64},
-        reason="scene fact drift",
-    )
-    assert invalidated.invalidated_node_ids == ("S1", "B0")
-    assert set(invalidated.state.accepted) == {"E0", "DP"}
-    assert set(invalidated.state.outputs) == {"episode_direction", "dp_review"}
-    assert invalidated.record.changed_field_digests["scene_facts"] == "9" * 64
-    assert invalidated.record.invalidated_artifact_digests == ("b" * 64, "c" * 64)
-
-
-def test_persisted_field_invalidation_replays_as_a_bounded_graph_transition(
-    tmp_path: Path,
-) -> None:
-    graph = _graph()
-    session = RunSession.create(
-        tmp_path / "runs", run_id="run-persisted-invalidation", graph=graph
-    )
-    direction = _direction_artifact()
-    accepted = session.runner(owner="worker-e0").accept(
-        node_id="E0",
-        artifacts={"episode_direction": direction},
-        dependency_digests={"episode_facts": "1" * 64},
-    )
-    session.runner(owner="worker-s1").accept(
-        node_id="S1",
-        artifacts={"scene_intent": _scene_intent_artifact()},
-        dependency_digests={
-            "episode_direction": accepted.outputs[
-                "episode_direction"
-            ].content_sha256,
-            "scene_facts": "2" * 64,
-        },
-    )
+    assert result.invalidated_node_ids == ("STORYBOARD",)
+    assert set(session.state().accepted) == {"I0", "E0", "B1", "VIDEO"}
+    assert "video_delivery" in session.state().outputs
+    assert "storyboard_delivery" not in session.state().outputs
 
     result = session.invalidate(
-        changed_field_digests={"scene_facts": "9" * 64},
-        reason="scene fact revision",
+        changed_field_digests={"raw_source": _digest("8")},
+        reason="normalized source changed",
     )
-    restored = RunSession.open(session.run_dir, graph=graph).state()
-    assert result.invalidated_node_ids == ("S1",)
-    assert tuple(restored.accepted) == ("E0",)
-    event = json.loads(
-        (session.run_dir / "STATE_EVENTS.jsonl")
-        .read_text(encoding="utf-8")
-        .splitlines()[-1]
-    )
-    assert event["transition"]["kind"] == "invalidation"
-    assert event["invalidation_record"]["invalidated_node_ids"] == ["S1"]
+    assert result.invalidated_node_ids == ("I0", "E0", "B1", "VIDEO")
+    assert not session.state().accepted
 
 
-def test_checkpoint_is_bound_to_dependency_digests_not_a_file_path_guess(tmp_path: Path) -> None:
+def test_capability_profile_invalidation_keeps_director_and_knowledge_selection(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-7", graph=_graph())
+    _complete(session)
+    before = session.state().to_dict()
+    no_change = session.invalidate_capability_profile(
+        capability_profile_digest=CAPABILITY_A,
+        reason="same capability profile",
+    )
+    assert no_change.invalidated_node_ids == ()
+    assert session.state().to_dict() == before
+    result = session.invalidate_capability_profile(
+        capability_profile_digest=CAPABILITY_B,
+        reason="generation capability profile changed",
+    )
+    assert result.invalidated_node_ids == ("B1", "STORYBOARD", "VIDEO")
+    state = session.state()
+    assert set(state.accepted) == {"I0", "E0"}
+    assert state.accepted["E0"].knowledge_snapshot_digest == KNOWLEDGE_A
+
+
+def test_selected_knowledge_snapshot_controls_invalidation_not_candidate_churn(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-8", graph=_graph())
+    _complete(session)
+    from mode_p_vnext.pipeline.invalidation import FieldInvalidator
+
+    no_change = FieldInvalidator(_graph()).invalidate_knowledge_snapshot(
+        session.state(),
+        knowledge_snapshot_digest=KNOWLEDGE_A,
+        reason="candidate set changed but selected snapshot did not",
+        commit_id="plan-knowledge",
+    )
+    assert no_change.invalidated_node_ids == ()
+    changed = FieldInvalidator(_graph()).invalidate_knowledge_snapshot(
+        session.state(),
+        knowledge_snapshot_digest=KNOWLEDGE_B,
+        reason="selected snapshot changed",
+        commit_id="plan-knowledge-2",
+    )
+    assert changed.invalidated_node_ids == ("E0", "B1", "STORYBOARD", "VIDEO")
+
+
+def test_stale_concurrent_result_and_same_scope_writer_are_rejected(tmp_path: Path) -> None:
+    runs = tmp_path / "runs"
+    first = RunSession.create(runs, run_id="run-9a", graph=_graph(), write_scope="episode-1:scene-1")
+    second = RunSession.create(runs, run_id="run-9b", graph=_graph(), write_scope="episode-1:scene-1")
+    stale = first.capture_execution_snapshot().base_state_sha256
+    source = _artifact(ArtifactKind.NORMALIZED_SOURCE, "stale-source")
+    _execute(first, "I0", source, {"raw_source": source.source_provenance[0].digest})
+    direction = _artifact(ArtifactKind.EPISODE_DIRECTION_DRAFT, "stale-direction")
+    with pytest.raises(StateInvariantError, match="stale concurrent result"):
+        first.runner(owner="late-worker").prepare(
+            "E0",
+            artifacts={"direction": direction},
+            input_digests={"source": first.state().outputs["source"].artifact_digest},
+            base_state_sha256=stale,
+            knowledge_snapshot_digest=KNOWLEDGE_A,
+        )
+    other = _artifact(ArtifactKind.NORMALIZED_SOURCE, "other")
+    with first._lock("lock-holder"):
+        with pytest.raises(RunSessionError, match="write lock is already held"):
+            second.runner(owner="other-worker").prepare(
+                "I0",
+                artifacts={"source": other},
+                input_digests={"raw_source": other.source_provenance[0].digest},
+                base_state_sha256=second.capture_execution_snapshot().base_state_sha256,
+            )
+
+
+def test_graph_rejects_wrong_artifact_type_and_noncanonical_state_schema() -> None:
     graph = _graph()
-    session = RunSession.create(tmp_path / "runs", run_id="run-checkpoint", graph=graph)
-    session.runner(owner="test-worker").accept(
-        node_id="E0",
-        artifacts={"episode_direction": _direction_artifact()},
-        dependency_digests={"episode_facts": "1" * 64},
+    wrong = ArtifactRef(
+        artifact_id="id:" + _digest("1"),
+        artifact_type=ArtifactKind.EPISODE_DIRECTION_DRAFT,
+        schema_version="3.0",
+        canonical_payload_sha256=_digest("2"),
+        artifact_digest=_digest("3"),
     )
-    checkpoint = next((session.run_dir / "checkpoints").glob("*.json"))
-    payload = json.loads(checkpoint.read_text(encoding="utf-8"))
-    assert payload["accepted"]["E0"]["dependency_digests"] == {"episode_facts": "1" * 64}
-    assert "path" not in json.dumps(payload["accepted"]["E0"], sort_keys=True)
-    assert session.resume_plan({"episode_facts": "1" * 64}).checkpoint_sequence == 1
-    assert session.resume_plan({"episode_facts": "f" * 64}).checkpoint_sequence == 0
-    assert canonical_sha256(payload["state"]) == payload["state_sha256"]
-
-
-def test_recovery_ignores_a_rehashed_checkpoint_that_is_not_bound_to_the_event_chain(
-    tmp_path: Path,
-) -> None:
-    graph = _graph()
-    session = RunSession.create(
-        tmp_path / "runs", run_id="run-forged-checkpoint", graph=graph
-    )
-    accepted = session.runner(owner="worker").accept(
-        node_id="E0",
-        artifacts={"episode_direction": _direction_artifact()},
-        dependency_digests={"episode_facts": "1" * 64},
-    )
-    checkpoint = (
-        session.run_dir / "checkpoints" / f"{accepted.event_sequence}.json"
-    )
-    assert checkpoint.is_file()
-    forged_state = PersistentGraphState(
-        run_id=accepted.run_id,
-        outputs={},
-        accepted={},
-        event_sequence=accepted.event_sequence,
-        current_commit_id=accepted.current_commit_id,
-    ).to_dict()
-    forged_checkpoint = {
-        **forged_state,
-        "state": forged_state,
-        "state_sha256": canonical_sha256(forged_state),
-    }
-    checkpoint.write_text(
-        json.dumps(forged_checkpoint), encoding="utf-8"
-    )
-
-    restored = RunSession.open(session.run_dir, graph=graph).state()
-    assert tuple(restored.accepted) == ("E0",)
-    assert restored.outputs["episode_direction"].content_sha256 == (
-        accepted.outputs["episode_direction"].content_sha256
-    )
-
-
-def test_recovery_fails_closed_when_an_accepted_artifact_reference_no_longer_verifies(
-    tmp_path: Path,
-) -> None:
-    graph = _graph()
-    session = RunSession.create(
-        tmp_path / "runs", run_id="run-dangling-artifact", graph=graph
-    )
-    artifact = _direction_artifact()
-    session.runner(owner="worker").accept(
-        node_id="E0",
-        artifacts={"episode_direction": artifact},
-        dependency_digests={"episode_facts": "1" * 64},
-    )
-    path = (
-        session.run_dir
-        / "artifacts"
-        / artifact.artifact_kind.value
-        / f"{artifact.content_sha256}.json"
-    )
-    stored = json.loads(path.read_text(encoding="utf-8"))
-    stored["payload"]["dramatic_promise"] = "Post-acceptance mutation."
-    path.write_text(json.dumps(stored), encoding="utf-8")
-
-    with pytest.raises(RunSessionError, match="persisted artifact"):
-        RunSession.open(session.run_dir, graph=graph).state()
-
-
-def test_state_event_cannot_reuse_a_different_commits_manifest_binding(
-    tmp_path: Path,
-) -> None:
-    graph = _graph()
-    session = RunSession.create(
-        tmp_path / "runs", run_id="run-forged-event", graph=graph
-    )
-    accepted = session.runner(owner="worker").accept(
-        node_id="E0",
-        artifacts={"episode_direction": _direction_artifact()},
-        dependency_digests={"episode_facts": "1" * 64},
-    )
-    scene_ref = session.artifacts.put(_scene_intent_artifact())
-    forged = graph.apply(
-        accepted,
-        node_id="S1",
-        outputs={"scene_intent": scene_ref},
-        dependency_digests={
-            "episode_direction": accepted.outputs[
-                "episode_direction"
-            ].content_sha256,
-            "scene_facts": "2" * 64,
-        },
-        commit_id=accepted.current_commit_id,
-    )
-    event = {
-        "state": forged.to_dict(),
-        "state_sha256": canonical_sha256(forged.to_dict()),
-        "commit_id": accepted.current_commit_id,
-        "node_id": "S1",
-        "transition": {
-            "kind": "node",
-            "base_state_sha256": canonical_sha256(accepted.to_dict()),
-        },
-    }
-    with (session.run_dir / "STATE_EVENTS.jsonl").open("ab") as handle:
-        handle.write(canonical_json_bytes(event))
-        handle.write(b"\n")
-
-    with pytest.raises(RunSessionError, match="commit manifest"):
-        RunSession.open(session.run_dir, graph=graph).state()
-
-
-def test_each_output_field_rejects_an_artifact_kind_from_another_stage() -> None:
-    graph = _graph()
-    with pytest.raises(StateInvariantError, match="artifact kind"):
+    with pytest.raises(StateInvariantError, match="artifact type"):
         graph.apply(
-            PersistentGraphState.empty("run-kind"),
-            node_id="E0",
-            outputs={
-                "episode_direction": _ref(
-                    "episode_direction", ArtifactKind.SCENE_INTENT, "a"
-                )
-            },
-            dependency_digests={"episode_facts": "1" * 64},
+            PersistentGraphState.empty("run-type"),
+            node_id="I0",
+            outputs={"source": wrong},
+            input_digests={"raw_source": _digest("4")},
+            knowledge_snapshot_digest=None,
+            capability_profile_digest=None,
+            commit_id="commit-type",
         )
+    state = PersistentGraphState.empty("run-type").to_dict()
+    state["schema_version"] = "2.2"
+    with pytest.raises(StateInvariantError, match="unsupported"):
+        PersistentGraphState.from_dict(state)
 
 
-def test_session_rejects_a_persisted_state_with_a_wrong_field_kind(tmp_path: Path) -> None:
-    graph = _graph()
-    session = RunSession.create(tmp_path / "runs", run_id="run-tampered-state", graph=graph)
-    accepted = session.runner(owner="worker").accept(
-        node_id="E0",
-        artifacts={"episode_direction": _direction_artifact()},
-        dependency_digests={"episode_facts": "1" * 64},
-    )
-    forged = PersistentGraphState(
-        run_id=accepted.run_id,
-        outputs={
-            "episode_direction": _ref(
-                "episode_direction", ArtifactKind.SCENE_INTENT, "a"
-            )
-        },
-        accepted=accepted.accepted,
-        event_sequence=accepted.event_sequence + 1,
-        current_commit_id=accepted.current_commit_id,
-    )
-    event = {
-        "state": forged.to_dict(),
-        "state_sha256": canonical_sha256(forged.to_dict()),
-        "commit_id": None,
-        "node_id": None,
-    }
-    with (session.run_dir / "STATE_EVENTS.jsonl").open("ab") as handle:
-        handle.write(canonical_json_bytes(event))
-        handle.write(b"\n")
+def test_pointer_tampering_and_ambiguous_committed_recovery_fail_closed(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-10", graph=_graph())
+    source = _artifact(ArtifactKind.NORMALIZED_SOURCE, "pointer")
+    _execute(session, "I0", source, {"raw_source": source.source_provenance[0].digest})
+    pointer = json.loads(session.current_pointer_path.read_text(encoding="utf-8"))
+    pointer["state_sha256"] = _digest("9")
+    session.current_pointer_path.write_text(json.dumps(pointer), encoding="utf-8")
+    with pytest.raises(RunSessionError, match="pointer digest"):
+        RunSession.open(session.run_dir, graph=_graph()).state()
 
-    with pytest.raises(RunSessionError, match="artifact kind"):
-        RunSession.open(session.run_dir, graph=graph).state()
-
-
-def test_content_addressed_repository_rejects_a_mutated_payload(tmp_path: Path) -> None:
-    graph = _graph()
-    session = RunSession.create(tmp_path / "runs", run_id="run-tampered-artifact", graph=graph)
-    artifact = _direction_artifact()
-    ref = session.artifacts.put(artifact)
-    path = (
-        session.run_dir
-        / "artifacts"
-        / artifact.artifact_kind.value
-        / f"{artifact.content_sha256}.json"
-    )
-    stored = json.loads(path.read_text(encoding="utf-8"))
-    stored["payload"]["dramatic_promise"] = "Forged post-hash payload."
-    path.write_text(json.dumps(stored), encoding="utf-8")
-
-    assert not session.artifacts.contains(ref)
-    with pytest.raises(StateInvariantError, match="not a persisted artifact"):
-        session.runner(owner="worker").prepare(
-            node_id="E0",
-            artifacts={"episode_direction": ref},
-            dependency_digests={"episode_facts": "1" * 64},
+    ambiguous = RunSession.create(tmp_path / "runs", run_id="run-11", graph=_graph())
+    for label in ("ambiguous-a", "ambiguous-b"):
+        artifact = _artifact(ArtifactKind.NORMALIZED_SOURCE, label)
+        pending = ambiguous.runner(owner=f"writer-{label}").prepare(
+            "I0",
+            artifacts={"source": artifact},
+            input_digests={"raw_source": artifact.source_provenance[0].digest},
+            base_state_sha256=ambiguous.capture_execution_snapshot().base_state_sha256,
         )
-
-
-def test_v22_persistence_records_are_versioned_and_run_record_is_self_hashing(
-    tmp_path: Path,
-) -> None:
-    graph = _graph()
-    session = RunSession.create(
-        tmp_path / "runs", run_id="run-v22-records", graph=graph
-    )
-    run_path = session.run_dir / "RUN.json"
-    run_record = json.loads(run_path.read_text(encoding="utf-8"))
-    assert run_record["schema_name"] == "mode_p_vnext_run"
-    assert run_record["schema_version"] == "2.2"
-    run_digest = run_record.pop("record_sha256")
-    assert canonical_sha256(run_record) == run_digest
-    assert PersistentGraphState.empty(session.run_id).to_dict()["schema_version"] == "2.2"
-
-    pending = session.runner(owner="worker").prepare(
-        node_id="E0",
-        artifacts={"episode_direction": _direction_artifact()},
-        dependency_digests={"episode_facts": "1" * 64},
-    )
-    assert pending.to_dict()["schema_version"] == "2.2"
-    manifest = json.loads(
-        (
-            session.run_dir
-            / "staging"
-            / pending.generation_id
-            / "MANIFEST.json"
-        ).read_text(encoding="utf-8")
-    )
-    assert manifest["schema_version"] == "2.2"
-
-    tampered = json.loads(run_path.read_text(encoding="utf-8"))
-    tampered["run_id"] = "substituted-run"
-    run_path.write_text(json.dumps(tampered), encoding="utf-8")
-    with pytest.raises(RunSessionError, match="RUN record digest"):
-        RunSession.open(session.run_dir, graph=graph)
-
-
-def test_run_id_cannot_escape_or_alias_the_runs_root(tmp_path: Path) -> None:
-    graph = _graph()
-    runs_root = tmp_path / "container" / "runs"
-
-    with pytest.raises(RunSessionError, match="safe"):
-        RunSession.create(runs_root, run_id="..", graph=graph)
-
-    assert not (tmp_path / "container" / "RUN.json").exists()
-
-
-def test_second_prepare_is_rejected_until_the_pending_write_is_resolved(
-    tmp_path: Path,
-) -> None:
-    graph = _graph()
-    session = RunSession.create(
-        tmp_path / "runs", run_id="run-single-pending", graph=graph
-    )
-    first = session.runner(owner="worker-1").prepare(
-        node_id="E0",
-        artifacts={"episode_direction": _direction_artifact()},
-        dependency_digests={"episode_facts": "1" * 64},
-    )
-
-    with pytest.raises(RunSessionError, match="unresolved prepared write"):
-        session.runner(owner="worker-2").prepare(
-            node_id="E0",
-            artifacts={"episode_direction": _direction_artifact("f")},
-            dependency_digests={"episode_facts": "1" * 64},
-        )
-
-    candidates = [
-        path
-        for path in (session.run_dir / "staging").iterdir()
-        if path.is_dir() and path.name != "abandoned"
-    ]
-    assert [path.name for path in candidates] == [first.generation_id]
-
-
-def test_current_pointer_tamper_is_rejected_against_the_event_chain(
-    tmp_path: Path,
-) -> None:
-    graph = _graph()
-    session = RunSession.create(
-        tmp_path / "runs", run_id="run-current-tamper", graph=graph
-    )
-    accepted = session.runner(owner="worker").accept(
-        node_id="E0",
-        artifacts={"episode_direction": _direction_artifact()},
-        dependency_digests={"episode_facts": "1" * 64},
-    )
-    pointer_path = session.current_pointer_path
-    pointer = json.loads(pointer_path.read_text(encoding="utf-8"))
-    assert pointer["sequence"] == accepted.event_sequence
-    pointer["sequence"] += 1
-    pointer_path.write_text(json.dumps(pointer), encoding="utf-8")
-
-    with pytest.raises(RunSessionError, match="current pointer"):
-        RunSession.open(session.run_dir, graph=graph).state()
-
-
-def test_noop_invalidation_does_not_publish_a_phantom_event_sequence(
-    tmp_path: Path,
-) -> None:
-    graph = _graph()
-    session = RunSession.create(
-        tmp_path / "runs", run_id="run-noop-invalidation", graph=graph
-    )
-    before = session.state()
-
-    result = session.invalidate(
-        changed_field_digests={"unconsumed_field": "9" * 64},
-        reason="unrelated external input changed",
-    )
-
-    assert result.invalidated_node_ids == ()
-    assert result.state == before
-    assert session.state() == before
-    assert (session.run_dir / "STATE_EVENTS.jsonl").read_text(encoding="utf-8") == ""
+        NodeTransaction.promote(ambiguous.run_dir, pending)
+    with pytest.raises(RunSessionError, match="multiple committed children"):
+        RunSession.open(ambiguous.run_dir, graph=_graph()).recover_pending(owner="recovery")

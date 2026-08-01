@@ -1,0 +1,97 @@
+{
+  "task_id": "A2",
+  "kind": "MODE_P_VNEXT_A2_PERSISTENT_RUNTIME_EVIDENCE",
+  "architecture_version": "3.0",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_COMPLETE_VERIFICATION_INPUT"
+  },
+  "changed_paths": [
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/pipeline/state.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/pipeline/graph.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/pipeline/invalidation.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/__init__.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/artifacts.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/cache.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/session.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/transaction.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a2_persistent_graph.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_V30_PERSISTENT_RUNTIME_012.json"
+  ],
+  "checks": [
+    {"name": "persistent_state_graph", "exit_code": 0},
+    {"name": "checkpoint_resume", "exit_code": 0},
+    {"name": "pending_write_atomicity", "exit_code": 0},
+    {"name": "content_addressed_artifacts", "exit_code": 0},
+    {"name": "field_level_invalidation", "exit_code": 0},
+    {"name": "capability_profile_invalidation", "exit_code": 0},
+    {"name": "stale_concurrent_result_rejected", "exit_code": 0}
+  ],
+  "verification_results": [
+    {
+      "name": "a2_persistent_graph",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_a2_persistent_graph.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_\u8c03\u5ea6\u5668",
+      "exit_code": 0,
+      "summary": "10 passed in 4.83s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_a1_and_v4_entrypoint_regression",
+      "exit_code": 0,
+      "summary": "44 passed in 2.34s: A0 ReleaseLedger, A1 frozen domain, and active v4 entrypoints.",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit"
+    },
+    {
+      "name": "v4_full_regression",
+      "exit_code": 0,
+      "summary": "686 passed, 95 skipped, 8 subtests passed in 198.68s.",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit"
+    },
+    {
+      "name": "vnext_full_collection_probe",
+      "exit_code": 1,
+      "summary": "The full vNext collection has three expected A5/A6/A7 historical-consumer import failures after frozen v3 removed incompatible GenerationSegmentTimeline and GenerationSegment types. Restoring aliases would violate v3.0; this A2 package does not modify downstream packages.",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit"
+    }
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/pipeline/state.py": "ffefbdb228a2447139b857848a60ab53254ad07a8f9dcf1c62b6a1cf2a2371d1",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/pipeline/graph.py": "e345ddbefec5b05ebcb15e5b3192806e1785ceb264292566a90807bd39f6c933",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/pipeline/invalidation.py": "fbf94c603df1e08265e2f6fd37b9bd3b9b7c44b1545b91d389af2272399447e7",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/__init__.py": "e64a1999c5ffe44378dac81f3a5009d7f8e7791b18e7119ec8d400cd75a1ff1e",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/artifacts.py": "3a02d5e3d6ab7fc8f2eb47783391cbbf9ed40a2c82e178ad18bc8c80a3ac28d2",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/cache.py": "ea9ae4360e009983b0331f539c9b38a63096d946990d6ae46c615d749781f0c4",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/session.py": "2ae7ece46dd86308d3570c4ed890cc70d70c15720c8f35a2aa4034c5e067607c",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/runtime/transaction.py": "c49dd096ff074b15dbc85aad8234fafcb8ee6e6d693669bfa34dffef0a310dbd",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a2_persistent_graph.py": "215f4d8692e7b16179425a2742fc8fcba65b1155db445e0de1ab06c7de215298"
+  },
+  "root_cause_repairs": [
+    "Replaced v2.2 runtime-reference assumptions with canonical Artifact ID, type, domain schema, payload hash, and complete-envelope digest bindings.",
+    "Replaced event-and-checkpoint authority with a replayed atomic committed-transition chain; checkpoints are verified accelerators only.",
+    "Made pending staging non-recoverable and quarantined; only an atomically promoted, unique direct committed child may be resumed.",
+    "Bound accepted nodes to input digests, upstream ArtifactRefs, local stage signature, selected knowledge snapshot, capability profile, parent commit, and exact captured base-state digest.",
+    "Added field-closure and capability-scoped invalidation: unchanged selected knowledge is a no-op, profiles invalidate declared consumers and descendants, and adapter changes remain delivery scoped.",
+    "Added a cross-run write-scope lock and mandatory pre-execution state digest so stale concurrent results cannot prepare or commit.",
+    "Kept all canonical payload, time, VEC, Projection, and identifier authority in mode_p_vnext.domain; A2 holds only operational reference and replay metadata."
+  ],
+  "authority_boundary": {
+    "canonical_domain": "mode_p_vnext.domain",
+    "runtime_ledger": "A2 records canonical ArtifactRef metadata and deterministic commit/replay evidence only; it never deserializes, redefines, or mutates canonical domain payloads.",
+    "pending_recovery_policy": "Pending staging is quarantined; only atomically committed transitions may resume.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A3 knowledge, A4 provider, A5 timeline/VEC, A6 Projection, A7 Gate/DP/media, or later package was implemented.",
+    "No legacy GenerationSegment compatibility alias was restored.",
+    "No Director, DP, external media, production runtime, or visual acceptance was started or claimed."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false,
+  "media_visual_acceptance": false
+}
