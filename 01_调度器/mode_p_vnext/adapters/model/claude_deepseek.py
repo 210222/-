@@ -26,8 +26,8 @@ from mode_p_vnext.ports.structured_text import (
     ViolationSet,
 )
 from mode_p_vnext.prompts.compiler import PromptCompiler
-from mode_p_vnext.prompts.schema_registry import DraftSchemaRegistry
-from mode_p_vnext.prompts.signatures import StageSignature
+from mode_p_vnext.prompts.schema_registry import DraftSchema, DraftSchemaRegistry
+from mode_p_vnext.prompts.signatures import Stage, StageSignature
 
 
 def _sha256_text(value: str) -> str:
@@ -211,14 +211,65 @@ class ClaudeDeepSeekStructuredAdapter(StructuredGenerationPort):
         approved_input: Mapping[str, Any],
         policy: GenerationPolicy,
     ) -> tuple[ModelDraft, TextCallEvidence]:
-        if policy.require_native_schema and not self._capabilities.native_json_schema:
-            raise CapabilityUnsupportedError(
-                "CAPABILITY_UNSUPPORTED: provider lacks native JSON Schema transport"
-            )
+        self._require_native_schema_capability()
         compiled = self._compiler.compile(signature, approved_input)
         schema = self._schemas.schema_for(signature)
         if schema.digest != compiled.schema_digest:
             raise RuntimeError("compiled prompt/schema digest mismatch")
+        payload, evidence = self._invoke(
+            signature, compiled, schema, policy, attempt=1
+        )
+        return ModelDraft(signature.stage, signature.contract_name, payload), evidence
+
+    def repair(
+        self,
+        signature: StageSignature,
+        violations: ViolationSet,
+        policy: GenerationPolicy,
+        repair_budget: RepairBudget,
+    ) -> tuple[ContractPatch, TextCallEvidence]:
+        """Request one native, scoped ContractPatch without re-sending a Draft."""
+
+        if signature.stage is not violations.stage:
+            raise ValueError("signature stage must match violation set stage")
+        repair_budget.ensure_available(violations)
+        self._require_native_schema_capability()
+        compiled = self._compiler.compile_repair(signature, violations)
+        schema = self._schemas.repair_schema_for(signature)
+        if schema.digest != compiled.schema_digest:
+            raise RuntimeError("compiled repair/schema digest mismatch")
+        payload, evidence = self._invoke(
+            signature, compiled, schema, policy, attempt=2
+        )
+        try:
+            patch = ContractPatch(
+                stage=Stage(str(payload["stage"])),
+                draft_digest=str(payload["draft_digest"]),
+                repair_scope=tuple(payload["repair_scope"]),
+                values=dict(payload["values"]),
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError("provider returned an invalid ContractPatch") from exc
+        repair_budget.consume(violations, patch)
+        return patch, evidence
+
+    def _require_native_schema_capability(self) -> None:
+        """This adapter has no non-native transport; reject before model I/O."""
+
+        if not self._capabilities.native_json_schema:
+            raise CapabilityUnsupportedError(
+                "CAPABILITY_UNSUPPORTED: provider lacks native JSON Schema transport"
+            )
+
+    def _invoke(
+        self,
+        signature: StageSignature,
+        compiled: Any,
+        schema: DraftSchema,
+        policy: GenerationPolicy,
+        *,
+        attempt: int,
+    ) -> tuple[Mapping[str, Any], TextCallEvidence]:
         request = StructuredTransportRequest(
             executable=self._executable,
             requested_model=policy.requested_model,
@@ -248,38 +299,14 @@ class ClaudeDeepSeekStructuredAdapter(StructuredGenerationPort):
             schema_characters=schema.character_count,
             response_characters=len(response_text),
             latency_ms=latency_ms,
-            attempt=1,
+            attempt=attempt,
             accepted=True,
             rejection_code=None,
             input_tokens=usage.get("input_tokens"),
             output_tokens=usage.get("output_tokens"),
             cache_hit=usage.get("cache_hit"),
         )
-        return ModelDraft(signature.stage, signature.contract_name, payload), evidence
-
-    def repair(
-        self,
-        signature: StageSignature,
-        violations: ViolationSet,
-        patch: ContractPatch,
-        policy: GenerationPolicy,
-        repair_budget: RepairBudget,
-    ) -> tuple[ModelDraft, TextCallEvidence]:
-        """Submit exactly one compact ContractPatch, never a full failed Draft."""
-
-        if signature.stage is not violations.stage:
-            raise ValueError("signature stage must match violation set stage")
-        repair_budget.ensure_available(violations, patch)
-        result = self.generate(
-            signature,
-            {"contract_patch": patch.compact_payload(violations)},
-            policy,
-        )
-        # A CLI/network/transport exception above propagates without charging
-        # the creative repair. Only a successful structured model response is
-        # allowed to consume the one repair opportunity.
-        repair_budget.consume(violations, patch)
-        return result
+        return payload, evidence
 
     @staticmethod
     def _decode_response(
@@ -359,6 +386,8 @@ def _validate_draft_against_schema(
     if expected == "string":
         if not isinstance(value, str):
             raise ValueError(f"draft schema violation at {path}: expected string")
+        if "minLength" in schema and len(value) < schema["minLength"]:
+            raise ValueError(f"draft schema violation at {path}: string is too short")
         if "maxLength" in schema and len(value) > schema["maxLength"]:
             raise ValueError(f"draft schema violation at {path}: string exceeds maxLength")
         return

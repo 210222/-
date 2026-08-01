@@ -1,4 +1,4 @@
-"""Port contract for a structured creative-Draft model call."""
+"""Port contract for structured stage Drafts and scoped repair patches."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ class GenerationPolicy:
 
 @dataclass(frozen=True)
 class ModelDraft:
-    """Unsealed creative output. It is never a VEC or release artifact."""
+    """Unsealed stage output. It is never a VEC or release artifact."""
 
     stage: Stage
     contract_name: str
@@ -106,6 +106,8 @@ class ViolationSet:
     repair_scope: tuple[str, ...]
 
     def __post_init__(self) -> None:
+        if not isinstance(self.stage, Stage):
+            raise ValueError("violation stage must be a Stage")
         if len(self.draft_digest) != 64:
             raise ValueError("draft_digest must be a SHA-256 value")
         if not self.violations or not self.repair_scope:
@@ -126,6 +128,8 @@ class ContractPatch:
     values: Mapping[str, Any]
 
     def __post_init__(self) -> None:
+        if not isinstance(self.stage, Stage):
+            raise ValueError("contract patch stage must be a Stage")
         if len(self.draft_digest) != 64:
             raise ValueError("draft_digest must be a SHA-256 value")
         scope = tuple(self.repair_scope)
@@ -169,8 +173,11 @@ class RepairBudget:
         if self.maximum != 1:
             raise ValueError("architecture permits exactly one scoped contract repair")
 
-    def ensure_available(self, violations: ViolationSet, patch: ContractPatch) -> None:
-        patch.compact_payload(violations)
+    def ensure_available(
+        self, violations: ViolationSet, patch: ContractPatch | None = None
+    ) -> None:
+        if patch is not None:
+            patch.compact_payload(violations)
         if self.used >= self.maximum:
             raise ValueError("repair budget exhausted")
 
@@ -189,3 +196,11 @@ class StructuredGenerationPort(Protocol):
         approved_input: Mapping[str, Any],
         policy: GenerationPolicy,
     ) -> tuple[ModelDraft, TextCallEvidence]: ...
+
+    def repair(
+        self,
+        signature: StageSignature,
+        violations: ViolationSet,
+        policy: GenerationPolicy,
+        repair_budget: RepairBudget,
+    ) -> tuple[ContractPatch, TextCallEvidence]: ...

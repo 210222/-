@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Mapping
 
+from .signatures import Stage, StageSignature
+
 
 DIRECTOR_CORE = (
     "You are the MODE:P Director for one bounded creative stage. Use only approved "
@@ -11,6 +13,14 @@ DIRECTOR_CORE = (
     "draft content only; do not invent story facts, deterministic identifiers, hashes, "
     "or rendered delivery text. Keep private reasoning private. Return one "
     "JSON object that satisfies the separately transported contract."
+)
+
+FACT_EXTRACTION_CORE = (
+    "You extract only source-anchored MODE:P script facts for one bounded ingest "
+    "window. Use only the normalized source supplied for this call. Do not make "
+    "creative decisions, rewrite narrative, invent facts, identifiers, hashes, or "
+    "validation status. Return one JSON object that satisfies the separately "
+    "transported contract."
 )
 
 _CONDITIONAL_FRAGMENTS: Mapping[str, str] = {
@@ -33,8 +43,19 @@ _CONDITIONAL_FRAGMENTS: Mapping[str, str] = {
 }
 
 
-def conditional_fragments(approved_input: Mapping[str, object]) -> tuple[str, ...]:
+def core_for_signature(signature: StageSignature) -> str:
+    """I0 is a fact extractor, not a Director creative call."""
+
+    return FACT_EXTRACTION_CORE if signature.stage is Stage.I0 else DIRECTOR_CORE
+
+
+def conditional_fragments(
+    approved_input: Mapping[str, object], *, stage: Stage | None = None
+) -> tuple[str, ...]:
     """Select only fragments whose compact input has the matching feature."""
+
+    if stage is Stage.I0:
+        return ()
 
     selected: list[str] = []
     if approved_input.get("continuity_state"):

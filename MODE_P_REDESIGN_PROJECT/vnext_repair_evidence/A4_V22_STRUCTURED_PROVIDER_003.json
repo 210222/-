@@ -1,0 +1,136 @@
+{
+  "schema_version": "2.2",
+  "task_id": "A4",
+  "title": "Implement declarative stage signatures, prompt budgets, and the provider port",
+  "run_id": "codex-a4-v22-20260801",
+  "architecture_version": "2.2",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/adapters/model/claude_deepseek.py",
+    "01_调度器/mode_p_vnext/ports/structured_text.py",
+    "01_调度器/mode_p_vnext/prompts/compiler.py",
+    "01_调度器/mode_p_vnext/prompts/fragments.py",
+    "01_调度器/mode_p_vnext/prompts/schema_registry.py",
+    "01_调度器/mode_p_vnext/prompts/signatures.py",
+    "01_调度器/mode_p_vnext/tests/test_a4_structured_provider.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A4_V22_STRUCTURED_PROVIDER_003.json"
+  ],
+  "checks": [
+    {
+      "name": "stage_signatures_declared",
+      "exit_code": 0,
+      "evidence": "stage_signatures() freezes exactly I0, E0, S1, B0 and B1. I0 is an internal FactExtractionDraft signature; the other four remain creative Draft stages."
+    },
+    {
+      "name": "prompt_schema_separate_transport",
+      "exit_code": 0,
+      "evidence": "PromptCompiler transmits only contract identity and schema digest in prompt text. ClaudeDeepSeekStructuredAdapter sends the registered JSON Schema through StructuredTransportRequest.json_schema; tests prove canonical schema JSON is absent from system and user prompt fields."
+    },
+    {
+      "name": "b1_prompt_under_12000_chars",
+      "exit_code": 0,
+      "evidence": "Stage.B1 declares a 12000-character hard prompt budget. The compiler measures complete system plus user text before provider I/O and the registered test proves a 12000-character oversized input fails closed."
+    },
+    {
+      "name": "b1_schema_under_4500_chars",
+      "exit_code": 0,
+      "evidence": "Stage.B1 declares a 4500-character Schema budget. DraftSchemaRegistry canonicalizes and measures the separate ExecutionDesignDraft schema before provider I/O; its current canonical size is 2777 characters."
+    },
+    {
+      "name": "native_windows_binary_first",
+      "exit_code": 0,
+      "evidence": "resolve_windows_claude_binary accepts only native claude.exe on Windows and rejects .cmd-only candidates. The native-only adapter rejects absent native JSON Schema capability before runner invocation even when a caller sets require_native_schema=false."
+    },
+    {
+      "name": "one_scoped_contract_repair",
+      "exit_code": 0,
+      "evidence": "Repair now compiles the ViolationSet into a separate ContractPatch transport schema and returns a locally validated ContractPatch. RepairBudget permits exactly one successful scoped patch; transport failure consumes no budget and a second attempt fails before model I/O."
+    },
+    {
+      "name": "i0_fact_extraction_signature",
+      "exit_code": 0,
+      "evidence": "I0 has a 6000-character prompt and 2500-character Schema cap, uses a non-Director fact-extraction core, disables creative fragments, and accepts only a closed FactExtractionDraft facts[] object with source span, semantic type, statement, and optional subject/dialogue/scene fields."
+    },
+    {
+      "name": "source_span_repair_ceiling",
+      "exit_code": 0,
+      "evidence": "An I0 source_end violation is sent only as ViolationSet metadata. The repair request uses ContractPatch rather than FactExtractionDraft, returns only the whitelisted $.facts[0].source_end value, records attempt=2, and cannot be repeated after budget consumption."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a4_structured_provider",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a4_structured_provider.py -q -p no:cacheprovider",
+      "result": "17 passed in 0.22s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "failure_first_v22_baseline",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a4_structured_provider.py -q -p no:cacheprovider",
+      "exit_code": 1,
+      "result": "Before the A4 implementation change, the expanded suite had 7 failures and 9 passes: I0 was absent and repair still requested a full Draft schema after receiving a patch-shaped input."
+    },
+    {
+      "name": "a0_to_a4_and_v4_regression_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "result": "105 passed in 6.93s; the v4 production entrypoint isolation suite remains green."
+    },
+    {
+      "name": "scope_and_diff_hygiene_local",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "git diff --check -- A4-owned paths",
+      "exit_code": 0,
+      "result": "No whitespace errors. Only the seven A4 implementation/test paths and this A4 Evidence file are declared; unrelated dirty files are preserved and excluded."
+    }
+  ],
+  "review": {
+    "findings": [
+      "The prior A4 surface defined only E0, S1, B0 and B1, so v2.2's mandatory internal I0 FactExtractionDraft signature and closed fact-only Schema were absent.",
+      "The previous repair path accepted a pre-built ContractPatch but invoked generate() with the original full Draft schema. It could therefore send patch-shaped input while soliciting a whole Draft and did not mechanically enforce a source-span repair ceiling.",
+      "Native schema capability could be bypassed by setting GenerationPolicy.require_native_schema=false even though this named adapter has no safe non-native fallback transport.",
+      "The strict local decoder did not enforce declared string minLength, allowing an empty I0 statement despite the fact-only contract requiring source-supported content."
+    ],
+    "root_cause": "A4 was previously completed for the v2.1 four-stage creative flow. The v2.2 rebase introduced a typed ingest boundary, but the old implementation treated it as an optional prompt variation and treated repair as an input-patch helper rather than a separately schema-constrained model response.",
+    "considered_options": [
+      {
+        "option": "Fold I0 into an existing Director creative stage or restore a combined total prompt",
+        "decision": "rejected",
+        "reason": "It would erase the architecture's explicit source-anchored ingest boundary and violate the stage-scoped prompt design."
+      },
+      {
+        "option": "Keep full Draft responses for repair and filter changed fields after the call",
+        "decision": "rejected",
+        "reason": "The model would still receive/return unbounded Draft authority, so neither the one-repair limit nor source-span repair ceiling would be provable at the transport boundary."
+      },
+      {
+        "option": "Create a frozen I0 Signature with a separate FactExtractionDraft Schema and compile repairs against a separate ContractPatch Schema",
+        "decision": "accepted",
+        "reason": "It preserves one structured port, strict budget gates and locally auditable limited repair without creating a persistent I0 node or adding creative authority to ingest."
+      },
+      {
+        "option": "Offer an implicit text/JSON fallback when native Schema capability is absent",
+        "decision": "rejected",
+        "reason": "This adapter is native-schema-only; a fallback would weaken the declared transport contract and must be designed as a separate future adapter if ever authorized."
+      }
+    ],
+    "remaining_risks": [
+      "A4 validates only the bounded model contract and patch ceiling. A8's normalized-source ingest and local FactAssembler must verify non-empty ordered spans, source support, dialogue-specific fields and deterministic fact identity before persistent FactRegistry output.",
+      "A4 does not call a model, Shadow, media service or production switch. Later runtime work must reuse stage_signatures() rather than reconstructing signatures or treating TextCallEvidence as visual evidence.",
+      "I0's 6000/2500 stage limits are deliberately conservative and fail rather than truncate; A8 must split independent normalized-source windows when an input would exceed the frozen budget."
+    ]
+  },
+  "media_visual_acceptance": false,
+  "external_submission": false,
+  "owner_production_approval": false,
+  "production_entry": "v4_unchanged",
+  "production_switch_performed": false
+}

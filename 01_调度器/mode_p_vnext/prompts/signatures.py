@@ -1,4 +1,4 @@
-"""The four declarative model-stage signatures required by architecture v2.1."""
+"""Frozen declarative model-stage signatures required by architecture v2.2."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from typing import Mapping
 
 
 class Stage(str, Enum):
+    I0 = "I0"
     E0 = "E0"
     S1 = "S1"
     B0 = "B0"
@@ -59,6 +60,42 @@ class StageSignature:
 
 
 _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
+    Stage.I0: StageSignature(
+        stage=Stage.I0,
+        version="2.2",
+        contract_name="FactExtractionDraft",
+        semantic_goal=(
+            "Extract only source-anchored script facts for deterministic local "
+            "assembly; make no narrative or visual design decisions."
+        ),
+        approved_input_fields=(
+            "normalized source document",
+            "source digest",
+            "source segment bounds",
+        ),
+        output_semantics=(
+            "source spans",
+            "fact semantics",
+            "source-supported statements",
+            "optional subject identifiers",
+            "optional dialogue text",
+            "optional scene hints",
+        ),
+        output_exclusions=(
+            "fact IDs",
+            "artifact IDs",
+            "hashes",
+            "validation status",
+            "creative decisions",
+            "camera, composition, movement, performance, and editing",
+            "reference bindings, audio files, VEC, projections, and delivery prompts",
+            "Golden, Holdout, historical outputs, and task records",
+        ),
+        # I0 is deliberately bounded like the smaller E0 transport. A8 must
+        # split independent normalized-source windows rather than truncate facts.
+        prompt_budget=6_000,
+        schema_budget=2_500,
+    ),
     Stage.E0: StageSignature(
         stage=Stage.E0,
         version="1.0",

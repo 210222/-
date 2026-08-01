@@ -1,4 +1,4 @@
-"""Compact native transport schemas for creative Drafts only."""
+"""Compact native transport schemas for Drafts and scoped repair patches."""
 
 from __future__ import annotations
 
@@ -30,6 +30,52 @@ class DraftSchema:
 
 
 _SCHEMAS: Mapping[Stage, Mapping[str, Any]] = {
+    Stage.I0: {
+        "type": "object",
+        "title": "FactExtractionDraft",
+        "additionalProperties": False,
+        "required": ["facts"],
+        "properties": {
+            "facts": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": [
+                        "source_start",
+                        "source_end",
+                        "semantic_type",
+                        "statement",
+                    ],
+                    "properties": {
+                        "source_start": {"type": "integer", "minimum": 0},
+                        "source_end": {"type": "integer", "minimum": 1},
+                        "semantic_type": {
+                            "enum": [
+                                "narrative",
+                                "character",
+                                "wardrobe",
+                                "prop",
+                                "setting",
+                                "dialogue",
+                                "continuity",
+                                "asset",
+                            ]
+                        },
+                        "statement": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 1_000,
+                        },
+                        "subject_id": {"type": "string", "minLength": 1, "maxLength": 160},
+                        "spoken_text": {"type": "string", "minLength": 1, "maxLength": 1_000},
+                        "scene_hint": {"type": "string", "minLength": 1, "maxLength": 160},
+                    },
+                },
+            }
+        },
+    },
     Stage.E0: {
         "type": "object", "title": "EpisodeDirectionDraft", "additionalProperties": False,
         "required": ["dramatic_promise", "audience_contract", "tension_curve", "visual_principles", "continuity_priorities", "unresolved_questions"],
@@ -93,6 +139,45 @@ _SCHEMAS: Mapping[Stage, Mapping[str, Any]] = {
 }
 
 
+def _repair_schema_document(signature: StageSignature) -> Mapping[str, Any]:
+    """Return the compact native schema for one scoped ContractPatch response."""
+
+    return {
+        "type": "object",
+        "title": "ContractPatch",
+        "additionalProperties": False,
+        "required": ["stage", "draft_digest", "repair_scope", "values"],
+        "properties": {
+            "stage": {"enum": [signature.stage.value]},
+            "draft_digest": {"type": "string", "minLength": 64, "maxLength": 64},
+            "repair_scope": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 16,
+                "items": {"type": "string", "minLength": 1, "maxLength": 512},
+            },
+            "values": {"type": "object", "additionalProperties": True},
+        },
+    }
+
+
+def _assert_repair_contract(
+    signature: StageSignature, document: Mapping[str, Any]
+) -> None:
+    """Ensure a repair transport cannot silently become a full Draft request."""
+
+    expected = {"type", "title", "additionalProperties", "required", "properties"}
+    fields = {"stage", "draft_digest", "repair_scope", "values"}
+    if set(document) != expected or document.get("title") != "ContractPatch":
+        raise ValueError("repair schema must be the compact ContractPatch")
+    if document.get("additionalProperties") is not False:
+        raise ValueError("repair schema must reject fields outside ContractPatch")
+    if set(document.get("required", ())) != fields or set(document.get("properties", {})) != fields:
+        raise ValueError("repair schema must declare only ContractPatch fields")
+    if document["properties"]["stage"].get("enum") != [signature.stage.value]:
+        raise ValueError("repair schema must bind the requested stage")
+
+
 def _assert_schema_node_matches_draft(
     node: Mapping[str, Any], draft_type: type[Any], label: str
 ) -> None:
@@ -110,7 +195,7 @@ def _assert_schema_node_matches_draft(
 def _assert_canonical_draft_contract(
     stage: Stage, document: Mapping[str, Any]
 ) -> None:
-    """Fail before provider I/O if the transport cannot decode a v2.1 Draft."""
+    """Fail before provider I/O if the transport cannot decode its v2.2 Draft."""
 
     from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingDraft
     from mode_p_vnext.domain.decisions import DecisionDraft, VisualCurvePointDraft
@@ -121,6 +206,30 @@ def _assert_canonical_draft_contract(
         VisualBeatDraft,
     )
 
+    if stage is Stage.I0:
+        if set(document) != {
+            "type", "title", "additionalProperties", "required", "properties"
+        } or document.get("title") != "FactExtractionDraft":
+            raise ValueError("I0 schema must be the compact FactExtractionDraft")
+        facts = document.get("properties", {}).get("facts")
+        if not isinstance(facts, Mapping) or facts.get("type") != "array":
+            raise ValueError("I0 facts schema must be an array")
+        item = facts.get("items")
+        if not isinstance(item, Mapping) or item.get("additionalProperties") is not False:
+            raise ValueError("I0 fact schema must be a closed object")
+        required = {"source_start", "source_end", "semantic_type", "statement"}
+        expected = required | {"subject_id", "spoken_text", "scene_hint"}
+        if set(item.get("properties", {})) != expected or set(item.get("required", ())) != required:
+            raise ValueError("I0 fact schema must declare only source-anchored fields")
+        if item["properties"]["semantic_type"].get("enum") != [
+            "narrative", "character", "wardrobe", "prop", "setting",
+            "dialogue", "continuity", "asset",
+        ]:
+            raise ValueError("I0 semantic_type schema must match canonical fact semantics")
+        for field_name in ("statement", "subject_id", "spoken_text", "scene_hint"):
+            if item["properties"][field_name].get("minLength") != 1:
+                raise ValueError(f"I0 {field_name} schema must reject empty text")
+        return
     if stage is Stage.E0:
         _assert_schema_node_matches_draft(
             document, EpisodeDirectionDraft, "E0 schema"
@@ -181,6 +290,22 @@ class DraftSchemaRegistry:
         report = PromptBudgetGate.validate_schema(signature, canonical)
         return DraftSchema(
             contract_name=signature.contract_name,
+            version=signature.version,
+            document=document,
+            canonical_json=canonical,
+            digest=hashlib.sha256(canonical.encode("utf-8")).hexdigest(),
+            budget_report=report,
+        )
+
+    def repair_schema_for(self, signature: StageSignature) -> DraftSchema:
+        """Resolve the separately transported, non-recursive ContractPatch schema."""
+
+        document = _repair_schema_document(signature)
+        _assert_repair_contract(signature, document)
+        canonical = _canonical_json(document)
+        report = PromptBudgetGate.validate_schema(signature, canonical)
+        return DraftSchema(
+            contract_name="ContractPatch",
             version=signature.version,
             document=document,
             canonical_json=canonical,
