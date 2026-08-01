@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from typing import Mapping, Protocol, runtime_checkable
 
 from mode_p_vnext.domain.artifact import DomainValidationError
-from mode_p_vnext.pipeline.verification_nodes import MediaRunRecord
+from mode_p_vnext.domain.evidence import MediaRunRecord
 
 
 @dataclass(frozen=True)

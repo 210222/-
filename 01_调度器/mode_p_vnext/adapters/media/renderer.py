@@ -8,6 +8,7 @@ real media stack: callers must treat it as "no visual evidence available".
 
 from __future__ import annotations
 
+from mode_p_vnext.domain.evidence import MediaRunRecord
 from mode_p_vnext.ports.media_renderer import (
     MediaRenderRequest,
     MediaRendererPort,
@@ -18,7 +19,7 @@ from mode_p_vnext.ports.media_renderer import (
 class NoopMediaRenderer:
     """Fail-closed renderer: never fabricates a MediaRunRecord."""
 
-    def render(self, request: MediaRenderRequest) -> object:
+    def render(self, request: MediaRenderRequest) -> MediaRunRecord:
         raise MediaRendererUnavailableError(
             "no real media renderer is configured; "
             "visual evidence is unavailable and nothing may claim it"

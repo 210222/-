@@ -8,7 +8,7 @@ raises instead of returning fabricated frame evidence.
 
 from __future__ import annotations
 
-from mode_p_vnext.pipeline.verification_nodes import (
+from mode_p_vnext.domain.evidence import (
     FrameEvidence,
     FrameEvidencePlan,
     MediaRunRecord,

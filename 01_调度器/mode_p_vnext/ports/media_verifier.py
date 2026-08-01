@@ -2,16 +2,16 @@
 
 Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §9.4 / §14 A7.
 
-A verifier consumes a MediaRunRecord and a FrameEvidencePlan and returns
-FrameEvidence entries bound to media hashes.  Without a verifier the pipeline
-fails closed: no frame evidence, no VISUAL_EVIDENCED.
+A verifier consumes a canonical MediaRunRecord and FrameEvidencePlan and
+returns FrameEvidence entries bound to media output refs.  Without a verifier
+the pipeline fails closed: no frame evidence, no VISUAL_EVIDENCED.
 """
 
 from __future__ import annotations
 
 from typing import Protocol, runtime_checkable
 
-from mode_p_vnext.pipeline.verification_nodes import (
+from mode_p_vnext.domain.evidence import (
     FrameEvidence,
     FrameEvidencePlan,
     MediaRunRecord,

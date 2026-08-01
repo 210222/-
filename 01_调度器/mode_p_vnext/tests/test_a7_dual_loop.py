@@ -2,20 +2,21 @@
 
 Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §9 / §14 A7.
 
-- Gate 0 is a zero-model deterministic gate (schema, IDs, ticks, references,
-  projection homology, claim ceiling).
-- DP consumes a scoped ReviewPacket and emits bounded RevisionRequests that
-  never rewrite the VEC.
-- Text validation can never claim visual acceptance; only real frame
-  evidence yields VISUAL_EVIDENCED and only explicit owner approval yields
-  OWNER_APPROVED.  Media failures are attributed to a concrete layer.
+All evidence types are the A1-frozen canonical ``domain.evidence`` types;
+A7 adds only the logic: Gate 0, scoped DP packet building, bounded revision
+routing, the TEXT_VALIDATED -> VISUAL_EVIDENCED -> OWNER_APPROVED ladder,
+and layer attribution for media failures.  Text can never claim visual
+acceptance; media failures are attributed to a concrete layer.
 """
 
 from __future__ import annotations
 
 import pytest
 
-from mode_p_vnext.domain.artifact import SourceRef, canonical_sha256
+from mode_p_vnext.domain.artifact import (
+    SourceRef,
+    canonical_sha256,
+)
 from mode_p_vnext.domain.blocking import (
     BlockingBeatDraft,
     BlockingCommit,
@@ -25,6 +26,17 @@ from mode_p_vnext.domain.decisions import (
     DecisionBasis,
     DecisionDraft,
     VisualCurvePointDraft,
+)
+from mode_p_vnext.domain.evidence import (
+    FrameEvidence,
+    FrameEvidencePlan,
+    MediaRunRecord,
+    OutcomeAttribution,
+    OwnerApprovalDecision,
+    OwnerApprovalRecord,
+    RevisionFailureType,
+    RevisionRequest,
+    VisualVerificationResult,
 )
 from mode_p_vnext.domain.facts import FactKind, FactRegistry, ScriptFact
 from mode_p_vnext.domain.ids import IdFactory
@@ -37,17 +49,19 @@ from mode_p_vnext.domain.vec import (
     VisualExecutionContract,
 )
 from mode_p_vnext.pipeline.verification_nodes import (
-    DPReviewPacket,
-    FrameEvidence,
-    FrameEvidencePlan,
-    FrameSpec,
-    MediaRunRecord,
-    OutcomeAttribution,
+    AttributionLayer,
+    ReviewPacket,
     VerificationStatus,
-    VisualVerificationResult,
     build_dp_review_packet,
+    build_media_evidence,
+    build_visual_verification,
+    gate0_attribution,
+    ladder_status,
+    layer_of,
+    media_render_attribution,
+    media_verify_attribution,
 )
-from mode_p_vnext.ports.approval import ApprovalPort, OwnerApprovalRecord
+from mode_p_vnext.ports.approval import ApprovalPort, OwnerApprovalRecord as _Approval
 from mode_p_vnext.ports.media_renderer import (
     MediaRenderRequest,
     MediaRendererPort,
@@ -66,7 +80,6 @@ from mode_p_vnext.services.projection_compiler import (
     derive_video,
 )
 from mode_p_vnext.services.revision_router import (
-    RevisionRequest,
     RevisionRoute,
     RevisionRouteKind,
     route_revisions,
@@ -291,6 +304,24 @@ def projections(ast: ProjectionAST):
     return derive_storyboard(ast=ast), derive_video(ast=ast)
 
 
+def _media_run() -> MediaRunRecord:
+    return MediaRunRecord(
+        run_id="run:1",
+        provider="sd2",
+        request_digest="a" * 64,
+        output_refs=(SourceRef(source_id="media/frame_001.png", digest="f" * 64),),
+    )
+
+
+def _frame_evidence(run: MediaRunRecord) -> FrameEvidence:
+    return FrameEvidence(
+        media_run_id=run.run_id,
+        frame_index=0,
+        observations=("composition", "subject_state"),
+        attributes={"tick": "0", "state": "state:a", "shot": "shot:1"},
+    )
+
+
 # ===================================================================
 # required_check: deterministic_gate_zero
 # ===================================================================
@@ -337,7 +368,6 @@ class TestDeterministicGateZero:
         self, vec: VisualExecutionContract, ast: ProjectionAST, projections
     ) -> None:
         storyboard, video = projections
-        # A node that is not sourced from the AST must fail the homology check.
         from dataclasses import replace
 
         foreign = replace(storyboard.nodes[0], source_id="foreign-node")
@@ -404,7 +434,6 @@ class TestIndependentDPPacket:
         ast: ProjectionAST,
         projections,
         fact_registry: FactRegistry,
-        blocking_commit: BlockingCommit,
     ) -> None:
         storyboard, video = projections
         gate0 = run_gate0(vec=vec, ast=ast, storyboard=storyboard, video=video, claim_ceiling="TEXT_VALIDATED")
@@ -416,14 +445,15 @@ class TestIndependentDPPacket:
             video=video,
             gate0=gate0,
             capability_summary="sd2 profile v1",
+            episode_direction_artifact_id="episode_direction:0000:" + "a" * 64,
+            scene_intent_artifact_id="scene_intent:0000:" + "b" * 64,
         )
-        assert isinstance(packet, DPReviewPacket)
-        assert packet.scene_id == SCENE_ID
-        assert packet.gate0_passed is True
-        assert packet.vec_digest == canonical_sha256(vec)
-        assert packet.fact_ids
-        assert packet.storyboard_source_node_ids
-        assert packet.video_source_node_ids
+        assert isinstance(packet, ReviewPacket)
+        assert packet.vec_artifact_id == vec.contract_id
+        assert packet.gate_result_refs == (gate0.result_id,)
+        assert set(packet.fact_refs) == set(vec.source_fact_ids)
+        assert len(packet.projection_artifact_ids) == 2
+        assert packet.capability_profile_digest == canonical_sha256("sd2 profile v1")
 
     def test_packet_excludes_director_private_content(
         self,
@@ -442,10 +472,18 @@ class TestIndependentDPPacket:
             video=video,
             gate0=gate0,
             capability_summary="sd2 profile v1",
+            episode_direction_artifact_id="episode_direction:0000:" + "a" * 64,
+            scene_intent_artifact_id="scene_intent:0000:" + "b" * 64,
         )
-        # The packet type has no field for private reasoning, prompts,
-        # repair conversations, or historical pass labels.
-        for forbidden in ("director_prompt", "private_reasoning", "repair_conversation", "historical_pass"):
+        # The canonical packet type has no field for private reasoning,
+        # prompts, repair conversations, or historical pass labels.
+        for forbidden in (
+            "director_prompt",
+            "private_reasoning",
+            "repair_conversation",
+            "historical_pass",
+            "scene_id",
+        ):
             assert not hasattr(packet, forbidden)
 
     def test_dp_packet_rejects_unapproved_fact(
@@ -478,6 +516,8 @@ class TestIndependentDPPacket:
                 video=video,
                 gate0=gate0,
                 capability_summary="sd2 profile v1",
+                episode_direction_artifact_id="episode_direction:0000:" + "a" * 64,
+                scene_intent_artifact_id="scene_intent:0000:" + "b" * 64,
             )
 
 
@@ -486,37 +526,30 @@ class TestIndependentDPPacket:
 # ===================================================================
 
 class TestBoundedRevisionRouter:
-    def _requests(self) -> tuple[RevisionRequest, ...]:
-        return (
-            RevisionRequest(
-                target_artifact_id="vec:1",
-                field_path="shots[0].visual_beats[0].subject_state",
-                failure_type="schema",
-                reason="enum violation",
-            ),
-            RevisionRequest(
-                target_artifact_id="vec:1",
-                field_path="curve_points[1].intensity",
-                failure_type="range",
-                reason="intensity out of bounds",
+    def _request(self, index: int, failure_type: RevisionFailureType) -> RevisionRequest:
+        return RevisionRequest(
+            request_id=f"rev:{index}",
+            target_artifact_id=f"vec:{index}",
+            failure_type=failure_type,
+            fact_refs=("char_chen",),
+            field_paths=(f"field-{index}",),
+            observed_issue=f"issue {index}",
+            requested_change="adjust the referenced field",
+            evidence_refs=(
+                SourceRef(source_id="gate0", digest=f"{index:064x}"),
             ),
         )
 
     def test_local_derivation_routes_first(self) -> None:
-        routes = route_revisions(self._requests(), patch_budget=1)
+        request = self._request(0, RevisionFailureType.PROJECTION_DIVERGENCE)
+        routes = route_revisions((request,), patch_budget=1)
         assert routes[0].kind == RevisionRouteKind.LOCAL_DERIVATION
 
     def test_scoped_patch_respects_budget(self) -> None:
-        # Two requests need model patches, but the budget allows one:
+        # Two creative requests need model patches, but the budget allows one:
         # the first is patched, the second is rejected (fail-closed).
         requests = tuple(
-            RevisionRequest(
-                target_artifact_id=f"vec:{i}",
-                field_path=f"field-{i}",
-                failure_type="choice",
-                reason=f"needs director choice {i}",
-            )
-            for i in range(2)
+            self._request(i, RevisionFailureType.VISUAL_LOGIC) for i in range(2)
         )
         routes = route_revisions(requests, patch_budget=1)
         kinds = [r.kind for r in routes]
@@ -524,12 +557,18 @@ class TestBoundedRevisionRouter:
         assert kinds.count(RevisionRouteKind.REJECT) == 1
 
     def test_zero_budget_never_patches(self) -> None:
-        routes = route_revisions(self._requests(), patch_budget=0)
+        requests = tuple(
+            self._request(i, RevisionFailureType.VISUAL_LOGIC) for i in range(2)
+        )
+        routes = route_revisions(requests, patch_budget=0)
         assert all(r.kind != RevisionRouteKind.SCOPED_PATCH for r in routes)
 
     def test_router_never_rewrites_vec(self) -> None:
         # Routing returns requests only; no mutation API exists on the router.
-        routes = route_revisions(self._requests(), patch_budget=5)
+        requests = tuple(
+            self._request(i, RevisionFailureType.CONTINUITY) for i in range(2)
+        )
+        routes = route_revisions(requests, patch_budget=5)
         assert all(isinstance(r, RevisionRoute) for r in routes)
         assert all(r.request.target_artifact_id for r in routes)
 
@@ -540,76 +579,93 @@ class TestBoundedRevisionRouter:
 
 class TestTextCannotClaimVisualAcceptance:
     def test_text_validation_stays_text_validated(self) -> None:
-        result = VisualVerificationResult.from_text_validation(scene_id=SCENE_ID)
-        assert result.status == VerificationStatus.TEXT_VALIDATED
+        status = ladder_status(
+            text_ceiling="TEXT_VALIDATED", verification=None, approval=None
+        )
+        assert status == VerificationStatus.TEXT_VALIDATED
 
-    def test_text_alone_cannot_construct_visual_evidenced(self) -> None:
-        with pytest.raises(ValueError, match="media"):
-            VisualVerificationResult.from_text_validation(
-                scene_id=SCENE_ID, status=VerificationStatus.VISUAL_EVIDENCED
+    def test_text_ceiling_cannot_claim_visual(self) -> None:
+        with pytest.raises(ValueError, match="claim ceiling"):
+            ladder_status(
+                text_ceiling="VISUAL_EVIDENCED", verification=None, approval=None
             )
 
-    def test_visual_evidenced_requires_frame_evidence(self) -> None:
-        text = VisualVerificationResult.from_text_validation(scene_id=SCENE_ID)
-        run = MediaRunRecord(
-            run_id="run:1",
-            scene_id=SCENE_ID,
-            renderer_version="sd2-1.0",
-            media_kind="image",
-            media_paths=("media/frame_001.png",),
-            created_at="2026-08-01T00:00:00Z",
+    def test_visual_evidenced_requires_passed_verification_with_frames(
+        self, vec: VisualExecutionContract
+    ) -> None:
+        run = _media_run()
+        frames = (_frame_evidence(run),)
+        verification = build_visual_verification(
+            verification_id="verification:1",
+            vec=vec,
+            media_run=run,
+            frames=frames,
         )
-        result = VisualVerificationResult.with_media_evidence(
-            scene_id=SCENE_ID, media_run=run, frame_evidence=()
+        status = ladder_status(
+            text_ceiling="TEXT_VALIDATED", verification=verification, approval=None
         )
-        assert result.status == VerificationStatus.VISUAL_EVIDENCED
-        # text results have no media bindings at all
-        assert text.media_run is None
+        assert status == VerificationStatus.VISUAL_EVIDENCED
 
-    def test_owner_approved_requires_explicit_approval_record(self) -> None:
-        run = MediaRunRecord(
-            run_id="run:2",
-            scene_id=SCENE_ID,
-            renderer_version="sd2-1.0",
-            media_kind="video",
-            media_paths=("media/clip_001.mp4",),
-            created_at="2026-08-01T00:00:00Z",
-        )
-        evidenced = VisualVerificationResult.with_media_evidence(
-            scene_id=SCENE_ID, media_run=run, frame_evidence=()
+    def test_visual_verification_requires_frame_evidence(self, vec: VisualExecutionContract) -> None:
+        # Canonical domain type enforces non-empty frame evidence.
+        run = _media_run()
+        with pytest.raises(ValueError, match="frame_evidence"):
+            build_visual_verification(
+                verification_id="verification:2",
+                vec=vec,
+                media_run=run,
+                frames=(),
+            )
+
+    def test_owner_approved_requires_explicit_approval_record(
+        self, vec: VisualExecutionContract
+    ) -> None:
+        run = _media_run()
+        verification = build_visual_verification(
+            verification_id="verification:3",
+            vec=vec,
+            media_run=run,
+            frames=(_frame_evidence(run),),
         )
         approval = OwnerApprovalRecord(
             approval_id="approval:1",
-            approved_at="2026-08-01T00:01:00Z",
-            media_evidence_digest=evidenced.media_evidence_digest,
-            approver="OWNER",
+            visual_verification_artifact_id=verification.verification_id,
+            decision=OwnerApprovalDecision.APPROVED,
+            approved_by="OWNER",
+            evidence_ref=SourceRef(
+                source_id="approval/session.json", digest="a" * 64
+            ),
         )
-        approved = VisualVerificationResult.with_owner_approval(
-            evidenced, approval=approval
+        status = ladder_status(
+            text_ceiling="TEXT_VALIDATED", verification=verification, approval=approval
         )
-        assert approved.status == VerificationStatus.OWNER_APPROVED
-        assert approved.approval_id == "approval:1"
+        assert status == VerificationStatus.OWNER_APPROVED
 
-    def test_owner_approval_must_bind_evidence_digest(self) -> None:
-        run = MediaRunRecord(
-            run_id="run:3",
-            scene_id=SCENE_ID,
-            renderer_version="sd2-1.0",
-            media_kind="image",
-            media_paths=("media/f.png",),
-            created_at="2026-08-01T00:00:00Z",
-        )
-        evidenced = VisualVerificationResult.with_media_evidence(
-            scene_id=SCENE_ID, media_run=run, frame_evidence=()
+    def test_owner_approval_must_bind_exact_verification(
+        self, vec: VisualExecutionContract
+    ) -> None:
+        run = _media_run()
+        verification = build_visual_verification(
+            verification_id="verification:4",
+            vec=vec,
+            media_run=run,
+            frames=(_frame_evidence(run),),
         )
         dangling = OwnerApprovalRecord(
             approval_id="approval:2",
-            approved_at="2026-08-01T00:02:00Z",
-            media_evidence_digest="0" * 64,
-            approver="OWNER",
+            visual_verification_artifact_id="verification:other",
+            decision=OwnerApprovalDecision.APPROVED,
+            approved_by="OWNER",
+            evidence_ref=SourceRef(
+                source_id="approval/session.json", digest="b" * 64
+            ),
         )
-        with pytest.raises(ValueError, match="digest"):
-            VisualVerificationResult.with_owner_approval(evidenced, approval=dangling)
+        with pytest.raises(ValueError, match="bind"):
+            ladder_status(
+                text_ceiling="TEXT_VALIDATED",
+                verification=verification,
+                approval=dangling,
+            )
 
     def test_media_renderer_port_fails_closed(
         self, ast: ProjectionAST
@@ -645,51 +701,44 @@ class TestMediaOutcomeAttribution:
         assert result.passed is False
         attribution = result.attribution
         assert attribution is not None
-        assert attribution.layer.value == "GATE0"
+        assert layer_of(attribution) == AttributionLayer.GATE0
 
     def test_media_render_failure_attributes_to_media_layer(self) -> None:
-        attribution = OutcomeAttribution.media_render_failure(
+        attribution = media_render_attribution(
             scene_id=SCENE_ID,
             renderer_version="sd2-1.0",
             reason="renderer timeout",
         )
-        assert attribution.layer.value == "MEDIA_RENDER"
-        assert attribution.node_refs
-        assert attribution.reason == "renderer timeout"
+        assert layer_of(attribution) == AttributionLayer.MEDIA_RENDER
+        assert attribution.supporting_evidence
+        assert "renderer timeout" in attribution.cause
 
     def test_media_verify_failure_attributes_to_verifier_layer(self) -> None:
-        attribution = OutcomeAttribution.media_verify_failure(
+        attribution = media_verify_attribution(
             scene_id=SCENE_ID,
             verifier_version="frame-check-1.0",
             reason="frame hash mismatch",
         )
-        assert attribution.layer.value == "MEDIA_VERIFY"
+        assert layer_of(attribution) == AttributionLayer.MEDIA_VERIFY
 
-    def test_frame_evidence_plan_tracks_ticks_and_states(self) -> None:
+    def test_frame_evidence_plan_tracks_checks_and_indices(self) -> None:
         plan = FrameEvidencePlan(
             plan_id="plan:1",
-            scene_id=SCENE_ID,
-            frames=(
-                FrameSpec(
-                    frame_id="frame:1",
-                    tick=0,
-                    state_id="state:a",
-                    shot_id="shot:1",
-                    checks=("composition", "subject_state"),
-                ),
-            ),
+            vec_artifact_id="vec:1",
+            checks=("composition", "subject_state"),
+            frame_indices=(0, 12, 24),
         )
-        assert plan.frames[0].tick == 0
-        assert plan.frames[0].state_id == "state:a"
+        assert plan.frame_indices == (0, 12, 24)
+        assert "composition" in plan.checks
 
     def test_attribution_is_required_for_failed_verification(self) -> None:
-        # A failed visual verification must carry a layer attribution.
-        text = VisualVerificationResult.from_text_validation(scene_id=SCENE_ID)
-        failure = text.with_failure(OutcomeAttribution.media_verify_failure(
+        # A media verification failure carries a layer attribution; the
+        # canonical VisualVerificationResult binds attributions to the result.
+        attribution = media_verify_attribution(
             scene_id=SCENE_ID,
             verifier_version="frame-check-1.0",
             reason="no frames captured",
-        ))
-        assert failure.failed is True
-        assert failure.attribution is not None
-        assert failure.attribution.layer.value == "MEDIA_VERIFY"
+        )
+        assert layer_of(attribution) == AttributionLayer.MEDIA_VERIFY
+        assert attribution.result_id
+        assert attribution.confidence == "high"

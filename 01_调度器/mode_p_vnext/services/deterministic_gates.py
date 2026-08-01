@@ -17,10 +17,12 @@ from mode_p_vnext.domain.artifact import (
     DomainValidationError,
     canonical_sha256,
 )
+from mode_p_vnext.domain.evidence import OutcomeAttribution
 from mode_p_vnext.domain.vec import VisualExecutionContract
 from mode_p_vnext.pipeline.verification_nodes import (
-    OutcomeAttribution,
+    AttributionLayer,
     TEXT_VALIDATED,
+    gate0_attribution,
 )
 from mode_p_vnext.services.projection_compiler import (
     ProjectionAST,
@@ -259,7 +261,7 @@ def run_gate0(
     )
     attribution = None
     if not passed:
-        attribution = OutcomeAttribution.gate0_failure(
+        attribution = gate0_attribution(
             scene_id=vec.scene_id,
             reason="; ".join(f"{issue.rule}:{issue.path}" for issue in issues[:3]),
         )

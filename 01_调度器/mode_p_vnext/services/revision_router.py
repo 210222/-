@@ -2,7 +2,8 @@
 
 Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §9.3 / §14 A7.
 
-The router turns scoped RevisionRequests into routes:
+The request type is the A1-frozen canonical ``domain.evidence.RevisionRequest``
+(re-exported here).  The router turns scoped requests into routes:
 
 - LOCAL_DERIVATION: deterministic local repair (no model call, no budget);
 - SCOPED_PATCH: one model patch that consumes part of the patch budget;
@@ -17,10 +18,16 @@ import enum
 from dataclasses import dataclass
 
 from mode_p_vnext.domain.artifact import DomainValidationError
+from mode_p_vnext.domain.evidence import RevisionFailureType, RevisionRequest
+
+__all__ = ["RevisionFailureType", "RevisionRequest"]
 
 # Failure types that local deterministic derivation can repair without a model.
 _LOCAL_REPAIRABLE_FAILURES = frozenset(
-    {"schema", "range", "enum", "integrity", "reference_closure", "tick"}
+    {
+        RevisionFailureType.PROJECTION_DIVERGENCE,
+        RevisionFailureType.CAPABILITY,
+    }
 )
 
 
@@ -28,21 +35,6 @@ class RevisionRouteKind(str, enum.Enum):
     LOCAL_DERIVATION = "LOCAL_DERIVATION"
     SCOPED_PATCH = "SCOPED_PATCH"
     REJECT = "REJECT"
-
-
-@dataclass(frozen=True)
-class RevisionRequest:
-    """A scoped finding from DP: never a VEC rewrite, always a request."""
-
-    target_artifact_id: str
-    field_path: str
-    failure_type: str
-    reason: str
-
-    def __post_init__(self) -> None:
-        for field_name in ("target_artifact_id", "field_path", "failure_type", "reason"):
-            if not isinstance(getattr(self, field_name), str) or not getattr(self, field_name):
-                raise DomainValidationError(f"{field_name} must be non-empty")
 
 
 @dataclass(frozen=True)
@@ -67,6 +59,8 @@ def route_revisions(
     """
     if isinstance(patch_budget, bool) or not isinstance(patch_budget, int) or patch_budget < 0:
         raise DomainValidationError("patch_budget must be a non-negative integer")
+    if not all(isinstance(request, RevisionRequest) for request in requests):
+        raise DomainValidationError("requests must contain RevisionRequest values")
 
     remaining = patch_budget
     routes: list[RevisionRoute] = []
