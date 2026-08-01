@@ -151,11 +151,33 @@ def test_single_k1_k2_entry_enforces_verified_blocking_commit() -> None:
     assert k2.stage is KnowledgeStage.K2
     assert k2.blocking_commit_digest == binding.content_sha256
     assert k2.decision_view.capsule_ids == ("K2-EXECUTION",)
-    assert k2.snapshot.dependency_digests["blocking_commit"] == (
-        binding.content_sha256
-    )
-    assert k2.snapshot.dependency_digests["blocking_commit_binding"] == (
-        binding.binding_digest
+    assert k2.snapshot.parent_artifact_ids == (binding.artifact_id,)
+    assert k2.snapshot.payload.blocking_commit_digest == binding.content_sha256
+    assert k2.snapshot.payload.retrieval_input_digest == canonical_sha256(
+        {
+            "scene_id": "EP1-S1",
+            "stage": "K2",
+            "catalog_index_sha256": catalog.index_sha256,
+            "context": {
+                "project_id": "EP1",
+                "model_id": "",
+                "mode": "",
+                "aspect_ratio": "",
+                "reference_mode": "",
+                "as_of": "2026-07-31",
+                "all_overrides": (),
+            },
+            "policy": {
+                "primary_card_limit": 3,
+                "conflict_record_limit": 1,
+                "anti_pattern_limit": 1,
+                "retriever_version": "knowledge-flow-1",
+                "ranking_version": "evidence-quality-then-repeat-1",
+            },
+            "blocking_commit_digest": binding.content_sha256,
+            "blocking_commit_binding_digest": binding.binding_digest,
+            "k1_principles": (),
+        }
     )
 
 
@@ -196,7 +218,10 @@ def test_k2_snapshot_binds_the_full_verified_blocking_commit_identity() -> None:
     assert first_result.snapshot.payload.retrieval_input_digest != (
         second_result.snapshot.payload.retrieval_input_digest
     )
-    assert first_result.snapshot.content_sha256 != second_result.snapshot.content_sha256
+    assert (
+        first_result.snapshot.canonical_payload_sha256
+        != second_result.snapshot.canonical_payload_sha256
+    )
 
 
 def test_snapshot_replays_selection_without_searching_catalog_again() -> None:
@@ -207,7 +232,7 @@ def test_snapshot_replays_selection_without_searching_catalog_again() -> None:
         context=_context(),
         stage=KnowledgeStage.K1,
     )
-    assert result.snapshot.content_sha256
+    assert result.snapshot.canonical_payload_sha256
     replay = retriever.replay(result.snapshot)
     assert replay.snapshot_id == result.snapshot.payload.snapshot_id
     assert replay.decision_view == result.decision_view
@@ -264,6 +289,51 @@ def test_legacy_adapters_do_not_create_a_second_runtime_snapshot_authority() -> 
     assert type(legacy_result.selection_receipt).__name__ == "KnowledgeSelectionReceipt"
     assert legacy_result.snapshot is legacy_result.selection_receipt
     assert type(legacy_result.snapshot) is not KnowledgeSnapshot
+
+
+def test_canonical_k1_k2_selection_never_calls_the_legacy_retriever(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The current authority must not depend on a historical selection path."""
+
+    def legacy_path_forbidden(*args, **kwargs):  # type: ignore[no-untyped-def]
+        raise AssertionError("canonical K1/K2 called the retired retrieval path")
+
+    monkeypatch.setattr(
+        legacy_knowledge_flow, "retrieve_for_diagnosis", legacy_path_forbidden
+    )
+    result = KnowledgeRetriever().retrieve(
+        diagnosis=_diagnosis(),
+        catalog=KnowledgeCatalog((_candidate("K1-ATTENTION"),)),
+        context=_context(),
+        stage=KnowledgeStage.K1,
+    )
+    assert result.decision_view.capsule_ids == ("K1-ATTENTION",)
+    assert "retrieve_for_diagnosis" not in inspect.getsource(
+        KnowledgeRetriever.retrieve
+    )
+
+
+def test_legacy_api_delegates_to_service_owned_selection(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Archived callers retain a receipt but cannot revive the retired logic."""
+
+    def retired_helper_forbidden(*args, **kwargs):  # type: ignore[no-untyped-def]
+        raise AssertionError("legacy helper must not select K1/K2 candidates")
+
+    monkeypatch.setattr(
+        legacy_knowledge_flow, "_hard_exclusion_reason", retired_helper_forbidden
+    )
+    result = legacy_knowledge_flow.retrieve_for_diagnosis(
+        _diagnosis(),
+        KnowledgeCatalog((_candidate("K1-ATTENTION"),)),
+        _context(),
+    )
+    assert result.packet.primary_cards[0].card_id == "K1-ATTENTION"
+    assert "retrieve_legacy_compatibility" in inspect.getsource(
+        legacy_knowledge_flow.retrieve_for_diagnosis
+    )
 
 
 def test_legacy_capability_without_a_complete_scope_fails_closed() -> None:
@@ -364,7 +434,7 @@ def test_snapshot_integrity_fails_closed_after_tampering() -> None:
         context=_context(),
         stage=KnowledgeStage.K1,
     )
-    object.__setattr__(result.snapshot, "content_sha256", "0" * 64)
+    object.__setattr__(result.snapshot, "canonical_payload_sha256", "0" * 64)
     with pytest.raises(ValueError, match="integrity"):
         retriever.replay(result.snapshot)
 
@@ -382,18 +452,10 @@ def test_replay_rejects_a_rehashed_obsolete_schema_snapshot() -> None:
     assert result.snapshot.schema_version == DOMAIN_SCHEMA_VERSION
 
     object.__setattr__(result.snapshot, "schema_version", "2.1")
-    object.__setattr__(result.snapshot, "program_version", "mode-p-vnext-2.1")
     object.__setattr__(
         result.snapshot,
-        "content_sha256",
-        ArtifactEnvelope.content_digest_for(
-            artifact_kind=result.snapshot.artifact_kind,
-            schema_version=result.snapshot.schema_version,
-            program_version=result.snapshot.program_version,
-            payload=result.snapshot.payload,
-            source_refs=result.snapshot.source_refs,
-            dependency_digests=result.snapshot.dependency_digests,
-        ),
+        "canonical_payload_sha256",
+        canonical_sha256(result.snapshot.payload),
     )
     with pytest.raises(ValueError, match="integrity"):
         retriever.replay(result.snapshot)

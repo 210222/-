@@ -2,13 +2,14 @@
 
 The legacy retrieval module is intentionally used only as a metadata search
 adapter.  This service is the sole K1/K2 boundary: it converts candidates into
-the v2.2 domain types, seals the complete selection in an ArtifactEnvelope,
+the frozen v3.0 domain types, seals the complete selection in an ArtifactEnvelope,
 and never lets raw source text or retriever-side conflict resolution enter the
 Director view.
 """
 
 from __future__ import annotations
 
+from datetime import date
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Mapping, Sequence
@@ -19,7 +20,6 @@ from mode_p_vnext.domain.artifact import (
     ArtifactKind,
     DomainValidationError,
     SourceRef,
-    ValidationStatus,
     canonical_sha256,
     require_sha256,
 )
@@ -31,18 +31,31 @@ from mode_p_vnext.domain.knowledge import (
     KnowledgeSnapshot,
     KnowledgeStage,
 )
+from mode_p_vnext.conflict_graph import build_conflict_graph
+from mode_p_vnext.diagnosis_artifact import (
+    DiagnosisArtifact,
+    validate_diagnosis_artifact,
+)
 from mode_p_vnext.knowledge_flow import (
     KnowledgeCandidate,
     KnowledgeCatalog,
     RetrievalContext,
     RetrievalPolicy,
-    retrieve_for_diagnosis,
 )
-from mode_p_vnext.schema.scene_diagnosis import SceneDiagnosis
+from mode_p_vnext.knowledge_security import (
+    KnowledgeSecurityEvent,
+    envelope_untrusted_text,
+    inspect_untrusted_text,
+)
+from mode_p_vnext.retrieval_budget import RetrievalBudget
+from mode_p_vnext.schema.scene_diagnosis import (
+    KnowledgeQuery,
+    SceneDiagnosis,
+    generate_knowledge_query,
+)
 
 
 _SCHEMA_VERSION = DOMAIN_SCHEMA_VERSION
-_PROGRAM_VERSION = f"mode-p-vnext-{_SCHEMA_VERSION}"
 
 
 class KnowledgePromotionError(ValueError):
@@ -361,6 +374,468 @@ def _is_k1_compatible(candidate: KnowledgeCandidate) -> bool:
     return not any(term in text for term in _K1_EXECUTION_TERMS)
 
 
+_QUALITY_RANK = {
+    "golden_evidence": 5,
+    "render_evidence": 4,
+    "cross_project": 3,
+    "user_opinion": 2,
+    "textbook": 1,
+    "legacy_pipeline": 0,
+}
+
+
+@dataclass(frozen=True)
+class _MetadataSelection:
+    """Private deterministic K1/K2 selection before canonical sealing.
+
+    This is deliberately local to this service.  It is the one implementation
+    that may decide candidate eligibility, ordering, budget use, conflict
+    exposure, or prompt-safety quarantine for both stages.
+    """
+
+    query: KnowledgeQuery
+    phase: str
+    selected_candidates: tuple[KnowledgeCandidate, ...]
+    primary_candidates: tuple[KnowledgeCandidate, ...]
+    anti_pattern_candidates: tuple[KnowledgeCandidate, ...]
+    conflicts: tuple[Mapping[str, Any], ...]
+    exclusions: Mapping[str, str]
+    security_events: tuple[KnowledgeSecurityEvent, ...]
+    selection_reasons: Mapping[str, str]
+    stage_budgets: Mapping[str, int]
+
+
+def _normalise_knowledge_text(value: str) -> str:
+    return " ".join(value.casefold().split())
+
+
+def _query_terms(
+    query: KnowledgeQuery,
+    diagnosis_artifact: DiagnosisArtifact | None,
+) -> tuple[str, ...]:
+    terms: list[str] = list(query.dimension_questions.keys())
+    for values in query.dimension_questions.values():
+        terms.extend(values)
+    terms.extend(query.model_risk_queries)
+    terms.extend(query.user_constraint_queries)
+    if diagnosis_artifact is not None and diagnosis_artifact.problem_set:
+        terms.extend(diagnosis_artifact.problem_set.knowledge_questions)
+        terms.extend(diagnosis_artifact.problem_set.decision_domains)
+    return tuple(_normalise_knowledge_text(term) for term in terms if term)
+
+
+def _candidate_matches_query(
+    candidate: KnowledgeCandidate, terms: Sequence[str]
+) -> bool:
+    tags = {_normalise_knowledge_text(item) for item in candidate.query_tags}
+    domain = _normalise_knowledge_text(candidate.decision_domain)
+    question = _normalise_knowledge_text(candidate.director_question)
+    if not terms:
+        return False
+    for term in terms:
+        if term in tags or domain == term or term == domain:
+            return True
+        if any(tag and (tag in term or term in tag) for tag in tags):
+            return True
+        if domain and (domain in term or term in domain):
+            return True
+        if question and (question in term or term in question):
+            return True
+    return False
+
+
+def _scope_matches(expected: Sequence[str], actual: str) -> bool:
+    return not expected or "*" in expected or (bool(actual) and actual in expected)
+
+
+def _candidate_security_events(
+    candidate: KnowledgeCandidate, context: RetrievalContext
+) -> tuple[KnowledgeSecurityEvent, ...]:
+    events: list[KnowledgeSecurityEvent] = []
+    if candidate.raw_evidence is not None:
+        if candidate.raw_evidence.project_id != context.project_id:
+            events.append(
+                KnowledgeSecurityEvent(
+                    event_id="SEC-"
+                    + canonical_sha256(
+                        {
+                            "cross_project": candidate.card_id,
+                            "project": context.project_id,
+                        }
+                    )[:16],
+                    category="CROSS_PROJECT_SOURCE",
+                    source_id=candidate.raw_evidence.source_id,
+                    project_id=context.project_id,
+                    content_sha256=candidate.raw_evidence.content_sha256,
+                    reason_codes=("source_project_mismatch",),
+                )
+            )
+        event = inspect_untrusted_text(candidate.raw_evidence)
+        if event is not None:
+            events.append(event)
+    claim_event = inspect_untrusted_text(
+        envelope_untrusted_text(
+            source_id=f"card:{candidate.card_id}",
+            source_kind="knowledge_card_claim",
+            project_id=context.project_id,
+            content=candidate.card.claim,
+        )
+    )
+    if claim_event is not None:
+        events.append(claim_event)
+    return tuple(events)
+
+
+def _hard_exclusion_reason(
+    candidate: KnowledgeCandidate,
+    context: RetrievalContext,
+    phase: str,
+    terms: Sequence[str],
+) -> str | None:
+    if candidate.status != "active" or not candidate.human_reviewed:
+        return "not_human_reviewed_active"
+    if candidate.stage != phase:
+        return "stage_not_available"
+    if candidate.card.source_quality == "legacy_pipeline":
+        return "legacy_pipeline_forbidden"
+    if candidate.card_id in context.all_overrides:
+        return "overridden_by_fact_user_or_continuity"
+    if not _scope_matches(candidate.project_scope, context.project_id):
+        return "project_scope_mismatch"
+    if not _scope_matches(candidate.target_models, context.model_id):
+        return "model_mismatch"
+    if not _scope_matches(candidate.target_modes, context.mode):
+        return "mode_mismatch"
+    if not _scope_matches(candidate.aspect_ratios, context.aspect_ratio):
+        return "aspect_mismatch"
+    if not _scope_matches(candidate.reference_modes, context.reference_mode):
+        return "reference_mode_mismatch"
+    if candidate.valid_until:
+        try:
+            expired = date.fromisoformat(candidate.valid_until) < context.current_date
+        except ValueError as exc:
+            raise ValueError(
+                f"invalid valid_until for {candidate.card_id}: {candidate.valid_until}"
+            ) from exc
+        if expired:
+            return "expired"
+    context_values = {
+        _normalise_knowledge_text(context.project_id),
+        _normalise_knowledge_text(context.model_id),
+        _normalise_knowledge_text(context.mode),
+        _normalise_knowledge_text(context.aspect_ratio),
+        _normalise_knowledge_text(context.reference_mode),
+    }
+    if any(
+        _normalise_knowledge_text(condition) in context_values
+        for condition in candidate.non_applicability
+    ):
+        return "non_applicability_matched"
+    if not _candidate_matches_query(candidate, terms):
+        return "question_mismatch"
+    return None
+
+
+def _rank_key(candidate: KnowledgeCandidate) -> tuple[int, int, str]:
+    return (
+        -_QUALITY_RANK.get(candidate.card.source_quality, 0),
+        -candidate.card.cross_scene_repeat,
+        candidate.card_id,
+    )
+
+
+def _deduplicate(
+    candidates: Sequence[KnowledgeCandidate],
+) -> tuple[list[KnowledgeCandidate], dict[str, str]]:
+    selected: list[KnowledgeCandidate] = []
+    exclusions: dict[str, str] = {}
+    seen: dict[tuple[str, str, str], str] = {}
+    for candidate in sorted(candidates, key=_rank_key):
+        source = candidate.card.source_hash or candidate.card.source_file or candidate.card_id
+        key = (source, candidate.version, candidate.decision_domain)
+        if key in seen:
+            exclusions[candidate.card_id] = f"duplicate_of:{seen[key]}"
+            continue
+        seen[key] = candidate.card_id
+        selected.append(candidate)
+    return selected, exclusions
+
+
+def _conflict_records(
+    candidates: Sequence[KnowledgeCandidate], policy: RetrievalPolicy
+) -> tuple[Mapping[str, Any], ...]:
+    by_id = {candidate.card_id: candidate for candidate in candidates}
+    pairs: set[tuple[str, str]] = set()
+    for candidate in candidates:
+        for other_id in candidate.contradicts:
+            if other_id in by_id:
+                pairs.add(tuple(sorted((candidate.card_id, other_id))))
+    for conflict in build_conflict_graph(
+        [candidate.card for candidate in candidates]
+    ).conflicts:
+        identifiers = tuple(sorted(conflict.get("card_ids", [])))
+        if len(identifiers) == 2:
+            pairs.add(identifiers)
+    records: list[Mapping[str, Any]] = []
+    for left, right in sorted(pairs):
+        if len(records) >= policy.conflict_record_limit:
+            break
+        records.append(
+            {
+                "conflict_id": "KCON-"
+                + canonical_sha256({"left": left, "right": right})[:12],
+                "option_card_ids": (left, right),
+                "director_question": (
+                    f"Resolve the conflict between {left} and {right}; do not "
+                    "select a creative winner automatically."
+                ),
+                "requires_director_decision": True,
+            }
+        )
+    return tuple(records)
+
+
+def _select_metadata(
+    *,
+    diagnosis: SceneDiagnosis,
+    catalog: KnowledgeCatalog,
+    context: RetrievalContext,
+    stage: KnowledgeStage,
+    policy: RetrievalPolicy,
+    k1_principles: Sequence[str] = (),
+    budget: RetrievalBudget | None = None,
+    diagnosis_artifact: DiagnosisArtifact | None = None,
+) -> _MetadataSelection:
+    """Perform the sole deterministic candidate selection for K1 or K2."""
+
+    phase = "problem" if stage is KnowledgeStage.K1 else "execution"
+    query = generate_knowledge_query(diagnosis)
+    terms = _query_terms(query, diagnosis_artifact)
+    exclusions: dict[str, str] = {}
+    security_events: list[KnowledgeSecurityEvent] = []
+    eligible: list[KnowledgeCandidate] = []
+
+    for candidate in catalog.candidates:
+        if stage is KnowledgeStage.K1 and not _is_k1_compatible(candidate):
+            exclusions[candidate.card_id] = "k1_execution_knowledge_forbidden"
+            continue
+        candidate_events = _candidate_security_events(candidate, context)
+        if candidate_events:
+            security_events.extend(candidate_events)
+            exclusions[candidate.card_id] = "security_quarantined"
+            continue
+        reason = _hard_exclusion_reason(candidate, context, phase, terms)
+        if reason is not None:
+            exclusions[candidate.card_id] = reason
+            continue
+        eligible.append(candidate)
+
+    deduplicated, duplicate_exclusions = _deduplicate(eligible)
+    exclusions.update(duplicate_exclusions)
+    conflicts = _conflict_records(deduplicated, policy)
+    conflict_option_ids = {
+        option_id
+        for conflict in conflicts
+        for option_id in conflict["option_card_ids"]
+    }
+    primary_pool = [
+        candidate
+        for candidate in deduplicated
+        if candidate.decision_relation == "primary"
+    ]
+    anti_pattern_pool = [
+        candidate
+        for candidate in deduplicated
+        if candidate.decision_relation == "anti_pattern"
+    ]
+    for candidate in deduplicated:
+        if candidate.decision_relation == "conflict":
+            exclusions.setdefault(
+                candidate.card_id, "conflict_requires_director_decision"
+            )
+
+    active_budget = budget or RetrievalBudget(max_cards=policy.primary_card_limit)
+    primary_limit = min(policy.primary_card_limit, active_budget.remaining)
+    primary_candidates = tuple(
+        sorted(primary_pool, key=_rank_key)[:primary_limit]
+    )
+    active_budget.consume(len(primary_candidates))
+    anti_pattern_candidates = tuple(
+        sorted(anti_pattern_pool, key=_rank_key)[:policy.anti_pattern_limit]
+    )
+    for candidate in primary_pool[primary_limit:]:
+        exclusions.setdefault(candidate.card_id, "primary_budget_exhausted")
+    for candidate in anti_pattern_pool[policy.anti_pattern_limit:]:
+        exclusions.setdefault(candidate.card_id, "anti_pattern_budget_exhausted")
+
+    selected: list[KnowledgeCandidate] = []
+    selection_reasons: dict[str, str] = {}
+    for reason, candidates in (
+        ("canonical_primary", primary_candidates),
+        ("canonical_anti_pattern", anti_pattern_candidates),
+    ):
+        for candidate in candidates:
+            if candidate.card_id in conflict_option_ids:
+                exclusions[candidate.card_id] = "conflict_requires_director_decision"
+                continue
+            try:
+                _candidate_to_capsule(candidate)
+            except ValueError as exc:
+                exclusions[candidate.card_id] = str(exc)
+                continue
+            selected.append(candidate)
+            selection_reasons[candidate.card_id] = reason
+
+    selected_ids = {candidate.card_id for candidate in selected}
+    for candidate in catalog.candidates:
+        if candidate.card_id in selected_ids:
+            exclusions.pop(candidate.card_id, None)
+        else:
+            exclusions.setdefault(candidate.card_id, "not_selected")
+
+    return _MetadataSelection(
+        query=query,
+        phase=phase,
+        selected_candidates=tuple(selected),
+        primary_candidates=tuple(
+            candidate
+            for candidate in selected
+            if selection_reasons[candidate.card_id] == "canonical_primary"
+        ),
+        anti_pattern_candidates=tuple(
+            candidate
+            for candidate in selected
+            if selection_reasons[candidate.card_id] == "canonical_anti_pattern"
+        ),
+        conflicts=conflicts,
+        exclusions=MappingProxyType(dict(exclusions)),
+        security_events=tuple(security_events),
+        selection_reasons=MappingProxyType(dict(selection_reasons)),
+        stage_budgets=MappingProxyType(
+            {
+                "primary_limit": policy.primary_card_limit,
+                "primary_used": len(primary_candidates),
+                "anti_pattern_limit": policy.anti_pattern_limit,
+                "anti_pattern_used": len(anti_pattern_candidates),
+                "conflict_record_limit": policy.conflict_record_limit,
+                "conflict_record_used": len(conflicts),
+            }
+        ),
+    )
+
+
+def retrieve_legacy_compatibility(
+    diagnosis: DiagnosisArtifact | SceneDiagnosis,
+    catalog: KnowledgeCatalog,
+    context: RetrievalContext,
+    *,
+    policy: RetrievalPolicy,
+    budget: RetrievalBudget | None,
+    blocking: Mapping[str, Any] | None,
+    k1_principles: Sequence[str],
+) -> object:
+    """Translate the sole selection result to a historical read-only receipt.
+
+    This function deliberately creates no canonical ``KnowledgeSnapshot`` or
+    ``ArtifactEnvelope``.  It exists only so archived callers can read their
+    list-shaped result while all eligibility, ordering, budget, conflict and
+    quarantine decisions remain in ``_select_metadata`` above.
+    """
+
+    from mode_p_vnext.knowledge_flow import (
+        ConflictExposure,
+        KnowledgePacket,
+        KnowledgeRetrievalResult,
+        KnowledgeSelectionReceipt,
+    )
+
+    if isinstance(diagnosis, DiagnosisArtifact):
+        violations = validate_diagnosis_artifact(diagnosis)
+        if violations:
+            raise ValueError("invalid Phase-A diagnosis: " + "; ".join(violations))
+        scene_diagnosis = diagnosis.diagnosis
+        diagnosis_artifact: DiagnosisArtifact | None = diagnosis
+    elif isinstance(diagnosis, SceneDiagnosis):
+        if not diagnosis.scene_id:
+            raise ValueError("scene_id is required for knowledge retrieval")
+        scene_diagnosis = diagnosis
+        diagnosis_artifact = None
+    else:
+        raise TypeError("diagnosis must be DiagnosisArtifact or SceneDiagnosis")
+
+    stage = (
+        KnowledgeStage.K2
+        if blocking is not None and blocking.get("approved") is True
+        else KnowledgeStage.K1
+    )
+    selection = _select_metadata(
+        diagnosis=scene_diagnosis,
+        catalog=catalog,
+        context=context,
+        stage=stage,
+        policy=policy,
+        k1_principles=(k1_principles if stage is KnowledgeStage.K1 else ()),
+        budget=budget,
+        diagnosis_artifact=diagnosis_artifact,
+    )
+    conflicts = tuple(
+        ConflictExposure(
+            conflict_id=str(record["conflict_id"]),
+            option_card_ids=tuple(record["option_card_ids"]),
+            director_question=str(record["director_question"]),
+        )
+        for record in selection.conflicts
+    )
+    packet = KnowledgePacket(
+        phase=selection.phase,
+        query=selection.query,
+        k1_principles=(
+            tuple(k1_principles) if stage is KnowledgeStage.K1 else ()
+        ),
+        primary_cards=selection.primary_candidates,
+        anti_pattern_cards=selection.anti_pattern_candidates,
+        conflict_exposures=conflicts,
+        no_match=(
+            not selection.primary_candidates
+            and not selection.anti_pattern_candidates
+            and not conflicts
+        ),
+    )
+    receipt = KnowledgeSelectionReceipt(
+        snapshot_id=f"legacy-selection:{scene_diagnosis.scene_id}:{selection.phase}",
+        query={
+            "scene_id": selection.query.scene_id,
+            "dimension_questions": selection.query.dimension_questions,
+            "model_risk_queries": selection.query.model_risk_queries,
+            "user_constraint_queries": selection.query.user_constraint_queries,
+        },
+        selected_card_records=tuple(
+            candidate.snapshot_record() for candidate in selection.selected_candidates
+        ),
+        conflict_records=tuple(conflict.to_dict() for conflict in conflicts),
+        index_sha256=catalog.index_sha256,
+        exclusions=dict(selection.exclusions),
+        selection_reasons=dict(selection.selection_reasons),
+        stage_budgets=dict(selection.stage_budgets),
+        security_events=tuple(
+            {
+                "event_digest": _security_event_digest(event),
+                "category": event.category,
+                "reason_codes": tuple(event.reason_codes),
+                "disposition": event.disposition,
+            }
+            for event in selection.security_events
+        ),
+    )
+    return KnowledgeRetrievalResult(
+        query=selection.query,
+        packet=packet,
+        selection_receipt=receipt,
+        exclusions=dict(selection.exclusions),
+        security_events=selection.security_events,
+    )
+
+
 def _retrieval_input_digest(
     *,
     diagnosis: SceneDiagnosis,
@@ -417,27 +892,31 @@ def _envelope_source_refs(
 def _verify_snapshot_envelope(snapshot: ArtifactEnvelope[KnowledgeSnapshot]) -> bool:
     if type(snapshot) is not ArtifactEnvelope:
         return False
-    if snapshot.artifact_kind is not ArtifactKind.KNOWLEDGE_SNAPSHOT:
+    if snapshot.artifact_type is not ArtifactKind.KNOWLEDGE_SNAPSHOT:
         return False
-    if (
-        snapshot.schema_version != _SCHEMA_VERSION
-        or snapshot.program_version != _PROGRAM_VERSION
-    ):
+    if snapshot.schema_version != _SCHEMA_VERSION:
         return False
     if type(snapshot.payload) is not KnowledgeSnapshot:
         return False
     try:
-        expected = ArtifactEnvelope.content_digest_for(
-            artifact_kind=snapshot.artifact_kind,
+        ArtifactEnvelope(
+            artifact_id=snapshot.artifact_id,
+            artifact_type=snapshot.artifact_type,
             schema_version=snapshot.schema_version,
-            program_version=snapshot.program_version,
             payload=snapshot.payload,
-            source_refs=snapshot.source_refs,
-            dependency_digests=snapshot.dependency_digests,
+            canonical_payload_sha256=snapshot.canonical_payload_sha256,
+            producer_stage=snapshot.producer_stage,
+            parent_artifact_ids=snapshot.parent_artifact_ids,
+            source_provenance=snapshot.source_provenance,
+            knowledge_snapshot_digest=snapshot.knowledge_snapshot_digest,
+            created_at_utc=snapshot.created_at_utc,
         )
     except DomainValidationError:
         return False
-    return snapshot.content_sha256 == expected
+    return (
+        snapshot.producer_stage in {"knowledge_retriever:K1", "knowledge_retriever:K2"}
+        and snapshot.knowledge_snapshot_digest is None
+    )
 
 
 class KnowledgeRetriever:
@@ -445,7 +924,7 @@ class KnowledgeRetriever:
 
     Searching remains a metadata-only adapter.  The adapter cannot become a
     second knowledge authority: all Director-visible values and replayable
-    state are instantiated from the v2.2 domain module below.
+    state are instantiated from the frozen v3.0 domain module below.
     """
 
     def __init__(self, *, policy: RetrievalPolicy | None = None) -> None:
@@ -466,7 +945,6 @@ class KnowledgeRetriever:
         if stage is KnowledgeStage.K1:
             if blocking_commit is not None:
                 raise ValueError("K1 cannot accept a BlockingCommit binding")
-            blocking: Mapping[str, Any] | None = None
         else:
             if not isinstance(blocking_commit, VerifiedBlockingCommit):
                 raise ValueError("K2 requires a verified BlockingCommit binding")
@@ -474,90 +952,18 @@ class KnowledgeRetriever:
                 raise ValueError("verified BlockingCommit scene_id must match diagnosis")
             if k1_principles:
                 raise ValueError("K2 does not accept K1 principles")
-            blocking = {
-                "approved": True,
-                "artifact_id": blocking_commit.artifact_id,
-                "content_sha256": blocking_commit.content_sha256,
-                "verification_digest": blocking_commit.verification_digest,
-            }
-
-        preflight_exclusions: dict[str, str] = {}
-        eligible_catalog = catalog
-        if stage is KnowledgeStage.K1:
-            eligible = tuple(
-                candidate
-                for candidate in catalog.candidates
-                if _is_k1_compatible(candidate)
-            )
-            eligible_ids = {candidate.card_id for candidate in eligible}
-            preflight_exclusions = {
-                candidate.card_id: "k1_execution_knowledge_forbidden"
-                for candidate in catalog.candidates
-                if candidate.card_id not in eligible_ids
-            }
-            eligible_catalog = KnowledgeCatalog(
-                eligible, catalog_version=catalog.catalog_version
-            )
-
-        legacy = retrieve_for_diagnosis(
+        selection = _select_metadata(
             diagnosis=diagnosis,
-            catalog=eligible_catalog,
+            catalog=catalog,
             context=context,
+            stage=stage,
             policy=self._policy,
-            blocking=blocking,
-            k1_principles=tuple(k1_principles)
-            if stage is KnowledgeStage.K1
-            else (),
+            k1_principles=(k1_principles if stage is KnowledgeStage.K1 else ()),
         )
-        expected_phase = "problem" if stage is KnowledgeStage.K1 else "execution"
-        if legacy.packet.phase != expected_phase:
-            raise RuntimeError("knowledge stage boundary violation")
 
         records = tuple(_candidate_record(candidate) for candidate in catalog.candidates)
         records_by_id = {record.candidate_id: record for record in records}
-        candidates_by_id = {candidate.card_id: candidate for candidate in catalog.candidates}
-        conflicts = tuple(item.to_dict() for item in legacy.packet.conflict_exposures)
-        conflict_option_ids = {
-            option_id
-            for conflict in conflicts
-            for option_id in conflict["option_card_ids"]
-        }
-        exclusions: dict[str, str] = {
-            **preflight_exclusions,
-            **dict(legacy.exclusions),
-        }
-
-        selected_candidates: list[KnowledgeCandidate] = []
-        selection_reasons: dict[str, str] = {}
-        for relation, candidates in (
-            ("legacy_primary", legacy.packet.primary_cards),
-            ("legacy_anti_pattern", legacy.packet.anti_pattern_cards),
-        ):
-            for candidate in candidates:
-                candidate_id = candidate.card_id
-                if candidate_id in selection_reasons:
-                    continue
-                if candidate_id in conflict_option_ids:
-                    exclusions[candidate_id] = "conflict_requires_director_decision"
-                    continue
-                if candidate.raw_evidence is not None:
-                    exclusions[candidate_id] = "security_quarantined"
-                    continue
-                try:
-                    _candidate_to_capsule(candidate)
-                except ValueError as exc:
-                    exclusions[candidate_id] = str(exc)
-                    continue
-                selected_candidates.append(candidate)
-                selection_reasons[candidate_id] = relation
-
-        selected_ids = {candidate.card_id for candidate in selected_candidates}
-        for candidate in catalog.candidates:
-            if candidate.card_id in selected_ids:
-                exclusions.pop(candidate.card_id, None)
-            else:
-                exclusions.setdefault(candidate.card_id, "not_selected")
-
+        selected_candidates = selection.selected_candidates
         selected_capsules = tuple(
             _candidate_to_capsule(candidate) for candidate in selected_candidates
         )
@@ -584,7 +990,9 @@ class KnowledgeRetriever:
             k1_principles=k1_principles,
         )
         security_event_digests = _unique_text(
-            tuple(_security_event_digest(event) for event in legacy.security_events)
+            tuple(
+                _security_event_digest(event) for event in selection.security_events
+            )
         )
         snapshot_id = "knowledge-snapshot:{}:{}:{}".format(
             diagnosis.scene_id,
@@ -597,38 +1005,36 @@ class KnowledgeRetriever:
             stage=stage,
             decision_view=decision_view,
             selected_capsule_ids=decision_view.capsule_ids,
-            exclusions=exclusions,
-            conflicts=conflicts,
+            exclusions=selection.exclusions,
+            conflicts=selection.conflicts,
             catalog_index_sha256=catalog.index_sha256,
             retrieval_input_digest=retrieval_input_digest,
             blocking_commit_digest=blocking_digest,
             security_event_digests=security_event_digests,
             candidate_records=records,
-            selection_reasons=selection_reasons,
+            selection_reasons=selection.selection_reasons,
             catalog_index_abstract={
                 "catalog_index": catalog.index_sha256,
                 "candidate_count": str(len(catalog.candidates)),
                 "catalog_version_digest": canonical_sha256(catalog.catalog_version),
             },
         )
-        dependencies = {
-            "catalog_index": catalog.index_sha256,
-            "retrieval_input": retrieval_input_digest,
-            "selection_receipt": legacy.selection_receipt.content_sha256,
-        }
-        if blocking_digest is not None:
-            dependencies["blocking_commit"] = blocking_digest
-            dependencies["blocking_commit_binding"] = blocking_binding_digest
         snapshot = ArtifactEnvelope.create(
             artifact_id=f"artifact:{snapshot_id}",
-            artifact_kind=ArtifactKind.KNOWLEDGE_SNAPSHOT,
-            schema_version=_SCHEMA_VERSION,
-            program_version=_PROGRAM_VERSION,
+            artifact_type=ArtifactKind.KNOWLEDGE_SNAPSHOT,
             payload=snapshot_payload,
-            source_refs=_envelope_source_refs(catalog, records),
-            dependency_digests=dependencies,
-            created_at=(f"{context.as_of}T00:00:00Z" if context.as_of else "1970-01-01T00:00:00Z"),
-            validation_status=ValidationStatus.DRAFT,
+            producer_stage=f"knowledge_retriever:{stage.value}",
+            parent_artifact_ids=(
+                (blocking_commit.artifact_id,) if blocking_commit is not None else ()
+            ),
+            source_provenance=_envelope_source_refs(catalog, records),
+            knowledge_snapshot_digest=None,
+            created_at_utc=(
+                f"{context.as_of}T00:00:00Z"
+                if context.as_of
+                else "1970-01-01T00:00:00Z"
+            ),
+            schema_version=_SCHEMA_VERSION,
         )
         return KnowledgeRetrieval(
             stage=stage,

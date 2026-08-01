@@ -575,96 +575,22 @@ def retrieve_for_diagnosis(
     blocking: Mapping[str, Any] | None = None,
     k1_principles: Sequence[str] = (),
 ) -> KnowledgeRetrievalResult:
-    """Retrieve a minimal, replayable knowledge packet from metadata only.
+    """Read the service-owned selection through the historical packet shape.
 
-    ``blocking`` must explicitly carry ``{"approved": True}`` before any
-    execution-stage capsule can be retrieved.  The result reports conflicts to
-    the Director and never decides which option wins.
+    This function owns no eligibility, ranking, budget, conflict, security or
+    promotion logic.  It is an archive adapter only; the sole K1/K2
+    implementation lives in ``services.knowledge_retriever``.
     """
-    scene_diagnosis, artifact = _diagnosis_and_artifact(diagnosis)
-    query = generate_knowledge_query(scene_diagnosis)
-    phase = _phase_for(blocking)
-    terms = _query_terms(query, artifact)
-    exclusions: Dict[str, str] = {}
-    security_events: List[KnowledgeSecurityEvent] = []
-    filtered: List[KnowledgeCandidate] = []
-
-    for candidate in catalog.candidates:
-        candidate_events = _candidate_security_events(candidate, context)
-        if candidate_events:
-            security_events.extend(candidate_events)
-            exclusions[candidate.card_id] = "security_quarantined"
-            continue
-        reason = _hard_exclusion_reason(candidate, context, phase, terms)
-        if reason:
-            exclusions[candidate.card_id] = reason
-            continue
-        filtered.append(candidate)
-
-    deduplicated, duplicate_exclusions = _deduplicate(filtered)
-    exclusions.update(duplicate_exclusions)
-    conflicts = _conflict_exposures(deduplicated, policy)
-
-    primary_pool = [card for card in deduplicated if card.decision_relation == "primary"]
-    anti_pool = [card for card in deduplicated if card.decision_relation == "anti_pattern"]
-    # Conflict relation cards remain visible through the explicit conflict
-    # record.  They are never silently ranked into a creative winner.
-    for card in deduplicated:
-        if card.decision_relation == "conflict":
-            exclusions.setdefault(card.card_id, "exposed_via_conflict_record")
-
-    primary_budget = budget or RetrievalBudget(max_cards=policy.primary_card_limit)
-    primary_limit = min(policy.primary_card_limit, primary_budget.remaining)
-    primary = tuple(sorted(primary_pool, key=_rank_key)[:primary_limit])
-    primary_budget.consume(len(primary))
-    anti_patterns = tuple(sorted(anti_pool, key=_rank_key)[:policy.anti_pattern_limit])
-    for card in primary_pool[primary_limit:]:
-        exclusions.setdefault(card.card_id, "primary_budget_exhausted")
-    for card in anti_pool[policy.anti_pattern_limit:]:
-        exclusions.setdefault(card.card_id, "anti_pattern_budget_exhausted")
-
-    packet = KnowledgePacket(
-        phase=phase,
-        query=query,
-        k1_principles=tuple(k1_principles),
-        primary_cards=primary,
-        anti_pattern_cards=anti_patterns,
-        conflict_exposures=conflicts,
-        no_match=not primary and not anti_patterns and not conflicts,
+    from mode_p_vnext.services.knowledge_retriever import (
+        retrieve_legacy_compatibility,
     )
-    selected = tuple(primary) + tuple(anti_patterns)
-    # This compatibility flow only returns a receipt.  The vNext service is
-    # the sole owner that converts this bounded metadata into the canonical
-    # domain KnowledgeSnapshot and seals it in an ArtifactEnvelope.
-    selection_receipt = KnowledgeSelectionReceipt(
-        snapshot_id=f"legacy-selection:{scene_diagnosis.scene_id}:{phase}",
-        query={
-            "scene_id": query.scene_id,
-            "dimension_questions": query.dimension_questions,
-            "model_risk_queries": query.model_risk_queries,
-            "user_constraint_queries": query.user_constraint_queries,
-        },
-        selected_card_records=tuple(card.snapshot_record() for card in selected),
-        conflict_records=tuple(item.to_dict() for item in conflicts),
-        index_sha256=catalog.index_sha256,
-        exclusions=dict(exclusions),
-        selection_reasons={
-            card.card_id: "matched_explicit_diagnosis_question" for card in selected
-        },
-        stage_budgets={
-            "primary_limit": policy.primary_card_limit,
-            "primary_used": len(primary),
-            "anti_pattern_limit": policy.anti_pattern_limit,
-            "anti_pattern_used": len(anti_patterns),
-            "conflict_record_limit": policy.conflict_record_limit,
-            "conflict_record_used": len(conflicts),
-        },
-        security_events=tuple(item.to_dict() for item in security_events),
-    )
-    return KnowledgeRetrievalResult(
-        query=query,
-        packet=packet,
-        selection_receipt=selection_receipt,
-        exclusions=dict(exclusions),
-        security_events=tuple(security_events),
+
+    return retrieve_legacy_compatibility(
+        diagnosis=diagnosis,
+        catalog=catalog,
+        context=context,
+        policy=policy,
+        budget=budget,
+        blocking=blocking,
+        k1_principles=k1_principles,
     )
