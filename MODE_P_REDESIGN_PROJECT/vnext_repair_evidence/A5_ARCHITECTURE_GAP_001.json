@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "kind": "ARCHITECTURE_GAP_FAILURE",
+  "task_id": "A5",
+  "architecture_version": "2.2",
+  "claim": {
+    "owner": "codex-a5-v22-20260801",
+    "token": "b28038ecd9094ecc9a7f7a5ab04ff9bd"
+  },
+  "authority_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md": "44a44931444299f511ba4d5e5b931c99e07511e3ee6d922bf307bcacde80f8cf",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md": "0afcddfea65877b80b8ceaf54322d74f37bc1a99bf8404dcc926da114cd85952",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md": "af876e92ae88fda6f80812e4a301908f9d13c1df95774dfff46369e1878bf59c"
+  },
+  "findings": [
+    {
+      "id": "A5_ARCHITECTURE_GAP_001",
+      "severity": "BLOCKER",
+      "authority": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md section 5.4 items 4 and 7",
+      "requirement": "The local VEC assembler must allocate integer ticks using duration weights, dialogue anchors, and a segment-length ceiling, then bind dialogue audio locally.",
+      "code_evidence": [
+        "01_调度器/mode_p_vnext/domain/facts.py exposes source spans and dialogue text but no timeline dialogue-anchor field or scene-span denominator.",
+        "01_调度器/mode_p_vnext/domain/time.py exposes no GenerationSegment maximum duration capability.",
+        "01_调度器/mode_p_vnext/services/timeline_allocator.py has a per-shot constant only; no architecture-defined segment ceiling.",
+        "01_调度器/mode_p_vnext/services/vec_assembler.py can only emit a nominal positive AudioEvent interval without an authorized temporal placement rule."
+      ],
+      "root_cause": "The v2.2 typed-fact amendment repaired semantic provenance but did not define the missing temporal contract that v2.0 requires VECAssembler to consume.",
+      "rejected_options": [
+        "Map normalized-source character offsets to ticks: source spans are evidence locations, not a defined timing coordinate system or full scene denominator.",
+        "Invent a segment duration in code: the required ceiling has no authority-defined value or capability record.",
+        "Infer timing or entity semantics from statement/reference_intents/audio_intents: v2.2 section 2.5 expressly forbids natural-language inference for binding."
+      ],
+      "required_architecture_repair": "A versioned amendment must define a locally assembled typed dialogue-anchor mapping, collision/interval policy, and a capability-owned generation-segment ceiling before A1, A4, and A5 are revalidated."
+    }
+  ],
+  "work_performed_before_closure": {
+    "failure_first_result": "The v2.2 typed-fact test suite initially failed 19 tests because legacy VEC assembly decoded fact_id prefixes and statement text.",
+    "candidate_fix_result": "A scoped candidate implementation made the A5 suite pass 33/33 by consuming FactSemantic, subject_id, and spoken_text only; it is intentionally not claimed as A5 completion because the temporal invariant remains unrepresentable."
+  },
+  "disposition": "FAIL_CLOSED_NO_A5_COMPLETION",
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false
+  }
+}
