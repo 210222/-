@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import unittest
 from pathlib import Path
@@ -42,9 +43,14 @@ from ep35_scene_parser import (
 # Fixture paths
 # ============================================================================
 
-_FIXTURE_DIR = Path(
-    r"D:\tsc\导演系统_v5(25)\06_测试\EP35_S1_MODE_P_CONTINUITY_DEEPSEEK"
+_REPOSITORY_FIXTURE_DIR = (
+    Path(__file__).resolve().parents[2]
+    / "06_测试"
+    / "EP35_S1_MODE_P_CONTINUITY_DEEPSEEK"
 )
+_FIXTURE_DIR = Path(
+    os.environ.get("MODE_P_EP35_S1_FIXTURE", str(_REPOSITORY_FIXTURE_DIR))
+).expanduser().resolve()
 
 _REQUIRED_FILES = [
     "INDEX_EP35_S1.md",
@@ -64,6 +70,24 @@ _REQUIRED_FILES = [
     "VALIDATION_REPORT.json",
     "SEKO_REFERENCE_BINDING_GUIDE_EP35_S1.md",
 ]
+
+
+def setUpModule() -> None:
+    """Classify the historical EP35 S1 corpus as an explicit external fixture.
+
+    The original test silently depended on one developer's D: drive and
+    produced dozens of false failures on every other checkout.  A repository
+    fixture is preferred when present; otherwise a caller may provide the
+    corpus explicitly through MODE_P_EP35_S1_FIXTURE.  Missing external data is
+    a visible skip, never a fabricated pass or a machine-specific failure.
+    """
+
+    if not _FIXTURE_DIR.is_dir():
+        raise unittest.SkipTest(
+            "EP35 S1 external fixture is unavailable; set "
+            "MODE_P_EP35_S1_FIXTURE or add the repository fixture at "
+            f"{_REPOSITORY_FIXTURE_DIR}"
+        )
 
 
 # ============================================================================

@@ -1,7 +1,7 @@
-"""Single construction controller for the MODE:P vNext architecture-v2 ledger.
+"""Single construction controller for the MODE:P vNext architecture-v3 ledger.
 
 The R, DDO, and CPL controllers remain readable as historical evidence, but
-they are not valid task selectors after architecture v2 becomes the
+they are not valid task selectors after architecture v3 becomes the
 construction baseline.  This module is the only controller used by
 ``/mode-p-vnext-rebuild`` for new work.
 """
@@ -76,7 +76,7 @@ def _claim_summary(lock: Dict[str, Any]) -> Dict[str, Any]:
 
 
 class ReleaseControl(RebuildControl):
-    """Bind audited claim/evidence mechanics to the sole v2 ReleaseLedger."""
+    """Bind audited claim/evidence mechanics to the sole v3 ReleaseLedger."""
 
     def __init__(self, project_root: Path):
         super().__init__(
@@ -95,8 +95,153 @@ class ReleaseControl(RebuildControl):
     def default(cls) -> "ReleaseControl":
         return cls(Path(__file__).resolve().parents[2])
 
+    def _architecture_authority_issues(self) -> List[str]:
+        """Return issues that must block both task selection and claim.
+
+        The base controller verifies task ordering and locked inputs at claim
+        time.  v3 additionally makes operator-facing guidance part of the
+        authority boundary: a correct JSON ledger with stale instructions is
+        not a safe construction state.
+        """
+
+        issues: List[str] = []
+        try:
+            registry = self._load_tasks_document()
+            state = self.load_state()
+            version = str(registry.get("architecture_version", ""))
+            raw_documents = registry.get("architecture_documents", [])
+            if not isinstance(raw_documents, list) or not all(
+                isinstance(item, dict) for item in raw_documents
+            ):
+                return ["registry architecture_documents must be a list of objects"]
+
+            documents = [
+                {"path": item.get("path"), "sha256": item.get("sha256")}
+                for item in raw_documents
+            ]
+            if state.get("architecture_version") != version:
+                issues.append("state and registry architecture_version disagree")
+            if state.get("architecture_documents") != documents:
+                issues.append(
+                    "state and registry architecture document bundle disagree"
+                )
+
+            expected_locked: Dict[str, str] = {}
+            for item in raw_documents:
+                rel_path = item.get("path")
+                expected_hash = item.get("sha256")
+                if not isinstance(rel_path, str) or not isinstance(
+                    expected_hash, str
+                ):
+                    issues.append("architecture document lacks path or sha256")
+                    continue
+                expected_locked[rel_path] = expected_hash
+                try:
+                    path = _resolve_safe(self.root, rel_path)
+                except ControlError as exc:
+                    issues.append(str(exc))
+                    continue
+                if not path.is_file() or _is_symlink_or_junction(path):
+                    issues.append(f"architecture document missing or unsafe: {rel_path}")
+                elif _sha256_file(path) != expected_hash:
+                    issues.append(f"architecture document hash drift: {rel_path}")
+
+            if registry.get("locked_verification_inputs", {}) != expected_locked:
+                issues.append(
+                    "registry locked inputs do not equal the architecture bundle"
+                )
+
+            if version == "3.0":
+                if len(raw_documents) != 1:
+                    issues.append("architecture v3.0 requires one normative document")
+                elif raw_documents[0].get("role") != "SOLE_NORMATIVE_BASELINE":
+                    issues.append(
+                        "architecture v3.0 document role must be "
+                        "SOLE_NORMATIVE_BASELINE"
+                    )
+
+                historical = registry.get("historical_architecture_documents")
+                if not isinstance(historical, list):
+                    issues.append("v3.0 registry lacks historical architecture records")
+                else:
+                    by_version = {
+                        str(item.get("version")): item
+                        for item in historical
+                        if isinstance(item, dict)
+                    }
+                    if by_version.get("2.3", {}).get("disposition") != (
+                        "REJECTED_BY_WHOLE_SYSTEM_AUDIT"
+                    ):
+                        issues.append("v2.3 is not explicitly rejected")
+                    for old_version in ("2.0", "2.1", "2.2"):
+                        if by_version.get(old_version, {}).get("disposition") != (
+                            "HISTORICAL_READ_ONLY"
+                        ):
+                            issues.append(
+                                f"v{old_version} is not marked historical read-only"
+                            )
+
+                guidance = registry.get("active_guidance")
+                if not isinstance(guidance, list) or not guidance:
+                    issues.append("v3.0 registry lacks active guidance declarations")
+                else:
+                    seen_paths = set()
+                    for item in guidance:
+                        if not isinstance(item, dict):
+                            issues.append("active guidance entry must be an object")
+                            continue
+                        rel_path = item.get("path")
+                        marker = item.get("marker")
+                        if not isinstance(rel_path, str) or not isinstance(
+                            marker, str
+                        ) or not marker:
+                            issues.append("active guidance entry lacks path or marker")
+                            continue
+                        if rel_path in seen_paths:
+                            issues.append(f"duplicate active guidance path: {rel_path}")
+                            continue
+                        seen_paths.add(rel_path)
+                        try:
+                            path = _resolve_safe(self.root, rel_path)
+                        except ControlError as exc:
+                            issues.append(str(exc))
+                            continue
+                        if not path.is_file() or _is_symlink_or_junction(path):
+                            issues.append(
+                                f"active guidance missing or unsafe: {rel_path}"
+                            )
+                            continue
+                        try:
+                            content = path.read_text(encoding="utf-8")
+                        except UnicodeError:
+                            issues.append(f"active guidance is not UTF-8: {rel_path}")
+                            continue
+                        if marker not in content:
+                            issues.append(
+                                f"active guidance authority marker drift: {rel_path}"
+                            )
+        except ControlError as exc:
+            issues.append(str(exc))
+        return issues
+
+    def _assert_architecture_authority(self) -> None:
+        issues = self._architecture_authority_issues()
+        if issues:
+            raise ControlError(
+                "architecture authority audit failed: " + "; ".join(issues)
+            )
+
+    def next_task(self):
+        self._assert_architecture_authority()
+        return super().next_task()
+
+    def claim(self, task_id: str, owner: str) -> Dict[str, Any]:
+        self._assert_architecture_authority()
+        return super().claim(task_id, owner)
+
     def audit(self) -> List[str]:
         issues = super().audit()
+        issues.extend(self._architecture_authority_issues())
         try:
             tasks = self.load_tasks()
             registry = self._load_tasks_document()
@@ -268,6 +413,11 @@ class ReleaseControl(RebuildControl):
             raise ControlError("cannot rebase architecture while a lock exists")
         if not version.strip() or not document_paths:
             raise ControlError("architecture version and documents are required")
+        if len(document_paths) != 1:
+            raise ControlError(
+                "architecture v3 requires one complete normative document, "
+                "not an amendment stack"
+            )
         state = self.load_state()
         if state.get("completed_tasks") or state.get("current_task") is not None:
             raise ControlError(
@@ -503,7 +653,7 @@ def _print_json(value: Any) -> None:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="MODE:P vNext architecture-v2 release control"
+        description="MODE:P vNext architecture-v3 release control"
     )
     parser.add_argument(
         "--project-root",

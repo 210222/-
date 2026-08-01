@@ -1,3 +1,5 @@
+<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.0 -->
+
 # MODE:P v4.0 - Minimal-Context Director/DP Runtime
 
 ## User entry
@@ -82,23 +84,22 @@ Gate reports, or fixed revision-round limits as active MODE:P behavior.
 
 ## Implementation work
 
-### vNext architecture-v2.2 release gate
+### vNext architecture-v3.0 release gate
 
-vNext engineering is governed only by the architecture-v2.2 ReleaseLedger:
+vNext engineering is governed only by the architecture-v3.0 ReleaseLedger:
 
-- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md`
-- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md`
-- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md`
+- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md`
 - `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json`
 - `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_STATE.json`
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md`
+- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md`
 - `.claude/commands/mode-p-vnext-rebuild.md`
 
 For `/mode-p-vnext-rebuild`, run `python -m mode_p_vnext.release_control
 audit/status/next/claim/complete/fail/recover/invalidate` from `01_调度器`.
 The model must not directly edit machine state, exclusive locks, completion
-lists, release gates, or task checkboxes. R, DDO, CPL, and V0-V10 controllers
-are historical/read-only task sources after the sole ledger exists. A10 media
+lists, release gates, or task checkboxes. v2.0-v2.3 architecture documents and
+R, DDO, CPL, and V0-V10 controllers are historical/read-only evidence after the
+v3.0 rebase; v2.3 is explicitly rejected. A10 media
 acceptance and owner approval are separate hash-bound gates; the model must
 never record owner approval for the user. Until a separately authorized
 production-switch task succeeds, v4 remains the sole production path.

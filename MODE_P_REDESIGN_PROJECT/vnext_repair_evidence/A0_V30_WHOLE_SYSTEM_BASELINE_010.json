@@ -1,0 +1,75 @@
+{
+  "task_id": "A0",
+  "kind": "MODE_P_VNEXT_A0_BASELINE_EVIDENCE",
+  "architecture_version": "3.0",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_PRECLAIM_VERIFICATION_INPUT"
+  },
+  "superseded_authority": {
+    "versions": ["2.0", "2.1", "2.2", "2.3"],
+    "disposition": "HISTORICAL_READ_ONLY",
+    "v2_3_disposition": "REJECTED_BY_WHOLE_SYSTEM_AUDIT"
+  },
+  "changed_paths": [
+    ".claude/commands/mode-p-vnext-rebuild.md",
+    "01_调度器/mode_p/test_active_entrypoints.py",
+    "01_调度器/mode_p/test_ep35_s1_pipeline.py",
+    "01_调度器/mode_p_vnext/README.md",
+    "01_调度器/mode_p_vnext/release_control.py",
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "CLAUDE.md",
+    "MODE_P_REDESIGN_PROJECT/README.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_STATE.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/ARCHITECTURE_V23_REJECTION_AND_V30_REBASE_001.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_CONSTRUCTION_PLAN_AUDIT_V3.0.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_V30_WHOLE_SYSTEM_BASELINE_010.json"
+  ],
+  "checks": [
+    {"name": "single_release_ledger", "exit_code": 0},
+    {"name": "legacy_queues_historical", "exit_code": 0},
+    {"name": "legacy_controllers_superseded", "exit_code": 0},
+    {"name": "one_lock_one_next_task", "exit_code": 0},
+    {"name": "task_path_ownership_disjoint", "exit_code": 0},
+    {"name": "phase_status_progression", "exit_code": 0},
+    {"name": "bounded_control_output", "exit_code": 0},
+    {"name": "portable_canonical_hashes", "exit_code": 0},
+    {"name": "single_architecture_document_locked", "exit_code": 0},
+    {"name": "v23_rejected_as_historical", "exit_code": 0},
+    {"name": "active_guidance_version_converged", "exit_code": 0},
+    {"name": "architecture_drift_blocks_claim", "exit_code": 0},
+    {"name": "manual_release_gates", "exit_code": 0},
+    {"name": "portable_registered_verification", "exit_code": 0},
+    {"name": "production_v4_unchanged", "exit_code": 0}
+  ],
+  "informational_results": [
+    {
+      "name": "full_v4_regression",
+      "exit_code": 0,
+      "summary": "686 passed, 95 explicitly skipped external-fixture tests, 8 subtests passed",
+      "duration_seconds": 206.87,
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit"
+    }
+  ],
+  "root_cause_repairs": [
+    "Replaced the v2.0-plus-amendments authority stack with one v3.0 normative document.",
+    "Rejected v2.3 scene-level 15-second allocation and restored the production invariant that the capability limit applies per Shot.",
+    "Made source spans provenance-only and defined typed Shot/VisualBeat reference and dialogue binding intents.",
+    "Assigned NormalizedSource and FactAssembler to A1 before any provider or VEC consumer.",
+    "Made active guidance part of the controller authority boundary so drift blocks next and claim.",
+    "Removed the EP35 regression suite's personal D-drive default and classified its absent corpus as an explicit portable external fixture."
+  ],
+  "non_goals": [
+    "No A1 domain or ingest implementation was performed.",
+    "No Director, DP, Shadow, external media, or production runtime was started.",
+    "No v4 runtime module or production entry was replaced."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false
+}

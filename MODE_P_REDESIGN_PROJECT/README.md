@@ -1,22 +1,22 @@
+<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.0 -->
+
 # MODE:P Director Intelligence - 重构项目章程
 
 > vNext 重构入口：`/mode-p-vnext-rebuild [task_id]`
 >
-> vNext v2.2 权威架构包：
-> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md` +
-> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md` +
-> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md`
+> vNext v3.0 唯一权威架构：
+> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md`
 >
-> vNext v2.2 工程协议：`MODE_P_VNEXT_CONSTRUCTION_V2.md`
+> vNext v3.0 工程协议：`MODE_P_VNEXT_CONSTRUCTION_V3.md`
 >
-> vNext v2 任务与状态：`MODE_P_VNEXT_RELEASE_TASKS.json`、
+> vNext v3 任务与状态：`MODE_P_VNEXT_RELEASE_TASKS.json`、
 > `MODE_P_VNEXT_RELEASE_STATE.json`
 >
 > 唯一控制命令：`python -m mode_p_vnext.release_control`
 >
-> 迁移方式：模块化单体内隔离迁移，验证后再提出独立生产切换方案。旧 R、DDO、
-> CPL、V0–V10 任务及以下 v3/v4 章程均只作历史证据和当前生产基线说明，不再是
-> vNext 施工任务源。
+> 迁移方式：模块化单体内隔离迁移，验证后再提出独立生产切换方案。v2.0-v2.3
+> 架构文档、R、DDO、CPL、V0–V10 任务均只作历史证据；v2.3 已被全项目审查否决。
+> 生产 v4 仍是只读产品行为基线和唯一生产入口，不是 vNext 施工任务源。
 
 > 状态：v3.0 活动管道重构与回归验证中。
 > 实施入口：`IMPLEMENTATION_PLAN.md`

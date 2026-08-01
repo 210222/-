@@ -237,7 +237,8 @@ class ActiveCommandTests(unittest.TestCase):
         self.assertIn("vNext engineering task", meta["description"])
         self.assertNotIn("Agent", meta["allowed-tools"])
         required = (
-            "MODE_P_VNEXT_CONSTRUCTION_V2.md",
+            "MODE_P_VNEXT_CONSTRUCTION_V3.md",
+            "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
             "MODE_P_VNEXT_RELEASE_TASKS.json",
             "MODE_P_VNEXT_RELEASE_STATE.json",
             "release_control audit",
@@ -250,6 +251,7 @@ class ActiveCommandTests(unittest.TestCase):
             "release_control invalidate",
             "one A0-A10 task",
             "black-box",
+            "architecture-v3.0",
             "PRODUCTION_SWITCH: NOT_PERFORMED",
             "Do not start Shadow, media generation, or production switching automatically",
             "Never directly edit state",
@@ -271,7 +273,7 @@ class ActiveCommandTests(unittest.TestCase):
         command = _read(".claude/commands/mode-p-vnext-rebuild.md")
         root_guidance = _read("CLAUDE.md")
         construction = _read(
-            "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md"
+            "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md"
         )
 
         for marker in (
@@ -300,13 +302,13 @@ class ActiveCommandTests(unittest.TestCase):
             self.assertNotIn(stale, command + "\n" + construction)
 
         for marker in (
-            "HISTORICAL_READ_ONLY",
-            "B1 Prompt 硬上限 12K",
-            "B1 Draft Schema 硬上限 4.5K",
-            "模型只输出 Draft",
-            "文本验证不能设置 `media_visual_acceptance=true`",
-            "任何 A 任务都不得修改 `/mode-p-pilot`",
-            "首个合法施工任务只能是 A0",
+            "v2.3 已正式否决",
+            "B1 prompt `<12000`",
+            "schema `<4500`",
+            "模型只输出创作 Draft",
+            "文本结果永远不能宣称视觉通过",
+            "一轮只完成一个 A 包",
+            "生产切换是独立项目",
         ):
             self.assertIn(marker, construction)
 
@@ -398,6 +400,8 @@ class CanonicalRoleContractTests(unittest.TestCase):
 
     def test_root_guidance_has_no_deleted_or_legacy_active_command(self) -> None:
         text = _read("CLAUDE.md")
+        self.assertIn("MODE_P_VNEXT_AUTHORITY: architecture-v3.0", text)
+        self.assertIn("architecture-v3.0 ReleaseLedger", text)
         self.assertIn("current Claude Code task is the orchestrator", text)
         self.assertIn("persistent `mode-p-director` subagent", text)
         self.assertIn("new `mode-p-dp` subagent", text)

@@ -1,4 +1,4 @@
-"""A0 freezes one architecture-v2.3 construction ledger and v4 safety."""
+"""A0 freezes one architecture-v3.0 construction ledger and v4 safety."""
 
 from __future__ import annotations
 
@@ -25,26 +25,10 @@ from mode_p_vnext.release_control import (
 
 ARCHITECTURE_REL = (
     "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
-    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0.md"
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md"
 )
-AMENDMENT_REL = (
-    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
-    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.1_AMENDMENT.md"
-)
-V22_AMENDMENT_REL = (
-    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
-    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.2_AMENDMENT.md"
-)
-V23_AMENDMENT_REL = (
-    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
-    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md"
-)
-ARCHITECTURE_BUNDLE = {
-    ARCHITECTURE_REL,
-    AMENDMENT_REL,
-    V22_AMENDMENT_REL,
-    V23_AMENDMENT_REL,
-}
+ARCHITECTURE_BUNDLE = {ARCHITECTURE_REL}
+AUTHORITY_MARKER = "MODE_P_VNEXT_AUTHORITY: architecture-v3.0"
 
 
 def _read_json(path):
@@ -59,7 +43,7 @@ def _write_json(path, value):
     )
 
 
-def test_release_ledger_is_the_single_v2_task_selector():
+def test_release_ledger_is_the_single_v3_task_selector():
     control = ReleaseControl.default()
     tasks = control.load_tasks()
     assert [task.task_id for task in tasks] == [
@@ -94,7 +78,7 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     control = ReleaseControl.default()
     document = _read_json(control.tasks_path)
     assert document["schema_version"] == "2.0"
-    assert document["architecture_version"] == "2.3"
+    assert document["architecture_version"] == "3.0"
     assert document["authority"] == "SOLE_VNEXT_CONSTRUCTION_LEDGER"
     assert document["terminal_claim_ceiling"] == "OWNER_APPROVED_PREVIEW"
     assert document["status_after_all"] == "PRODUCTION_SWITCH_PROPOSAL_ELIGIBLE"
@@ -137,28 +121,45 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     assert "b1_prompt_under_12000_chars" in a4["required_checks"]
     assert "b1_schema_under_4500_chars" in a4["required_checks"]
     assert "i0_fact_extraction_signature" in a4["required_checks"]
-    assert "local_anchor_excluded_from_i0" in a4["required_checks"]
-    assert "free_text_intents_not_binding_transport" in a4["required_checks"]
+    assert "model_does_not_mint_ids_or_ticks" in a4["required_checks"]
+    assert "typed_binding_intents_in_b1_schema" in a4["required_checks"]
+    assert "free_text_not_binding_transport" in a4["required_checks"]
     a5 = next(task for task in document["tasks"] if task["task_id"] == "A5")
     assert "drafts_contain_creative_choices_only" in a5["required_checks"]
     assert "deterministic_vec_rebuild" in a5["required_checks"]
     assert "typed_reference_binding" in a5["required_checks"]
     assert "typed_dialogue_audio_binding" in a5["required_checks"]
-    assert "no_fact_id_semantics" in a5["required_checks"]
-    assert "bounded_generation_segment" in a5["required_checks"]
-    assert "anchored_dialogue_audio_placement" in a5["required_checks"]
+    assert "no_fact_id_or_statement_parsing" in a5["required_checks"]
+    assert "per_shot_generation_cap" in a5["required_checks"]
+    assert "scene_duration_not_capped_at_15s" in a5["required_checks"]
+    assert "dialogue_phase_tick_placement" in a5["required_checks"]
+    assert "source_span_never_used_as_timing" in a5["required_checks"]
+    assert "requirements_bound_to_shot_or_beat" in a5["required_checks"]
     assert "free_text_intents_not_bound" in a5["required_checks"]
 
     a1 = next(task for task in document["tasks"] if task["task_id"] == "A1")
     assert {
+        "normalized_source_contract",
+        "local_fact_assembler_ownership",
         "typed_fact_semantics",
-        "opaque_fact_ids",
-        "source_span_invariants",
-        "dialogue_anchor_contract",
+        "opaque_fact_handles_and_ids",
+        "source_span_provenance_only",
+        "generation_capability_profile",
+        "duration_intent_not_raw_ticks",
+        "typed_reference_binding_intent",
+        "typed_dialogue_binding_intent",
     }.issubset(a1["required_checks"])
+    assert {
+        "01_调度器/mode_p_vnext/services/source_normalizer.py",
+        "01_调度器/mode_p_vnext/services/fact_assembler.py",
+    }.issubset(a1["allowed_paths"])
 
     a0 = next(task for task in document["tasks"] if task["task_id"] == "A0")
-    assert "architecture_v23_temporal_contracts_registered" in a0["required_checks"]
+    assert "single_architecture_document_locked" in a0["required_checks"]
+    assert "v23_rejected_as_historical" in a0["required_checks"]
+    assert "active_guidance_version_converged" in a0["required_checks"]
+    assert "architecture_drift_blocks_claim" in a0["required_checks"]
+    assert "01_调度器/mode_p/test_ep35_s1_pipeline.py" in a0["allowed_paths"]
 
     a6 = next(task for task in document["tasks"] if task["task_id"] == "A6")
     assert {
@@ -180,10 +181,12 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
 
     a8 = next(task for task in document["tasks"] if task["task_id"] == "A8")
     assert {
+        "raw_source_to_fact_registry",
+        "canonical_ingest_to_projection",
         "typed_ingest_provenance",
-        "complete_v22_state_graph",
+        "complete_v30_state_graph",
         "run_record_digest_tamper_rejected",
-        "local_dialogue_anchor_assembly",
+        "no_v4_write_or_external_media",
     }.issubset(a8["required_checks"])
 
 
@@ -210,7 +213,7 @@ def test_architecture_bundle_hashes_are_locked_and_current():
     assert expected == actual
 
     state = control.load_state()
-    assert state["architecture_version"] == "2.3"
+    assert state["architecture_version"] == "3.0"
     assert state["architecture_documents"] == [
         {"path": item["path"], "sha256": item["sha256"]}
         for item in document["architecture_documents"]
@@ -218,36 +221,50 @@ def test_architecture_bundle_hashes_are_locked_and_current():
     assert state["architecture_document"] == state["architecture_documents"][-1]
 
 
-def test_v22_root_contracts_are_explicit_and_fail_closed():
+def test_v30_root_contracts_are_explicit_and_fail_closed():
     root = ReleaseControl.default().root
-    amendment = (root / V22_AMENDMENT_REL).read_text(encoding="utf-8")
+    architecture = (root / ARCHITECTURE_REL).read_text(encoding="utf-8")
 
-    assert "FactExtractionDraft" in amendment
-    assert "FactSemantic" in amendment
-    assert "fact_id` 是不透明身份" in amendment
-    assert "source_start/source_end" in amendment
-    assert "只从 `ScriptFact.semantic` 推导引用与 AudioEvent" in amendment
-    assert "type(payload) is mode_p_vnext.domain.projection.ProjectionAST" in amendment
-    assert "不得重新定义同名或语义等价的持久化 dataclass" in amendment
-    assert "INGEST(I0 + FactAssembler)" in amendment
-    assert "TEXT_VALIDATED" in amendment
-    assert "production_entry=v4_unchanged" in amendment
+    for marker in (
+        "NORMATIVE_SINGLE_AUTHORITY",
+        "REJECTED_BY_WHOLE_SYSTEM_AUDIT",
+        "NormalizedSource",
+        "local FactAssembler",
+        "FactRegistry",
+        "TICKS_PER_SECOND = 24000",
+        "一个 `GenerationUnit` 对应一个 `CinematicShot`",
+        "Scene/Episode 总时长",
+        "MUST NOT 被 15 秒封顶",
+        "source_start/source_end",
+        "MUST NOT 用于计算 screen time",
+        "DialogueBindingIntent",
+        "ReferenceBindingIntent",
+        "唯一机器绑定输入",
+        "每个生成的 ReferenceRequirement/AudioEvent 必须绑定",
+        "B1 运行 prompt（不含 schema）必须 `< 12000`",
+        "VEC -> ProjectionAST -> StoryboardProjection / VideoProjection",
+        "production_entry=v4_unchanged",
+    ):
+        assert marker in architecture
 
 
-def test_v23_temporal_contracts_are_explicit_and_fail_closed():
-    root = ReleaseControl.default().root
-    amendment = (root / V23_AMENDMENT_REL).read_text(encoding="utf-8")
-
-    assert "MAX_GENERATION_SEGMENT_TICKS = 360000" in amendment
-    assert "MAX_SHOT_TICKS" in amendment
-    assert "deterministic largest-remainder" in amendment
-    assert "dialogue_anchor_ppm: int | None" in amendment
-    assert "I0 model contract MUST NOT return it" in amendment
-    assert "[start_tick," in amendment
-    assert "start_tick + 1)" in amendment
-    assert "reference_intents[]" in amendment
-    assert "MUST NOT be parsed or matched against facts." in amendment
-    assert "v4_unchanged" in amendment
+def test_v23_is_registered_as_rejected_history_not_active_authority():
+    control = ReleaseControl.default()
+    document = _read_json(control.tasks_path)
+    historical = {
+        item["version"]: item for item in document["historical_architecture_documents"]
+    }
+    assert historical["2.3"]["disposition"] == (
+        "REJECTED_BY_WHOLE_SYSTEM_AUDIT"
+    )
+    assert all(
+        historical[version]["disposition"] == "HISTORICAL_READ_ONLY"
+        for version in ("2.0", "2.1", "2.2")
+    )
+    assert all(
+        "V2." not in item["path"]
+        for item in document["architecture_documents"]
+    )
 
 
 def test_legacy_queues_are_imported_as_history_not_completion():
@@ -344,27 +361,49 @@ def test_construction_entry_and_readme_route_only_to_release_control():
     construction = (
         root
         / "MODE_P_REDESIGN_PROJECT"
-        / "MODE_P_VNEXT_CONSTRUCTION_V2.md"
+        / "MODE_P_VNEXT_CONSTRUCTION_V3.md"
     ).read_text(encoding="utf-8")
 
     assert "python -m mode_p_vnext.release_control" in command
     assert "MODE_P_VNEXT_RELEASE_TASKS.json" in command
     assert "MODE_P_VNEXT_RELEASE_STATE.json" in command
-    assert "R, DDO, CPL, and V0-V10 files are historical evidence only" in command
+    assert "historical evidence only" in command
+    assert "v2.3 is rejected" in command
     assert "python -m mode_p_vnext.rebuild_control claim" not in command
     assert "Never call `record-owner-approval` for the user." in command
 
-    assert "MODE_P_VNEXT_CONSTRUCTION_V2.md" in readme
+    assert "MODE_P_VNEXT_CONSTRUCTION_V3.md" in readme
     assert "MODE_P_VNEXT_RELEASE_TASKS.json" in readme
     assert "python -m mode_p_vnext.release_control" in readme
-    assert "首个合法施工任务只能是 A0" in construction
-    assert "架构 v2.2 权威包" in construction
+    assert "v2.3 已正式否决" in construction
+    assert "一轮只完成一个 A 包" in construction
     assert "独占写入所有权" in construction
 
     root_guidance = (root / "CLAUDE.md").read_text(encoding="utf-8")
-    assert "architecture-v2.2 ReleaseLedger" in root_guidance
+    assert "architecture-v3.0 ReleaseLedger" in root_guidance
     assert "mode_p_vnext.release_control" in root_guidance
     assert "mode_p_vnext.rebuild_control\naudit/status" not in root_guidance
+
+    registry = _read_json(ReleaseControl.default().tasks_path)
+    assert {item["path"] for item in registry["active_guidance"]} == {
+        "CLAUDE.md",
+        ".claude/commands/mode-p-vnext-rebuild.md",
+        "MODE_P_REDESIGN_PROJECT/README.md",
+        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md",
+        "01_调度器/mode_p_vnext/README.md",
+    }
+    for item in registry["active_guidance"]:
+        content = (root / item["path"]).read_text(encoding="utf-8")
+        assert item["marker"] == AUTHORITY_MARKER
+        assert AUTHORITY_MARKER in content
+
+    historical_construction = (
+        root
+        / "MODE_P_REDESIGN_PROJECT"
+        / "MODE_P_VNEXT_CONSTRUCTION_V2.md"
+    ).read_text(encoding="utf-8")
+    assert "HISTORICAL_READ_ONLY" in historical_construction
+    assert "REJECTED_BY_WHOLE_SYSTEM_AUDIT" in historical_construction
 
 
 def test_a0_cannot_enable_external_media_or_production():
@@ -547,6 +586,83 @@ def test_claim_cli_summary_is_bounded():
     }
     assert "claim_manifest" not in summary
     assert len(json.dumps(summary)) < 512
+
+
+def test_v3_active_guidance_drift_blocks_next_and_claim(tmp_path):
+    architecture = (
+        tmp_path
+        / "MODE_P_REDESIGN_PROJECT"
+        / "vnext_repair_evidence"
+        / "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md"
+    )
+    architecture.parent.mkdir(parents=True, exist_ok=True)
+    architecture.write_text("single v3 authority\n", encoding="utf-8")
+    architecture_hash = _sha256_file(architecture)
+    architecture_rel = architecture.relative_to(tmp_path).as_posix()
+
+    guidance = tmp_path / "CLAUDE.md"
+    guidance.write_text(AUTHORITY_MARKER + "\n", encoding="utf-8")
+    task = _minimal_release_task("A0", [], "BASELINE_REPAIR_REQUIRED")
+    tasks = {
+        "schema_version": "2.0",
+        "queue_id": "test-v3",
+        "architecture_version": "3.0",
+        "architecture_documents": [
+            {
+                "path": architecture_rel,
+                "sha256": architecture_hash,
+                "role": "SOLE_NORMATIVE_BASELINE",
+            }
+        ],
+        "historical_architecture_documents": [
+            {
+                "version": version,
+                "path": f"historical-v{version}.md",
+                "disposition": (
+                    "REJECTED_BY_WHOLE_SYSTEM_AUDIT"
+                    if version == "2.3"
+                    else "HISTORICAL_READ_ONLY"
+                ),
+            }
+            for version in ("2.0", "2.1", "2.2", "2.3")
+        ],
+        "active_guidance": [
+            {"path": "CLAUDE.md", "marker": AUTHORITY_MARKER}
+        ],
+        "locked_verification_inputs": {architecture_rel: architecture_hash},
+        "authority": "SOLE_VNEXT_CONSTRUCTION_LEDGER",
+        "status_after_all": "DONE",
+        "tasks": [task],
+    }
+    state = _minimal_release_state()
+    state.update(
+        {
+            "architecture_version": "3.0",
+            "architecture_documents": [
+                {"path": architecture_rel, "sha256": architecture_hash}
+            ],
+        }
+    )
+    control = ReleaseControl(tmp_path)
+    _write_json(control.tasks_path, tasks)
+    _write_json(control.state_path, state)
+
+    assert control.next_task().task_id == "A0"
+    guidance.write_text("stale architecture-v2.2 guidance\n", encoding="utf-8")
+    with pytest.raises(ControlError, match="active guidance authority marker drift"):
+        control.next_task()
+    with pytest.raises(ControlError, match="active guidance authority marker drift"):
+        control.claim("A0", "drift-test")
+
+
+def test_architecture_rebase_rejects_an_amendment_stack(tmp_path):
+    control = ReleaseControl(tmp_path)
+    first = tmp_path / "first.md"
+    second = tmp_path / "second.md"
+    first.write_text("first", encoding="utf-8")
+    second.write_text("second", encoding="utf-8")
+    with pytest.raises(ControlError, match="one complete normative document"):
+        control.rebase_architecture("3.1", [first, second])
 
 
 def test_artifact_hashes_are_portable_across_git_line_endings(tmp_path):

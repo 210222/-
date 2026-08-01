@@ -1,34 +1,46 @@
-# MODE:P vNext — Isolated Rewrite Workspace
+<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.0 -->
 
-This directory is reserved for the MODE:P vNext implementation governed by:
+# MODE:P vNext — Architecture-v3.0 Isolated Workspace
 
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_LOOP_SPEC.md`
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_REBUILD_LOOP.md`
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_IMPLEMENTATION_PLAN.md`
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_PROGRESS.md`
+This package is the isolated implementation workspace for the sole normative
+architecture:
 
-Current state: isolated rebuild infrastructure. No vNext production runtime,
-production entry switch, external generation submission, or visual-media
-acceptance authority exists yet. v4 remains the sole production entry.
+- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md`
+- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md`
+- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json`
+- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_STATE.json`
+
+Run `python -m mode_p_vnext.release_control audit/status/next` from
+`01_调度器`. Only the exact task returned by `next` may be claimed. v2.0-v2.3,
+the old loop/implementation/progress files, R/DDO/CPL queues and
+`director_vnext1` are `HISTORICAL_READ_ONLY`; v2.3 is rejected by the whole
+MODE:P audit and grants no v3 completion.
+
+## Architecture boundaries
+
+- Director is the sole visual designer. Fresh DP only emits bounded
+  `RevisionRequest`; local code owns IDs, hashes, 24000-tick time, N+1
+  boundaries, typed bindings and projection.
+- One Shot is one initial generation unit. Every Shot is independent and no
+  longer than the capability maximum (15 seconds for the default SD2.0
+  profile); a Scene is not capped at 15 seconds.
+- Source spans are provenance only. They never produce screen/audio timing.
+- Storyboard and Video compile from the same canonical `ProjectionAST`.
+- Text validation cannot claim visual acceptance. Real media and explicit
+  hash-bound owner preview approval belong to A10.
 
 ## Isolation rules
 
-- Do not import modules from `01_调度器/mode_p` or `01_调度器/legacy_mode_p`.
-- Do not read v4 knowledge indexes, caches, Sessions or delivery as runtime input.
-- v4 may be exercised only through black-box regression commands recorded by the plan.
-- Do not copy old compiler behavior as a hidden fallback.
-- Golden source media remains external evidence; text runtime code does not load media binaries.
-- All implementation work enters through `/mode-p-vnext-rebuild` one task at a time.
-- Rebuild is fail-closed: it cannot enable Shadow, Pilot, Canary, or
-  Production. It also cannot clear a kill switch or submit to an external
-  generation platform.
-- `rollback.py` is a vNext-only, tested control-plane drill. It binds a
-  pre-existing read-only v4 rollback archive to retained vNext evidence; it
-  does not change the real `/mode-p-pilot` entry, a v4 Session, or a delivery.
-- The operations runbook is
-  `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_OPERATIONS.md`.
+- Do not import runtime modules from `01_调度器/mode_p` or
+  `01_调度器/legacy_mode_p`.
+- Do not read v4 knowledge indexes, caches, Sessions or delivery as vNext
+  runtime input. v4 may be exercised only through registered black-box tests.
+- Do not copy old compiler behavior or the 27K prompt as a hidden fallback.
+- Do not load media binaries into Director/DP text context.
+- Rebuild cannot enable Shadow, Pilot, Canary or Production, clear a kill
+  switch, submit externally or change the real `/mode-p-pilot` entry.
+- `production_entry=v4_unchanged` and
+  `production_switch_authorized=false` remain invariant through A10.
 
-A future release may be designed only after the rebuild queue, Golden and
-recovery gates, real-media acceptance, and explicit user approval have all
-completed. That future release must be a separately scoped, audited change;
-it must not reuse a Rebuild flag as an activation shortcut.
+A future production switch requires a separately scoped, authorized and
+audited change with rollback; no A-task or feature flag can activate it.
