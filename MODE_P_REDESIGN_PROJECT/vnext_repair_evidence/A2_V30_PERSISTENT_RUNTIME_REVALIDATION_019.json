@@ -1,0 +1,96 @@
+{
+  "schema_name": "mode_p_vnext_a2_persistent_runtime_revalidation_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A2",
+  "created_at": "2026-08-02T07:56:46+08:00",
+  "owner": "codex-a2-v30-state-graph-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_COMPLETE_VERIFICATION_INPUT"
+  },
+  "revalidation": {
+    "reason": "The A0 V4 cohort-authority repair invalidated downstream completion evidence. This Evidence rebinds the complete A2 runtime to the locked v3.0 architecture and includes two newly discovered fail-closed repairs.",
+    "previous_a2_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_V30_PERSISTENT_RUNTIME_012.json",
+    "previous_a2_evidence_disposition": "HISTORICAL_READ_ONLY_NOT_CURRENT_COMPLETION_PROOF",
+    "implementation_changed_after_claim": true,
+    "repaired_hazards": [
+      "StateGraph now rejects any owned-field dependency cycle before a run can be persisted, preserving the required deterministic DAG.",
+      "PersistentNodeCache now publishes a key exactly once and rejects competing ArtifactRefs, so nondeterministic output cannot silently overwrite a deterministic cache identity.",
+      "The v3.0 runtime is tested not to import the historical session, transaction, or dependency-invalidation authorities; A8 alone owns future CLI rewiring."
+    ]
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/pipeline/state.py",
+    "01_调度器/mode_p_vnext/pipeline/graph.py",
+    "01_调度器/mode_p_vnext/pipeline/invalidation.py",
+    "01_调度器/mode_p_vnext/runtime/__init__.py",
+    "01_调度器/mode_p_vnext/runtime/artifacts.py",
+    "01_调度器/mode_p_vnext/runtime/cache.py",
+    "01_调度器/mode_p_vnext/runtime/session.py",
+    "01_调度器/mode_p_vnext/runtime/transaction.py",
+    "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_V30_PERSISTENT_RUNTIME_REVALIDATION_019.json"
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_调度器/mode_p_vnext/pipeline/state.py": "ffefbdb228a2447139b857848a60ab53254ad07a8f9dcf1c62b6a1cf2a2371d1",
+    "01_调度器/mode_p_vnext/pipeline/graph.py": "d021ebd72add31efcd1253d8b2ea3fe0972f2d4e854e6503e325af9194d4eb71",
+    "01_调度器/mode_p_vnext/pipeline/invalidation.py": "fbf94c603df1e08265e2f6fd37b9bd3b9b7c44b1545b91d389af2272399447e7",
+    "01_调度器/mode_p_vnext/runtime/__init__.py": "e64a1999c5ffe44378dac81f3a5009d7f8e7791b18e7119ec8d400cd75a1ff1e",
+    "01_调度器/mode_p_vnext/runtime/artifacts.py": "3a02d5e3d6ab7fc8f2eb47783391cbbf9ed40a2c82e178ad18bc8c80a3ac28d2",
+    "01_调度器/mode_p_vnext/runtime/cache.py": "59715e7ea33ed815393e8eee20f9cd01a5f15ad43e50464e15dad29ad45922ef",
+    "01_调度器/mode_p_vnext/runtime/session.py": "2ae7ece46dd86308d3570c4ed890cc70d70c15720c8f35a2aa4034c5e067607c",
+    "01_调度器/mode_p_vnext/runtime/transaction.py": "c49dd096ff074b15dbc85aad8234fafcb8ee6e6d693669bfa34dffef0a310dbd",
+    "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py": "60696f33a50a387e09f869f80dc76f0484e7a32ffdfc537ce2440793a25bb065"
+  },
+  "checks": [
+    {"name": "persistent_state_graph", "exit_code": 0},
+    {"name": "checkpoint_resume", "exit_code": 0},
+    {"name": "pending_write_atomicity", "exit_code": 0},
+    {"name": "content_addressed_artifacts", "exit_code": 0},
+    {"name": "field_level_invalidation", "exit_code": 0},
+    {"name": "capability_profile_invalidation", "exit_code": 0},
+    {"name": "stale_concurrent_result_rejected", "exit_code": 0}
+  ],
+  "verification_results": [
+    {
+      "name": "a2_persistent_graph",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_a2_persistent_graph.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "13 passed in 4.45s"
+    }
+  ],
+  "precompletion_results": [
+    {
+      "name": "a2_legacy_runtime_regression",
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_v6_1_session_state.py mode_p_vnext/tests/test_v6_2_atomic_commit.py mode_p_vnext/tests/test_v6_3_dependency_invalidation.py mode_p_vnext/tests/test_v6_7_concurrency_lock.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "47 passed in 5.57s"
+    },
+    {
+      "name": "a0_a1_v4_isolation_regression",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p/test_active_entrypoints.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "51 passed in 4.52s"
+    }
+  ],
+  "authority_boundary": {
+    "canonical_domain": "mode_p_vnext.domain",
+    "runtime_ledger": "A2 records immutable ArtifactRef metadata, deterministic graph signatures, commit-chain state, and invalidation evidence only. It never owns or mutates domain payloads.",
+    "legacy_lifecycle_modules": "HISTORICAL_COMPATIBILITY_ONLY; not imported by mode_p_vnext.runtime and not a v3.0 graph authority.",
+    "pending_recovery_policy": "Pending staging is quarantined. Only one atomically promoted direct committed child may resume.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A3 knowledge flow, A4 provider, A5 timeline or VEC, A6 Projection, A7 Gate or DP/media, or later package implementation was changed.",
+    "No top-level CLI rewiring was performed; that integration is exclusively A8 scope.",
+    "No Director, DP, external media, production runtime, or visual acceptance was started or claimed."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false,
+  "media_visual_acceptance": false
+}

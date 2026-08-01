@@ -39,15 +39,39 @@ def _optional_digest(value: str | None, field_name: str) -> str | None:
     return value
 
 
-def _atomic_write(path: Path, payload: bytes) -> None:
+def _write_immutable(path: Path, payload: bytes) -> None:
+    """Publish a cache value once; a matching key may never be overwritten.
+
+    A cache key is a deterministic statement about the stage and all of its
+    inputs.  Replacing an existing value for that key would make a
+    nondeterministic producer appear reproducible, so a competing value must
+    fail closed instead of winning by write order.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
+    if path.exists() or path.is_symlink():
+        if path.is_file() and not path.is_symlink() and path.read_bytes() == payload:
+            return
+        raise StateInvariantError("cache key already names different or unsafe canonical bytes")
     temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
     try:
         with temporary.open("xb") as handle:
             handle.write(payload)
             handle.flush()
             os.fsync(handle.fileno())
-        os.replace(temporary, path)
+        try:
+            os.link(temporary, path)
+        except FileExistsError:
+            if not path.is_file() or path.is_symlink() or path.read_bytes() != payload:
+                raise StateInvariantError("cache key already names different or unsafe canonical bytes")
+        except OSError:
+            try:
+                with path.open("xb") as handle:
+                    handle.write(payload)
+                    handle.flush()
+                    os.fsync(handle.fileno())
+            except FileExistsError:
+                if not path.is_file() or path.is_symlink() or path.read_bytes() != payload:
+                    raise StateInvariantError("cache key already names different or unsafe canonical bytes")
     finally:
         if temporary.exists():
             temporary.unlink()
@@ -101,20 +125,31 @@ class PersistentNodeCache:
     def put(self, key: NodeCacheKey, ref: ArtifactRef) -> None:
         if not isinstance(key, NodeCacheKey) or not isinstance(ref, ArtifactRef):
             raise StateInvariantError("cache requires NodeCacheKey and ArtifactRef")
-        _atomic_write(self._path(key), canonical_json_bytes({"key": key.to_dict(), "artifact_ref": ref.to_dict()}))
+        _write_immutable(
+            self._path(key),
+            canonical_json_bytes({"key": key.to_dict(), "artifact_ref": ref.to_dict()}),
+        )
 
     def get(self, key: NodeCacheKey) -> ArtifactRef | None:
         if not isinstance(key, NodeCacheKey):
             raise StateInvariantError("cache key must be a NodeCacheKey")
         path = self._path(key)
+        if path.is_symlink():
+            raise StateInvariantError("cache record is not a regular file")
         if not path.exists():
             return None
-        if not path.is_file() or path.is_symlink():
+        if not path.is_file():
             raise StateInvariantError("cache record is not a regular file")
         try:
-            value = json.loads(path.read_text(encoding="utf-8"))
+            raw = path.read_bytes()
+            value = json.loads(raw.decode("utf-8"))
         except (OSError, UnicodeError, json.JSONDecodeError) as exc:
             raise StateInvariantError("cache record is invalid JSON") from exc
-        if not isinstance(value, Mapping) or set(value) != {"key", "artifact_ref"} or value["key"] != key.to_dict():
+        if (
+            not isinstance(value, Mapping)
+            or set(value) != {"key", "artifact_ref"}
+            or value["key"] != key.to_dict()
+            or canonical_json_bytes(value) != raw
+        ):
             raise StateInvariantError("cache record is not bound to its cache key")
         return ArtifactRef.from_dict(value["artifact_ref"])

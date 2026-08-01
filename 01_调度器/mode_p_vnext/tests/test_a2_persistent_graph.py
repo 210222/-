@@ -388,6 +388,54 @@ def test_graph_rejects_wrong_artifact_type_and_noncanonical_state_schema() -> No
         PersistentGraphState.from_dict(state)
 
 
+def test_graph_rejects_dependency_cycles_before_a_run_is_persisted() -> None:
+    with pytest.raises(StateInvariantError, match="dependency cycle"):
+        StateGraph(
+            (
+                NodeSpec(
+                    "A",
+                    "3.0",
+                    {"a": ArtifactKind.NORMALIZED_SOURCE},
+                    ("b",),
+                ),
+                NodeSpec(
+                    "B",
+                    "3.0",
+                    {"b": ArtifactKind.EPISODE_DIRECTION_DRAFT},
+                    ("a",),
+                ),
+            )
+        )
+
+
+def test_content_addressed_cache_refuses_competing_value_for_same_key(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-cache", graph=_graph())
+    first = session.artifacts.put(_artifact(ArtifactKind.NORMALIZED_SOURCE, "cache-first"))
+    competing = session.artifacts.put(_artifact(ArtifactKind.NORMALIZED_SOURCE, "cache-second"))
+    key = NodeCacheKey(
+        node_id="I0",
+        stage_signature=_graph().node("I0").stage_signature,
+        input_digests={"raw_source": _digest("7")},
+        knowledge_snapshot_digest=None,
+        capability_profile_digest=None,
+    )
+    session.cache.put(key, first)
+    with pytest.raises(StateInvariantError, match="already names different"):
+        session.cache.put(key, competing)
+    assert session.cache.get(key) == first
+
+
+def test_v30_runtime_does_not_reintroduce_legacy_state_authorities() -> None:
+    package_root = Path(__file__).resolve().parents[1]
+    runtime_sources = tuple((package_root / "runtime").glob("*.py"))
+    assert runtime_sources
+    for source in runtime_sources:
+        text = source.read_text(encoding="utf-8")
+        assert "mode_p_vnext.session_state" not in text
+        assert "mode_p_vnext.atomic_commit" not in text
+        assert "mode_p_vnext.dependency_invalidation" not in text
+
+
 def test_pointer_tampering_and_ambiguous_committed_recovery_fail_closed(tmp_path: Path) -> None:
     session = RunSession.create(tmp_path / "runs", run_id="run-10", graph=_graph())
     source = _artifact(ArtifactKind.NORMALIZED_SOURCE, "pointer")

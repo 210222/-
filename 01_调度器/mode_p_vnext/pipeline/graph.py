@@ -118,10 +118,46 @@ class StateGraph:
                     )
                 owners[field_name] = node.node_id
                 output_types[field_name] = artifact_type
+        self._validate_acyclic(values, owners)
         self._nodes = values
         self._by_id = MappingProxyType({node.node_id: node for node in values})
         self._owners = MappingProxyType(owners)
         self._output_types = MappingProxyType(output_types)
+
+    @staticmethod
+    def _validate_acyclic(nodes: Sequence[NodeSpec], owners: Mapping[str, str]) -> None:
+        """Reject configuration cycles before they can become unrecoverable state.
+
+        A node may consume an external input field, which has no graph owner.
+        Only inputs owned by another node form dependency edges.  Validating
+        those edges at construction time prevents a persisted run from naming
+        a graph in which no first committed node can ever exist.
+        """
+        dependencies = {
+            node.node_id: tuple(
+                owners[field_name]
+                for field_name in node.input_fields
+                if field_name in owners
+            )
+            for node in nodes
+        }
+        visiting: set[str] = set()
+        visited: set[str] = set()
+
+        def visit(node_id: str, path: tuple[str, ...]) -> None:
+            if node_id in visited:
+                return
+            if node_id in visiting:
+                cycle = " -> ".join((*path, node_id))
+                raise StateInvariantError(f"StateGraph dependency cycle is not allowed: {cycle}")
+            visiting.add(node_id)
+            for dependency in dependencies[node_id]:
+                visit(dependency, (*path, node_id))
+            visiting.remove(node_id)
+            visited.add(node_id)
+
+        for node in nodes:
+            visit(node.node_id, ())
 
     @property
     def nodes(self) -> tuple[NodeSpec, ...]:
