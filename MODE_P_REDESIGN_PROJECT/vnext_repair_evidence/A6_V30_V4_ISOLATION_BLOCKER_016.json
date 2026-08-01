@@ -1,0 +1,67 @@
+{
+  "schema_version": "3.0",
+  "record_type": "mode_p_vnext_a6_precondition_blocker",
+  "task_id": "A6",
+  "run_id": "codex-a6-v30-projection-20260802",
+  "architecture_version": "3.0",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "SOLE_NORMATIVE_BASELINE",
+    "applicable_sections": [
+      "section 1 v4 production isolation",
+      "section 10 single ProjectionAST and delivery",
+      "section 15 A6",
+      "section 17 prohibited shortcuts"
+    ]
+  },
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A6_V30_V4_ISOLATION_BLOCKER_016.json"
+  ],
+  "classification": "REGISTERED_V4_ISOLATION_PRECONDITION_FAILURE",
+  "root_cause": "Before any A6 implementation change, the registered a6_v4_isolation command failed because the frozen v4 cohort reconciliation record expects SHA-256 c87578dbe981677bf8c68f7963664640dc144b47471573b97bed2f1cd615131b for 01_调度器/mode_p/test_ep35_s1_pipeline.py, while the current committed source is 5bf7163355246d002e687f7bae6ec03113cd0d4cdfb8ef1293809e736ddc9216. Neither the v4 test nor the reconciliation record is an A6 allowed path; Git status showed no uncommitted change for either file. This is an existing v4 baseline-accounting drift, not a ProjectionAST defect.",
+  "failed_checks": [
+    {
+      "name": "a6_v4_isolation",
+      "exit_code": 1,
+      "evidence": "V4CompatibilityTests.test_v4_collection_matches_registered_cohorts failed at validate_registered_cohorts with assertion: registered legacy source changed."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a6_projection_compiler",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_a6_projection_compiler.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_调度器",
+      "exit_code": 1,
+      "summary": "20 setup errors: the A6 test is a retired v2 consumer that constructs removed VisualBeatDraft/ShotDesignDraft fields. It cannot define v3 behavior and must be replaced only after the v4 isolation precondition is restored."
+    },
+    {
+      "name": "a6_v4_isolation",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_v9_4_v4_compatibility.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_调度器",
+      "exit_code": 1,
+      "summary": "5 passed, 1 failed; the registered v4 legacy source SHA differs from the frozen reconciliation ledger."
+    }
+  ],
+  "rejected_actions": [
+    {
+      "action": "Modify the v4 test or its frozen reconciliation ledger from A6.",
+      "reason": "Both are outside A6 allowed paths and would alter the production-isolation baseline under the unrelated Projection work package."
+    },
+    {
+      "action": "Ignore a6_v4_isolation and start a ProjectionAST migration anyway.",
+      "reason": "A6 completion explicitly requires the registered v4 isolation command; proceeding would weaken the immutable v4 production boundary."
+    },
+    {
+      "action": "Restore v2 Draft, VEC, or Projection compatibility aliases to make the historical A6 test pass.",
+      "reason": "That would recreate a second canonical Projection authority and violate frozen v3.0 domain ownership."
+    }
+  ],
+  "required_remediation": "A prior authorized baseline/control work package must reconcile the v4 cohort record with the intended immutable v4 source, or restore the intended v4 source under its own authority. Only after a6_v4_isolation passes may A6 compile the canonical domain.projection ProjectionAST and adapter-only delivery views.",
+  "authority_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "a6_implementation_started": false,
+    "user_worktree_changes_modified": false
+  }
+}
