@@ -1,0 +1,137 @@
+{
+  "schema_name": "mode_p_vnext_a2_architecture_boundary_failure_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A2",
+  "created_at": "2026-08-02T13:40:00+08:00",
+  "owner": "codex-a2-v30-persistent-graph-audit-20260802",
+  "classification": "ARCHITECTURE_BOUNDARY_FAILURE",
+  "disposition": "FAIL_CLOSED",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "violated_sections": [
+      "5.1",
+      "11",
+      "15 A1",
+      "15 A2"
+    ]
+  },
+  "locked_requirements": [
+    "All persistent types are defined only in mode_p_vnext.domain.",
+    "Pipeline modules must not define persistent dataclasses or semantic equivalents.",
+    "The system has exactly one persistent state graph.",
+    "A2 may not modify the A1-owned canonical domain while A1 is completed."
+  ],
+  "contradicting_evidence": [
+    {
+      "path": "01_调度器/mode_p_vnext/pipeline/state.py",
+      "symbols": [
+        "ArtifactRef",
+        "NodeAcceptance",
+        "PersistentGraphState"
+      ],
+      "persistence_proof": "All three are frozen dataclasses with to_dict/from_dict contracts; PersistentGraphState is serialized into commits and checkpoints.",
+      "architecture_conflict": "Persistent schema authority is implemented in pipeline instead of mode_p_vnext.domain."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/pipeline/invalidation.py",
+      "symbols": [
+        "InvalidationRecord"
+      ],
+      "persistence_proof": "InvalidationRecord is a frozen dataclass with to_dict/from_dict and is embedded in committed invalidation transitions.",
+      "architecture_conflict": "A persistent transition schema is implemented in pipeline instead of mode_p_vnext.domain."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/runtime/transaction.py",
+      "symbols": [
+        "PendingNodeWrite"
+      ],
+      "persistence_proof": "PendingNodeWrite is a frozen dataclass written to PENDING.json and bound by the commit manifest.",
+      "architecture_conflict": "A durable transaction schema is implemented outside mode_p_vnext.domain."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/runtime/cache.py",
+      "symbols": [
+        "NodeCacheKey"
+      ],
+      "persistence_proof": "NodeCacheKey is a frozen dataclass serialized into restart-safe cache records.",
+      "architecture_conflict": "A durable cache identity schema is implemented outside mode_p_vnext.domain."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/pipeline/graph.py",
+      "symbols": [
+        "NodeSpec"
+      ],
+      "persistence_proof": "NodeSpec is a frozen dataclass whose descriptor is persisted in RUN.json and bound by graph_digest.",
+      "architecture_conflict": "The durable graph contract lacks a canonical domain authority."
+    }
+  ],
+  "second_authority_evidence": {
+    "historical_executable_modules": [
+      "01_调度器/mode_p_vnext/session_state.py",
+      "01_调度器/mode_p_vnext/atomic_commit.py",
+      "01_调度器/mode_p_vnext/concurrency_lock.py",
+      "01_调度器/mode_p_vnext/dependency_invalidation.py"
+    ],
+    "active_non_v3_imports": [
+      "mode_p_vnext.cli imports PersistentSession from mode_p_vnext.session_state",
+      "mode_p_vnext.shadow_entry imports Transaction from mode_p_vnext.atomic_commit",
+      "mode_p_vnext.runtime.session imports SessionLock from the legacy-capable mode_p_vnext.concurrency_lock"
+    ],
+    "impact": "The repository still exposes executable state, transaction, and invalidation authorities alongside the new A2 graph. Marking them historical in prose does not fail closed."
+  },
+  "release_ledger_ownership_conflict": {
+    "a1_completed": true,
+    "a1_owns": [
+      "01_调度器/mode_p_vnext/domain/**"
+    ],
+    "a2_owns_domain": false,
+    "a2_allowed_paths_include_only": [
+      "pipeline state/graph/invalidation",
+      "runtime/**",
+      "legacy A2 lifecycle modules",
+      "A2 tests and Evidence"
+    ],
+    "conclusion": "A2 cannot move the durable schemas into the sole canonical domain without an out-of-scope modification to a completed predecessor."
+  },
+  "verification_observations": [
+    {
+      "name": "a2_registered_baseline",
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "13 passed in 1.69s, but the suite does not enforce v3.0 section 5.1 persistent-type ownership."
+    },
+    {
+      "name": "static_persistence_boundary_audit",
+      "command": "rg -n '@dataclass|to_dict|from_dict|PENDING_FILENAME|CHECKPOINT_SCHEMA_NAME' <A2 implementation paths>",
+      "command_exit_code": 0,
+      "architecture_invariant_exit_code": 1,
+      "summary": "Found persistent dataclasses and durable serialization contracts outside mode_p_vnext.domain; architecture invariant failed."
+    }
+  ],
+  "deepseek_v4_flash_advisory": {
+    "transport": "Claude Code CLI",
+    "model": "deepseek-v4-flash",
+    "effort": "max",
+    "session_id": "7b819a6c-6be9-4c30-9512-a97fe0cf4865",
+    "authority": false,
+    "verdict": "BLOCK_DRAFT",
+    "summary": "The advisory review independently identified the same section 5.1 violation and agreed that A2 must fail before A1 is reopened."
+  },
+  "required_remediation_sequence": [
+    "Fail A2 under its current exclusive lock and stop the work package.",
+    "In a later control-plane round, invalidate completed A1 because canonical persistent schemas are missing from its domain authority.",
+    "Re-run A1 to define the canonical persistent graph, acceptance, invalidation, transaction, cache-key, and graph-contract schemas in mode_p_vnext.domain without implementing A2 storage behavior.",
+    "Resume A2 only when ReleaseLedger again returns A2; migrate pipeline/runtime behavior to the A1 domain schemas and retire executable legacy state authorities with auditable historical source blobs.",
+    "Re-run registered tests, cross-package regressions, authority scans, Evidence validation, and ReleaseLedger audit."
+  ],
+  "implementation_files_modified": false,
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_V30_PERSISTENT_TYPE_OWNERSHIP_BLOCKER_028.json"
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false,
+  "media_visual_acceptance": false
+}
