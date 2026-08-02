@@ -1,0 +1,52 @@
+{
+  "task_id": "A4",
+  "architecture_version": "3.0",
+  "architecture_input": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a"
+  },
+  "status": "FAILED_CLOSED",
+  "classification": "ARCHITECTURE_CODE_TEST_INCONSISTENCY",
+  "changed_paths": [],
+  "observations": [
+    {
+      "id": "A4-STRICT-BUDGET-001",
+      "severity": "BLOCKER",
+      "requirement": "v3.0 §8 requires B1 prompt characters < 12000 and B1 schema characters < 4500 before provider invocation.",
+      "code_evidence": [
+        "01_调度器/mode_p_vnext/prompts/signatures.py:217-218 sets B1 bounds to 12000 and 4500.",
+        "01_调度器/mode_p_vnext/prompts/budgets.py:29 and :48 reject only count > budget."
+      ],
+      "reproducible_effect": "A B1 prompt of exactly 12000 characters and a B1 schema of exactly 4500 characters are accepted although both violate the strict architecture bounds.",
+      "test_evidence": "Registered a4_structured_provider passed 20 tests, but no exact-boundary test exists; that passing result therefore cannot establish §8 compliance.",
+      "required_repair": "A re-opened A4 must add exact-boundary failing tests and make the pre-provider budget gate fail when count >= the declared exclusive bound."
+    },
+    {
+      "id": "A4-PROVIDER-CACHE-002",
+      "severity": "BLOCKER",
+      "requirement": "User requested DeepSeek v4 Flash cache-hit optimization, while v3.0 §12 permits only a provider port and forbids importing undocumented supplier prompts or behaviour.",
+      "code_evidence": [
+        "01_调度器/mode_p_vnext/ports/structured_text.py:73 stores an optional cache_hit telemetry value only.",
+        "01_调度器/mode_p_vnext/adapters/model/claude_deepseek.py:107-128 has no declared cache capability, cache-key contract, or provider cache-control channel.",
+        "01_调度器/mode_p_vnext/adapters/model/claude_deepseek.py:174-179 only relays optional CLI usage metadata."
+      ],
+      "reproducible_effect": "The port has no evidence-backed mechanism to request, measure, or guarantee a cache hit; adding a vendor-specific option or assuming CLI session behaviour would be an unapproved design.",
+      "required_repair": "Before implementation, obtain a versioned provider capability contract that defines supported cache controls, stable-key semantics, telemetry fields, and invalidation boundaries; otherwise retain only deterministic prompt-prefix construction and optional telemetry."
+    }
+  ],
+  "external_model_review": {
+    "provider_transport": "local Claude Code CLI",
+    "requested_model": "deepseek-v4-flash",
+    "scope": "zero-tool, read-only strict-budget review",
+    "result": "NONCONFORMANT: strict < limits are implemented as <= acceptance via count > budget.",
+    "claim_ceiling": "TEXT_VALIDATED"
+  },
+  "safety": {
+    "v4_modified": false,
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "raw_prompts_or_hidden_reasoning_persisted": false
+  },
+  "disposition": "The claimed A4 is failed closed. No source, test, state, lock, v4, or production change was made outside the controller-managed failure transition. Do not claim another task in this run."
+}
