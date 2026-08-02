@@ -1,0 +1,178 @@
+{
+  "schema_name": "mode_p_vnext_a1_domain_authority_revalidation_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A1",
+  "created_at": "2026-08-02T13:30:00+08:00",
+  "owner": "codex-a1-post-completion-hash-repair-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "relevant_sections": [
+      "5.1",
+      "6",
+      "7",
+      "8",
+      "15 A1"
+    ]
+  },
+  "revalidation_trigger": {
+    "previous_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_V30_DOMAIN_AUTHORITY_CONVERGENCE_026.json",
+    "reason": "A post-completion whitespace repair changed the committed hash of compat/retired_authority.py after Evidence 026 was recorded.",
+    "repair_commit": "c08d25b2e76bee0667db343a9ad74114516f539d",
+    "implementation_changed_after_reclaim": false,
+    "required_action": "Re-run A1 verification and snapshot every A1 implementation artifact at its current committed content hash."
+  },
+  "revalidated_invariants": [
+    "Normalized source provenance is an exact, untrimmed statement equality contract.",
+    "There is one canonical persistent domain authority for every v3.0 artifact type.",
+    "Retired authority modules expose only frozen non-persistent observations and fail closed on old constructors.",
+    "Historical implementations remain auditable through eleven recorded Git blob identifiers.",
+    "No model response owns IDs, hashes, ticks, boundaries, bindings, VEC, ProjectionAST, Evidence, or ReleaseLedger state."
+  ],
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/adapters/delivery/__init__.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/capability.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/storyboard_adapter.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/video_adapter.py",
+    "01_调度器/mode_p_vnext/compat/__init__.py",
+    "01_调度器/mode_p_vnext/compat/legacy_facts.py",
+    "01_调度器/mode_p_vnext/compat/retired_authority.py",
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "01_调度器/mode_p_vnext/director_vnext1/projection.py",
+    "01_调度器/mode_p_vnext/director_vnext1/revision.py",
+    "01_调度器/mode_p_vnext/domain/facts.py",
+    "01_调度器/mode_p_vnext/schema/canonical_timeline.py",
+    "01_调度器/mode_p_vnext/schema/fact_registry.py",
+    "01_调度器/mode_p_vnext/services/fact_assembler.py",
+    "01_调度器/mode_p_vnext/services/projection_compiler.py",
+    "01_调度器/mode_p_vnext/storyboard_projection.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py"
+  ],
+  "checks": [
+    {
+      "name": "canonical_artifact_envelope",
+      "exit_code": 0
+    },
+    {
+      "name": "canonical_24000_tick_timebase",
+      "exit_code": 0
+    },
+    {
+      "name": "draft_artifact_separation",
+      "exit_code": 0
+    },
+    {
+      "name": "no_duplicate_domain_authority",
+      "exit_code": 0
+    },
+    {
+      "name": "known_legacy_domain_authorities_retired",
+      "exit_code": 0
+    },
+    {
+      "name": "semantic_equivalent_persistent_type_audit",
+      "exit_code": 0
+    },
+    {
+      "name": "domain_schemas_frozen_for_downstream",
+      "exit_code": 0
+    },
+    {
+      "name": "legacy_read_adapter_only",
+      "exit_code": 0
+    },
+    {
+      "name": "normalized_source_contract",
+      "exit_code": 0
+    },
+    {
+      "name": "local_fact_assembler_ownership",
+      "exit_code": 0
+    },
+    {
+      "name": "typed_fact_semantics",
+      "exit_code": 0
+    },
+    {
+      "name": "opaque_fact_handles_and_ids",
+      "exit_code": 0
+    },
+    {
+      "name": "source_span_provenance_only",
+      "exit_code": 0
+    },
+    {
+      "name": "generation_capability_profile",
+      "exit_code": 0
+    },
+    {
+      "name": "duration_intent_not_raw_ticks",
+      "exit_code": 0
+    },
+    {
+      "name": "typed_reference_binding_intent",
+      "exit_code": 0
+    },
+    {
+      "name": "typed_dialogue_binding_intent",
+      "exit_code": 0
+    }
+  ],
+  "precompletion_results": [
+    {
+      "name": "registered_and_related_regressions",
+      "command": "python -m pytest <A1,A0,v4,A2,A3,A4 registered and related files> -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "142 passed in 13.83s."
+    },
+    {
+      "name": "historical_blob_reproducibility",
+      "command": "git cat-file -e <oid>^{blob} for all eleven recorded source blobs",
+      "exit_code": 0,
+      "summary": "11/11 historical Git blob objects exist."
+    },
+    {
+      "name": "python_and_patch_integrity",
+      "command": "python -m compileall -q <A1 paths>; git diff --check",
+      "exit_code": 0,
+      "summary": "Compilation and patch integrity passed."
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "v4_ep35_external_fixture_suite",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p/test_ep35_s1_pipeline.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "95 skipped because external fixture conditions were unavailable; no skip is counted as passing Evidence."
+    },
+    {
+      "name": "deepseek_v4_flash_advisory_review",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "transport": "Claude Code CLI",
+      "model": "deepseek-v4-flash",
+      "effort": "max",
+      "session_id": "7b819a6c-6be9-4c30-9512-a97fe0cf4865",
+      "verdict": "PASS_DRAFT",
+      "summary": "Advisory review agreed that declaring unchanged allowed artifacts for deterministic re-snapshot is controller-legal; the model did not write Evidence or ledger state."
+    }
+  ],
+  "invalid_command_attempts": [
+    {
+      "command": "python -m pytest ... mode_p_vnext/tests/test_a2_*.py ...",
+      "result": "NO_TESTS_RAN",
+      "reason": "PowerShell did not expand the pytest path wildcard.",
+      "counted_as_evidence": false
+    }
+  ],
+  "non_goals": [
+    "No A2 or later work package was claimed or implemented.",
+    "No v4 production source or production entry was changed.",
+    "No production switch, media runtime, or external submission was authorized.",
+    "No artificial implementation edit was introduced to manufacture a claim-time delta."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false
+}
