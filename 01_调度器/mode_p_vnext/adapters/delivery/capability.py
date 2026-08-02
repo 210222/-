@@ -1,12 +1,8 @@
-"""Capability profile and explicit adaptation records for delivery adapters.
+"""Delivery capability profiles and canonical adaptation records.
 
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §10 / §14 A6.
-
-A CapabilityProfile is a verified platform snapshot.  The digest is bound into
-every ProjectionManifest.  Adapters may degrade output to match the profile,
-but every degradation must be recorded as a CapabilityAdaptationRecord — the
-record is the audit trail that makes "adapter-only changes" distinguishable
-from Director-level creative changes.
+CapabilityAdaptationRecord is owned exclusively by
+``mode_p_vnext.domain.projection``.  Delivery adapters construct that exact
+type so every downgrade is hashable and traceable to canonical AST nodes.
 """
 
 from __future__ import annotations
@@ -14,11 +10,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from mode_p_vnext.domain.artifact import DomainValidationError, canonical_sha256
+from mode_p_vnext.domain.projection import CapabilityAdaptationRecord
 
 
 @dataclass(frozen=True)
 class CapabilityProfile:
-    """Verified platform capability snapshot (frozen, hashable)."""
+    """Verified delivery-platform snapshot used only by pure adapters."""
 
     platform: str
     version: str
@@ -31,35 +28,50 @@ class CapabilityProfile:
             raise DomainValidationError("platform must be non-empty")
         if not isinstance(self.version, str) or not self.version.strip():
             raise DomainValidationError("version must be non-empty")
-        if isinstance(self.max_prompt_chars, bool) or not isinstance(
-            self.max_prompt_chars, int
-        ) or self.max_prompt_chars < 1:
+        if (
+            isinstance(self.max_prompt_chars, bool)
+            or not isinstance(self.max_prompt_chars, int)
+            or self.max_prompt_chars < 1
+        ):
             raise DomainValidationError("max_prompt_chars must be a positive integer")
-        if isinstance(self.reference_slots, bool) or not isinstance(
-            self.reference_slots, int
-        ) or self.reference_slots < 0:
-            raise DomainValidationError("reference_slots must be a non-negative integer")
+        if (
+            isinstance(self.reference_slots, bool)
+            or not isinstance(self.reference_slots, int)
+            or self.reference_slots < 0
+        ):
+            raise DomainValidationError("reference_slots must be non-negative")
         if not isinstance(self.internal_cuts_supported, bool):
-            raise DomainValidationError("internal_cuts_supported must be a bool")
-
-
-@dataclass(frozen=True)
-class CapabilityAdaptationRecord:
-    """One explicit capability degradation applied by an adapter.
-
-    node_id names the projection node the degradation applies to ("" when the
-    record covers the whole delivery).  ``capability`` names the profile
-    dimension, ``action`` describes what the adapter did (e.g. segment_per_shot,
-    chunked, flag_reference_budget_exceeded), and ``reason`` states why.
-    """
-
-    node_id: str
-    capability: str
-    action: str
-    reason: str
-    adapter_version: str
+            raise DomainValidationError("internal_cuts_supported must be boolean")
 
 
 def capability_profile_digest(profile: CapabilityProfile) -> str:
-    """Deterministic digest of a capability profile for manifest binding."""
+    if type(profile) is not CapabilityProfile:
+        raise DomainValidationError("profile must be a CapabilityProfile")
     return canonical_sha256(profile)
+
+
+def adaptation_record(
+    *,
+    profile: CapabilityProfile,
+    adapter_version: str,
+    adaptation_code: str,
+    source_node_ids: tuple[str, ...],
+    semantic_loss: bool,
+) -> CapabilityAdaptationRecord:
+    """Construct the one canonical adaptation artifact payload type."""
+
+    return CapabilityAdaptationRecord(
+        adapter_version=adapter_version,
+        capability_profile_digest=capability_profile_digest(profile),
+        adaptation_code=adaptation_code,
+        source_node_ids=source_node_ids,
+        semantic_loss=semantic_loss,
+    )
+
+
+__all__ = [
+    "CapabilityAdaptationRecord",
+    "CapabilityProfile",
+    "adaptation_record",
+    "capability_profile_digest",
+]

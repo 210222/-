@@ -1,68 +1,301 @@
-"""A6 acceptance tests: one ProjectionAST compiles both projections.
-
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §10 / §14 A6.
-
-The VEC is the sole creative authority; `compile_projection_ast` produces the
-single ProjectionAST; `derive_storyboard` / `derive_video` both compile from
-that one AST (never from the VEC independently).  Adapters only format or
-degrade capability, they never invent events.  Every projection manifest
-carries the binding digests required by §10.
-"""
+"""A6 acceptance tests for the frozen v3.0 single-projection invariant."""
 
 from __future__ import annotations
 
-import hashlib
+from dataclasses import replace
+import inspect
+import json
 
 import pytest
 
+from mode_p_vnext.adapters.delivery import capability as delivery_capability
+from mode_p_vnext.adapters.delivery.capability import (
+    CapabilityProfile,
+    capability_profile_digest,
+)
+from mode_p_vnext.adapters.delivery.storyboard_adapter import (
+    render_storyboard,
+    storyboard_adapter_version,
+)
+from mode_p_vnext.adapters.delivery.video_adapter import (
+    render_video,
+    video_adapter_version,
+)
+from mode_p_vnext.domain import projection as canonical_projection
 from mode_p_vnext.domain.artifact import (
+    ArtifactEnvelope,
+    ArtifactKind,
     DomainValidationError,
     SourceRef,
+    canonical_json_bytes,
     canonical_sha256,
 )
-from mode_p_vnext.domain.blocking import (
-    BlockingBeatDraft,
-    BlockingCommit,
-    BlockingDraft,
-)
+from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingCommit, BlockingDraft
 from mode_p_vnext.domain.decisions import (
     DecisionBasis,
     DecisionDraft,
     VisualCurvePointDraft,
 )
-from mode_p_vnext.domain.facts import FactKind, FactRegistry, ScriptFact
+from mode_p_vnext.domain.facts import (
+    FactConfidence,
+    FactKind,
+    FactQualifiers,
+    FactRegistry,
+    FactSemantic,
+    ScriptFact,
+    SourceSpan,
+)
 from mode_p_vnext.domain.ids import IdFactory
-from mode_p_vnext.domain.time import TICKS_PER_SECOND
+from mode_p_vnext.domain.projection import (
+    CapabilityAdaptationRecord,
+    ProjectionAST,
+    ProjectionManifest,
+    ProjectionNode,
+)
+from mode_p_vnext.domain.time import DurationIntent
 from mode_p_vnext.domain.vec import (
+    DialogueBindingIntent,
     ExecutionDesignDraft,
+    GenerationMode,
+    PlacementPhase,
+    ReferenceBindingIntent,
+    ReferenceResponsibility,
     ShotDesignDraft,
     StoryboardRole,
     VisualBeatDraft,
     VisualBeatPhase,
     VisualExecutionContract,
 )
+from mode_p_vnext.services import projection_compiler
 from mode_p_vnext.services.blocking_assembler import assemble_blocking_commit
 from mode_p_vnext.services.projection_compiler import (
-    ProjectionAST,
-    ProjectionManifest,
-    ProjectionNode,
     compile_projection_ast,
     derive_storyboard,
     derive_video,
+    node_attribute,
 )
 from mode_p_vnext.services.vec_assembler import assemble_vec
 
 
-PROGRAM_VERSION = "mode-p-vnext-a6-test"
-COMPILER_VERSION = "2.1.0"
-SCHEMA_VERSION = "2.1"
+PROGRAM_VERSION = "mode-p-vnext-a6-v3-test"
 EPISODE_ID = "EP35"
 SCENE_ID = "EP35-S2"
+SOURCE_REF = SourceRef(source_id="a6-fixture", digest="f" * 64)
 
 
-# ---------------------------------------------------------------------------
-# Shared fixtures (VEC with required / optional / omit beats in two shots)
-# ---------------------------------------------------------------------------
+def _opaque_id(character: str) -> str:
+    return f"id:{character * 64}"
+
+
+def _opaque_handle(character: str) -> str:
+    return f"fh:{character * 64}"
+
+
+def _fact(
+    *,
+    ordinal: int,
+    character: str,
+    semantic: FactSemantic,
+    span_start: int,
+    subject_label: str | None = None,
+    spoken_text: str | None = None,
+) -> ScriptFact:
+    return ScriptFact(
+        fact_id=_opaque_id(character),
+        fact_handle=_opaque_handle(character),
+        kind=FactKind.SCRIPT,
+        semantic=semantic,
+        statement=f"fixture-{semantic.value}-{ordinal}",
+        confidence=FactConfidence.EXPLICIT,
+        qualifiers=FactQualifiers(
+            episode_id=EPISODE_ID,
+            scene_id=SCENE_ID,
+            subject_label=subject_label,
+            spoken_text=spoken_text,
+        ),
+        provenance=(
+            SourceSpan(
+                source_ref=SOURCE_REF,
+                episode_id=EPISODE_ID,
+                scene_id=SCENE_ID,
+                source_start=span_start,
+                source_end=span_start + 1,
+            ),
+        ),
+        ordinal=ordinal,
+    )
+
+
+def make_facts() -> FactRegistry:
+    return FactRegistry(
+        source_ref=SOURCE_REF,
+        facts=(
+            _fact(
+                ordinal=1,
+                character="a",
+                semantic=FactSemantic.CHARACTER,
+                span_start=10,
+                subject_label="Mira",
+            ),
+            _fact(
+                ordinal=2,
+                character="b",
+                semantic=FactSemantic.PROP,
+                span_start=20,
+                subject_label="service pistol",
+            ),
+            _fact(
+                ordinal=3,
+                character="c",
+                semantic=FactSemantic.DIALOGUE,
+                span_start=30,
+                subject_label="Mira",
+                spoken_text="Don't move.",
+            ),
+            _fact(
+                ordinal=4,
+                character="d",
+                semantic=FactSemantic.SETTING,
+                span_start=40,
+                subject_label="range",
+            ),
+        ),
+    )
+
+
+def make_blocking_draft() -> BlockingDraft:
+    return BlockingDraft(
+        beats=(
+            BlockingBeatDraft(
+                ordinal=1,
+                dramatic_action="Mira enters the quiet range.",
+                character_states=({"character": "Mira", "posture": "guarded"},),
+                prop_states=(),
+                gaze_relations=(),
+                action_paths=("enter",),
+                continuity_effect="The range is established.",
+            ),
+            BlockingBeatDraft(
+                ordinal=2,
+                dramatic_action="Mira confronts the pistol.",
+                character_states=({"character": "Mira", "posture": "ready"},),
+                prop_states=({"prop": "pistol", "state": "visible"},),
+                gaze_relations=("Mira -> pistol",),
+                action_paths=("raise focus",),
+                continuity_effect="The threat escalates.",
+            ),
+        )
+    )
+
+
+def make_execution_draft() -> ExecutionDesignDraft:
+    return ExecutionDesignDraft(
+        curve_points=(
+            VisualCurvePointDraft(1, 60, "arrival tension"),
+            VisualCurvePointDraft(2, 85, "threat escalation"),
+        ),
+        decisions=(
+            DecisionDraft(
+                scope="coverage",
+                basis=DecisionBasis.CHOICE,
+                locked_by=(),
+                options=("wide", "close"),
+                selected_index=1,
+                rationale="preserve the reveal",
+                tradeoff="less environment detail",
+            ),
+        ),
+        shots=(
+            ShotDesignDraft(
+                shot_ordinal=1,
+                blocking_beat_ordinal=1,
+                duration_intent=DurationIntent.STANDARD,
+                generation_mode=GenerationMode.TEXT_ONLY,
+                composition="wide entrance",
+                camera="slow push",
+                lighting="cold practicals",
+                performance="guarded scan",
+                visual_beats=(
+                    VisualBeatDraft(
+                        1,
+                        VisualBeatPhase.ENTRY,
+                        "at door",
+                        "room",
+                        StoryboardRole.REQUIRED,
+                    ),
+                    VisualBeatDraft(
+                        2,
+                        VisualBeatPhase.ACTION,
+                        "steps in",
+                        "Mira",
+                        StoryboardRole.OPTIONAL,
+                    ),
+                ),
+                reference_binding_intents=(
+                    ReferenceBindingIntent(
+                        shot_ordinal=1,
+                        visual_beat_ordinal=None,
+                        fact_handle=_opaque_handle("a"),
+                        responsibility=ReferenceResponsibility.CHARACTER_IDENTITY,
+                    ),
+                ),
+                dialogue_binding_intents=(),
+                creative_notes="hold the silence",
+            ),
+            ShotDesignDraft(
+                shot_ordinal=2,
+                blocking_beat_ordinal=2,
+                duration_intent=DurationIntent.EXTENDED,
+                generation_mode=GenerationMode.OMNI_REFERENCE,
+                composition="waist-up confrontation",
+                camera="controlled settle",
+                lighting="hard side key",
+                performance="breath held",
+                visual_beats=(
+                    VisualBeatDraft(
+                        1,
+                        VisualBeatPhase.ENTRY,
+                        "pistol revealed",
+                        "pistol",
+                        StoryboardRole.REQUIRED,
+                    ),
+                    VisualBeatDraft(
+                        2,
+                        VisualBeatPhase.ACTION,
+                        "eyes lock",
+                        "Mira",
+                        StoryboardRole.REQUIRED,
+                    ),
+                    VisualBeatDraft(
+                        3,
+                        VisualBeatPhase.REACTION,
+                        "breath steadies",
+                        "live weapon",
+                        StoryboardRole.OMIT,
+                    ),
+                ),
+                reference_binding_intents=(
+                    ReferenceBindingIntent(
+                        shot_ordinal=2,
+                        visual_beat_ordinal=1,
+                        fact_handle=_opaque_handle("b"),
+                        responsibility=ReferenceResponsibility.PROP_IDENTITY,
+                    ),
+                ),
+                dialogue_binding_intents=(
+                    DialogueBindingIntent(
+                        shot_ordinal=2,
+                        visual_beat_ordinal=2,
+                        fact_handle=_opaque_handle("c"),
+                        placement_phase=PlacementPhase.MIDDLE,
+                    ),
+                ),
+                creative_notes="do not rush the line",
+            ),
+        ),
+        transition_intents=("hard cut",),
+        handoff_intent="leave on the confrontation",
+    )
 
 
 @pytest.fixture
@@ -71,205 +304,34 @@ def id_factory() -> IdFactory:
 
 
 @pytest.fixture
-def blocking_draft() -> BlockingDraft:
-    return BlockingDraft(
-        beats=(
-            BlockingBeatDraft(
-                ordinal=1,
-                dramatic_action="He arrives at the shooting range.",
-                character_states=({"character_id": "chen", "posture": "tense"},),
-                prop_states=(),
-                gaze_relations=(),
-                action_paths=("enter the range",),
-                continuity_effect="Establishes the space.",
-            ),
-            BlockingBeatDraft(
-                ordinal=2,
-                dramatic_action="He loads the pistol.",
-                character_states=({"character_id": "chen", "posture": "focused"},),
-                prop_states=({"prop_id": "pistol", "state": "loaded"},),
-                gaze_relations=("chen -> pistol",),
-                action_paths=("load weapon",),
-                continuity_effect="The weapon is now live.",
-            ),
-        )
-    )
-
-
-@pytest.fixture
-def blocking_commit(id_factory: IdFactory, blocking_draft: BlockingDraft) -> BlockingCommit:
+def blocking_commit(id_factory: IdFactory) -> BlockingCommit:
     return assemble_blocking_commit(
-        draft=blocking_draft,
+        draft=make_blocking_draft(),
         episode_id=EPISODE_ID,
         scene_id=SCENE_ID,
         id_factory=id_factory,
         program_version=PROGRAM_VERSION,
-        schema_version=SCHEMA_VERSION,
     )
 
 
 @pytest.fixture
-def execution_design_draft() -> ExecutionDesignDraft:
-    return ExecutionDesignDraft(
-        curve_points=(
-            VisualCurvePointDraft(
-                dramatic_beat_ordinal=1,
-                intensity=60,
-                explanation="arrival tension",
-            ),
-            VisualCurvePointDraft(
-                dramatic_beat_ordinal=2,
-                intensity=85,
-                explanation="weapon escalation",
-            ),
-        ),
-        decisions=(
-            DecisionDraft(
-                scope="camera distance for the loading shot",
-                basis=DecisionBasis.CHOICE,
-                locked_by=(),
-                options=("extreme close-up on hands", "medium shot with face"),
-                selected_index=0,
-                rationale="weapon detail sells the threat",
-                tradeoff="sacrifice facial reaction in this beat",
-            ),
-        ),
-        shots=(
-            ShotDesignDraft(
-                blocking_beat_ordinal=1,
-                dramatic_function="introduce the range and the protagonist's state",
-                attention_target="chen entering the space",
-                information_action="the range is empty, chen is alone",
-                framing_intent="wide establishing",
-                camera_pose="eye level",
-                camera_motion="static",
-                composition="depth layering with targets in background",
-                lighting="harsh overhead fluorescents",
-                performance="controlled breathing, deliberate steps",
-                duration_weight=4,
-                visual_beats=(
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.ENTRY,
-                        subject_state="chen at doorway, surveying",
-                        attention="the empty range",
-                        storyboard_role=StoryboardRole.REQUIRED,
-                    ),
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.ACTION,
-                        subject_state="chen steps forward",
-                        attention="the shooting lane",
-                        storyboard_role=StoryboardRole.OPTIONAL,
-                    ),
-                ),
-            ),
-            ShotDesignDraft(
-                blocking_beat_ordinal=2,
-                dramatic_function="weapon preparation as threat escalation",
-                attention_target="hands loading the pistol",
-                information_action="the pistol is ready to fire",
-                framing_intent="extreme close-up on hands and weapon",
-                camera_pose="overhead angle",
-                camera_motion="slow push-in",
-                composition="hands dominate frame, face out of focus",
-                lighting="single practical above the bench",
-                performance="precise, ritualistic movements",
-                duration_weight=6,
-                visual_beats=(
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.ENTRY,
-                        subject_state="hands reach for the case",
-                        attention="the pistol case",
-                        storyboard_role=StoryboardRole.REQUIRED,
-                    ),
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.ACTION,
-                        subject_state="magazine slides in",
-                        attention="the click of the magazine seating",
-                        storyboard_role=StoryboardRole.REQUIRED,
-                    ),
-                    VisualBeatDraft(
-                        phase=VisualBeatPhase.REACTION,
-                        subject_state="chen's breath steadies",
-                        attention="the now-live weapon",
-                        storyboard_role=StoryboardRole.OMIT,
-                    ),
-                ),
-            ),
-        ),
-        transition_intents=("hard cut on the magazine click",),
-        audio_intents=("mechanical click of magazine",),
-        reference_intents=("pistol prop reference",),
-        handoff_intent="cut to the target paper, hold 12 frames",
-    )
-
-
-@pytest.fixture
-def fact_registry() -> FactRegistry:
-    return FactRegistry(
-        facts=(
-            ScriptFact(
-                fact_id="char_chen",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="Chen is the protagonist, wearing a black tactical jacket.",
-                source_ref=SourceRef(source_id="ep35_script", digest="a" * 64, locator="S2"),
-            ),
-            ScriptFact(
-                fact_id="prop_pistol",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="A standard-issue 9mm pistol sits in a foam case.",
-                source_ref=SourceRef(source_id="ep35_script", digest="b" * 64, locator="S2"),
-            ),
-            ScriptFact(
-                fact_id="costume_tactical_jacket",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="Black tactical jacket with worn leather patches on the elbows.",
-                source_ref=SourceRef(source_id="ep35_script", digest="c" * 64, locator="S2"),
-            ),
-            ScriptFact(
-                fact_id="scene_shooting_range",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="Indoor shooting range, fluorescent lighting, sound-dampening panels.",
-                source_ref=SourceRef(source_id="ep35_script", digest="d" * 64, locator="S2"),
-            ),
-            ScriptFact(
-                fact_id="dialogue_chen_muttering",
-                scene_id=SCENE_ID,
-                kind=FactKind.SCRIPT,
-                statement="Chen mutters: the range is clear.",
-                source_ref=SourceRef(source_id="ep35_script", digest="e" * 64, locator="S2"),
-            ),
-        )
-    )
-
-
-@pytest.fixture
-def vec(
-    id_factory: IdFactory,
-    blocking_commit: BlockingCommit,
-    execution_design_draft: ExecutionDesignDraft,
-    fact_registry: FactRegistry,
-) -> VisualExecutionContract:
+def vec(id_factory: IdFactory, blocking_commit: BlockingCommit) -> VisualExecutionContract:
     return assemble_vec(
-        draft=execution_design_draft,
+        draft=make_execution_draft(),
         blocking_commit=blocking_commit,
-        facts=fact_registry,
+        facts=make_facts(),
         episode_id=EPISODE_ID,
         scene_id=SCENE_ID,
         id_factory=id_factory,
         program_version=PROGRAM_VERSION,
-        schema_version=SCHEMA_VERSION,
     )
 
 
 @pytest.fixture
 def ast(
-    vec: VisualExecutionContract,
-    blocking_commit: BlockingCommit,
     id_factory: IdFactory,
+    blocking_commit: BlockingCommit,
+    vec: VisualExecutionContract,
 ) -> ProjectionAST:
     return compile_projection_ast(
         vec=vec,
@@ -278,104 +340,89 @@ def ast(
         scene_id=SCENE_ID,
         id_factory=id_factory,
         program_version=PROGRAM_VERSION,
-        compiler_version=COMPILER_VERSION,
     )
 
 
-def _all_beats(vec: VisualExecutionContract):
-    return [beat for shot in vec.shots for beat in shot.visual_beats]
+def _vec_beats(vec: VisualExecutionContract):
+    return tuple(beat for shot in vec.shots for beat in shot.visual_beats)
 
 
-# ===================================================================
 # required_check: single_projection_ast
-# ===================================================================
-
 class TestSingleProjectionAST:
-    def test_compile_is_deterministic(
+    def test_compile_is_deterministic_and_canonical(
+        self,
+        id_factory: IdFactory,
+        blocking_commit: BlockingCommit,
+        vec: VisualExecutionContract,
+    ) -> None:
+        first = compile_projection_ast(
+            vec=vec,
+            blocking_commit=blocking_commit,
+            episode_id=EPISODE_ID,
+            scene_id=SCENE_ID,
+            id_factory=id_factory,
+            program_version=PROGRAM_VERSION,
+        )
+        second = compile_projection_ast(
+            vec=vec,
+            blocking_commit=blocking_commit,
+            episode_id=EPISODE_ID,
+            scene_id=SCENE_ID,
+            id_factory=id_factory,
+            program_version=PROGRAM_VERSION,
+        )
+        assert first == second
+        assert type(first) is ProjectionAST
+        assert all(type(node) is ProjectionNode for node in first.nodes)
+
+    def test_ast_binds_vec_and_every_visualbeat_once(
+        self, ast: ProjectionAST, vec: VisualExecutionContract
+    ) -> None:
+        beats = _vec_beats(vec)
+        assert ast.source_vec_artifact_id == vec.contract_id
+        assert {node.source_beat_id for node in ast.nodes} == {
+            beat.beat_id for beat in beats
+        }
+        assert len(ast.nodes) == len(beats)
+        assert {node.source_shot_id for node in ast.nodes} == {
+            shot.shot_id for shot in vec.shots
+        }
+        assert {
+            node_attribute(node, "vec_digest", str) for node in ast.nodes
+        } == {canonical_sha256(vec)}
+
+    def test_ast_preserves_scene_ticks_states_and_n_plus_one_boundaries(
+        self, ast: ProjectionAST, vec: VisualExecutionContract
+    ) -> None:
+        unit_by_shot = {unit.shot_id: unit for unit in vec.generation_units}
+        beat_by_id = {beat.beat_id: beat for beat in _vec_beats(vec)}
+        boundary_ids: set[str] = set()
+        for node in ast.nodes:
+            beat = beat_by_id[node.source_beat_id]
+            placement = unit_by_shot[node.source_shot_id].scene_placement.interval
+            assert node.interval.start_tick == placement.start_tick + beat.interval.start_tick
+            assert node.interval.end_tick == placement.start_tick + beat.interval.end_tick
+            assert (node.start_state_id, node.end_state_id) == (
+                beat.start_state_id,
+                beat.end_state_id,
+            )
+            boundary_ids.add(node.attributes["entering_boundary"]["boundary_id"])
+            boundary_ids.add(node.attributes["exiting_boundary"]["boundary_id"])
+        assert boundary_ids == {item.boundary_id for item in vec.boundaries}
+
+    def test_compile_rejects_wrong_commit_or_program_authority(
         self,
         vec: VisualExecutionContract,
         blocking_commit: BlockingCommit,
         id_factory: IdFactory,
     ) -> None:
-        a = compile_projection_ast(
-            vec=vec,
-            blocking_commit=blocking_commit,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-            compiler_version=COMPILER_VERSION,
-        )
-        b = compile_projection_ast(
-            vec=vec,
-            blocking_commit=blocking_commit,
-            episode_id=EPISODE_ID,
-            scene_id=SCENE_ID,
-            id_factory=id_factory,
-            program_version=PROGRAM_VERSION,
-            compiler_version=COMPILER_VERSION,
-        )
-        assert a.ast_id == b.ast_id
-        assert a.ast_digest == b.ast_digest
-
-    def test_ast_binds_vec_digest(self, ast: ProjectionAST, vec: VisualExecutionContract) -> None:
-        assert ast.vec_digest == canonical_sha256(vec)
-        assert ast.ast_digest == canonical_sha256(
-            {
-                "vec_digest": ast.vec_digest,
-                "compiler_version": ast.compiler_version,
-                "nodes": ast.nodes,
-                "reference_requirements": ast.reference_requirements,
-                "audio_events": ast.audio_events,
-                "voice_requirements": ast.voice_requirements,
-            }
-        )
-
-    def test_ast_covers_all_vec_nodes(
-        self, ast: ProjectionAST, vec: VisualExecutionContract
-    ) -> None:
-        beat_ids = {beat.beat_id for beat in _all_beats(vec)}
-        shot_ids = {shot.shot_id for shot in vec.shots}
-        boundary_ids = {b.boundary_id for b in vec.boundaries}
-        source_ids = {n.source_id for n in ast.nodes}
-        # every VEC node maps to exactly one AST node (via source_id)
-        assert beat_ids <= source_ids
-        assert shot_ids <= source_ids
-        assert boundary_ids <= source_ids
-        assert len(ast.nodes) == len(beat_ids) + len(shot_ids) + len(boundary_ids)
-        assert len(ast.nodes) == len(source_ids)
-        # AST node ids are locally generated and distinct from VEC source ids
-        node_ids = {n.node_id for n in ast.nodes}
-        assert node_ids.isdisjoint(source_ids)
-        for node in ast.nodes:
-            assert node.source_id in source_ids
-
-    def test_ast_source_node_ids_match_vec(
-        self, ast: ProjectionAST, vec: VisualExecutionContract
-    ) -> None:
-        vec_node_ids = (
-            {beat.beat_id for beat in _all_beats(vec)}
-            | {shot.shot_id for shot in vec.shots}
-            | {b.boundary_id for b in vec.boundaries}
-        )
-        assert set(ast.source_node_ids) == vec_node_ids
-
-    def test_ast_rejects_unbound_state(
-        self,
-        vec: VisualExecutionContract,
-        blocking_draft: BlockingDraft,
-    ) -> None:
-        # A VEC's beat states derive from one commit input digest; a commit
-        # assembled under a different program version has a disjoint state set
-        # and must be rejected by the compiler.
-        foreign_factory = IdFactory(program_version="foreign-version")
+        foreign_factory = IdFactory(program_version="foreign")
         foreign_commit = assemble_blocking_commit(
-            draft=blocking_draft,
+            draft=make_blocking_draft(),
             episode_id=EPISODE_ID,
             scene_id=SCENE_ID,
             id_factory=foreign_factory,
-            program_version="foreign-version",
-            schema_version=SCHEMA_VERSION,
+            program_version="foreign",
         )
         with pytest.raises(DomainValidationError):
             compile_projection_ast(
@@ -385,221 +432,291 @@ class TestSingleProjectionAST:
                 scene_id=SCENE_ID,
                 id_factory=id_factory,
                 program_version=PROGRAM_VERSION,
-                compiler_version=COMPILER_VERSION,
+            )
+        with pytest.raises(DomainValidationError):
+            compile_projection_ast(
+                vec=vec,
+                blocking_commit=blocking_commit,
+                episode_id=EPISODE_ID,
+                scene_id=SCENE_ID,
+                id_factory=id_factory,
+                program_version="foreign",
             )
 
 
-# ===================================================================
 # required_check: storyboard_visualbeat_selection
-# ===================================================================
-
 class TestStoryboardVisualBeatSelection:
-    def test_storyboard_excludes_omit_beats(self, ast: ProjectionAST) -> None:
-        storyboard = derive_storyboard(ast=ast)
-        roles = {n.storyboard_role for n in storyboard.nodes}
-        assert StoryboardRole.OMIT not in roles
-        for node in storyboard.nodes:
-            assert node.node_type == "beat"
-            assert node.storyboard_role in (StoryboardRole.REQUIRED, StoryboardRole.OPTIONAL)
-
-    def test_storyboard_covers_all_required_beats(
+    def test_storyboard_includes_required_and_excludes_omit(
         self, ast: ProjectionAST, vec: VisualExecutionContract
     ) -> None:
-        storyboard = derive_storyboard(ast=ast)
+        storyboard = derive_storyboard(ast)
+        selected = {node.source_beat_id for node in storyboard.nodes}
         required = {
             beat.beat_id
-            for beat in _all_beats(vec)
-            if beat.storyboard_role == StoryboardRole.REQUIRED
+            for beat in _vec_beats(vec)
+            if beat.storyboard_role is StoryboardRole.REQUIRED
         }
-        projected = {n.source_id for n in storyboard.nodes}
-        assert required <= projected
+        omitted = {
+            beat.beat_id
+            for beat in _vec_beats(vec)
+            if beat.storyboard_role is StoryboardRole.OMIT
+        }
+        assert required <= selected
+        assert selected.isdisjoint(omitted)
 
-    def test_storyboard_capacity_keeps_required_first(
+    def test_capacity_keeps_ast_order_and_only_drops_optional(
         self, ast: ProjectionAST
     ) -> None:
-        storyboard = derive_storyboard(ast=ast, max_panels=3)
-        required = [n for n in storyboard.nodes if n.storyboard_role == StoryboardRole.REQUIRED]
-        optional = [n for n in storyboard.nodes if n.storyboard_role == StoryboardRole.OPTIONAL]
-        assert len(required) >= 1
-        assert len(optional) <= max(0, 3 - len(required))
-        assert len(storyboard.nodes) <= 3
+        required_count = sum(
+            node_attribute(node, "storyboard_role", str)
+            == StoryboardRole.REQUIRED.value
+            for node in ast.nodes
+        )
+        storyboard = derive_storyboard(ast, max_panels=required_count)
+        assert len(storyboard.nodes) == required_count
+        assert [node.node_id for node in storyboard.nodes] == [
+            node.node_id
+            for node in ast.nodes
+            if node_attribute(node, "storyboard_role", str)
+            == StoryboardRole.REQUIRED.value
+        ]
 
-    def test_storyboard_keeps_beat_shot_tick_state_decision_references(
-        self, ast: ProjectionAST
-    ) -> None:
-        storyboard = derive_storyboard(ast=ast)
-        for node in storyboard.nodes:
-            assert node.beat_id
-            assert node.shot_id
-            assert node.start_tick < node.end_tick
-            assert node.start_state_id
-            assert node.end_state_id
-            assert isinstance(node.decision_ids, tuple)
+    def test_capacity_cannot_drop_required_beats(self, ast: ProjectionAST) -> None:
+        with pytest.raises(DomainValidationError):
+            derive_storyboard(ast, max_panels=1)
+
+    def test_sparse_view_reuses_exact_ast_nodes(self, ast: ProjectionAST) -> None:
+        storyboard = derive_storyboard(ast)
+        ast_by_id = {node.node_id: node for node in ast.nodes}
+        assert all(ast_by_id[node.node_id] is node for node in storyboard.nodes)
 
 
-# ===================================================================
 # required_check: video_full_node_projection
-# ===================================================================
-
 class TestVideoFullNodeProjection:
-    def test_video_includes_every_beat_including_omit(
-        self, ast: ProjectionAST, vec: VisualExecutionContract
-    ) -> None:
-        video = derive_video(ast=ast)
-        all_beats = {beat.beat_id for beat in _all_beats(vec)}
-        video_beat_ids = {n.source_id for n in video.nodes if n.node_type == "beat"}
-        assert video_beat_ids == all_beats
-
-    def test_video_includes_shots_boundaries_and_execution_details(
-        self, ast: ProjectionAST, vec: VisualExecutionContract
-    ) -> None:
-        video = derive_video(ast=ast)
-        types = {n.node_type for n in video.nodes}
-        assert "shot" in types
-        assert "boundary" in types
-        shot_nodes = [n for n in video.nodes if n.node_type == "shot"]
-        assert shot_nodes
-        for node in shot_nodes:
-            assert node.camera_pose
-            assert node.camera_motion
-            assert node.composition
-            assert node.lighting
-            assert node.performance
-
-    def test_video_does_not_omit_for_storyboard_reasons(
+    def test_video_is_the_complete_ordered_visualbeat_projection(
         self, ast: ProjectionAST
     ) -> None:
-        video = derive_video(ast=ast)
-        roles = {n.storyboard_role for n in video.nodes}
-        assert StoryboardRole.OMIT in roles  # omit beats still present in video
+        video = derive_video(ast)
+        assert video.nodes == ast.nodes
+        assert all(left is right for left, right in zip(video.nodes, ast.nodes))
 
-
-# ===================================================================
-# required_check: shared_tick_state_and_bindings
-# ===================================================================
-
-class TestSharedTickStateAndBindings:
-    def test_same_beat_id_same_tick_state_in_both_projections(
-        self, ast: ProjectionAST
-    ) -> None:
-        storyboard = derive_storyboard(ast=ast)
-        video = derive_video(ast=ast)
-        sb_by_id = {n.source_id: n for n in storyboard.nodes}
+    def test_video_keeps_omit_beats_and_execution_fields(self, ast: ProjectionAST) -> None:
+        video = derive_video(ast)
+        assert StoryboardRole.OMIT.value in {
+            node_attribute(node, "storyboard_role", str) for node in video.nodes
+        }
         for node in video.nodes:
-            if node.node_type != "beat":
-                continue
-            sb = sb_by_id.get(node.source_id)
-            if sb is None:
-                continue  # omit beats are storyboard-absent by design
-            assert sb.start_tick == node.start_tick
-            assert sb.end_tick == node.end_tick
-            assert sb.start_state_id == node.start_state_id
-            assert sb.end_state_id == node.end_state_id
-            assert sb.decision_ids == node.decision_ids
-            assert sb.beat_id == node.beat_id
-            assert sb.shot_id == node.shot_id
+            for field_name in (
+                "composition",
+                "camera",
+                "lighting",
+                "performance",
+                "entering_boundary",
+                "exiting_boundary",
+            ):
+                assert node.attributes[field_name]
 
-    def test_manifest_carries_required_binding_fields(
-        self, ast: ProjectionAST
-    ) -> None:
-        manifest = ProjectionManifest(
-            vec_digest=ast.vec_digest,
-            projection_ast_digest=ast.ast_digest,
-            source_node_ids=ast.source_node_ids,
-            compiler_version=ast.compiler_version,
-            adapter_version="storyboard-v2.1.0",
-            capability_profile_digest="",
-            reference_binding_digest=ast.reference_binding_digest,
-            audio_binding_digest=ast.audio_binding_digest,
-        )
-        assert manifest.vec_digest == ast.vec_digest
-        assert manifest.projection_ast_digest == ast.ast_digest
-        assert manifest.source_node_ids == ast.source_node_ids
-        assert len(manifest.reference_binding_digest) == 64
-        assert len(manifest.audio_binding_digest) == 64
-
-    def test_binding_digests_track_ast_inputs(
+    def test_video_carries_typed_reference_and_audio_bindings(
         self, ast: ProjectionAST, vec: VisualExecutionContract
     ) -> None:
-        expected_ref = canonical_sha256(ast.reference_requirements)
-        expected_audio = canonical_sha256(
-            {"audio_events": ast.audio_events, "voice_requirements": ast.voice_requirements}
-        )
-        assert ast.reference_binding_digest == expected_ref
-        assert ast.audio_binding_digest == expected_audio
+        reference_ids = {
+            item["requirement_id"]
+            for node in derive_video(ast).nodes
+            for item in node.attributes["reference_bindings"]
+        }
+        audio_ids = {
+            item["event_id"]
+            for node in derive_video(ast).nodes
+            for item in node.attributes["audio_bindings"]
+        }
+        assert reference_ids == {
+            item.requirement_id for item in vec.reference_requirements
+        }
+        assert audio_ids == {item.event_id for item in vec.audio_events}
 
-    def test_ast_ids_are_locally_generated_and_stable(
+
+# required_check: shared_tick_state_and_bindings
+class TestSharedTickStateAndBindings:
+    def test_common_storyboard_and_video_nodes_are_identical(
         self, ast: ProjectionAST
     ) -> None:
-        # AST ids must be machine-generated and deterministic, never from the model.
-        assert ast.ast_id.startswith("projection_ast:")
-        assert len(ast.ast_id.split(":")) == 3
+        storyboard = derive_storyboard(ast)
+        video = derive_video(ast)
+        video_by_id = {node.node_id: node for node in video.nodes}
+        for node in storyboard.nodes:
+            assert video_by_id[node.node_id] is node
+            assert node.interval == video_by_id[node.node_id].interval
+            assert node.decision_ids == video_by_id[node.node_id].decision_ids
+
+    def test_manifest_is_canonical_and_binds_ast_and_all_nodes(
+        self, ast: ProjectionAST
+    ) -> None:
+        manifest = derive_storyboard(ast).manifest
+        assert type(manifest) is ProjectionManifest
+        assert manifest.projection_ast_digest == canonical_sha256(ast)
+        assert manifest.source_node_ids == tuple(node.node_id for node in ast.nodes)
+        assert manifest.vec_digest == node_attribute(ast.nodes[0], "vec_digest", str)
+
+    def test_binding_digests_match_vec_inputs(
+        self, ast: ProjectionAST, vec: VisualExecutionContract
+    ) -> None:
+        manifest = derive_video(ast).manifest
+        assert manifest.reference_binding_digest == canonical_sha256(
+            vec.reference_requirements
+        )
+        assert manifest.audio_binding_digest == canonical_sha256(
+            {
+                "audio_events": vec.audio_events,
+                "voice_requirements": vec.voice_requirements,
+            }
+        )
 
 
-# ===================================================================
 # required_check: adapter_only_recompile
-# ===================================================================
-
 class TestAdapterOnlyRecompile:
-    def test_adapter_version_change_keeps_nodes_unchanged(
+    def test_adapter_version_change_only_changes_manifest(self, ast: ProjectionAST) -> None:
+        first = derive_video(ast, adapter_version="video-adapter-v3.0.0")
+        second = derive_video(ast, adapter_version="video-adapter-v3.1.0")
+        assert all(left is right for left, right in zip(first.nodes, second.nodes))
+        assert first.ast is second.ast is ast
+        assert first.manifest.projection_ast_digest == second.manifest.projection_ast_digest
+        assert first.adapter_version != second.adapter_version
+
+    def test_adapters_are_pure_and_never_invent_node_ids(self, ast: ProjectionAST) -> None:
+        storyboard = derive_storyboard(
+            ast, adapter_version=storyboard_adapter_version
+        )
+        first = render_storyboard(storyboard)
+        second = render_storyboard(storyboard)
+        assert first == second
+        assert tuple(panel.source_node_id for panel in first.panels) == tuple(
+            node.node_id for node in storyboard.nodes
+        )
+        assert first.source_projection_id == ast.projection_id
+
+    def test_profile_must_be_bound_before_render(self, ast: ProjectionAST) -> None:
+        profile = CapabilityProfile("test", "1", 100_000, 10, True)
+        unbound = derive_video(ast, adapter_version=video_adapter_version)
+        with pytest.raises(DomainValidationError):
+            render_video(unbound, profile=profile)
+
+    def test_video_chunking_preserves_each_node_exactly_once(
         self, ast: ProjectionAST
     ) -> None:
-        a = derive_video(ast=ast, adapter_version="video-v2.1.0")
-        b = derive_video(ast=ast, adapter_version="video-v2.2.0")
-        assert [n.node_id for n in a.nodes] == [n.node_id for n in b.nodes]
-        assert a.manifest.vec_digest == b.manifest.vec_digest
-        assert a.manifest.projection_ast_digest == b.manifest.projection_ast_digest
-        assert a.adapter_version != b.adapter_version
-
-    def test_capability_degradation_produces_adaptation_record(
-        self, ast: ProjectionAST
-    ) -> None:
-        from mode_p_vnext.adapters.delivery.capability import (
-            CapabilityAdaptationRecord,
-            CapabilityProfile,
-            capability_profile_digest,
-        )
-        from mode_p_vnext.adapters.delivery.video_adapter import render_video
-
-        profile = CapabilityProfile(
-            platform="test-sd2",
-            version="1.0",
-            max_prompt_chars=10_000,
-            reference_slots=2,
-            internal_cuts_supported=False,
-        )
-        video = derive_video(
-            ast=ast,
-            adapter_version="video-v2.1.0",
+        profile = CapabilityProfile("test", "1", 5_000, 10, True)
+        projection = derive_video(
+            ast,
+            adapter_version=video_adapter_version,
             capability_profile_digest=capability_profile_digest(profile),
         )
-        delivery = render_video(video, profile=profile, adapter_version="video-adapter-1")
-        assert delivery.adaptation_records, "multi-shot video on a no-internal-cut platform must degrade"
-        for record in delivery.adaptation_records:
-            assert isinstance(record, CapabilityAdaptationRecord)
-            assert record.adapter_version == "video-adapter-1"
-        # degradation never invents nodes: node count preserved
-        assert len(delivery.nodes) == len(video.nodes)
+        delivery = render_video(projection, profile=profile)
+        assert delivery.nodes == projection.nodes
+        assert tuple(
+            node_id
+            for chunk in delivery.prompt_chunks
+            for node_id in chunk.source_node_ids
+        ) == tuple(node.node_id for node in ast.nodes)
+        assert all(len(chunk.text) <= profile.max_prompt_chars for chunk in delivery.prompt_chunks)
 
-    def test_render_is_pure_function(self, ast: ProjectionAST) -> None:
-        from mode_p_vnext.adapters.delivery.storyboard_adapter import render_storyboard
 
-        storyboard = derive_storyboard(ast=ast)
-        a = render_storyboard(storyboard, adapter_version="sb-adapter-1")
-        b = render_storyboard(storyboard, adapter_version="sb-adapter-1")
-        assert a.panels == b.panels
-        assert a.adapter_version == b.adapter_version == "sb-adapter-1"
+# required_check: canonical_projection_type_identity
+# required_check: no_duplicate_projection_authority
+class TestCanonicalProjectionAuthority:
+    def test_service_exports_exact_domain_types(self) -> None:
+        assert projection_compiler.ProjectionAST is canonical_projection.ProjectionAST
+        assert projection_compiler.ProjectionNode is canonical_projection.ProjectionNode
+        assert projection_compiler.ProjectionManifest is canonical_projection.ProjectionManifest
+        assert (
+            delivery_capability.CapabilityAdaptationRecord
+            is canonical_projection.CapabilityAdaptationRecord
+        )
 
-    def test_storyboard_adapter_formats_without_inventing_events(
+    def test_service_and_adapter_define_no_duplicate_authority_classes(self) -> None:
+        compiler_source = inspect.getsource(projection_compiler)
+        capability_source = inspect.getsource(delivery_capability)
+        assert "class ProjectionAST" not in compiler_source
+        assert "class ProjectionNode" not in compiler_source
+        assert "class ProjectionManifest" not in compiler_source
+        assert "class CapabilityAdaptationRecord" not in capability_source
+
+
+# required_check: projection_envelope_roundtrip
+class TestProjectionEnvelopeRoundtrip:
+    def test_canonical_ast_is_accepted_by_projection_envelope(
+        self, ast: ProjectionAST, vec: VisualExecutionContract
+    ) -> None:
+        envelope = ArtifactEnvelope.create(
+            artifact_id=ast.projection_id,
+            artifact_type=ArtifactKind.PROJECTION_AST,
+            payload=ast,
+            producer_stage="A6:projection",
+            parent_artifact_ids=(vec.contract_id,),
+            source_provenance=(SOURCE_REF,),
+            knowledge_snapshot_digest=None,
+            created_at_utc="2026-08-02T00:00:00+00:00",
+        )
+        assert envelope.payload is ast
+        assert envelope.canonical_payload_sha256 == canonical_sha256(ast)
+
+        wire = canonical_json_bytes(envelope)
+        decoded = json.loads(wire.decode("utf-8"))
+        encoded = json.dumps(
+            decoded,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        ).encode("utf-8")
+        assert encoded == wire
+        assert decoded["payload"]["projection_id"] == ast.projection_id
+
+    def test_envelope_rejects_noncanonical_projection_payload(self, ast: ProjectionAST) -> None:
+        with pytest.raises(DomainValidationError):
+            ArtifactEnvelope.create(
+                artifact_id=ast.projection_id,
+                artifact_type=ArtifactKind.PROJECTION_AST,
+                payload=replace(ast, nodes=()),
+                producer_stage="A6:projection",
+                parent_artifact_ids=(ast.source_vec_artifact_id,),
+                source_provenance=(SOURCE_REF,),
+                knowledge_snapshot_digest=None,
+                created_at_utc="2026-08-02T00:00:00+00:00",
+            )
+
+
+# required_check: capability_adaptation_recorded
+class TestCapabilityAdaptationRecorded:
+    def test_every_video_degradation_uses_canonical_traceable_record(
         self, ast: ProjectionAST
     ) -> None:
-        from mode_p_vnext.adapters.delivery.storyboard_adapter import render_storyboard
+        profile = CapabilityProfile("test-sd2", "1", 100_000, 10, False)
+        projection = derive_video(
+            ast,
+            adapter_version=video_adapter_version,
+            capability_profile_digest=capability_profile_digest(profile),
+        )
+        delivery = render_video(projection, profile=profile)
+        assert delivery.adaptation_records
+        ast_node_ids = {node.node_id for node in ast.nodes}
+        for record in delivery.adaptation_records:
+            assert type(record) is CapabilityAdaptationRecord
+            assert set(record.source_node_ids) <= ast_node_ids
+            assert record.capability_profile_digest == capability_profile_digest(profile)
+            assert record.adapter_version == video_adapter_version
 
-        storyboard = derive_storyboard(ast=ast)
-        delivery = render_storyboard(storyboard, adapter_version="sb-adapter-1")
-        assert delivery.panels
-        for panel in delivery.panels:
-            # adapter only re-emits nodes from the AST, with no new content
-            assert panel.beat_id
-            assert panel.shot_id
-            assert panel.subject_state
+    def test_storyboard_reference_budget_loss_is_explicit(
+        self, ast: ProjectionAST
+    ) -> None:
+        profile = CapabilityProfile("board", "1", 100_000, 1, True)
+        projection = derive_storyboard(
+            ast,
+            adapter_version=storyboard_adapter_version,
+            capability_profile_digest=capability_profile_digest(profile),
+        )
+        delivery = render_storyboard(projection, profile=profile)
+        assert len(delivery.adaptation_records) == 1
+        record = delivery.adaptation_records[0]
+        assert type(record) is CapabilityAdaptationRecord
+        assert record.adaptation_code == "REFERENCE_SLOT_BUDGET_EXCEEDED"
+        assert record.semantic_loss is True
+        assert record.source_node_ids

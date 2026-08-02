@@ -1,20 +1,15 @@
-"""Single ProjectionAST compiler shared by Storyboard and Video projections.
+"""Compile both delivery views from the sole canonical v3 ProjectionAST.
 
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §10 / §14 A6.
-
-The VEC is the sole creative authority.  ``compile_projection_ast`` turns it
-into exactly one ProjectionAST; ``derive_storyboard`` and ``derive_video``
-both compile from that one AST — never from the VEC independently — so the two
-deliveries share beat, tick, and state identities.  Delivery adapters may only
-format or perform explicit capability degradation (recorded as
-CapabilityAdaptationRecord); they never invent events, and an adapter-only
-recompile never invokes the Director.
+Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0 §10,
+§15 A6, and §16.  This module deliberately imports (and re-exports) the
+projection domain types; it must never define competing ProjectionAST,
+ProjectionNode, or ProjectionManifest classes.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
+from typing import Any, Mapping
 
 from mode_p_vnext.domain.artifact import (
     ArtifactKind,
@@ -23,306 +18,233 @@ from mode_p_vnext.domain.artifact import (
 )
 from mode_p_vnext.domain.blocking import BlockingCommit
 from mode_p_vnext.domain.ids import IdFactory
-from mode_p_vnext.domain.time import CanonicalTimeline
-from mode_p_vnext.domain.vec import (
-    AudioEvent,
-    ReferenceRequirement,
-    StoryboardRole,
-    VisualExecutionContract,
-    VisualShot,
-    VoiceRequirement,
+from mode_p_vnext.domain.projection import (
+    ProjectionAST,
+    ProjectionManifest,
+    ProjectionNode,
 )
-
-COMPILER_VERSION = "2.1.0"
-
-_EMPTY_DECISIONS: tuple[str, ...] = ()
+from mode_p_vnext.domain.time import TickRange
+from mode_p_vnext.domain.vec import StoryboardRole, VisualExecutionContract
 
 
-# ---------------------------------------------------------------------------
-# ProjectionNode — one frozen node of the shared AST
-# ---------------------------------------------------------------------------
+COMPILER_VERSION = "3.0.0"
+STORYBOARD_ADAPTER_VERSION = "storyboard-adapter-v3.0.0"
+VIDEO_ADAPTER_VERSION = "video-adapter-v3.0.0"
 
 
-@dataclass(frozen=True)
-class ProjectionNode:
-    """A node in the shared ProjectionAST.
-
-    node_type is one of ``shot`` / ``beat`` / ``boundary``.  Beat nodes carry
-    the shared tick/state/decision references required by both projections;
-    shot nodes carry the creative execution details used by the Video
-    projection; boundary nodes carry the transition intent between shots.
-    """
-
-    node_id: str
-    node_type: str
-    source_id: str
-    shot_id: str
-    beat_id: str = ""
-    boundary_id: str = ""
-    start_tick: int = 0
-    end_tick: int = 0
-    phase: str = ""
-    storyboard_role: str = ""
-    start_state_id: str = ""
-    end_state_id: str = ""
-    decision_ids: tuple[str, ...] = _EMPTY_DECISIONS
-    subject_state: str = ""
-    attention: str = ""
-    dramatic_function: str = ""
-    attention_target: str = ""
-    information_action: str = ""
-    framing_intent: str = ""
-    camera_pose: str = ""
-    camera_motion: str = ""
-    composition: str = ""
-    lighting: str = ""
-    performance: str = ""
-    transition_intent: str = ""
+def _require_text(value: str, field_name: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise DomainValidationError(f"{field_name} must be non-empty")
+    return value
 
 
-# ---------------------------------------------------------------------------
-# ProjectionAST — the single intermediate representation
-# ---------------------------------------------------------------------------
+def _reference_payload(requirement: Any) -> Mapping[str, Any]:
+    return {
+        "requirement_id": requirement.requirement_id,
+        "responsibility": requirement.responsibility.value,
+        "source_fact_id": requirement.source_fact_id,
+        "source_fact_handle": requirement.source_fact_handle,
+        "shot_id": requirement.shot_id,
+        "visual_beat_id": requirement.visual_beat_id,
+    }
 
 
-@dataclass(frozen=True)
-class ProjectionAST:
-    """The one shared projection tree for Storyboard and Video."""
+def _audio_payload(event: Any) -> Mapping[str, Any]:
+    return {
+        "event_id": event.event_id,
+        "source_fact_id": event.source_fact_id,
+        "source_fact_handle": event.source_fact_handle,
+        "shot_id": event.shot_id,
+        "visual_beat_id": event.visual_beat_id,
+        "marker_tick": event.marker.tick,
+        "placement_phase": event.placement_phase.value,
+        "character_label": event.character_label,
+        "text": event.text,
+        "media_duration_ticks": event.media_duration_ticks,
+    }
 
-    ast_id: str
-    vec_digest: str
-    compiler_version: str
-    timeline: CanonicalTimeline
-    nodes: tuple[ProjectionNode, ...]
-    reference_requirements: tuple[ReferenceRequirement, ...]
-    audio_events: tuple[AudioEvent, ...]
-    voice_requirements: tuple[VoiceRequirement, ...]
-    source_node_ids: tuple[str, ...]
-    ast_digest: str
-    reference_binding_digest: str
-    audio_binding_digest: str
 
-    def __post_init__(self) -> None:
-        for field_name in ("ast_id", "vec_digest", "ast_digest"):
-            value = getattr(self, field_name)
-            if not isinstance(value, str) or not value:
-                raise DomainValidationError(f"{field_name} must be non-empty")
-        if not isinstance(self.timeline, CanonicalTimeline):
-            raise DomainValidationError("timeline must be the canonical timeline")
-        nodes = tuple(self.nodes)
-        if not nodes or not all(isinstance(node, ProjectionNode) for node in nodes):
-            raise DomainValidationError("nodes must contain ProjectionNode values")
-        node_ids = tuple(node.node_id for node in nodes)
-        if len(node_ids) != len(set(node_ids)):
-            raise DomainValidationError("ProjectionAST node IDs must be unique")
-        for node in nodes:
-            if node.node_type == "boundary":
-                if node.start_tick < 0 or node.end_tick < node.start_tick:
-                    raise DomainValidationError(
-                        f"boundary node {node.node_id} must be a valid tick point"
-                    )
-            elif node.start_tick < 0 or node.end_tick <= node.start_tick:
-                raise DomainValidationError(
-                    f"node {node.node_id} must have a positive tick interval"
-                )
-        if self.ast_digest != self._compute_digest():
-            raise DomainValidationError("ProjectionAST ast_digest is inconsistent")
+def _voice_payload(requirement: Any) -> Mapping[str, Any]:
+    return {
+        "requirement_id": requirement.requirement_id,
+        "audio_event_id": requirement.audio_event_id,
+        "character_label": requirement.character_label,
+        "shot_id": requirement.shot_id,
+        "visual_beat_id": requirement.visual_beat_id,
+    }
 
-    def _compute_digest(self) -> str:
-        return canonical_sha256(
-            {
-                "vec_digest": self.vec_digest,
-                "compiler_version": self.compiler_version,
-                "nodes": self.nodes,
-                "reference_requirements": self.reference_requirements,
-                "audio_events": self.audio_events,
-                "voice_requirements": self.voice_requirements,
-            }
+
+def _boundary_payload(boundary: Any) -> Mapping[str, Any]:
+    return {
+        "boundary_id": boundary.boundary_id,
+        "boundary_ordinal": boundary.boundary_ordinal,
+        "scene_tick": boundary.scene_tick,
+        "from_shot_id": boundary.from_shot_id,
+        "to_shot_id": boundary.to_shot_id,
+        "before_state_id": boundary.before_state_id,
+        "after_state_id": boundary.after_state_id,
+        "transition_intent": boundary.transition_intent,
+        "decision_ids": boundary.decision_ids,
+    }
+
+
+def _walk(node: ProjectionNode) -> tuple[ProjectionNode, ...]:
+    values = [node]
+    for child in node.children:
+        values.extend(_walk(child))
+    return tuple(values)
+
+
+def projection_nodes(ast: ProjectionAST) -> tuple[ProjectionNode, ...]:
+    """Return every canonical node in deterministic source order."""
+
+    if type(ast) is not ProjectionAST:
+        raise DomainValidationError(
+            "ast must use the exact mode_p_vnext.domain.projection.ProjectionAST type"
         )
+    return tuple(node for root in ast.nodes for node in _walk(root))
 
 
-# ---------------------------------------------------------------------------
-# ProjectionManifest — binding metadata required by §10
-# ---------------------------------------------------------------------------
+def node_attribute(node: ProjectionNode, name: str, expected_type: type) -> Any:
+    """Read a compiler-owned node attribute with fail-closed type validation."""
 
-
-@dataclass(frozen=True)
-class ProjectionManifest:
-    """Per-projection binding manifest (§10)."""
-
-    vec_digest: str
-    projection_ast_digest: str
-    source_node_ids: tuple[str, ...]
-    compiler_version: str
-    adapter_version: str
-    capability_profile_digest: str
-    reference_binding_digest: str
-    audio_binding_digest: str
-
-
-# ---------------------------------------------------------------------------
-# StoryboardProjection / VideoProjection — derived views
-# ---------------------------------------------------------------------------
+    if type(node) is not ProjectionNode:
+        raise DomainValidationError("delivery nodes must use the canonical ProjectionNode")
+    try:
+        value = node.attributes[name]
+    except KeyError as exc:
+        raise DomainValidationError(
+            f"ProjectionNode {node.node_id} is missing required attribute {name}"
+        ) from exc
+    if not isinstance(value, expected_type):
+        raise DomainValidationError(
+            f"ProjectionNode {node.node_id} attribute {name} must be "
+            f"{expected_type.__name__}"
+        )
+    return value
 
 
 @dataclass(frozen=True)
 class StoryboardProjection:
-    """Storyboard view: required + (capacity-permitting) optional beats."""
+    """Ordered sparse view whose nodes remain owned by one canonical AST."""
 
+    ast: ProjectionAST
     nodes: tuple[ProjectionNode, ...]
     manifest: ProjectionManifest
-    adapter_version: str
+
+    def __post_init__(self) -> None:
+        _validate_projection_view(self.ast, self.nodes, self.manifest)
+
+    @property
+    def adapter_version(self) -> str:
+        return self.manifest.adapter_version
 
 
 @dataclass(frozen=True)
 class VideoProjection:
-    """Video view: every node on the shared timeline."""
+    """Full VisualBeat view whose nodes remain owned by one canonical AST."""
 
+    ast: ProjectionAST
     nodes: tuple[ProjectionNode, ...]
     manifest: ProjectionManifest
-    adapter_version: str
+
+    def __post_init__(self) -> None:
+        _validate_projection_view(self.ast, self.nodes, self.manifest)
+
+    @property
+    def adapter_version(self) -> str:
+        return self.manifest.adapter_version
 
 
-# ---------------------------------------------------------------------------
-# Compiler
-# ---------------------------------------------------------------------------
+def _validate_projection_view(
+    ast: ProjectionAST,
+    nodes: tuple[ProjectionNode, ...],
+    manifest: ProjectionManifest,
+) -> None:
+    if type(ast) is not ProjectionAST or type(manifest) is not ProjectionManifest:
+        raise DomainValidationError("projection views require exact canonical domain types")
+    values = tuple(nodes)
+    if not values or not all(type(node) is ProjectionNode for node in values):
+        raise DomainValidationError("projection view nodes must be canonical ProjectionNode values")
+    ast_nodes = projection_nodes(ast)
+    ast_by_id = {node.node_id: node for node in ast_nodes}
+    if any(ast_by_id.get(node.node_id) is not node for node in values):
+        raise DomainValidationError("projection views must retain the exact AST node objects")
+    if len(values) != len({node.node_id for node in values}):
+        raise DomainValidationError("projection view nodes must not contain duplicates")
+    if manifest.projection_ast_digest != canonical_sha256(ast):
+        raise DomainValidationError("projection manifest does not bind its canonical AST")
+    if manifest.source_node_ids != tuple(node.node_id for node in ast_nodes):
+        raise DomainValidationError("projection manifest source_node_ids do not cover the AST")
 
 
-def _beat_nodes(vec: VisualExecutionContract) -> list[ProjectionNode]:
-    nodes: list[ProjectionNode] = []
-    for shot in vec.shots:
-        shot_node_interval = shot.interval
-        for beat in shot.visual_beats:
-            if (
-                beat.interval.start_tick < shot_node_interval.start_tick
-                or beat.interval.end_tick > shot_node_interval.end_tick
-            ):
-                raise DomainValidationError(
-                    f"beat {beat.beat_id} interval escapes its shot interval"
-                )
-            nodes.append(
-                ProjectionNode(
-                    node_id="",
-                    node_type="beat",
-                    source_id=beat.beat_id,
-                    shot_id=shot.shot_id,
-                    beat_id=beat.beat_id,
-                    start_tick=beat.interval.start_tick,
-                    end_tick=beat.interval.end_tick,
-                    phase=beat.phase.value,
-                    storyboard_role=beat.storyboard_role.value,
-                    start_state_id=beat.start_state_id,
-                    end_state_id=beat.end_state_id,
-                    decision_ids=tuple(beat.decision_ids),
-                    subject_state=beat.subject_state,
-                    attention=beat.attention,
-                )
-            )
-    return nodes
-
-
-def _shot_nodes(vec: VisualExecutionContract) -> list[ProjectionNode]:
-    nodes: list[ProjectionNode] = []
-    for shot in vec.shots:
-        nodes.append(
-            ProjectionNode(
-                node_id="",
-                node_type="shot",
-                source_id=shot.shot_id,
-                shot_id=shot.shot_id,
-                start_tick=shot.interval.start_tick,
-                end_tick=shot.interval.end_tick,
-                decision_ids=tuple(shot.decision_ids),
-                dramatic_function=shot.dramatic_function,
-                attention_target=shot.attention_target,
-                information_action=shot.information_action,
-                framing_intent=shot.framing_intent,
-                camera_pose=shot.camera_pose,
-                camera_motion=shot.camera_motion,
-                composition=shot.composition,
-                lighting=shot.lighting,
-                performance=shot.performance,
-            )
-        )
-    return nodes
-
-
-def _boundary_nodes(vec: VisualExecutionContract) -> list[ProjectionNode]:
-    """Boundary nodes are zero-length tick points between adjacent shots."""
-    shots_by_id = {shot.shot_id: shot for shot in vec.shots}
-    nodes: list[ProjectionNode] = []
-    for boundary in vec.boundaries:
-        left = shots_by_id.get(boundary.from_shot_id)
-        right = shots_by_id.get(boundary.to_shot_id)
-        if left is None or right is None:
-            raise DomainValidationError(
-                f"boundary {boundary.boundary_id} references unknown shots"
-            )
-        boundary_tick = left.interval.end_tick
-        nodes.append(
-            ProjectionNode(
-                node_id="",
-                node_type="boundary",
-                source_id=boundary.boundary_id,
-                shot_id="",
-                boundary_id=boundary.boundary_id,
-                start_tick=boundary_tick,
-                end_tick=boundary_tick,
-                decision_ids=tuple(boundary.decision_ids),
-                transition_intent=boundary.transition_intent,
-            )
-        )
-    return nodes
-
-
-def _assign_node_ids(
-    nodes: list[ProjectionNode],
+def _compile_node_attributes(
     *,
-    episode_id: str,
-    scene_id: str,
-    id_factory: IdFactory,
+    vec: VisualExecutionContract,
+    shot: Any,
+    beat: Any,
+    entering_boundary: Any,
+    exiting_boundary: Any,
+    scene_interval: TickRange,
     vec_digest: str,
-) -> tuple[ProjectionNode, ...]:
-    assigned: list[ProjectionNode] = []
-    for ordinal, node in enumerate(nodes):
-        node_id = id_factory.create(
-            artifact_kind=ArtifactKind.PROJECTION_AST,
-            episode_id=episode_id,
-            scene_id=scene_id,
-            stage=f"node:{node.node_type}",
-            input_digest=vec_digest,
-            ordinal=ordinal,
-        )
-        assigned.append(
-            ProjectionNode(
-                node_id=node_id,
-                node_type=node.node_type,
-                source_id=node.source_id,
-                shot_id=node.shot_id,
-                beat_id=node.beat_id,
-                boundary_id=node.boundary_id,
-                start_tick=node.start_tick,
-                end_tick=node.end_tick,
-                phase=node.phase,
-                storyboard_role=node.storyboard_role,
-                start_state_id=node.start_state_id,
-                end_state_id=node.end_state_id,
-                decision_ids=node.decision_ids,
-                subject_state=node.subject_state,
-                attention=node.attention,
-                dramatic_function=node.dramatic_function,
-                attention_target=node.attention_target,
-                information_action=node.information_action,
-                framing_intent=node.framing_intent,
-                camera_pose=node.camera_pose,
-                camera_motion=node.camera_motion,
-                composition=node.composition,
-                lighting=node.lighting,
-                performance=node.performance,
-                transition_intent=node.transition_intent,
-            )
-        )
-    return tuple(assigned)
+    compiler_version: str,
+    capability_profile_digest: str,
+    reference_binding_digest: str,
+    audio_binding_digest: str,
+) -> Mapping[str, Any]:
+    references = {
+        item.requirement_id: item for item in vec.reference_requirements
+    }
+    audio_events = {item.event_id: item for item in vec.audio_events}
+    voice_by_event = {
+        item.audio_event_id: item for item in vec.voice_requirements
+    }
+    shot_references = tuple(
+        _reference_payload(references[item_id])
+        for item_id in shot.reference_requirement_ids
+    )
+    shot_audio = tuple(
+        _audio_payload(audio_events[item_id]) for item_id in shot.audio_event_ids
+    )
+    shot_voices = tuple(
+        _voice_payload(voice_by_event[item_id]) for item_id in shot.audio_event_ids
+    )
+    return {
+        "node_kind": "visual_beat",
+        "compiler_version": compiler_version,
+        "vec_digest": vec_digest,
+        "capability_profile_digest": capability_profile_digest,
+        "reference_binding_digest": reference_binding_digest,
+        "audio_binding_digest": audio_binding_digest,
+        "source_shot_ordinal": shot.source_shot_ordinal,
+        "source_visual_beat_ordinal": beat.source_visual_beat_ordinal,
+        "generation_unit_id": shot.generation_unit_id,
+        "generation_mode": shot.generation_mode.value,
+        "local_start_tick": beat.interval.start_tick,
+        "local_end_tick": beat.interval.end_tick,
+        "scene_start_tick": scene_interval.start_tick,
+        "scene_end_tick": scene_interval.end_tick,
+        "phase": beat.phase.value,
+        "storyboard_role": beat.storyboard_role.value,
+        "subject_state": beat.subject_state,
+        "attention": beat.attention,
+        "composition": shot.composition,
+        "camera": shot.camera,
+        "lighting": shot.lighting,
+        "performance": shot.performance,
+        "creative_notes": shot.creative_notes,
+        "mirror_flip_forbidden": shot.mirror_flip_forbidden,
+        "shot_decision_ids": shot.decision_ids,
+        "shot_reference_requirement_ids": shot.reference_requirement_ids,
+        "beat_reference_requirement_ids": beat.reference_requirement_ids,
+        "shot_audio_event_ids": shot.audio_event_ids,
+        "beat_audio_event_ids": beat.audio_event_ids,
+        "reference_bindings": shot_references,
+        "audio_bindings": shot_audio,
+        "voice_bindings": shot_voices,
+        "entering_boundary": _boundary_payload(entering_boundary),
+        "exiting_boundary": _boundary_payload(exiting_boundary),
+    }
 
 
 def compile_projection_ast(
@@ -335,54 +257,47 @@ def compile_projection_ast(
     program_version: str,
     compiler_version: str = COMPILER_VERSION,
 ) -> ProjectionAST:
-    """Compile the sole ProjectionAST from an accepted VEC and its BlockingCommit.
+    """Compile one canonical, beat-addressed ProjectionAST from a validated VEC."""
 
-    Every node ID, digest, and the AST identity are generated locally; the
-    model never supplies them.  The compiler validates that beat states are
-    bound to the blocking commit's state chain and that every beat interval
-    stays inside its shot interval.
-    """
+    if type(vec) is not VisualExecutionContract:
+        raise DomainValidationError("vec must be the canonical VisualExecutionContract")
+    if type(blocking_commit) is not BlockingCommit:
+        raise DomainValidationError("blocking_commit must be the canonical BlockingCommit")
+    if not isinstance(id_factory, IdFactory):
+        raise DomainValidationError("id_factory must be an IdFactory")
+    _require_text(episode_id, "episode_id")
+    _require_text(scene_id, "scene_id")
+    _require_text(program_version, "program_version")
+    _require_text(compiler_version, "compiler_version")
+    if id_factory.program_version != program_version:
+        raise DomainValidationError("IdFactory program_version must match program_version")
+    if vec.episode_id != episode_id or vec.scene_id != scene_id:
+        raise DomainValidationError("VEC identity must match the compilation context")
+    if blocking_commit.scene_id != scene_id:
+        raise DomainValidationError("BlockingCommit identity must match the compilation context")
+    if vec.blocking_commit_artifact_id != blocking_commit.commit_id:
+        raise DomainValidationError("VEC must bind the supplied BlockingCommit exactly")
+
+    commit_beat_ids = {item.beat_id for item in blocking_commit.beats}
+    if any(shot.blocking_beat_id not in commit_beat_ids for shot in vec.shots):
+        raise DomainValidationError("VEC references a BlockingBeat outside its commit")
+
+    unit_by_shot = {item.shot_id: item for item in vec.generation_units}
+    entering_by_shot = {
+        item.to_shot_id: item for item in vec.boundaries if item.to_shot_id is not None
+    }
+    exiting_by_shot = {
+        item.from_shot_id: item
+        for item in vec.boundaries
+        if item.from_shot_id is not None
+    }
+    if set(unit_by_shot) != {item.shot_id for item in vec.shots}:
+        raise DomainValidationError("every VEC Shot requires exactly one GenerationUnit")
+    if set(entering_by_shot) != set(unit_by_shot) or set(exiting_by_shot) != set(unit_by_shot):
+        raise DomainValidationError("every VEC Shot requires entering and exiting Boundaries")
+
     vec_digest = canonical_sha256(vec)
-    if vec.scene_id != blocking_commit.scene_id:
-        raise DomainValidationError(
-            "VEC and BlockingCommit must belong to the same scene"
-        )
-    commit_beat_ids = {beat.beat_id for beat in blocking_commit.beats}
-    for shot in vec.shots:
-        if shot.blocking_beat_id not in commit_beat_ids:
-            raise DomainValidationError(
-                f"shot {shot.shot_id} references blocking beat "
-                f"{shot.blocking_beat_id} outside the blocking commit"
-            )
-
-    shot_nodes = _shot_nodes(vec)
-    beat_nodes = _beat_nodes(vec)
-    boundary_nodes = _boundary_nodes(vec)
-
-    nodes = _assign_node_ids(
-        shot_nodes + beat_nodes + boundary_nodes,
-        episode_id=episode_id,
-        scene_id=scene_id,
-        id_factory=id_factory,
-        vec_digest=vec_digest,
-    )
-
-    source_node_ids = tuple(
-        node.source_id for node in nodes
-    )
-    if len(source_node_ids) != len(set(source_node_ids)):
-        raise DomainValidationError("AST source node ids must be unique")
-
-    ast_digest = canonical_sha256(
-        {
-            "vec_digest": vec_digest,
-            "compiler_version": compiler_version,
-            "nodes": nodes,
-            "reference_requirements": vec.reference_requirements,
-            "audio_events": vec.audio_events,
-            "voice_requirements": vec.voice_requirements,
-        }
-    )
+    capability_profile_digest = canonical_sha256(vec.capability_profile)
     reference_binding_digest = canonical_sha256(vec.reference_requirements)
     audio_binding_digest = canonical_sha256(
         {
@@ -391,97 +306,185 @@ def compile_projection_ast(
         }
     )
 
-    ast_id = id_factory.create(
+    nodes: list[ProjectionNode] = []
+    ordinal = 0
+    for shot in vec.shots:
+        placement = unit_by_shot[shot.shot_id].scene_placement.interval
+        for beat in shot.visual_beats:
+            scene_interval = TickRange(
+                start_tick=placement.start_tick + beat.interval.start_tick,
+                end_tick=placement.start_tick + beat.interval.end_tick,
+            )
+            if scene_interval.end_tick > placement.end_tick:
+                raise DomainValidationError("VisualBeat scene interval escapes its Shot placement")
+            node_id = id_factory.create(
+                artifact_kind=ArtifactKind.PROJECTION_AST,
+                episode_id=episode_id,
+                scene_id=scene_id,
+                stage="projection:visual-beat",
+                input_digest=vec_digest,
+                ordinal=ordinal,
+            )
+            nodes.append(
+                ProjectionNode(
+                    node_id=node_id,
+                    source_beat_id=beat.beat_id,
+                    source_shot_id=shot.shot_id,
+                    interval=scene_interval,
+                    start_state_id=beat.start_state_id,
+                    end_state_id=beat.end_state_id,
+                    decision_ids=beat.decision_ids,
+                    attributes=_compile_node_attributes(
+                        vec=vec,
+                        shot=shot,
+                        beat=beat,
+                        entering_boundary=entering_by_shot[shot.shot_id],
+                        exiting_boundary=exiting_by_shot[shot.shot_id],
+                        scene_interval=scene_interval,
+                        vec_digest=vec_digest,
+                        compiler_version=compiler_version,
+                        capability_profile_digest=capability_profile_digest,
+                        reference_binding_digest=reference_binding_digest,
+                        audio_binding_digest=audio_binding_digest,
+                    ),
+                )
+            )
+            ordinal += 1
+
+    projection_id = id_factory.create(
         artifact_kind=ArtifactKind.PROJECTION_AST,
         episode_id=episode_id,
         scene_id=scene_id,
-        stage="ast",
+        stage="projection:ast",
         input_digest=vec_digest,
         ordinal=0,
     )
-
     return ProjectionAST(
-        ast_id=ast_id,
-        vec_digest=vec_digest,
-        compiler_version=compiler_version,
-        timeline=vec.timeline,
-        nodes=nodes,
-        reference_requirements=tuple(vec.reference_requirements),
-        audio_events=tuple(vec.audio_events),
-        voice_requirements=tuple(vec.voice_requirements),
-        source_node_ids=source_node_ids,
-        ast_digest=ast_digest,
-        reference_binding_digest=reference_binding_digest,
-        audio_binding_digest=audio_binding_digest,
+        projection_id=projection_id,
+        source_vec_artifact_id=vec.contract_id,
+        nodes=tuple(nodes),
     )
+
+
+def _consistent_digest_attribute(ast: ProjectionAST, name: str) -> str:
+    values = {
+        node_attribute(node, name, str) for node in projection_nodes(ast)
+    }
+    if len(values) != 1:
+        raise DomainValidationError(f"ProjectionAST nodes disagree on {name}")
+    return values.pop()
 
 
 def _build_manifest(
     ast: ProjectionAST,
     *,
     adapter_version: str,
-    capability_profile_digest: str,
+    capability_profile_digest: str | None,
 ) -> ProjectionManifest:
+    _require_text(adapter_version, "adapter_version")
+    nodes = projection_nodes(ast)
+    compiler_versions = {
+        node_attribute(node, "compiler_version", str) for node in nodes
+    }
+    if len(compiler_versions) != 1:
+        raise DomainValidationError("ProjectionAST nodes disagree on compiler_version")
+    compiled_capability_digest = _consistent_digest_attribute(
+        ast, "capability_profile_digest"
+    )
+    selected_capability_digest = (
+        compiled_capability_digest
+        if capability_profile_digest is None
+        else capability_profile_digest
+    )
     return ProjectionManifest(
-        vec_digest=ast.vec_digest,
-        projection_ast_digest=ast.ast_digest,
-        source_node_ids=ast.source_node_ids,
-        compiler_version=ast.compiler_version,
+        vec_digest=_consistent_digest_attribute(ast, "vec_digest"),
+        projection_ast_digest=canonical_sha256(ast),
+        source_node_ids=tuple(node.node_id for node in nodes),
+        compiler_version=compiler_versions.pop(),
         adapter_version=adapter_version,
-        capability_profile_digest=capability_profile_digest,
-        reference_binding_digest=ast.reference_binding_digest,
-        audio_binding_digest=ast.audio_binding_digest,
+        capability_profile_digest=selected_capability_digest,
+        reference_binding_digest=_consistent_digest_attribute(
+            ast, "reference_binding_digest"
+        ),
+        audio_binding_digest=_consistent_digest_attribute(ast, "audio_binding_digest"),
     )
 
 
 def derive_storyboard(
     ast: ProjectionAST,
     *,
-    adapter_version: str = "storyboard-v2.1.0",
-    capability_profile_digest: str = "",
-    max_panels: Optional[int] = None,
+    adapter_version: str = STORYBOARD_ADAPTER_VERSION,
+    capability_profile_digest: str | None = None,
+    max_panels: int | None = None,
 ) -> StoryboardProjection:
-    """Select storyboard beats: required first, then optional within capacity."""
-    beats = [node for node in ast.nodes if node.node_type == "beat"]
-    required = [node for node in beats if node.storyboard_role == StoryboardRole.REQUIRED.value]
-    optional = [node for node in beats if node.storyboard_role == StoryboardRole.OPTIONAL.value]
+    """Select required beats plus capacity-permitting optional beats in AST order."""
 
-    selected = list(required)
+    nodes = projection_nodes(ast)
+    required = tuple(
+        node
+        for node in nodes
+        if node_attribute(node, "storyboard_role", str)
+        == StoryboardRole.REQUIRED.value
+    )
+    optional = tuple(
+        node
+        for node in nodes
+        if node_attribute(node, "storyboard_role", str)
+        == StoryboardRole.OPTIONAL.value
+    )
+    roles = {
+        node_attribute(node, "storyboard_role", str) for node in nodes
+    }
+    if not roles.issubset({item.value for item in StoryboardRole}):
+        raise DomainValidationError("ProjectionAST contains an unknown storyboard role")
+
     if max_panels is not None:
-        if max_panels < 1:
-            raise DomainValidationError("max_panels must be positive when supplied")
-        remaining = max_panels - len(selected)
-        if remaining > 0:
-            selected.extend(optional[:remaining])
-    else:
-        selected.extend(optional)
-
+        if isinstance(max_panels, bool) or not isinstance(max_panels, int) or max_panels < 1:
+            raise DomainValidationError("max_panels must be a positive integer")
+        if max_panels < len(required):
+            raise DomainValidationError(
+                "max_panels cannot exclude a required storyboard VisualBeat"
+            )
+        optional = optional[: max_panels - len(required)]
+    selected_ids = {node.node_id for node in (*required, *optional)}
+    selected = tuple(node for node in nodes if node.node_id in selected_ids)
+    if not selected:
+        raise DomainValidationError("storyboard projection cannot be empty")
     manifest = _build_manifest(
         ast,
         adapter_version=adapter_version,
         capability_profile_digest=capability_profile_digest,
     )
-    return StoryboardProjection(
-        nodes=tuple(selected),
-        manifest=manifest,
-        adapter_version=adapter_version,
-    )
+    return StoryboardProjection(ast=ast, nodes=selected, manifest=manifest)
 
 
 def derive_video(
     ast: ProjectionAST,
     *,
-    adapter_version: str = "video-v2.1.0",
-    capability_profile_digest: str = "",
+    adapter_version: str = VIDEO_ADAPTER_VERSION,
+    capability_profile_digest: str | None = None,
 ) -> VideoProjection:
-    """Video view: every node on the shared timeline (all beats, shots, boundaries)."""
+    """Return the complete ordered VisualBeat projection from the same AST."""
+
+    nodes = projection_nodes(ast)
     manifest = _build_manifest(
         ast,
         adapter_version=adapter_version,
         capability_profile_digest=capability_profile_digest,
     )
-    return VideoProjection(
-        nodes=ast.nodes,
-        manifest=manifest,
-        adapter_version=adapter_version,
-    )
+    return VideoProjection(ast=ast, nodes=nodes, manifest=manifest)
+
+
+__all__ = [
+    "COMPILER_VERSION",
+    "ProjectionAST",
+    "ProjectionManifest",
+    "ProjectionNode",
+    "StoryboardProjection",
+    "VideoProjection",
+    "compile_projection_ast",
+    "derive_storyboard",
+    "derive_video",
+    "node_attribute",
+    "projection_nodes",
+]

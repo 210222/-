@@ -1,36 +1,33 @@
-"""Storyboard delivery adapter — formats the storyboard projection only.
-
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §10 / §14 A6.
-
-The adapter re-emits the projection's selected beat nodes as ordered panels.
-It never invents events: every panel is a direct projection of one AST beat
-node with its shared beat/shot/tick/state/decision references.  If a
-capability profile is supplied and the reference budget is exceeded, an
-explicit CapabilityAdaptationRecord is emitted instead of silently dropping
-content.
-"""
+"""Pure storyboard formatter over a sparse canonical ProjectionAST view."""
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 from mode_p_vnext.adapters.delivery.capability import (
     CapabilityAdaptationRecord,
     CapabilityProfile,
+    adaptation_record,
+    capability_profile_digest,
 )
+from mode_p_vnext.domain.artifact import DomainValidationError
+from mode_p_vnext.domain.projection import ProjectionManifest
 from mode_p_vnext.services.projection_compiler import (
-    ProjectionNode,
     StoryboardProjection,
+    node_attribute,
 )
 
-storyboard_adapter_version = "storyboard-adapter-v2.1.0"
+
+storyboard_adapter_version = "storyboard-adapter-v3.0.0"
 
 
 @dataclass(frozen=True)
 class StoryboardPanel:
-    """One storyboard panel — a direct view of one AST beat node."""
+    """A lossless formatting view of one selected canonical VisualBeat node."""
 
     panel_id: str
+    source_node_id: str
     beat_id: str
     shot_id: str
     phase: str
@@ -41,15 +38,27 @@ class StoryboardPanel:
     subject_state: str
     attention: str
     decision_ids: tuple[str, ...]
+    reference_requirement_ids: tuple[str, ...]
+    audio_event_ids: tuple[str, ...]
+    entering_boundary_id: str
+    exiting_boundary_id: str
 
 
 @dataclass(frozen=True)
 class StoryboardDelivery:
-    """Formatted storyboard output plus explicit adaptation records."""
-
     panels: tuple[StoryboardPanel, ...]
+    source_projection_id: str
+    manifest: ProjectionManifest
     adapter_version: str
     adaptation_records: tuple[CapabilityAdaptationRecord, ...] = ()
+
+
+def _boundary_id(node: object, attribute_name: str) -> str:
+    boundary = node_attribute(node, attribute_name, Mapping)
+    value = boundary.get("boundary_id")
+    if not isinstance(value, str) or not value:
+        raise DomainValidationError(f"{attribute_name} must preserve boundary_id")
+    return value
 
 
 def render_storyboard(
@@ -57,50 +66,84 @@ def render_storyboard(
     *,
     adapter_version: str = storyboard_adapter_version,
     profile: CapabilityProfile | None = None,
-    reference_requirement_count: int = 0,
 ) -> StoryboardDelivery:
-    """Format the storyboard projection into panels.
+    """Format selected nodes without inventing IDs, events, time, or bindings."""
 
-    Pure function: identical inputs produce identical output; no Director
-    invocation, no side effects.  Adapter-only changes never alter the
-    projection nodes themselves.  ``reference_requirement_count`` is the
-    number of AST reference requirements this storyboard depends on (the
-    caller supplies the AST count; the adapter never derives new content).
-    """
+    if type(projection) is not StoryboardProjection:
+        raise DomainValidationError("projection must be a StoryboardProjection")
+    if adapter_version != projection.manifest.adapter_version:
+        raise DomainValidationError(
+            "adapter_version must match the ProjectionManifest; re-derive the adapter view"
+        )
+    if profile is not None and (
+        projection.manifest.capability_profile_digest
+        != capability_profile_digest(profile)
+    ):
+        raise DomainValidationError(
+            "delivery CapabilityProfile digest must match the ProjectionManifest"
+        )
+
     panels = tuple(
         StoryboardPanel(
             panel_id=node.node_id,
-            beat_id=node.beat_id,
-            shot_id=node.shot_id,
-            phase=node.phase,
-            start_tick=node.start_tick,
-            end_tick=node.end_tick,
+            source_node_id=node.node_id,
+            beat_id=node.source_beat_id,
+            shot_id=node.source_shot_id,
+            phase=node_attribute(node, "phase", str),
+            start_tick=node.interval.start_tick,
+            end_tick=node.interval.end_tick,
             start_state_id=node.start_state_id,
             end_state_id=node.end_state_id,
-            subject_state=node.subject_state,
-            attention=node.attention,
+            subject_state=node_attribute(node, "subject_state", str),
+            attention=node_attribute(node, "attention", str),
             decision_ids=node.decision_ids,
+            reference_requirement_ids=node_attribute(
+                node, "shot_reference_requirement_ids", tuple
+            ),
+            audio_event_ids=node_attribute(node, "shot_audio_event_ids", tuple),
+            entering_boundary_id=_boundary_id(node, "entering_boundary"),
+            exiting_boundary_id=_boundary_id(node, "exiting_boundary"),
         )
         for node in projection.nodes
     )
 
-    records: list[CapabilityAdaptationRecord] = []
-    if profile is not None and reference_requirement_count > profile.reference_slots:
-        records.append(
-            CapabilityAdaptationRecord(
-                node_id="",
-                capability="reference_slots",
-                action="flag_reference_budget_exceeded",
-                reason=(
-                    f"storyboard references {reference_requirement_count} requirements "
-                    f"but the platform supports {profile.reference_slots}"
-                ),
-                adapter_version=adapter_version,
+    records: tuple[CapabilityAdaptationRecord, ...] = ()
+    if profile is not None:
+        reference_ids = {
+            item_id
+            for node in projection.ast.nodes
+            for item_id in node_attribute(
+                node, "shot_reference_requirement_ids", tuple
             )
-        )
+        }
+        if len(reference_ids) > profile.reference_slots:
+            affected = tuple(
+                node.node_id
+                for node in projection.ast.nodes
+                if node_attribute(node, "shot_reference_requirement_ids", tuple)
+            )
+            records = (
+                adaptation_record(
+                    profile=profile,
+                    adapter_version=adapter_version,
+                    adaptation_code="REFERENCE_SLOT_BUDGET_EXCEEDED",
+                    source_node_ids=affected,
+                    semantic_loss=True,
+                ),
+            )
 
     return StoryboardDelivery(
         panels=panels,
+        source_projection_id=projection.ast.projection_id,
+        manifest=projection.manifest,
         adapter_version=adapter_version,
-        adaptation_records=tuple(records),
+        adaptation_records=records,
     )
+
+
+__all__ = [
+    "StoryboardDelivery",
+    "StoryboardPanel",
+    "render_storyboard",
+    "storyboard_adapter_version",
+]

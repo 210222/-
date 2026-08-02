@@ -1,12 +1,4 @@
-"""Delivery adapters for MODE:P vNext projections.
-
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §10 / §14 A6.
-
-Adapters may only format a projection or perform explicit capability
-degradation.  Every degradation is recorded as a CapabilityAdaptationRecord;
-adapters never invent events, and adapter-only recompiles never invoke the
-Director (the render functions are pure).
-"""
+"""Pure v3 delivery adapters over one canonical ProjectionAST authority."""
 
 from mode_p_vnext.adapters.delivery.capability import (
     CapabilityAdaptationRecord,
@@ -21,6 +13,7 @@ from mode_p_vnext.adapters.delivery.storyboard_adapter import (
 )
 from mode_p_vnext.adapters.delivery.video_adapter import (
     VideoDelivery,
+    VideoPromptChunk,
     render_video,
     video_adapter_version,
 )
@@ -31,6 +24,7 @@ __all__ = [
     "StoryboardDelivery",
     "StoryboardPanel",
     "VideoDelivery",
+    "VideoPromptChunk",
     "capability_profile_digest",
     "render_storyboard",
     "render_video",

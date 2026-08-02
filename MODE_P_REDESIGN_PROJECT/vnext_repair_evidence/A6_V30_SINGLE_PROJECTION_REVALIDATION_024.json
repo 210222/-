@@ -1,0 +1,127 @@
+{
+  "task_id": "A6",
+  "title": "Compile storyboard and video from one canonical ProjectionAST",
+  "status": "COMPLETION_CANDIDATE",
+  "architecture_version": "3.0",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a"
+  },
+  "root_cause_and_repair": {
+    "root_cause": "The retired A6 implementation defined second, incompatible ProjectionAST, ProjectionNode, ProjectionManifest, and CapabilityAdaptationRecord classes outside mode_p_vnext.domain.projection. Its fixture also constructed removed pre-v3 Draft fields, so the registered test failed before exercising projection behavior. This violated the frozen v3.0 single projection authority and prevented ArtifactEnvelope persistence.",
+    "repair": "The compiler now constructs only the exact canonical domain ProjectionAST and beat-addressed ProjectionNode types. Storyboard and Video are immutable views over the same node objects; manifests use the exact canonical ProjectionManifest. Delivery adapters format those views and emit only the exact canonical CapabilityAdaptationRecord type. The A6 fixture now consumes A5's typed v3 Draft, BlockingCommit, FactRegistry, and deterministic VEC contracts.",
+    "rejected_shortcuts": [
+      "No compatibility aliases or restored v2 Draft fields were added.",
+      "No duplicate service-side projection authority was retained.",
+      "No adapter accepts caller-supplied binding counts or invents node IDs, ticks, states, boundaries, or bindings.",
+      "No character slicing is used to force an oversized node through a prompt limit; that condition fails closed.",
+      "No A7 or later-package consumer was modified from A6."
+    ]
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/projection_compiler.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/__init__.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/capability.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/storyboard_adapter.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/video_adapter.py",
+    "01_调度器/mode_p_vnext/tests/test_a6_projection_compiler.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A6_V30_SINGLE_PROJECTION_REVALIDATION_024.json"
+  ],
+  "artifact_hashes": {
+    "01_调度器/mode_p_vnext/services/projection_compiler.py": "98657d7d228e777e244a597932207c5ccf58ed41070e7578f7cb6aaf76afe9cb",
+    "01_调度器/mode_p_vnext/adapters/delivery/__init__.py": "9d32c0d30caefb53c19f051ab00cd2ae202ba01ebc2d376e8f99500588583bc1",
+    "01_调度器/mode_p_vnext/adapters/delivery/capability.py": "c69154171a70062b4537f6865733634d55fb15fb59332139dfa00c50efe8770a",
+    "01_调度器/mode_p_vnext/adapters/delivery/storyboard_adapter.py": "3afcc5ddb9eacc6939328d01e4584f2584a4691638711dc65e6d2556b219e57e",
+    "01_调度器/mode_p_vnext/adapters/delivery/video_adapter.py": "d2330441ddede393c4e3f540972cadc8b12078011a908694d48d8430be75dafd",
+    "01_调度器/mode_p_vnext/tests/test_a6_projection_compiler.py": "13e8c6859e7e2597cd6f3c15fa261d4ed24b1117a8ef0253908712036d6a9883"
+  },
+  "checks": [
+    {
+      "name": "single_projection_ast",
+      "exit_code": 0,
+      "result": "The deterministic compiler returns exact mode_p_vnext.domain.projection types and maps every VEC VisualBeat once."
+    },
+    {
+      "name": "storyboard_visualbeat_selection",
+      "exit_code": 0,
+      "result": "All required beats are retained, omit beats are excluded, optional capacity is source ordered, and insufficient capacity fails closed."
+    },
+    {
+      "name": "video_full_node_projection",
+      "exit_code": 0,
+      "result": "Video reuses every canonical AST VisualBeat node in order, including storyboard-omit beats."
+    },
+    {
+      "name": "shared_tick_state_and_bindings",
+      "exit_code": 0,
+      "result": "Common views retain identical node objects with shared scene ticks, states, decisions, N+1 boundary references, typed bindings, and manifest digests."
+    },
+    {
+      "name": "adapter_only_recompile",
+      "exit_code": 0,
+      "result": "Adapter-version and capability formatting changes preserve the AST and all node identities; profile and version mismatches fail closed."
+    },
+    {
+      "name": "canonical_projection_type_identity",
+      "exit_code": 0,
+      "result": "Runtime identity assertions prove compiler and adapters export the exact domain.projection classes."
+    },
+    {
+      "name": "projection_envelope_roundtrip",
+      "exit_code": 0,
+      "result": "ArtifactEnvelope accepts the exact ProjectionAST payload and its canonical UTF-8 JSON survives decode/re-encode byte-for-byte."
+    },
+    {
+      "name": "no_duplicate_projection_authority",
+      "exit_code": 0,
+      "result": "Source introspection proves no ProjectionAST, ProjectionNode, ProjectionManifest, or CapabilityAdaptationRecord class is redefined in A6 service/adapter code."
+    },
+    {
+      "name": "capability_adaptation_recorded",
+      "exit_code": 0,
+      "result": "Every exercised delivery degradation emits canonical records bound to the capability digest and non-empty canonical source node IDs."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a6_projection_compiler",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a6_projection_compiler.py -q -p no:cacheprovider",
+      "summary": "24 passed in 0.39s"
+    },
+    {
+      "name": "a6_v4_isolation",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "summary": "6 passed in 2.56s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_through_a6_release_security_v4_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_rebuild_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py mode_p_vnext/tests/test_v9_5_security.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "183 passed in 11.25s"
+    },
+    {
+      "name": "workspace_scope_and_diff_check",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "exit_code": 0,
+      "summary": "A6 actual implementation delta is limited to six registered allowed-path files; pre-existing user changes remain outside the declared A6 delta."
+    }
+  ],
+  "deferred_downstream_migration": {
+    "work_package": "A7",
+    "status": "NOT_ENTERED",
+    "reason": "The A7 fixture and deterministic gate consumer still target the retired A6 service shape. They are owned by the next, unclaimed work package and must migrate to canonical v3 ProjectionAST without compatibility aliases. They are not an A6 completion gate and no A7 path was changed."
+  },
+  "scope_exclusions": [
+    "No A7 dual-loop, Gate 0, DP, media, or approval implementation was changed.",
+    "No A8-A10 implementation or external media operation was started.",
+    "No v4 production code, production entry, or FeatureGate was changed.",
+    "No unrelated tracked or untracked user workspace change was staged or modified."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "completed_at_utc": "2026-08-02T12:09:28.8368911Z"
+}
