@@ -1,0 +1,57 @@
+{
+  "task_id": "A4",
+  "architecture_version": "3.0",
+  "architecture_input": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a"
+  },
+  "status": "FAILED_CLOSED",
+  "classification": "FROZEN_A0_PORTABILITY_REGRESSION",
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/adapters/model/claude_deepseek.py",
+    "01_调度器/mode_p_vnext/prompts/budgets.py",
+    "01_调度器/mode_p_vnext/prompts/compiler.py",
+    "01_调度器/mode_p_vnext/tests/test_a4_structured_provider.py"
+  ],
+  "candidate_a4_result": {
+    "status": "NOT_ACCEPTED_NOT_COMPLETED",
+    "focused_verification": "22 passed in 0.11s",
+    "strict_budget_boundary": "count >= exclusive limit is rejected",
+    "cache_transport": "static stage contract moved to system prefix; dynamic approved input remains in user input; provider usage cache_read_input_tokens is normalized without inventing hits",
+    "real_provider_probe": {
+      "requested_model": "deepseek-v4-flash",
+      "identical_calls": 2,
+      "input_tokens_each": 2205,
+      "cache_creation_input_tokens_each": 0,
+      "cache_read_input_tokens_each": 0,
+      "claim": "NO_PROVIDER_VERIFIED_CACHE_HIT"
+    }
+  },
+  "blocking_regression": {
+    "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_rebuild_control.py mode_p/test_active_entrypoints.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+    "result": "2 failed, 134 passed in 9.34s",
+    "failed_checks": [
+      "test_a0_release_control.py::test_current_v4_cohort_ledger_is_canonical_and_history_stays_read_only",
+      "test_v9_4_v4_compatibility.py::V4CompatibilityTests::test_v4_collection_matches_registered_cohorts"
+    ],
+    "registered_source": "01_调度器/mode_p/test_ep35_s1_pipeline.py",
+    "ledger_and_git_blob_sha256": "5bf7163355246d002e687f7bae6ec03113cd0d4cdfb8ef1293809e736ddc9216",
+    "windows_worktree_sha256": "c1dfcc6030af8e1e9c61ccc2ac9efdfa1efb8665c577284abb130be3487c6c9e",
+    "git_eol_evidence": "i/lf w/crlf attr/unspecified",
+    "git_config_evidence": "system core.autocrlf=true",
+    "root_cause": "A0 registered a byte-exact LF hash but did not freeze repository EOL policy or make its portability verifier independent of Git checkout conversion. A clean Windows checkout therefore invalidates the frozen v4 cohort regression."
+  },
+  "required_recovery": [
+    "Fail the current A4 and do not complete it.",
+    "Preserve but remove the unaccepted A4 candidate changes from the active worktree.",
+    "Invalidate completed A3 through A0 through ReleaseControl in reverse dependency order.",
+    "Repair A0 portability without editing v4 production behavior, then revalidate A0 through A4 in ledger order."
+  ],
+  "safety": {
+    "v4_modified": false,
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "owner_preview_approval_recorded": false
+  }
+}
