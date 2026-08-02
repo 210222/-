@@ -1,4 +1,10 @@
-"""Canonical v3.0 source, extraction-draft, and assembled fact contracts."""
+"""Canonical schema-3.0 source, draft, and assembled-fact contracts.
+
+The surrounding construction authority is v3.1.  The data schema retains its
+3.0 identifier because this package freezes the same persisted field layout;
+the active architecture hash and ReleaseLedger provide the separate v3.1
+authority binding.
+"""
 
 from __future__ import annotations
 
@@ -74,6 +80,20 @@ _SUBJECT_REQUIRED_SEMANTICS = frozenset(
 def _require_text(value: str, field_name: str) -> None:
     if not isinstance(value, str) or not value.strip():
         raise DomainValidationError(f"{field_name} must be non-empty")
+
+
+def _canonical_draft_text(value: str, field_name: str) -> str:
+    """Normalize model-supplied textual Draft fields before local assembly.
+
+    Source text itself is NFC-normalized by ``SourceNormalizer``.  Applying
+    the same Unicode normalization plus edge trimming here lets exact source
+    support be checked deterministically without allowing a provider's
+    surrounding whitespace or decomposition form to influence IDs and hashes.
+    Internal whitespace and case remain meaningful and are never folded.
+    """
+
+    _require_text(value, field_name)
+    return unicodedata.normalize("NFC", value.strip())
 
 
 def normalized_text_sha256(value: str) -> str:
@@ -205,7 +225,9 @@ class FactQualifiers:
         for field_name in ("subject_label", "spoken_text"):
             value = getattr(self, field_name)
             if value is not None:
-                _require_text(value, field_name)
+                object.__setattr__(
+                    self, field_name, _canonical_draft_text(value, field_name)
+                )
 
 
 @dataclass(frozen=True)
@@ -226,7 +248,9 @@ class FactExtractionDraft:
             raise DomainValidationError("confidence must be a FactConfidence")
         if not isinstance(self.qualifiers, FactQualifiers):
             raise DomainValidationError("qualifiers must be FactQualifiers")
-        _require_text(self.statement, "statement")
+        object.__setattr__(
+            self, "statement", _canonical_draft_text(self.statement, "statement")
+        )
         if (
             isinstance(self.source_start, bool)
             or not isinstance(self.source_start, int)
@@ -271,6 +295,8 @@ class SourceSpan:
 
 @dataclass(frozen=True)
 class ScriptFact:
+    ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.SCRIPT_FACT
+
     fact_id: str
     fact_handle: str
     kind: FactKind
@@ -292,7 +318,9 @@ class ScriptFact:
             raise DomainValidationError("confidence must be a FactConfidence")
         if not isinstance(self.qualifiers, FactQualifiers):
             raise DomainValidationError("qualifiers must be FactQualifiers")
-        _require_text(self.statement, "statement")
+        object.__setattr__(
+            self, "statement", _canonical_draft_text(self.statement, "statement")
+        )
         if isinstance(self.ordinal, bool) or not isinstance(self.ordinal, int) or self.ordinal < 1:
             raise DomainValidationError("ordinal must be a positive local integer")
         provenance = tuple(self.provenance)

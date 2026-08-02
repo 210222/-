@@ -1,4 +1,4 @@
-"""Read-only observation adapter for pre-v3.0 fact records.
+"""Read-only observation adapter for pre-schema-3.0 fact records.
 
 The adapter never mints a v3 ScriptFact, handle, ID, registry, or Artifact.
 Only the A1 FactAssembler may do that after a new typed extraction pass.

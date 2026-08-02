@@ -1,4 +1,4 @@
-"""A1 v3.0 canonical-domain invariants.
+"""A1 v3.1 canonical-domain invariants.
 
 These tests intentionally freeze contracts for later packages.  They do not
 claim that A5 assembly, A6 projection, or visual acceptance already exists.
@@ -57,7 +57,7 @@ from mode_p_vnext.domain import (
     VisualShot,
     VoiceRequirement,
 )
-from mode_p_vnext.domain.artifact import canonical_sha256
+from mode_p_vnext.domain.artifact import binary_sha256, canonical_sha256
 from mode_p_vnext.services.fact_assembler import FactAssembler
 from mode_p_vnext.services.source_normalizer import SourceNormalizer
 
@@ -220,8 +220,28 @@ def test_canonical_artifact_envelope_is_exact_payload_hashed_and_typed():
     with pytest.raises(DomainValidationError, match="payload type"):
         dataclasses.replace(envelope, artifact_type=ArtifactKind.FACT_REGISTRY)
 
+    _, assembled = _assembled()
+    fact = assembled.payload.facts[0]
+    fact_envelope = ArtifactEnvelope.create(
+        artifact_id="script-fact:1", artifact_type=ArtifactKind.SCRIPT_FACT,
+        payload=fact, producer_stage="I0.fact-assembler",
+        parent_artifact_ids=(assembled.artifact_id,),
+        source_provenance=(fact.provenance[0].source_ref,),
+        knowledge_snapshot_digest=None, created_at_utc=UTC,
+    )
+    assert fact_envelope.payload is fact
 
-def test_schema_is_v30_and_domain_is_the_only_canonical_authority():
+
+def test_canonical_text_hashes_normalize_lf_while_binary_hashes_preserve_bytes():
+    assert canonical_sha256({"text": "line-1\r\nline-2\rline-3"}) == canonical_sha256(
+        {"text": "line-1\nline-2\nline-3"}
+    )
+    assert binary_sha256(b"line-1\r\nline-2") != binary_sha256(b"line-1\nline-2")
+    with pytest.raises(DomainValidationError, match="bytes-like"):
+        binary_sha256("not binary")
+
+
+def test_schema_layout_is_frozen_while_v31_architecture_is_the_active_authority():
     import mode_p_vnext.domain.artifact as artifact
     import mode_p_vnext.domain.blocking as blocking
     import mode_p_vnext.domain.decisions as decisions
@@ -236,6 +256,8 @@ def test_schema_is_v30_and_domain_is_the_only_canonical_authority():
     import mode_p_vnext.domain.vec as vec
 
     modules = (artifact, blocking, decisions, direction, evidence, facts, ids, knowledge, projection, release, time, vec)
+    # v3.1 supersedes the architecture because of the Projection/Gate order;
+    # the A1 envelope and domain field layout itself remains schema-3.0.
     assert DOMAIN_SCHEMA_VERSION == "3.0"
     assert all(module.DOMAIN_SCHEMA_VERSION == DOMAIN_SCHEMA_VERSION for module in modules)
     names = [name for module in modules for name in module.CANONICAL_DOMAIN_TYPES]
@@ -274,6 +296,16 @@ def test_normalized_source_contract_is_canonical_and_partitioned():
     with pytest.raises(DomainValidationError, match="gap-free"):
         SourceNormalizer.normalize("abcd", source_id="s", normalized_partitions=(("e", "s1", 0, 2), ("e", "s2", 3, 4)))
 
+    nfc_source = SourceNormalizer.normalize(
+        b"\xef\xbb\xbfCafe\xcc\x81\r\n",
+        source_id="script:nfc",
+        locator="nfc.txt",
+        normalized_partitions=(("episode:nfc", "scene:nfc", 0, len("Caf\u00e9\n")),),
+    )
+    assert nfc_source.normalized_text == "Caf\u00e9\n"
+    assert nfc_source.encoding == "utf-8"
+    assert nfc_source.line_start_offsets == (0, 5)
+
 
 def test_local_fact_assembler_validates_deduplicates_and_mints_opaque_handles():
     source, envelope = _assembled()
@@ -298,6 +330,58 @@ def test_local_fact_assembler_validates_deduplicates_and_mints_opaque_handles():
             normalized_source=source, normalized_source_artifact_id="normalized-source:1", drafts=(unsupported,),
             source_kind=FactKind.SCRIPT, producer_stage="I0.fact_assembler", created_at_utc=UTC,
         )
+
+
+def test_fact_assembly_is_permutation_invariant_and_preserves_typed_distinctions():
+    text = "Alice and Bob enter.\nUS and us wait.\n"
+    source = SourceNormalizer.normalize(
+        text,
+        source_id="script:deterministic",
+        normalized_partitions=(("episode:1", "scene:1", 0, len(text)),),
+    )
+    first_end = text.index("\n")
+    second_start = first_end + 1
+    second_end = len(text) - 1
+    semantic = __import__("mode_p_vnext.domain", fromlist=["FactSemantic"]).FactSemantic
+    drafts = (
+        FactExtractionDraft(
+            semantic.CHARACTER, "Alice and Bob enter.", 0, first_end,
+            FactConfidence.EXPLICIT, FactQualifiers("episode:1", "scene:1", subject_label="Alice"),
+        ),
+        FactExtractionDraft(
+            semantic.CHARACTER, "Alice and Bob enter.", 0, first_end,
+            FactConfidence.EXPLICIT, FactQualifiers("episode:1", "scene:1", subject_label="Bob"),
+        ),
+        FactExtractionDraft(
+            semantic.NARRATIVE, "US", second_start, second_end,
+            FactConfidence.EXPLICIT, FactQualifiers("episode:1", "scene:1"),
+        ),
+        FactExtractionDraft(
+            semantic.NARRATIVE, "us", second_start, second_end,
+            FactConfidence.EXPLICIT, FactQualifiers("episode:1", "scene:1"),
+        ),
+    )
+
+    def assemble(values, kind=FactKind.SCRIPT):
+        return FactAssembler().assemble(
+            normalized_source=source,
+            normalized_source_artifact_id="normalized-source:deterministic",
+            drafts=values,
+            source_kind=kind,
+            producer_stage="I0.fact_assembler",
+            created_at_utc=UTC,
+        )
+
+    forward = assemble(drafts)
+    reverse = assemble(tuple(reversed(drafts)))
+    assert forward == reverse
+    assert tuple(fact.statement for fact in forward.payload.facts)[-2:] == ("US", "us")
+    assert tuple(fact.qualifiers.subject_label for fact in forward.payload.facts[:2]) == ("Alice", "Bob")
+
+    continuity = assemble(drafts, FactKind.CONTINUITY)
+    assert {
+        (fact.fact_id, fact.fact_handle) for fact in continuity.payload.facts
+    }.isdisjoint({(fact.fact_id, fact.fact_handle) for fact in forward.payload.facts})
 
 
 def test_fact_semantics_and_source_spans_are_typed_provenance_only():
@@ -341,6 +425,7 @@ def test_legacy_adapters_are_read_only_observations(tmp_path: Path):
     assert isinstance(legacy_checkpoint, LegacyCheckpointObservation)
     assert legacy_checkpoint.requires_reassembly is True
     assert not hasattr(legacy_checkpoint, "artifact_id")
+    assert legacy_checkpoint.source_ref.locator == "legacy-checkpoint/legacy.json"
 
 
 def test_24000_tick_capability_applies_per_generation_unit_not_scene():

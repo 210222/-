@@ -124,7 +124,10 @@ def read_legacy_b0_k2_checkpoint(path: Path) -> LegacyCheckpointObservation:
     source_ref = SourceRef(
         source_id=f"legacy-checkpoint:{source_path.name}",
         digest=input_digest,
-        locator=str(source_path),
+        # Retain only a stable, non-host-specific observation locator.  An
+        # absolute local path is neither canonical provenance nor safe prompt
+        # material for a later pipeline stage.
+        locator=f"legacy-checkpoint/{source_path.name}",
     )
     return LegacyCheckpointObservation(
         source_ref=source_ref,

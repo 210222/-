@@ -1,4 +1,4 @@
-"""The sole v3.0 timebase and versioned generation-capability contracts."""
+"""The sole schema-3.0 timebase and capability contracts under v3.1 authority."""
 
 from __future__ import annotations
 

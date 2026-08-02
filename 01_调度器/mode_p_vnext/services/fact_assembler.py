@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import replace
 
 from mode_p_vnext.domain.artifact import (
     ArtifactEnvelope,
@@ -31,13 +30,35 @@ _CONFIDENCE_ORDER = {
 
 
 def _canonical_statement(value: str) -> str:
-    return " ".join(value.split()).casefold()
+    """Return the exact Draft-normalized statement identity.
+
+    Case and internal whitespace are intentionally not folded.  Folding them
+    can merge distinct, source-supported facts (for example ``US`` and
+    ``us``), which would give model text authority over semantic loss.
+    ``FactExtractionDraft`` has already normalized Unicode and edge spacing.
+    """
+
+    return value
+
+
+def _draft_identity_key(draft: FactExtractionDraft) -> tuple[str, ...]:
+    """Complete local identity key for deterministic grouping and ordering."""
+
+    qualifiers = draft.qualifiers
+    return (
+        draft.semantic.value,
+        _canonical_statement(draft.statement),
+        qualifiers.episode_id,
+        qualifiers.scene_id,
+        qualifiers.subject_label or "",
+        qualifiers.spoken_text or "",
+    )
 
 
 class FactAssembler:
     """Validate, deduplicate and identify model-produced fact drafts locally."""
 
-    def __init__(self, *, program_version: str = "mode-p-vnext-fact-assembler-3.0") -> None:
+    def __init__(self, *, program_version: str = "mode-p-vnext-fact-assembler-3.1") -> None:
         self._ids = IdFactory(program_version=program_version)
 
     def assemble(
@@ -88,26 +109,21 @@ class FactAssembler:
                 )
             )
 
-        # Canonical order is source order, not provider response order.
+        # Canonical order is source order plus the complete semantic identity,
+        # never provider response order.  Facts sharing a source span are
+        # common (for example two characters in one sentence), so a partial
+        # sort key would make their ordinals and opaque IDs nondeterministic.
         validated.sort(
             key=lambda item: (
                 item[1].source_start,
                 item[1].source_end,
-                item[0].semantic.value,
-                _canonical_statement(item[0].statement),
+                *_draft_identity_key(item[0]),
             )
         )
         grouped: dict[tuple[object, ...], list[tuple[FactExtractionDraft, SourceSpan]]] = {}
         for item in validated:
             draft = item[0]
-            key = (
-                draft.semantic,
-                _canonical_statement(draft.statement),
-                draft.qualifiers.episode_id,
-                draft.qualifiers.scene_id,
-                (draft.qualifiers.subject_label or "").casefold(),
-                draft.qualifiers.spoken_text,
-            )
+            key = _draft_identity_key(draft)
             grouped.setdefault(key, []).append(item)
 
         facts: list[ScriptFact] = []
@@ -120,8 +136,9 @@ class FactAssembler:
             )
             identity_input = canonical_sha256(
                 {
-                    "source_digest": normalized_source.source_ref.digest,
-                    "semantic": representative.semantic,
+                "source_digest": normalized_source.source_ref.digest,
+                "source_kind": source_kind,
+                "semantic": representative.semantic,
                     "statement": _canonical_statement(representative.statement),
                     "qualifiers": representative.qualifiers,
                     "provenance": spans,

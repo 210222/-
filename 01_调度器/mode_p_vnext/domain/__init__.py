@@ -1,4 +1,4 @@
-"""The sole canonical MODE:P vNext domain authority (architecture v3.0)."""
+"""The sole canonical MODE:P vNext domain surface (authority v3.1)."""
 
 from .artifact import (
     DOMAIN_SCHEMA_VERSION,

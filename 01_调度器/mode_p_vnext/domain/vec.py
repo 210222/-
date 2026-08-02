@@ -1,4 +1,4 @@
-"""v3.0 B1 creative Drafts and the locally assembled VEC contract."""
+"""Schema-3.0 B1 Drafts and the locally assembled VEC under v3.1 authority."""
 
 from __future__ import annotations
 

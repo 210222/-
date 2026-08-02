@@ -1,0 +1,80 @@
+{
+  "task_id": "A1",
+  "kind": "CANONICAL_DOMAIN_REPAIR_EVIDENCE",
+  "architecture_authority": {
+    "version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/compat/legacy_checkpoint.py",
+    "01_调度器/mode_p_vnext/compat/legacy_facts.py",
+    "01_调度器/mode_p_vnext/domain/__init__.py",
+    "01_调度器/mode_p_vnext/domain/artifact.py",
+    "01_调度器/mode_p_vnext/domain/facts.py",
+    "01_调度器/mode_p_vnext/domain/time.py",
+    "01_调度器/mode_p_vnext/domain/vec.py",
+    "01_调度器/mode_p_vnext/services/fact_assembler.py",
+    "01_调度器/mode_p_vnext/services/source_normalizer.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_V31_CANONICAL_DOMAIN_042.json"
+  ],
+  "schema_authority_boundary": {
+    "active_architecture_version": "3.1",
+    "frozen_domain_schema_version": "3.0",
+    "reason": "v3.1 resolves the ProjectionAST/Gate0/DP execution-order conflict. It does not change the A1 persisted envelope or domain-field layout. The schema identifier therefore remains 3.0 while the ReleaseLedger locks the v3.1 authority SHA; this avoids a cosmetic schema bump that would make downstream version checks drift without a layout migration."
+  },
+  "root_cause_and_repair": {
+    "root_causes": [
+      "FactAssembler sorted same-span drafts only by span, semantic, and case-folded statement. Distinct typed facts such as two characters in one sentence could therefore retain provider return order, changing local ordinals, IDs, handles, and FactRegistry bytes.",
+      "Case-folding fact statements could merge distinct source-supported semantics such as 'US' and 'us', allowing a lossy model-facing normalization to erase a fact.",
+      "Fact identity omitted source_kind, so otherwise identical SCRIPT and CONTINUITY facts could mint the same persistent ID and model-selection handle.",
+      "canonical_sha256 preserved CRLF/CR in structured text, contrary to the frozen cross-platform canonical-text rule and capable of producing checkout-dependent hashes.",
+      "The legacy checkpoint observation retained an absolute host path as its locator, which was non-canonical and unsafe to carry into later pipeline data."
+    ],
+    "repair": [
+      "FactAssembler now orders by source span plus the complete typed draft identity and preserves case/internal whitespace semantics. The same semantic input set is permutation-invariant before IDs are minted.",
+      "source_kind participates in the local fact identity; ScriptFact is registered as an envelope-valid canonical payload type.",
+      "Draft-facing fact text is NFC-normalized and edge-trimmed locally before source support, grouping, hashing, or persistence; no raw tick field or source-span-to-time conversion was introduced.",
+      "Structured canonical hashes normalize CRLF/CR to LF. binary_sha256 explicitly hashes bytes without normalization, preserving media/binary evidence semantics.",
+      "The read-only legacy adapter now exposes only a stable legacy-checkpoint filename locator and still cannot mint vNext IDs, handles, or artifacts."
+    ]
+  },
+  "checks": [
+    {"name": "canonical_artifact_envelope", "exit_code": 0, "proof": "Exact typed payload mapping, payload digest validation, and ScriptFact envelope closure are covered."},
+    {"name": "canonical_24000_tick_timebase", "exit_code": 0, "proof": "CanonicalTimeline and per-unit capability assertions pass without any source-span timing path."},
+    {"name": "draft_artifact_separation", "exit_code": 0, "proof": "Draft field-shape tests retain no final IDs, hashes, boundaries, or raw ticks."},
+    {"name": "no_duplicate_domain_authority", "exit_code": 0, "proof": "Domain ownership and service/compat AST checks remain unique."},
+    {"name": "domain_schemas_frozen_for_downstream", "exit_code": 0, "proof": "All domain modules share schema-3.0 while the active architecture SHA is v3.1-bound."},
+    {"name": "legacy_read_adapter_only", "exit_code": 0, "proof": "Legacy observations require re-ingest/reassembly and expose no artifact or handle authority."},
+    {"name": "normalized_source_contract", "exit_code": 0, "proof": "CRLF, BOM, UTF-8 decoding, NFC text, line indices, digest, and gap-free partitions are exercised."},
+    {"name": "local_fact_assembler_ownership", "exit_code": 0, "proof": "Local assembly mints IDs/handles and is invariant to provider draft permutation."},
+    {"name": "typed_fact_semantics", "exit_code": 0, "proof": "Typed qualifiers, dialogue support, and case-sensitive source facts remain distinct."},
+    {"name": "opaque_fact_handles_and_ids", "exit_code": 0, "proof": "Exact opaque pairs are local-only and differ across source authority kinds."},
+    {"name": "source_span_provenance_only", "exit_code": 0, "proof": "Spans validate source membership and FactAssembler contains no timing path."},
+    {"name": "generation_capability_profile", "exit_code": 0, "proof": "SD2.0 per-GenerationUnit 360000-tick cap and uncapped aggregate scene coverage pass."},
+    {"name": "duration_intent_not_raw_ticks", "exit_code": 0, "proof": "Director Draft duration remains the DurationIntent enum only."},
+    {"name": "typed_reference_binding_intent", "exit_code": 0, "proof": "Reference target scope and opaque-handle validation pass."},
+    {"name": "typed_dialogue_binding_intent", "exit_code": 0, "proof": "Dialogue target scope, placement phase, and opaque-handle validation pass."}
+  ],
+  "registered_verification_observation": [
+    {"name": "a1_domain_model", "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider", "result": "14 passed", "exit_code": 0}
+  ],
+  "related_regression": [
+    {"command": "python -m compileall -q mode_p_vnext/domain mode_p_vnext/compat mode_p_vnext/services/source_normalizer.py mode_p_vnext/services/fact_assembler.py", "result": "passed", "exit_code": 0},
+    {"command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider", "result": "107 passed", "exit_code": 0},
+    {"command": "python -m pytest mode_p/test_active_entrypoints.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider", "result": "21 passed", "exit_code": 0},
+    {"command": "python -m mode_p_vnext.release_control audit", "result": "ok: true while A1 claim was active", "exit_code": 0}
+  ],
+  "claim_delta_observation": {
+    "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+    "implementation_delta": "Only A1-allowed domain, compatibility, source-normalization, fact-assembly, test, and this Evidence files changed after the A1 claim. User-owned modified files remain outside changed_paths and are neither staged nor committed.",
+    "controller_action": "ReleaseLedger complete revalidates the v3.1 authority hash, compares the claim-time/complete-time manifests, reruns the registered a1_domain_model command, snapshots artifacts, and rejects undeclared or out-of-scope changes."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "text_claim_ceiling": "TEXT_VALIDATED"
+  }
+}

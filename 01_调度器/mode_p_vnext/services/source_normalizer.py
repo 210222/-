@@ -1,4 +1,4 @@
-"""Deterministic owner of raw-source normalization for the v3.0 ingest chain."""
+"""Deterministic owner of raw-source normalization for the v3.1 ingest chain."""
 
 from __future__ import annotations
 

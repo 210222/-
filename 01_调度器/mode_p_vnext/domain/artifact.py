@@ -6,6 +6,7 @@ import dataclasses
 import enum
 import hashlib
 import json
+import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from types import MappingProxyType
@@ -76,6 +77,19 @@ def _require_utc_timestamp(value: str, field_name: str) -> None:
         raise DomainValidationError(f"{field_name} must be an ISO-8601 timestamp") from exc
     if parsed.tzinfo is None or parsed.utcoffset() != timezone.utc.utcoffset(parsed):
         raise DomainValidationError(f"{field_name} must be timezone-aware UTC")
+
+
+def _canonical_text(value: str) -> str:
+    """Return the text form used by every canonical structured hash.
+
+    Domain values may retain their source-facing presentation, but hashes must
+    not drift merely because a Windows checkout or upstream text source used
+    CRLF/CR line endings.  NFC is deliberately *not* applied here: that is a
+    source-normalization responsibility, and applying it to arbitrary creative
+    text would silently redefine persisted content beyond the architecture.
+    """
+
+    return value.replace("\r\n", "\n").replace("\r", "\n")
 
 
 def _require_deeply_immutable(
@@ -189,14 +203,22 @@ def _canonical_value(value: Any) -> Any:
         return {item.name: _canonical_value(getattr(value, item.name)) for item in dataclasses.fields(value)}
     if isinstance(value, Mapping):
         result: dict[str, Any] = {}
-        for key in sorted(value):
+        for raw_key in value:
+            key = raw_key
             if not isinstance(key, str):
                 raise DomainValidationError("canonical mappings require string keys")
-            result[key] = _canonical_value(value[key])
-        return result
+            key = _canonical_text(key)
+            if key in result:
+                raise DomainValidationError(
+                    "canonical mapping keys collide after line-ending normalization"
+                )
+            result[key] = _canonical_value(value[raw_key])
+        return {key: result[key] for key in sorted(result)}
     if isinstance(value, (tuple, list)):
         return [_canonical_value(item) for item in value]
-    if value is None or isinstance(value, (str, int, bool)):
+    if isinstance(value, str):
+        return _canonical_text(value)
+    if value is None or isinstance(value, (int, bool)):
         return value
     if isinstance(value, float):
         raise DomainValidationError("floating-point values are forbidden in canonical artifacts")
@@ -213,8 +235,16 @@ def canonical_sha256(value: Any) -> str:
     return hashlib.sha256(canonical_json_bytes(value)).hexdigest()
 
 
+def binary_sha256(value: bytes | bytearray | memoryview) -> str:
+    """Hash binary evidence without text normalization or transcoding."""
+
+    if not isinstance(value, (bytes, bytearray, memoryview)):
+        raise DomainValidationError("binary_sha256 requires bytes-like input")
+    return hashlib.sha256(bytes(value)).hexdigest()
+
+
 def _canonical_payload_type(artifact_kind: ArtifactKind) -> type[Any]:
-    """Return the sole v3.0 payload authority for a persistent artifact kind.
+    """Return the sole payload authority for a persistent artifact kind.
 
     Imports stay local so the pure domain modules can declare their payload
     classes without an import cycle at module load time.
@@ -234,7 +264,7 @@ def _canonical_payload_type(artifact_kind: ArtifactKind) -> type[Any]:
         RevisionRequest,
         VisualVerificationResult,
     )
-    from .facts import FactRegistry, NormalizedSource
+    from .facts import FactRegistry, NormalizedSource, ScriptFact
     from .knowledge import KnowledgeCapsuleV2, KnowledgeSnapshot
     from .projection import (
         CapabilityAdaptationRecord,
@@ -247,6 +277,7 @@ def _canonical_payload_type(artifact_kind: ArtifactKind) -> type[Any]:
     authorities: dict[ArtifactKind, type[Any]] = {
         ArtifactKind.NORMALIZED_SOURCE: NormalizedSource,
         ArtifactKind.FACT_REGISTRY: FactRegistry,
+        ArtifactKind.SCRIPT_FACT: ScriptFact,
         ArtifactKind.EPISODE_DIRECTION_DRAFT: EpisodeDirectionDraft,
         ArtifactKind.SCENE_INTENT_DRAFT: SceneIntentDraft,
         ArtifactKind.KNOWLEDGE_CAPSULE: KnowledgeCapsuleV2,
