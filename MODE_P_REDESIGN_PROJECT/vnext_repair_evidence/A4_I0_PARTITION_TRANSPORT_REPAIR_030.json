@@ -1,0 +1,92 @@
+{
+  "schema_name": "mode_p_vnext_a4_i0_partition_transport_repair_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A4",
+  "created_at": "2026-08-02T23:46:16+08:00",
+  "owner": "codex-a4-i0-draft-surface-repair-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_COMPLETE_VERIFICATION_INPUT",
+    "applicable_sections": ["section 6", "section 8", "section 12", "section 15 A4", "section 17"]
+  },
+  "root_cause": {
+    "discovered_by": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A10_REAL_PROVIDER_I0_CONTRACT_CONFLICT_029.json",
+    "statement": "The I0 provider schema and declarative signature exposed a natural-language scene_hint, while the downstream local decoder treated that optional model field as an exact canonical source-partition identifier. This crossed the v3.0 authority boundary because a model-visible semantic label could be interpreted as a local machine partition.",
+    "rejected_alternatives": [
+      "Do not instruct the model to echo the current canonical scene ID: that would ask the model to mint or transport a local identifier.",
+      "Do not relax the local equality check to accept arbitrary natural-language labels: that would let free text control a machine partition.",
+      "Do not alter the frozen A1 FactExtractionDraft/FactQualifiers domain contract: the canonical episode_id and scene_id are already attached locally by A8 from the explicit source partition."
+    ]
+  },
+  "repair": {
+    "implementation": [
+      "Removed scene_hint from the I0 native JSON schema and from its self-validation shape.",
+      "Removed optional scene hints from the I0 declarative output semantics and explicitly excludes scene or partition identifiers.",
+      "Strengthened the I0 system instruction so a provider cannot name or select a local scene partition.",
+      "Added boundary regression coverage proving a natural scene label in a model response is rejected both by the strict schema decoder and by the structured adapter."
+    ],
+    "authority_after_repair": "The provider may return only source spans, semantic types, source-supported statements, optional subject labels, and optional dialogue text. The local A8 caller remains the only authority that attaches the explicit episode/scene source partition before FactAssembler produces canonical facts, IDs, handles, provenance, and hashes.",
+    "downstream_status": "A8 remains invalidated. Its stale direct test port and defense-only decoder branch still mention scene_hint, but they are outside A4 allowed paths and cannot serve as current A8 evidence. They must be removed or revalidated only when A8 is later claimed; this A4 completion neither treats them as conforming nor changes their owner."
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/prompts/fragments.py",
+    "01_调度器/mode_p_vnext/prompts/schema_registry.py",
+    "01_调度器/mode_p_vnext/prompts/signatures.py",
+    "01_调度器/mode_p_vnext/tests/test_a4_structured_provider.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A4_I0_PARTITION_TRANSPORT_REPAIR_030.json"
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_调度器/mode_p_vnext/prompts/fragments.py": "feb1ca902c65656de6014b225b4c8731c80b514ff6ee42919326a6e4b8633ce8",
+    "01_调度器/mode_p_vnext/prompts/schema_registry.py": "dddedf5bbac6764688e1c6faa86c421a5921a87eef7dca909d9eb6bd8036faed",
+    "01_调度器/mode_p_vnext/prompts/signatures.py": "8dea7bb35929e216d27c20dc76b49101a469e23f32f32b28df763033fb91956f",
+    "01_调度器/mode_p_vnext/tests/test_a4_structured_provider.py": "40776f794f6214bfc014a2a36a38e13e1c52a2c2019f5c261aad611aefdf9b53"
+  },
+  "checks": [
+    {"name": "stage_signatures_declared", "exit_code": 0},
+    {"name": "prompt_schema_separate_transport", "exit_code": 0},
+    {"name": "b1_prompt_under_12000_chars", "exit_code": 0},
+    {"name": "b1_schema_under_4500_chars", "exit_code": 0},
+    {"name": "native_windows_binary_first", "exit_code": 0},
+    {"name": "one_scoped_contract_repair", "exit_code": 0},
+    {"name": "i0_fact_extraction_signature", "exit_code": 0},
+    {"name": "source_span_repair_ceiling", "exit_code": 0},
+    {"name": "model_does_not_mint_ids_or_ticks", "exit_code": 0},
+    {"name": "typed_binding_intents_in_b1_schema", "exit_code": 0},
+    {"name": "free_text_not_binding_transport", "exit_code": 0},
+    {"name": "i0_model_partition_field_rejected", "exit_code": 0}
+  ],
+  "verification_results": [
+    {
+      "name": "a4_structured_provider",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_a4_structured_provider.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "22 passed in 0.27s"
+    }
+  ],
+  "precompletion_results": [
+    {
+      "name": "a0_to_a4_and_v4_isolation_regression",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_rebuild_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "136 passed in 11.07s"
+    }
+  ],
+  "boundary_assertions": {
+    "i0_partition_assignment": "No I0 provider-visible field can carry a scene hint, local scene ID, or source-partition selector. The native structured adapter rejects scene_hint after transport even if a provider returns it.",
+    "canonical_authority": "Provider Drafts do not create canonical IDs, hashes, ticks, boundaries, bindings, VEC, or Projection. Local deterministic assembly remains authoritative.",
+    "schema_transport": "The compact JSON schema remains a dedicated transport field rather than prompt text; the repaired I0 schema is 675 characters, below its 2500-character budget.",
+    "production": "v4 remains the production entry, production_switch_authorized remains false, and no Director, DP, renderer, media, or owner-approval action was started."
+  },
+  "non_goals": [
+    "No A5-A10 implementation or evidence was modified, claimed, or completed.",
+    "No v4 production path, feature gate, or production switch was changed.",
+    "No free-text model output is interpreted as a local ID, partition, binding, tick, VEC, Projection, media result, or user approval."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false,
+  "media_visual_acceptance": false
+}

@@ -101,11 +101,11 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
             "source-supported statements",
             "optional subject identifiers",
             "optional dialogue text",
-            "optional scene hints",
         ),
         output_exclusions=(
             "fact IDs",
             "artifact IDs",
+            "scene or partition identifiers",
             "hashes",
             "validation status",
             "creative decisions",

@@ -133,15 +133,19 @@ def test_i0_fact_extraction_is_schema_separated_and_not_a_director_call() -> Non
     assert schema.character_count <= signature.schema_budget
     assert set(fact["properties"]) == {
         "source_start", "source_end", "semantic_type", "statement",
-        "subject_id", "spoken_text", "scene_hint",
+        "subject_id", "spoken_text",
     }
     assert set(fact["required"]) == {
         "source_start", "source_end", "semantic_type", "statement",
     }
     assert "fact_id" not in fact["properties"]
+    assert "scene_hint" not in fact["properties"]
     assert schema.canonical_json not in compiled.prompt_text
     assert "MODE:P Director" not in compiled.system_message
     assert "creative decisions" in compiled.system_message
+    assert "local scene partition" in compiled.system_message
+    assert "optional scene hints" not in compiled.user_message
+    assert "scene or partition identifiers" in signature.output_exclusions
 
 
 def test_prompt_transports_only_contract_identity_while_schema_stays_separate() -> None:
@@ -288,6 +292,10 @@ def test_i0_schema_rejects_non_fact_fields_and_empty_source_statements() -> None
     with pytest.raises(ValueError, match="unexpected field.*fact_id"):
         _validate_draft_against_schema(payload, schema)
     del payload["facts"][0]["fact_id"]
+    payload["facts"][0]["scene_hint"] = "雨后站台"
+    with pytest.raises(ValueError, match="unexpected field.*scene_hint"):
+        _validate_draft_against_schema(payload, schema)
+    del payload["facts"][0]["scene_hint"]
     payload["facts"][0]["statement"] = ""
     with pytest.raises(ValueError, match="too short"):
         _validate_draft_against_schema(payload, schema)
@@ -455,6 +463,39 @@ def test_i0_uses_the_same_structured_port_without_creative_fields() -> None:
     assert draft.contract_name == "FactExtractionDraft"
     assert requests[0].json_schema["title"] == "FactExtractionDraft"
     assert evidence.stage is Stage.I0
+
+
+def test_i0_structured_provider_rejects_model_authored_scene_partition_fields() -> None:
+    """Only the local caller may attach an I0 fact to its source partition."""
+
+    requests = []
+    adapter = ClaudeDeepSeekStructuredAdapter(
+        runner=lambda request: requests.append(request) or {
+            "payload": {
+                "facts": [
+                    {
+                        "source_start": 0,
+                        "source_end": 7,
+                        "semantic_type": "prop",
+                        "statement": "手机在桌上。",
+                        "subject_id": "prop:phone",
+                        "scene_hint": "雨后站台",
+                    }
+                ]
+            }
+        },
+        executable="claude.exe",
+    )
+
+    with pytest.raises(ValueError, match="unexpected field.*scene_hint"):
+        adapter.generate(
+            stage_signatures()[Stage.I0],
+            {"normalized_source": "手机在桌上。", "source_digest": "a" * 64},
+            GenerationPolicy(requested_model="deepseek-v4-pro"),
+        )
+
+    fact_schema = requests[0].json_schema["properties"]["facts"]["items"]
+    assert "scene_hint" not in fact_schema["properties"]
 
 
 def test_adapter_rejects_non_draft_fields_after_structured_transport() -> None:

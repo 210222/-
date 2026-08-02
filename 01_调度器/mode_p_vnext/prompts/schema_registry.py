@@ -70,7 +70,6 @@ _SCHEMAS: Mapping[Stage, Mapping[str, Any]] = {
                         },
                         "subject_id": {"type": "string", "minLength": 1, "maxLength": 160},
                         "spoken_text": {"type": "string", "minLength": 1, "maxLength": 1_000},
-                        "scene_hint": {"type": "string", "minLength": 1, "maxLength": 160},
                     },
                 },
             }
@@ -284,7 +283,7 @@ def _assert_canonical_draft_contract(
         if not isinstance(item, Mapping) or item.get("additionalProperties") is not False:
             raise ValueError("I0 fact schema must be a closed object")
         required = {"source_start", "source_end", "semantic_type", "statement"}
-        expected = required | {"subject_id", "spoken_text", "scene_hint"}
+        expected = required | {"subject_id", "spoken_text"}
         if set(item.get("properties", {})) != expected or set(item.get("required", ())) != required:
             raise ValueError("I0 fact schema must declare only source-anchored fields")
         if item["properties"]["semantic_type"].get("enum") != [
@@ -292,7 +291,7 @@ def _assert_canonical_draft_contract(
             "dialogue", "continuity", "asset",
         ]:
             raise ValueError("I0 semantic_type schema must match canonical fact semantics")
-        for field_name in ("statement", "subject_id", "spoken_text", "scene_hint"):
+        for field_name in ("statement", "subject_id", "spoken_text"):
             if item["properties"][field_name].get("minLength") != 1:
                 raise ValueError(f"I0 {field_name} schema must reject empty text")
         return

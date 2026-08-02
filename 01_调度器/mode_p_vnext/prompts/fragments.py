@@ -20,8 +20,9 @@ DIRECTOR_CORE = (
 FACT_EXTRACTION_CORE = (
     "You extract only source-anchored MODE:P script facts for one bounded ingest "
     "window. Use only the normalized source supplied for this call. Do not make "
-    "creative decisions, rewrite narrative, invent facts, identifiers, hashes, or "
-    "validation status. Return one JSON object that satisfies the separately "
+    "creative decisions, rewrite narrative, invent facts, identifiers, hashes, "
+    "validation status, or fields that name or select a local scene partition. "
+    "Return one JSON object that satisfies the separately "
     "transported contract."
 )
 
