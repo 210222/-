@@ -9,7 +9,7 @@ boundaries, resolved fact bindings, and the final VEC graph.
 from __future__ import annotations
 
 from mode_p_vnext.domain.artifact import ArtifactKind, DomainValidationError, canonical_sha256
-from mode_p_vnext.domain.blocking import BlockingCommit
+from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingCommit, BlockingDraft
 from mode_p_vnext.domain.decisions import DirectorDecision, VisualCurvePoint
 from mode_p_vnext.domain.facts import FactRegistry, FactSemantic, ScriptFact
 from mode_p_vnext.domain.ids import IdFactory
@@ -32,6 +32,7 @@ from mode_p_vnext.domain.vec import (
     VisualShot,
     VoiceRequirement,
 )
+from mode_p_vnext.services.blocking_assembler import assemble_blocking_commit
 from mode_p_vnext.services.timeline_allocator import allocate_shot_timelines
 
 
@@ -93,6 +94,54 @@ def _require_fact_scope(facts: FactRegistry, *, episode_id: str, scene_id: str) 
             or fact.qualifiers.scene_id != scene_id
         ):
             raise DomainValidationError("every resolved fact must belong to the VEC episode and scene")
+
+
+def _reconstruct_blocking_draft(commit: BlockingCommit) -> BlockingDraft:
+    """Recover the exact creative B0 Draft represented by a canonical commit.
+
+    ``BlockingCommit`` carries the complete creative beat content but no model
+    authority.  Reconstructing its Draft lets the VEC boundary prove that the
+    supplied commit is the deterministic output of the active local B0
+    compiler, instead of trusting an opaque ID or an external envelope.
+    """
+
+    return BlockingDraft(
+        beats=tuple(
+            BlockingBeatDraft(
+                ordinal=beat.source_ordinal,
+                dramatic_action=beat.dramatic_action,
+                character_states=beat.character_states,
+                prop_states=beat.prop_states,
+                gaze_relations=beat.gaze_relations,
+                action_paths=beat.action_paths,
+                continuity_effect=beat.continuity_effect,
+            )
+            for beat in commit.beats
+        )
+    )
+
+
+def _require_current_blocking_authority(
+    commit: BlockingCommit,
+    *,
+    episode_id: str,
+    scene_id: str,
+    id_factory: IdFactory,
+    program_version: str,
+) -> None:
+    """Fail closed unless B0 is reproducible under the current local authority."""
+
+    expected = assemble_blocking_commit(
+        draft=_reconstruct_blocking_draft(commit),
+        episode_id=episode_id,
+        scene_id=scene_id,
+        id_factory=id_factory,
+        program_version=program_version,
+    )
+    if expected != commit:
+        raise DomainValidationError(
+            "blocking_commit is not rebuildable by the current local B0 compiler"
+        )
 
 
 def _resolve_reference_fact(
@@ -188,6 +237,13 @@ def assemble_vec(
         raise DomainValidationError("id_factory program_version must match the approved VEC program_version")
     if blocking_commit.scene_id != scene_id:
         raise DomainValidationError("blocking_commit scene_id must match the VEC scene")
+    _require_current_blocking_authority(
+        blocking_commit,
+        episode_id=episode_id,
+        scene_id=scene_id,
+        id_factory=id_factory,
+        program_version=program_version,
+    )
     _require_fact_scope(facts, episode_id=episode_id, scene_id=scene_id)
     expected_transition_count = len(draft.shots) - 1
     if len(draft.transition_intents) != expected_transition_count:

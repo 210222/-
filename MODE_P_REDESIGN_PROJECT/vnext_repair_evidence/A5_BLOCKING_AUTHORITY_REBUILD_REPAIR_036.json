@@ -1,0 +1,162 @@
+{
+  "schema_name": "mode_p_vnext_a5_blocking_authority_rebuild_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A5",
+  "created_at": "2026-08-03T01:06:00+08:00",
+  "owner": "codex-a5-deterministic-assembly-20260803",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "SOLE_NORMATIVE_BASELINE",
+    "applicable_sections": [
+      "section 4.3",
+      "section 5.2",
+      "section 7",
+      "section 8",
+      "section 9",
+      "section 15 A5",
+      "section 16",
+      "section 17"
+    ]
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/blocking_assembler.py",
+    "01_调度器/mode_p_vnext/services/vec_assembler.py",
+    "01_调度器/mode_p_vnext/tests/test_a5_vec_assembly.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A5_BLOCKING_AUTHORITY_REBUILD_REPAIR_036.json"
+  ],
+  "artifact_hash_algorithm": "SHA-256 over UTF-8 text with CRLF normalized to LF, matching the ReleaseLedger canonical text-hash rule.",
+  "artifact_hashes_at_evidence_creation": {
+    "01_调度器/mode_p_vnext/services/blocking_assembler.py": "ff940ddc2084d18b07e806a2b7e0fbee230d462577e5a83a8df1d29a8f67bb40",
+    "01_调度器/mode_p_vnext/services/vec_assembler.py": "44de55bb6c6e24c5197b9d78abf2b0088838e01bc33b61df3827773dff953427",
+    "01_调度器/mode_p_vnext/tests/test_a5_vec_assembly.py": "bd8c063623a77291988aed5c6b41160e8747811c616386893f031709fb2a87c1"
+  },
+  "root_repair": {
+    "invariant": "A VEC may consume only the canonical BlockingCommit deterministically compiled by the active local B0 compiler for the same program version, episode, and scene. Opaque IDs remain opaque: their text is never parsed to infer provenance or authority.",
+    "prechange_failure": "A structurally valid BlockingCommit assembled with a foreign IdFactory program version and the same scene passed assemble_vec because the VEC assembler checked only the scene ID. The B0 assembler also accepted any non-empty schema_version into its identity digest. Both paths allowed a noncanonical commit identity to reach VEC assembly without a local proof that it was rebuilt by the current frozen authority.",
+    "repair": "Blocking assembly now rejects every schema_version other than the frozen canonical domain schema. Before allocating any VEC IDs, ticks, requirements, or boundaries, the VEC assembler reconstructs the creative BlockingDraft from the canonical commit content, reassembles it through the current local B0 compiler with the explicit episode, scene, IdFactory, and program version, and requires complete object equality. A foreign-program, foreign-episode, altered-ID, altered-state, or noncanonical-schema commit therefore fails closed without parsing any opaque identifier.",
+    "deterministic_authority": "The model remains limited to B0/B1 creative Draft fields. Local code alone creates and verifies BlockingCommit IDs, state IDs, VEC IDs, hashes, per-shot ticks, N+1 boundaries, typed requirements, and final VEC identity. The verification reuses the canonical local compiler rather than trusting an artifact envelope or a semantic ID prefix.",
+    "regression_proof": "The new tests reproduce the former acceptance of a foreign-program Commit and a same-program Commit from a foreign episode, then require failure under the repaired VEC boundary. A second regression proves an arbitrary schema identity is rejected at B0 creation. The focused suite passed 18 tests after the repair."
+  },
+  "a1_a4_dependency_boundary": {
+    "domain_and_time_boundary": "A1 remains the sole owner of persistent domain types, source provenance, opaque fact handles, 24000-tick time contracts, DurationIntent, capability profiles, and typed binding intents. A5 only consumes those frozen types to compile deterministic Blocking, Timeline, and VEC output.",
+    "provider_boundary": "A4 retains all stage signatures, prompt budgets, provider transport, schema validation, and model-Draft handling. This repair performs no provider I/O and does not alter a model-visible schema or prompt.",
+    "no_duplicate_authority": "No new persistent domain type, legacy adapter, projection, delivery, DP, state-graph, or production behavior was added. The VEC boundary only proves that its existing BlockingCommit input was produced by the active deterministic B0 compiler."
+  },
+  "checks": [
+    {
+      "name": "drafts_contain_creative_choices_only",
+      "exit_code": 0
+    },
+    {
+      "name": "local_ids_hashes_and_ticks",
+      "exit_code": 0
+    },
+    {
+      "name": "local_binding_and_boundary_assembly",
+      "exit_code": 0
+    },
+    {
+      "name": "explicit_visual_beats",
+      "exit_code": 0
+    },
+    {
+      "name": "deterministic_vec_rebuild",
+      "exit_code": 0
+    },
+    {
+      "name": "typed_reference_binding",
+      "exit_code": 0
+    },
+    {
+      "name": "typed_dialogue_audio_binding",
+      "exit_code": 0
+    },
+    {
+      "name": "no_fact_id_or_statement_parsing",
+      "exit_code": 0
+    },
+    {
+      "name": "per_shot_generation_cap",
+      "exit_code": 0
+    },
+    {
+      "name": "scene_duration_not_capped_at_15s",
+      "exit_code": 0
+    },
+    {
+      "name": "dialogue_phase_tick_placement",
+      "exit_code": 0
+    },
+    {
+      "name": "source_span_never_used_as_timing",
+      "exit_code": 0
+    },
+    {
+      "name": "requirements_bound_to_shot_or_beat",
+      "exit_code": 0
+    },
+    {
+      "name": "free_text_intents_not_bound",
+      "exit_code": 0
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a5_vec_assembly",
+      "argv": [
+        "{python}",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_a5_vec_assembly.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "18 passed in 0.24s"
+    }
+  ],
+  "supplemental_regressions": [
+    {
+      "name": "a0_through_a9_prompt_security_v4_active_entrypoints_regression",
+      "exit_code": 0,
+      "summary": "243 passed, 4 subtests passed in 24.35s across A0 control, rebuild control, A1-A9, prompt injection, v4 compatibility, security, and active-entrypoint checks."
+    },
+    {
+      "name": "changed_modules_compile_check",
+      "exit_code": 0,
+      "summary": "python -m compileall -q completed for blocking_assembler.py, vec_assembler.py, and test_a5_vec_assembly.py."
+    },
+    {
+      "name": "changed_paths_diff_check",
+      "exit_code": 0,
+      "summary": "git diff --check passed for the implementation and regression-test paths."
+    },
+    {
+      "name": "release_ledger_audit",
+      "exit_code": 0,
+      "summary": "python -m mode_p_vnext.release_control audit returned no issues before completion."
+    }
+  ],
+  "authority_boundary": {
+    "blocking_boundary": "B0 remains the only source of creative blocking choices. The locally reconstructed Draft is used solely to prove deterministic provenance of the supplied final Commit; it does not add, select, or reinterpret creative content.",
+    "vec_boundary": "VEC rebuilds IDs, hashes, local GenerationUnit timelines, N+1 boundaries, typed reference requirements, audio events, and voice requirements from canonical inputs. It does not accept caller-provided final identities or derive bindings from free text.",
+    "time_boundary": "Per-shot generation capability remains independent of scene duration. Dialogue placement remains phase-based inside the target VisualBeat, and no source-span field participates in timing.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A0-A4 or A6-A10 implementation was changed.",
+    "No v4 production entry, FeatureGate, production switch, external submission, provider invocation, real media run, visual acceptance, or owner approval was started, enabled, or claimed.",
+    "No model output was granted authority over IDs, hashes, source normalization, fact handles, ticks, timelines, boundaries, requirements, VEC, ProjectionAST, or Director decisions."
+  ],
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "external_submission": false
+  }
+}

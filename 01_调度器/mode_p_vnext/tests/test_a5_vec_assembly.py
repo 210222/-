@@ -441,6 +441,42 @@ def test_blocking_commit_rejects_mismatched_program_identity() -> None:
         )
 
 
+def test_blocking_commit_rejects_noncanonical_schema_identity(id_factory) -> None:
+    with pytest.raises(DomainValidationError, match="schema_version must match canonical domain schema"):
+        assemble_blocking_commit(
+            draft=make_blocking_draft(),
+            episode_id=EPISODE_ID,
+            scene_id=SCENE_ID,
+            id_factory=id_factory,
+            program_version=PROGRAM_VERSION,
+            schema_version="foreign-schema-version",
+        )
+
+
+@pytest.mark.parametrize(
+    ("foreign_episode_id", "foreign_program_version"),
+    (
+        (EPISODE_ID, "foreign-approved-program"),
+        ("EP35-foreign", PROGRAM_VERSION),
+    ),
+)
+def test_vec_rejects_blocking_commit_not_rebuildable_by_current_program(
+    id_factory,
+    foreign_episode_id: str,
+    foreign_program_version: str,
+) -> None:
+    foreign_commit = assemble_blocking_commit(
+        draft=make_blocking_draft(),
+        episode_id=foreign_episode_id,
+        scene_id=SCENE_ID,
+        id_factory=IdFactory(program_version=foreign_program_version),
+        program_version=foreign_program_version,
+    )
+
+    with pytest.raises(DomainValidationError, match="rebuildable by the current local B0 compiler"):
+        build_vec(id_factory, foreign_commit)
+
+
 @pytest.mark.parametrize(
     "transition_intents",
     (

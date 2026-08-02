@@ -43,6 +43,10 @@ def assemble_blocking_commit(
     ):
         if not isinstance(value, str) or not value.strip():
             raise DomainValidationError(f"{field_name} must be non-empty")
+    if schema_version != DOMAIN_SCHEMA_VERSION:
+        raise DomainValidationError(
+            f"schema_version must match canonical domain schema {DOMAIN_SCHEMA_VERSION}"
+        )
     if id_factory.program_version != program_version:
         raise DomainValidationError(
             "id_factory program_version must match the approved Blocking program_version"
