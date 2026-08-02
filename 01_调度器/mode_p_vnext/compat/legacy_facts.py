@@ -42,8 +42,10 @@ def read_legacy_script_fact(
     if not isinstance(statement, str) or not statement.strip():
         raise DomainValidationError("legacy fact requires a non-empty statement or summary")
     supporting_text = normalized_source.text_for(source_start, source_end)
-    if statement.strip() not in supporting_text:
-        raise DomainValidationError("legacy fact statement is not supported by the declared span")
+    if supporting_text != statement:
+        raise DomainValidationError(
+            "legacy fact source span must match the complete canonical statement"
+        )
     if not any(
         partition.contains(source_start, source_end)
         for partition in normalized_source.partitions
@@ -53,7 +55,7 @@ def read_legacy_script_fact(
     raw_semantic = record.get("semantic", record.get("kind"))
     return LegacyFactObservation(
         legacy_fact_id=legacy_id if isinstance(legacy_id, str) and legacy_id.strip() else None,
-        statement=statement.strip(),
+        statement=statement,
         source_ref=normalized_source.source_ref,
         source_start=source_start,
         source_end=source_end,

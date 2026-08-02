@@ -319,8 +319,10 @@ class ScriptFact:
             if not partition.contains(span.source_start, span.source_end):
                 raise DomainValidationError("fact provenance crosses a source partition")
             text = source.text_for(span.source_start, span.source_end)
-            if self.statement.strip() not in text:
-                raise DomainValidationError("statement is not directly supported by its source span")
+            if text != self.statement:
+                raise DomainValidationError(
+                    "fact source span must match the complete canonical statement"
+                )
             if self.semantic is FactSemantic.DIALOGUE:
                 assert self.qualifiers.spoken_text is not None
                 if self.qualifiers.spoken_text not in text:

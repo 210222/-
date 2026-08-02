@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import ast
 import dataclasses
+import importlib
 import inspect
 from pathlib import Path
 
@@ -292,7 +293,7 @@ def test_local_fact_assembler_validates_deduplicates_and_mints_opaque_handles():
     with pytest.raises(DomainValidationError, match="exact registry member"):
         registry.by_handle("fh:" + "f" * 64)
     unsupported = dataclasses.replace(_drafts(source)[0], statement="不存在")
-    with pytest.raises(DomainValidationError, match="supported"):
+    with pytest.raises(DomainValidationError, match="complete canonical statement"):
         FactAssembler().assemble(
             normalized_source=source, normalized_source_artifact_id="normalized-source:1", drafts=(unsupported,),
             source_kind=FactKind.SCRIPT, producer_stage="I0.fact_assembler", created_at_utc=UTC,
@@ -309,6 +310,33 @@ def test_fact_source_span_must_match_the_complete_canonical_statement():
             normalized_source=source,
             normalized_source_artifact_id="normalized-source:1",
             drafts=(broad_span,),
+            source_kind=FactKind.SCRIPT,
+            producer_stage="I0.fact_assembler",
+            created_at_utc=UTC,
+        )
+
+    _, envelope = _assembled()
+    fact = envelope.payload.facts[0]
+    broad_provenance = dataclasses.replace(fact.provenance[0], source_start=0)
+    with pytest.raises(DomainValidationError, match="complete canonical statement"):
+        dataclasses.replace(fact, provenance=(broad_provenance,)).validate_against_normalized_source(
+            source
+        )
+
+    with pytest.raises(DomainValidationError, match="complete canonical statement"):
+        read_legacy_script_fact(
+            {"fact_id": "legacy-1", "statement": draft.statement},
+            normalized_source=source,
+            source_start=0,
+            source_end=draft.source_end,
+        )
+
+    padded = dataclasses.replace(draft, statement=f" {draft.statement} ")
+    with pytest.raises(DomainValidationError, match="complete canonical statement"):
+        FactAssembler().assemble(
+            normalized_source=source,
+            normalized_source_artifact_id="normalized-source:1",
+            drafts=(padded,),
             source_kind=FactKind.SCRIPT,
             producer_stage="I0.fact_assembler",
             created_at_utc=UTC,
@@ -333,9 +361,13 @@ def test_fact_semantics_and_source_spans_are_typed_provenance_only():
 
 def test_legacy_adapters_are_read_only_observations(tmp_path: Path):
     source = _source()
+    statement = "安娜说：走吧。"
+    source_start = source.normalized_text.index(statement)
     observation = read_legacy_script_fact(
-        {"fact_id": "dialogue_1", "statement": "安娜说：走吧。", "semantic": "dialogue"},
-        normalized_source=source, source_start=12, source_end=20,
+        {"fact_id": "dialogue_1", "statement": statement, "semantic": "dialogue"},
+        normalized_source=source,
+        source_start=source_start,
+        source_end=source_start + len(statement),
     )
     assert isinstance(observation, LegacyFactObservation)
     assert observation.requires_reingest is True
@@ -356,6 +388,69 @@ def test_legacy_adapters_are_read_only_observations(tmp_path: Path):
     assert isinstance(legacy_checkpoint, LegacyCheckpointObservation)
     assert legacy_checkpoint.requires_reassembly is True
     assert not hasattr(legacy_checkpoint, "artifact_id")
+
+
+def test_known_legacy_persistent_authority_modules_are_retired_fail_closed():
+    from mode_p_vnext.compat.retired_authority import (
+        LegacyAuthorityObservation,
+        RetiredAuthorityError,
+    )
+
+    legacy_modules = (
+        "mode_p_vnext.director_vnext1.contracts",
+        "mode_p_vnext.director_vnext1.projection",
+        "mode_p_vnext.director_vnext1.revision",
+        "mode_p_vnext.schema.canonical_timeline",
+        "mode_p_vnext.schema.fact_registry",
+        "mode_p_vnext.storyboard_projection",
+        "mode_p_vnext.services.projection_compiler",
+        "mode_p_vnext.adapters.delivery.capability",
+        "mode_p_vnext.adapters.delivery.storyboard_adapter",
+        "mode_p_vnext.adapters.delivery.video_adapter",
+        "mode_p_vnext.adapters.delivery",
+    )
+    package_root = Path(__file__).resolve().parents[1]
+    for module_name in legacy_modules:
+        module = importlib.import_module(module_name)
+        assert module.MIGRATION_DISPOSITION == "HISTORICAL_READ_ONLY"
+        assert module.PERSISTENT_CONSTRUCTION_AUTHORIZED is False
+        assert len(module.HISTORICAL_GIT_BLOB_OID) == 40
+        assert set(module.HISTORICAL_GIT_BLOB_OID) <= set("0123456789abcdef")
+        observation = module.observe_legacy_payload({"module": module_name})
+        assert isinstance(observation, LegacyAuthorityObservation)
+        assert observation.requires_reingest is True
+        assert observation.persistent_write_authorized is False
+        assert not hasattr(observation, "ARTIFACT_KIND")
+        assert not hasattr(observation, "artifact_id")
+        with pytest.raises(dataclasses.FrozenInstanceError):
+            observation.requires_reingest = False
+        with pytest.raises(RetiredAuthorityError, match="retired"):
+            module.construct_legacy_authority()
+        with pytest.raises(RetiredAuthorityError, match="retired"):
+            getattr(module, "LegacyPersistentConstructor")
+
+        relative = Path(*module_name.split(".")[1:])
+        source_path = package_root / relative
+        if source_path.is_dir():
+            source_path = source_path / "__init__.py"
+        else:
+            source_path = source_path.with_suffix(".py")
+        tree = ast.parse(source_path.read_text(encoding="utf-8"))
+        dataclass_names = [
+            node.name
+            for node in tree.body
+            if isinstance(node, ast.ClassDef)
+            and any(
+                (isinstance(item, ast.Name) and item.id == "dataclass")
+                or (
+                    isinstance(item, ast.Call)
+                    and isinstance(item.func, ast.Name)
+                    and item.func.id == "dataclass"
+                )
+                for item in node.decorator_list
+            )
+        ]
+        assert dataclass_names == [], f"retired authority remains executable in {module_name}"
 
 
 def test_24000_tick_capability_applies_per_generation_unit_not_scene():

@@ -1,39 +1,34 @@
-"""Delivery adapters for MODE:P vNext projections.
+"""Retired v2 delivery package; historical evidence only."""
 
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §10 / §14 A6.
+from __future__ import annotations
 
-Adapters may only format a projection or perform explicit capability
-degradation.  Every degradation is recorded as a CapabilityAdaptationRecord;
-adapters never invent events, and adapter-only recompiles never invoke the
-Director (the render functions are pure).
-"""
+from typing import Mapping
 
-from mode_p_vnext.adapters.delivery.capability import (
-    CapabilityAdaptationRecord,
-    CapabilityProfile,
-    capability_profile_digest,
-)
-from mode_p_vnext.adapters.delivery.storyboard_adapter import (
-    StoryboardDelivery,
-    StoryboardPanel,
-    render_storyboard,
-    storyboard_adapter_version,
-)
-from mode_p_vnext.adapters.delivery.video_adapter import (
-    VideoDelivery,
-    render_video,
-    video_adapter_version,
+from mode_p_vnext.compat.retired_authority import (
+    LegacyAuthorityObservation,
+    observe_legacy_payload as _observe,
+    reject_legacy_construction,
 )
 
-__all__ = [
-    "CapabilityAdaptationRecord",
-    "CapabilityProfile",
-    "StoryboardDelivery",
-    "StoryboardPanel",
-    "VideoDelivery",
-    "capability_profile_digest",
-    "render_storyboard",
-    "render_video",
-    "storyboard_adapter_version",
-    "video_adapter_version",
-]
+MIGRATION_DISPOSITION = "HISTORICAL_READ_ONLY"
+PERSISTENT_CONSTRUCTION_AUTHORIZED = False
+HISTORICAL_GIT_BLOB_OID = "f35d5f3470568e0eb37a34cdcf39553b1b95318a"
+CANONICAL_REPLACEMENT_MODULES = ("mode_p_vnext.adapters.delivery_v30",)
+
+
+def observe_legacy_payload(payload: Mapping[str, object]) -> LegacyAuthorityObservation:
+    return _observe(
+        payload,
+        source_module=__name__,
+        historical_git_blob_oid=HISTORICAL_GIT_BLOB_OID,
+    )
+
+
+def construct_legacy_authority(*_args: object, **_kwargs: object) -> None:
+    reject_legacy_construction(__name__)
+
+
+def __getattr__(name: str) -> object:
+    if name.startswith("__"):
+        raise AttributeError(name)
+    reject_legacy_construction(f"{__name__}.{name}")

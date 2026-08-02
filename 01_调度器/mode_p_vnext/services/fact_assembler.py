@@ -68,8 +68,10 @@ class FactAssembler:
             if not partition.contains(draft.source_start, draft.source_end):
                 raise DomainValidationError("fact draft source span crosses its scene partition")
             supporting_text = normalized_source.text_for(draft.source_start, draft.source_end)
-            if draft.statement.strip() not in supporting_text:
-                raise DomainValidationError("fact statement is not exactly supported by its source span")
+            if supporting_text != draft.statement:
+                raise DomainValidationError(
+                    "fact source span must match the complete canonical statement"
+                )
             if (
                 draft.qualifiers.spoken_text is not None
                 and draft.qualifiers.spoken_text not in supporting_text

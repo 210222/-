@@ -1,0 +1,183 @@
+{
+  "schema_name": "mode_p_vnext_a1_domain_authority_convergence_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A1",
+  "created_at": "2026-08-02T12:52:05+08:00",
+  "owner": "codex-a1-v30-domain-convergence-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "relevant_sections": ["5.1", "6", "7", "8", "15 A1"]
+  },
+  "trigger": {
+    "upstream_rebaseline_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_V30_DOMAIN_AUTHORITY_OWNERSHIP_REBASELINE_025.json",
+    "previous_failure_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_V30_DOMAIN_AUTHORITY_SCOPE_BLOCKER_024.json"
+  },
+  "root_causes_closed": [
+    "FactAssembler and ScriptFact accepted a statement merely contained within a broader source span instead of requiring the normalized source slice and complete statement to be identical.",
+    "Sixteen canonical-name persistent dataclasses remained executable across rejected Director, timeline, fact, storyboard, Projection and delivery islands.",
+    "The old Projection and delivery implementation paths could be imported as a second pre-v3 authority even though A6 now owns clean v3.0 implementation paths."
+  ],
+  "failure_first_results": [
+    {
+      "name": "registered_a1_before_convergence",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 1,
+      "summary": "10 passed, 2 failed: over-broad source span accepted and sixteen duplicate canonical authorities found."
+    },
+    {
+      "name": "expanded_a1_failure_contract",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider -k 'complete_canonical_statement or known_legacy_persistent_authority_modules'",
+      "exit_code": 1,
+      "summary": "Both exact-span and explicit historical-authority retirement guards failed before implementation."
+    }
+  ],
+  "implementation": {
+    "exact_source_semantics": [
+      "FactAssembler requires normalized_source.text_for(start,end) == FactExtractionDraft.statement without trimming or containment.",
+      "ScriptFact.validate_against_normalized_source applies the same exact equality to every provenance span.",
+      "The legacy fact observation adapter applies the same equality and cannot widen provenance."
+    ],
+    "historical_authority_retirement": {
+      "module_count": 11,
+      "persistent_dataclass_count_after": 0,
+      "duplicate_canonical_name_count_after": 0,
+      "disposition": "HISTORICAL_READ_ONLY",
+      "persistent_construction_authorized": false,
+      "missing_legacy_symbol_behavior": "RetiredAuthorityError",
+      "future_projection_path": "mode_p_vnext.services.projection_compiler_v30",
+      "future_delivery_path": "mode_p_vnext.adapters.delivery_v30"
+    },
+    "read_only_observation_boundary": {
+      "type": "LegacyAuthorityObservation",
+      "classification": "EXPLICIT_NON_PERSISTENT_DTO",
+      "deep_frozen_payload": true,
+      "requires_reingest": true,
+      "persistent_write_authorized": false,
+      "artifact_kind_present": false,
+      "artifact_id_present": false
+    }
+  },
+  "historical_git_blobs": {
+    "mode_p_vnext.director_vnext1.contracts": "5002e9b9b2a12afaaba25591d1668c4d60864a24",
+    "mode_p_vnext.director_vnext1.projection": "0291ee0d4a622e6228a0c4dd8fc8478b03115da0",
+    "mode_p_vnext.director_vnext1.revision": "ef6e352a88c87d15fb5af7c3b6e6092c4fbfeb78",
+    "mode_p_vnext.schema.canonical_timeline": "71962570158777d61f3ff5d1b3bfd37325842709",
+    "mode_p_vnext.schema.fact_registry": "3088208dfdad2b73bbb7d42fcf3d04a4f8f5cc99",
+    "mode_p_vnext.storyboard_projection": "3838303e8c4e0677d8328bca961a797dc034ab27",
+    "mode_p_vnext.services.projection_compiler": "2bad649321786428fa58a3461155763eedb331dd",
+    "mode_p_vnext.adapters.delivery.capability": "e284fb323e4c98c97ae65a21ac2d0eec3906ed83",
+    "mode_p_vnext.adapters.delivery.storyboard_adapter": "c6408e62bc2556ed8ae8eeca3698355a65310e5b",
+    "mode_p_vnext.adapters.delivery.video_adapter": "5b72d558e34c18341d4fe19bdfa8090050076678",
+    "mode_p_vnext.adapters.delivery": "f35d5f3470568e0eb37a34cdcf39553b1b95318a"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/adapters/delivery/__init__.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/capability.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/storyboard_adapter.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/video_adapter.py",
+    "01_调度器/mode_p_vnext/compat/__init__.py",
+    "01_调度器/mode_p_vnext/compat/legacy_facts.py",
+    "01_调度器/mode_p_vnext/compat/retired_authority.py",
+    "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "01_调度器/mode_p_vnext/director_vnext1/projection.py",
+    "01_调度器/mode_p_vnext/director_vnext1/revision.py",
+    "01_调度器/mode_p_vnext/domain/facts.py",
+    "01_调度器/mode_p_vnext/schema/canonical_timeline.py",
+    "01_调度器/mode_p_vnext/schema/fact_registry.py",
+    "01_调度器/mode_p_vnext/services/fact_assembler.py",
+    "01_调度器/mode_p_vnext/services/projection_compiler.py",
+    "01_调度器/mode_p_vnext/storyboard_projection.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py"
+  ],
+  "checks": [
+    {"name": "canonical_artifact_envelope", "exit_code": 0},
+    {"name": "canonical_24000_tick_timebase", "exit_code": 0},
+    {"name": "draft_artifact_separation", "exit_code": 0},
+    {"name": "no_duplicate_domain_authority", "exit_code": 0},
+    {"name": "known_legacy_domain_authorities_retired", "exit_code": 0},
+    {"name": "semantic_equivalent_persistent_type_audit", "exit_code": 0},
+    {"name": "domain_schemas_frozen_for_downstream", "exit_code": 0},
+    {"name": "legacy_read_adapter_only", "exit_code": 0},
+    {"name": "normalized_source_contract", "exit_code": 0},
+    {"name": "local_fact_assembler_ownership", "exit_code": 0},
+    {"name": "typed_fact_semantics", "exit_code": 0},
+    {"name": "opaque_fact_handles_and_ids", "exit_code": 0},
+    {"name": "source_span_provenance_only", "exit_code": 0},
+    {"name": "generation_capability_profile", "exit_code": 0},
+    {"name": "duration_intent_not_raw_ticks", "exit_code": 0},
+    {"name": "typed_reference_binding_intent", "exit_code": 0},
+    {"name": "typed_dialogue_binding_intent", "exit_code": 0}
+  ],
+  "precompletion_results": [
+    {
+      "name": "a1_registered_verification",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "13 passed."
+    },
+    {
+      "name": "registered_and_related_regressions",
+      "command": "A1 plus all A0 registered tests and A2/A3/A4 structural regressions",
+      "exit_code": 0,
+      "summary": "142 passed."
+    },
+    {
+      "name": "v4_ep35_external_fixture_suite",
+      "command": "python -m pytest mode_p/test_ep35_s1_pipeline.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "95 skipped because external fixture conditions were unavailable; not counted as passing evidence."
+    },
+    {
+      "name": "historical_blob_reproducibility",
+      "command": "git cat-file -e <oid>^{blob} for all eleven recorded source blobs",
+      "exit_code": 0,
+      "summary": "11/11 historical Git blob objects exist."
+    },
+    {
+      "name": "release_ledger_audit",
+      "command": "python -m mode_p_vnext.release_control audit",
+      "exit_code": 0,
+      "summary": "ok=true, issues=[]"
+    },
+    {
+      "name": "patch_integrity",
+      "command": "git diff --check; compileall changed Python authority paths",
+      "exit_code": 0,
+      "summary": "No syntax or whitespace errors."
+    }
+  ],
+  "downstream_preconditions": {
+    "A6_A7_old_path_collection": "EXPECTED_FAIL_CLOSED",
+    "reason": "Their pre-v3 tests still import the retired projection compiler; A6 and A7 must migrate to the new registered v3.0 paths in their own work packages.",
+    "current_work_package_did_not_modify_downstream_tests": true
+  },
+  "deepseek_v4_flash_advisory": {
+    "transport": "Claude Code CLI",
+    "model": "deepseek-v4-flash",
+    "effort": "max",
+    "authority": false,
+    "strategy_verdict": "RETIRE_OLD_PERSISTENT_AUTHORITY",
+    "final_verdict": "PASS_DRAFT",
+    "persistent_review_session_id": "7b819a6c-6be9-4c30-9512-a97fe0cf4865",
+    "cache_probe": {
+      "new_input_tokens": 173,
+      "cache_read_input_tokens": 4352,
+      "cache_creation_input_tokens": 0,
+      "output_tokens": 53,
+      "cache_hit_proven": true
+    },
+    "contract_observation": "The model still emitted Markdown-fenced or syntactically invalid JSON in advisory calls, so no model response was accepted as a typed contract or Evidence."
+  },
+  "non_goals": [
+    "No A2 implementation was modified or claimed.",
+    "No A6 or A7 new implementation was started.",
+    "No v4 source, v4 production entry, media runtime, or external submission was changed.",
+    "No historical test was redefined as v3 authority.",
+    "No model response minted or validated IDs, hashes, ticks, boundaries, bindings, VEC, ProjectionAST, Evidence, or ledger state."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false
+}

@@ -1,65 +1,37 @@
-"""Capability profile and explicit adaptation records for delivery adapters.
-
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §10 / §14 A6.
-
-A CapabilityProfile is a verified platform snapshot.  The digest is bound into
-every ProjectionManifest.  Adapters may degrade output to match the profile,
-but every degradation must be recorded as a CapabilityAdaptationRecord — the
-record is the audit trail that makes "adapter-only changes" distinguishable
-from Director-level creative changes.
-"""
+"""Retired v2 delivery capability authority; historical evidence only."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from typing import Mapping
 
-from mode_p_vnext.domain.artifact import DomainValidationError, canonical_sha256
+from mode_p_vnext.compat.retired_authority import (
+    LegacyAuthorityObservation,
+    observe_legacy_payload as _observe,
+    reject_legacy_construction,
+)
 
-
-@dataclass(frozen=True)
-class CapabilityProfile:
-    """Verified platform capability snapshot (frozen, hashable)."""
-
-    platform: str
-    version: str
-    max_prompt_chars: int
-    reference_slots: int
-    internal_cuts_supported: bool
-
-    def __post_init__(self) -> None:
-        if not isinstance(self.platform, str) or not self.platform.strip():
-            raise DomainValidationError("platform must be non-empty")
-        if not isinstance(self.version, str) or not self.version.strip():
-            raise DomainValidationError("version must be non-empty")
-        if isinstance(self.max_prompt_chars, bool) or not isinstance(
-            self.max_prompt_chars, int
-        ) or self.max_prompt_chars < 1:
-            raise DomainValidationError("max_prompt_chars must be a positive integer")
-        if isinstance(self.reference_slots, bool) or not isinstance(
-            self.reference_slots, int
-        ) or self.reference_slots < 0:
-            raise DomainValidationError("reference_slots must be a non-negative integer")
-        if not isinstance(self.internal_cuts_supported, bool):
-            raise DomainValidationError("internal_cuts_supported must be a bool")
+MIGRATION_DISPOSITION = "HISTORICAL_READ_ONLY"
+PERSISTENT_CONSTRUCTION_AUTHORIZED = False
+HISTORICAL_GIT_BLOB_OID = "e284fb323e4c98c97ae65a21ac2d0eec3906ed83"
+CANONICAL_REPLACEMENT_MODULES = (
+    "mode_p_vnext.domain.time",
+    "mode_p_vnext.domain.projection",
+)
 
 
-@dataclass(frozen=True)
-class CapabilityAdaptationRecord:
-    """One explicit capability degradation applied by an adapter.
-
-    node_id names the projection node the degradation applies to ("" when the
-    record covers the whole delivery).  ``capability`` names the profile
-    dimension, ``action`` describes what the adapter did (e.g. segment_per_shot,
-    chunked, flag_reference_budget_exceeded), and ``reason`` states why.
-    """
-
-    node_id: str
-    capability: str
-    action: str
-    reason: str
-    adapter_version: str
+def observe_legacy_payload(payload: Mapping[str, object]) -> LegacyAuthorityObservation:
+    return _observe(
+        payload,
+        source_module=__name__,
+        historical_git_blob_oid=HISTORICAL_GIT_BLOB_OID,
+    )
 
 
-def capability_profile_digest(profile: CapabilityProfile) -> str:
-    """Deterministic digest of a capability profile for manifest binding."""
-    return canonical_sha256(profile)
+def construct_legacy_authority(*_args: object, **_kwargs: object) -> None:
+    reject_legacy_construction(__name__)
+
+
+def __getattr__(name: str) -> object:
+    if name.startswith("__"):
+        raise AttributeError(name)
+    reject_legacy_construction(f"{__name__}.{name}")
