@@ -1,0 +1,199 @@
+{
+  "schema_name": "mode_p_vnext_a1_persistence_atomic_migration_ownership_blocker_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A1",
+  "created_at": "2026-08-02T14:17:58+08:00",
+  "owner": "codex-a1-v30-persistence-authority-audit-20260802",
+  "classification": "ARCHITECTURE_BOUNDARY_FAILURE",
+  "disposition": "FAIL_CLOSED",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "violated_sections": [
+      "5.1",
+      "11",
+      "15 A0",
+      "15 A1",
+      "15 A2"
+    ]
+  },
+  "triggering_evidence": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_V30_PERSISTENT_TYPE_OWNERSHIP_BLOCKER_028.json",
+    "sha256": "215ef2ef76502085b41284e0824ab5f43f7df6448a96bd15ad94577fc46fb992",
+    "refinement": "Evidence 028 correctly reopened A1 because the canonical persistent types are absent from mode_p_vnext.domain. The present audit proves that A1 still cannot repair the invariant atomically because the executable semantic equivalents are owned by A2 or remain in legacy lifecycle paths outside A1."
+  },
+  "locked_requirements": [
+    "All persistent types are defined only in mode_p_vnext.domain.",
+    "Pipeline and runtime modules must not define persistent dataclasses or semantic equivalents.",
+    "A1 must pass no_duplicate_domain_authority and semantic_equivalent_persistent_type_audit before freezing schemas for downstream work.",
+    "A0-A10 path ownership must remain disjoint, and a work package may not edit another package's paths.",
+    "A migration cannot create a new canonical authority while leaving the old executable authority active."
+  ],
+  "root_cause": "The A0 ownership rebaseline moved Projection and Delivery duplicate-authority retirement into A1, but did not perform the equivalent ownership rebaseline for the persistent graph and lifecycle schemas. A1 owns domain/** but not the executable pipeline, runtime, or legacy persistence authorities that must be retired in the same atomic migration.",
+  "persistent_authority_inventory": [
+    {
+      "path": "01_调度器/mode_p_vnext/pipeline/state.py",
+      "symbols": [
+        "ArtifactRef",
+        "NodeAcceptance",
+        "PersistentGraphState"
+      ],
+      "persistence_role": "Defines serialized artifact, acceptance, and graph-state records."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/pipeline/graph.py",
+      "symbols": [
+        "NodeSpec"
+      ],
+      "persistence_role": "Defines graph descriptors persisted in RUN metadata and bound by graph digest."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/pipeline/invalidation.py",
+      "symbols": [
+        "InvalidationRecord"
+      ],
+      "persistence_role": "Defines invalidation transition records serialized into committed state."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/runtime/transaction.py",
+      "symbols": [
+        "PendingNodeWrite"
+      ],
+      "persistence_role": "Defines durable pending-write and manifest-bound transaction records."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/runtime/cache.py",
+      "symbols": [
+        "NodeCacheKey"
+      ],
+      "persistence_role": "Defines serialized restart-safe cache identity records."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/runtime/session.py",
+      "symbols": [
+        "RUN schema",
+        "CURRENT pointer schema",
+        "checkpoint schema"
+      ],
+      "persistence_role": "Owns raw durable session schemas and imports non-domain persistent types."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/session_state.py",
+      "symbols": [
+        "PersistentSession"
+      ],
+      "persistence_role": "Remains an executable legacy session-state authority."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/atomic_commit.py",
+      "symbols": [
+        "Transaction"
+      ],
+      "persistence_role": "Remains an executable legacy transaction authority."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/concurrency_lock.py",
+      "symbols": [
+        "SessionLock"
+      ],
+      "persistence_role": "Remains an executable lock and lease authority used by runtime session code."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/dependency_invalidation.py",
+      "symbols": [
+        "legacy invalidation records"
+      ],
+      "persistence_role": "Remains an executable legacy invalidation authority."
+    }
+  ],
+  "release_ledger_ownership_conflict": {
+    "a1_allowed_scope": [
+      "01_调度器/mode_p_vnext/domain/**",
+      "A1 compatibility and pre-existing Projection/Delivery migration paths",
+      "A1 tests and Evidence"
+    ],
+    "excluded_required_retirement_paths": [
+      "01_调度器/mode_p_vnext/pipeline/state.py",
+      "01_调度器/mode_p_vnext/pipeline/graph.py",
+      "01_调度器/mode_p_vnext/pipeline/invalidation.py",
+      "01_调度器/mode_p_vnext/runtime/cache.py",
+      "01_调度器/mode_p_vnext/runtime/session.py",
+      "01_调度器/mode_p_vnext/runtime/transaction.py",
+      "01_调度器/mode_p_vnext/session_state.py",
+      "01_调度器/mode_p_vnext/atomic_commit.py",
+      "01_调度器/mode_p_vnext/concurrency_lock.py",
+      "01_调度器/mode_p_vnext/dependency_invalidation.py"
+    ],
+    "a2_owns_domain": false,
+    "a1_can_repair_atomically": false,
+    "conclusion": "Adding canonical domain types in A1 without retiring the existing executable semantic equivalents would create dual authority and fail A1's required checks. Deferring retirement to A2 would freeze an invalid A1 domain and violate the downstream schema-freeze gate."
+  },
+  "failed_checks": [
+    {
+      "name": "no_duplicate_domain_authority",
+      "exit_code": 1,
+      "reason": "Executable persistence authority would remain outside domain after any A1-scope-only addition."
+    },
+    {
+      "name": "semantic_equivalent_persistent_type_audit",
+      "exit_code": 1,
+      "reason": "Non-domain dataclasses and raw durable schema contracts are semantic equivalents of the required canonical domain types."
+    },
+    {
+      "name": "domain_schemas_frozen_for_downstream",
+      "exit_code": 1,
+      "reason": "The canonical domain cannot be frozen while the old executable authorities cannot be retired by the same work package."
+    }
+  ],
+  "deepseek_v4_flash_advisory": {
+    "transport": "Claude Code CLI",
+    "model": "deepseek-v4-flash",
+    "effort": "max",
+    "tools_enabled": false,
+    "session_id": "7b819a6c-6be9-4c30-9512-a97fe0cf4865",
+    "authority": false,
+    "verdict": "BLOCK_DRAFT",
+    "summary": "No compliant route exists within domain/** alone. The old executable persistent types are outside A1 ownership, so single authority is unsatisfiable without an A0 control-plane ownership rebaseline."
+  },
+  "required_remediation_sequence": [
+    "Fail A1 under its current exclusive lock and stop the work package.",
+    "In a later control-plane-only round, invalidate A0 because its path ownership registry cannot express the required atomic persistence-authority migration.",
+    "Re-run A0 to assign the old persistence-authority files to A1 for retirement and assign A2 clean replacement implementation paths; preserve disjoint ownership and v4 isolation.",
+    "Re-run A1 to define the canonical persistent schemas in mode_p_vnext.domain and retire or convert every old executable semantic equivalent in the same work package.",
+    "Resume A2 only after A1 completes; implement storage behavior exclusively against A1 domain schemas in the clean A2 paths.",
+    "Run all registered checks, affected regressions, architecture authority scans, Evidence validation, ReleaseLedger audit, and Git verification at every package boundary."
+  ],
+  "candidate_rebaseline_scope_for_a0_review": {
+    "a1_retirement_candidates": [
+      "01_调度器/mode_p_vnext/pipeline/state.py",
+      "01_调度器/mode_p_vnext/pipeline/graph.py",
+      "01_调度器/mode_p_vnext/pipeline/invalidation.py",
+      "01_调度器/mode_p_vnext/runtime/cache.py",
+      "01_调度器/mode_p_vnext/runtime/session.py",
+      "01_调度器/mode_p_vnext/runtime/transaction.py",
+      "01_调度器/mode_p_vnext/session_state.py",
+      "01_调度器/mode_p_vnext/atomic_commit.py",
+      "01_调度器/mode_p_vnext/concurrency_lock.py",
+      "01_调度器/mode_p_vnext/dependency_invalidation.py"
+    ],
+    "a2_clean_path_categories": [
+      "new v3.0 persistent graph implementation module",
+      "new v3.0 invalidation implementation module",
+      "new v3.0 runtime cache module",
+      "new v3.0 runtime session module",
+      "new v3.0 runtime transaction module",
+      "new v3.0 runtime locking module"
+    ],
+    "authority_note": "These are evidence-backed candidates for A0 registry design, not a modification of the frozen architecture and not final path names. A0 must choose and verify exact disjoint paths against v3.0 invariants."
+  },
+  "implementation_files_modified": false,
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_V30_PERSISTENCE_ATOMIC_MIGRATION_OWNERSHIP_BLOCKER_029.json"
+  ],
+  "source_commit": "782fc8552045775070893c5b2442742763166b3d",
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false,
+  "media_visual_acceptance": false
+}
