@@ -1,0 +1,156 @@
+{
+  "schema_name": "mode_p_vnext_a7_gate_dp_media_boundary_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A7",
+  "created_at": "2026-08-03T01:52:23+08:00",
+  "owner": "codex-a7-gate-dp-20260803",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "SOLE_NORMATIVE_BASELINE",
+    "applicable_sections": [
+      "section 3",
+      "section 4.2",
+      "section 13",
+      "section 15 A7",
+      "section 16",
+      "section 17"
+    ]
+  },
+  "changed_paths": [
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/services/deterministic_gates.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/services/revision_router.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/pipeline/verification_nodes.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/ports/media_verifier.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a7_dual_loop.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A7_GATE_DP_MEDIA_BOUNDARY_REPAIR_038.json"
+  ],
+  "artifact_hash_algorithm": "SHA-256 over UTF-8 text with CRLF normalized to LF, matching the ReleaseLedger canonical text-hash rule.",
+  "artifact_hashes_at_evidence_creation": {
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/services/deterministic_gates.py": "5869537565e583e4006ae8be347ceed9f5f632fc036be78c82ad11f537bc4939",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/services/revision_router.py": "27f39cf9c5d7ee71c7490afa6142c0dc649d445ed8c5a081b77791e787ee59a9",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/pipeline/verification_nodes.py": "3f9b746a6424b1841e53885150236b1618f47426c4863cd9d34cf307f7019b0c",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/ports/media_verifier.py": "925eccefe5a28350a80fa9e6c120b0a0fbad64ec50a44060e37743d221db9d17",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a7_dual_loop.py": "353b4fee1fdcadab07bb6853265ac59660a88f943e07b437a0335a28734f6141"
+  },
+  "root_repair": {
+    "invariant": "Gate 0 is a zero-model, fail-closed proof over the canonical VEC and the one A6 ProjectionAST. A fresh DP receives only a locally minted minimal ReviewPacket and can return only a bounded RevisionRequest against an exposed opaque artifact. Media-related DTOs cannot turn text or an unbound frame fixture into a visual acceptance claim; A7 has no active real-media adapter.",
+    "prechange_failure": "Gate 0 accepted any unique machine-shaped ProjectionAST/node IDs instead of re-deriving the frozen A6 identity from canonical VEC content and compiler version. It accepted a same-length changed prompt payload with a stale approved_input digest, and malformed CompiledPrompt fields could raise during evidence creation instead of yielding an auditable failed Gate result. build_dp_review_packet trusted a passed-shaped Gate result without re-deriving its local ID, while DP assembly allowed a local RevisionScope to nominate an artifact absent from the ReviewPacket. Passing MediaVerificationOutput values could omit outcome attribution; MediaEvidence could be rebound across a different frame plan and its identity varied with provider frame ordering.",
+    "repair": "Gate 0 now uses the frozen A6 compiler identity recipe only as a verifier: it re-derives AST and node IDs from canonical VEC digest plus compiler version, validates ProjectionManifest compiler identity while preserving A6 adapter-only recompilation, and recompiles every normal stage prompt through the frozen A4 signature/schema compiler to verify canonical schema, input digest, budget, system text, and user text. Malformed prompt input is converted into deterministic invalid-prompt evidence and a failed Gate result. Gate-to-DP assembly re-derives the passed Gate result ID and its canonical VEC/Projection/manifest evidence before DP can start. Revision scopes require opaque IDs and must be explicit members of the ReviewPacket. Media verification now requires outcome attribution for both pass and failure, re-derives local frame-plan and MediaEvidence identities, requires exact plan/run linkage, and normalizes frame evidence to the deterministic plan order.",
+    "deterministic_authority": "Models remain limited to DPReviewDraft and RevisionRequestDraft fields. Local code verifies prompt and projection identities, allocates Gate, packet, session, review, revision, frame-plan, media-evidence, and visual-verification IDs, and rejects any missing or foreign binding. No model, adapter, compatibility layer, or media DTO can rewrite VEC, ProjectionAST, Director choices, typed bindings, ticks, or canonical IDs.",
+    "regression_proof": "New regressions reproduce a forged but machine-shaped ProjectionAST ID, same-length prompt payload substitution with stale digest, malformed CompiledPrompt handling, a forged passed Gate result, an unseen or free-text DP target, missing pass attribution, cross-plan evidence reuse, and order-dependent frame evidence. The focused A7 suite passed 30 tests after repair. A separate regression proves A6 adapter-only recompilation remains valid rather than being mistaken for a second Projection authority."
+  },
+  "checks": [
+    {
+      "name": "deterministic_gate_zero",
+      "exit_code": 0
+    },
+    {
+      "name": "fresh_independent_dp_packet",
+      "exit_code": 0
+    },
+    {
+      "name": "dp_only_emits_bounded_revision_request",
+      "exit_code": 0
+    },
+    {
+      "name": "bounded_revision_router",
+      "exit_code": 0
+    },
+    {
+      "name": "text_cannot_claim_visual_acceptance",
+      "exit_code": 0
+    },
+    {
+      "name": "media_outcome_attribution",
+      "exit_code": 0
+    },
+    {
+      "name": "canonical_projection_and_evidence_consumption",
+      "exit_code": 0
+    },
+    {
+      "name": "external_media_not_started",
+      "exit_code": 0
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a7_dual_loop",
+      "argv": [
+        "{python}",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_a7_dual_loop.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_\u8c03\u5ea6\u5668",
+      "exit_code": 0,
+      "summary": "30 passed in 0.59s"
+    },
+    {
+      "name": "a7_v4_isolation",
+      "argv": [
+        "{python}",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_v9_4_v4_compatibility.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_\u8c03\u5ea6\u5668",
+      "exit_code": 0,
+      "summary": "6 passed in 2.83s"
+    }
+  ],
+  "supplemental_regressions": [
+    {
+      "name": "a0_through_a9_prompt_security_v4_active_entrypoints_regression",
+      "exit_code": 0,
+      "summary": "259 passed, 4 subtests passed in 24.78s across A0 control, rebuild control, A1-A9, prompt injection, v4 compatibility, security, and active-entrypoint checks."
+    },
+    {
+      "name": "a6_a8_cross_package_regression",
+      "exit_code": 0,
+      "summary": "A6 Projection compiler passed 30 tests and A8 real text-shadow passed 5 tests after the Gate-to-DP identity validation was tightened."
+    },
+    {
+      "name": "changed_modules_compile_check",
+      "exit_code": 0,
+      "summary": "python -m compileall -q completed for every A7 service, port, adapter directory, and A7 regression test path."
+    },
+    {
+      "name": "changed_paths_diff_check",
+      "exit_code": 0,
+      "summary": "git diff --check passed for all A7 implementation, port, test, and Evidence paths."
+    },
+    {
+      "name": "release_ledger_audit",
+      "exit_code": 0,
+      "summary": "python -m mode_p_vnext.release_control audit returned no issues before completion."
+    }
+  ],
+  "authority_boundary": {
+    "gate_boundary": "Gate 0 verifies existing VEC, ProjectionAST, manifests, prompts, and claim ceiling. It does not select shots, alter Director Drafts, create an alternate AST, invoke DP, invoke a provider, or claim visual success.",
+    "dp_boundary": "Fresh DP gets only ReviewPacket references and can emit READY or locally assembled bounded RevisionRequest artifacts. It cannot see private Director reasoning, history, runtime code, caches, full knowledge, media binaries, VEC mutation surfaces, or an unseen target artifact.",
+    "media_boundary": "A7 exposes typed renderer/verifier/approval ports and only fail-closed Noop adapters. Evidence assembly preserves exact local plan/run/frame relationships, but no rendered media, frame capture, visual verification run, owner approval, external submission, or media acceptance is created in this package.",
+    "projection_boundary": "A6 remains the sole ProjectionCompiler authority. Gate 0 checks its frozen compiler identity and manifest binding but permits the A6-defined adapter-only recompilation of delivery views.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A0-A6 or A8-A10 implementation was changed.",
+    "No v4 production entry, FeatureGate, production switch, provider invocation, external submission, real media run, visual acceptance, or owner approval was started, enabled, or claimed.",
+    "No model output was granted authority over IDs, hashes, ticks, timelines, states, boundaries, bindings, VEC, ProjectionAST, media evidence, or Director decisions."
+  ],
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "external_submission": false
+  }
+}

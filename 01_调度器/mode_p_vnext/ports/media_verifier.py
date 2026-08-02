@@ -31,8 +31,10 @@ class MediaVerificationOutput:
             raise DomainValidationError("frames must contain FrameEvidence")
         if not all(isinstance(item, OutcomeAttribution) for item in attributions):
             raise DomainValidationError("attributions must contain OutcomeAttribution")
-        if not self.passed and not attributions:
-            raise DomainValidationError("failed verification requires outcome attribution")
+        if not attributions:
+            raise DomainValidationError(
+                "media verification requires outcome attribution for every outcome"
+            )
         object.__setattr__(self, "frames", frames)
         object.__setattr__(self, "attributions", attributions)
 

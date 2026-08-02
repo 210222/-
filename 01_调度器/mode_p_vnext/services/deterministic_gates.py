@@ -23,8 +23,11 @@ from mode_p_vnext.domain.evidence import DeterministicGateResult
 from mode_p_vnext.domain.ids import IdFactory
 from mode_p_vnext.domain.projection import ProjectionAST, ProjectionManifest
 from mode_p_vnext.domain.vec import StoryboardRole, VisualExecutionContract
-from mode_p_vnext.prompts.compiler import CompiledPrompt
+from mode_p_vnext.prompts.budgets import BudgetReport
+from mode_p_vnext.prompts.compiler import CompiledPrompt, PromptCompiler
+from mode_p_vnext.prompts.signatures import StageSignature, stage_signatures
 from mode_p_vnext.services.projection_compiler import (
+    COMPILER_VERSION,
     StoryboardProjection,
     VideoProjection,
     node_attribute,
@@ -330,6 +333,7 @@ def _check_projection(
             or manifest.capability_profile_digest != capability_digest
             or manifest.reference_binding_digest != reference_digest
             or manifest.audio_binding_digest != audio_digest
+            or manifest.compiler_version != COMPILER_VERSION
         ):
             return False
     shots = {item.shot_id: item for item in vec.shots}
@@ -354,6 +358,60 @@ def _check_projection(
     return True
 
 
+def _check_canonical_projection_ids(
+    vec: VisualExecutionContract,
+    ast: ProjectionAST,
+    id_factory: IdFactory,
+) -> bool:
+    """Prove the AST/node identities belong to the frozen A6 compiler.
+
+    This is verification only: Gate 0 never creates a second ProjectionAST.
+    It reuses the A6 compiler's frozen identity recipe to reject a structurally
+    valid but foreign AST before DP can see it.
+    """
+
+    nodes = projection_nodes(ast)
+    if not nodes:
+        return False
+    try:
+        compiler_versions = {
+            node_attribute(node, "compiler_version", str) for node in nodes
+        }
+    except DomainValidationError:
+        return False
+    if compiler_versions != {COMPILER_VERSION}:
+        return False
+    projection_input_digest = canonical_sha256(
+        {
+            "vec_digest": canonical_sha256(vec),
+            "compiler_version": COMPILER_VERSION,
+        }
+    )
+    expected_projection_id = id_factory.create(
+        artifact_kind=ArtifactKind.PROJECTION_AST,
+        episode_id=vec.episode_id,
+        scene_id=vec.scene_id,
+        stage="projection:ast",
+        input_digest=projection_input_digest,
+        ordinal=0,
+    )
+    expected_node_ids = tuple(
+        id_factory.create(
+            artifact_kind=ArtifactKind.PROJECTION_AST,
+            episode_id=vec.episode_id,
+            scene_id=vec.scene_id,
+            stage="projection:visual-beat",
+            input_digest=projection_input_digest,
+            ordinal=ordinal,
+        )
+        for ordinal, _ in enumerate(nodes)
+    )
+    return (
+        ast.projection_id == expected_projection_id
+        and tuple(node.node_id for node in nodes) == expected_node_ids
+    )
+
+
 def _prompt_payload(prompt: CompiledPrompt) -> dict[str, object] | None:
     try:
         payload = json.loads(prompt.user_message)
@@ -374,15 +432,51 @@ def _contains_forbidden_key(value: object) -> bool:
     return False
 
 
-def _check_prompts(prompts: tuple[CompiledPrompt, ...]) -> tuple[bool, bool]:
+def _check_prompts(
+    prompts: tuple[CompiledPrompt, ...],
+) -> tuple[bool, bool, bool, bool]:
+    """Validate prompt content with A4's canonical compiler, not its shape."""
+
     if not prompts or not all(type(item) is CompiledPrompt for item in prompts):
-        return False, False
+        return False, False, False, False
+    canonical_signatures = stage_signatures()
+    compiler = PromptCompiler()
+    schema_ok = True
+    digest_ok = True
     budget_ok = True
     safety_ok = True
     for prompt in prompts:
         signature = prompt.signature
         report = prompt.budget_report
+        if (
+            type(signature) is not StageSignature
+            or type(report) is not BudgetReport
+            or not isinstance(prompt.system_message, str)
+            or not isinstance(prompt.user_message, str)
+        ):
+            schema_ok = False
+            digest_ok = False
+            budget_ok = False
+            safety_ok = False
+            continue
         payload = _prompt_payload(prompt)
+        canonical_signature = canonical_signatures.get(signature.stage)
+        approved_input = payload.get("approved_input") if payload is not None else None
+        canonical_prompt: CompiledPrompt | None = None
+        if canonical_signature == signature and isinstance(approved_input, dict):
+            try:
+                canonical_prompt = compiler.compile(canonical_signature, approved_input)
+            except (TypeError, ValueError, DomainValidationError):
+                canonical_prompt = None
+        schema_ok = schema_ok and (
+            canonical_signature == signature
+            and canonical_prompt is not None
+            and prompt.schema_digest == canonical_prompt.schema_digest
+        )
+        digest_ok = digest_ok and (
+            canonical_prompt is not None
+            and prompt.approved_input_digest == canonical_prompt.approved_input_digest
+        )
         budget_ok = budget_ok and (
             report.kind == "prompt"
             and report.stage == signature.stage.value
@@ -391,15 +485,118 @@ def _check_prompts(prompts: tuple[CompiledPrompt, ...]) -> tuple[bool, bool]:
             and report.character_count <= signature.prompt_budget
             and _is_sha256(prompt.schema_digest)
             and _is_sha256(prompt.approved_input_digest)
+            and canonical_prompt is not None
+            and report == canonical_prompt.budget_report
         )
-        approved_input = payload.get("approved_input") if payload is not None else None
         safety_ok = safety_ok and (
             signature.version == "3.0"
             and isinstance(approved_input, dict)
             and set(approved_input).issubset(signature.approved_input_keys)
             and not _contains_forbidden_key(payload)
+            and canonical_prompt is not None
+            and prompt.system_message == canonical_prompt.system_message
+            and prompt.user_message == canonical_prompt.user_message
         )
-    return budget_ok, safety_ok
+    return schema_ok, digest_ok, budget_ok, safety_ok
+
+
+def _compiled_prompt_evidence_ref(ordinal: int, prompt: object) -> SourceRef:
+    """Keep malformed prompt input auditable without trusting its shape."""
+
+    if (
+        type(prompt) is CompiledPrompt
+        and type(prompt.signature) is StageSignature
+    ):
+        try:
+            return SourceRef(
+                source_id=(
+                    f"compiled-prompt:{ordinal}:{prompt.signature.stage.value}"
+                ),
+                digest=canonical_sha256(prompt),
+            )
+        except (TypeError, ValueError, DomainValidationError):
+            pass
+    return SourceRef(
+        source_id=f"compiled-prompt:{ordinal}:invalid",
+        digest=canonical_sha256(
+            {
+                "kind": "invalid-compiled-prompt",
+                "ordinal": ordinal,
+            }
+        ),
+    )
+
+
+def validate_gate0_result(
+    *,
+    result: DeterministicGateResult,
+    vec: VisualExecutionContract,
+    ast: ProjectionAST,
+    storyboard: StoryboardProjection,
+    video: VideoProjection,
+    id_factory: IdFactory,
+    program_version: str,
+) -> None:
+    """Verify that a passed Gate 0 result was locally minted for these inputs.
+
+    This protects the Gate-to-DP boundary against a stale or hand-assembled
+    ``passed`` DTO.  It deliberately validates the existing Gate result rather
+    than re-running prompts or creating a second result authority.
+    """
+
+    if type(result) is not DeterministicGateResult or not result.passed:
+        raise DomainValidationError("Gate 0 result must be an exact passed result")
+    if not isinstance(id_factory, IdFactory) or id_factory.program_version != program_version:
+        raise DomainValidationError("IdFactory must match program_version")
+    expected_targets = (vec.contract_id, ast.projection_id)
+    if (
+        result.target_artifact_ids != expected_targets
+        or result.check_ids != GATE0_CHECK_IDS
+        or result.failed_check_ids
+    ):
+        raise DomainValidationError("Gate 0 result does not match the canonical checks")
+    expected_core_evidence = (
+        SourceRef(source_id=vec.contract_id, digest=canonical_sha256(vec)),
+        SourceRef(source_id=ast.projection_id, digest=canonical_sha256(ast)),
+        SourceRef(
+            source_id=f"storyboard-manifest:{ast.projection_id}",
+            digest=canonical_sha256(storyboard.manifest),
+        ),
+        SourceRef(
+            source_id=f"video-manifest:{ast.projection_id}",
+            digest=canonical_sha256(video.manifest),
+        ),
+    )
+    prompt_evidence = result.evidence_refs[len(expected_core_evidence):]
+    if (
+        result.evidence_refs[:len(expected_core_evidence)] != expected_core_evidence
+        or not prompt_evidence
+        or any(
+            not reference.source_id.startswith(f"compiled-prompt:{ordinal}:")
+            or reference.source_id.endswith(":invalid")
+            for ordinal, reference in enumerate(prompt_evidence)
+        )
+    ):
+        raise DomainValidationError("Gate 0 result evidence does not bind canonical inputs")
+    result_input_digest = canonical_sha256(
+        {
+            "target_artifact_ids": expected_targets,
+            "checks": GATE0_CHECK_IDS,
+            "failed": (),
+            "evidence": result.evidence_refs,
+            "claim_ceiling": TEXT_VALIDATED,
+        }
+    )
+    expected_result_id = id_factory.create(
+        artifact_kind=ArtifactKind.GATE0_RESULT,
+        episode_id=vec.episode_id,
+        scene_id=vec.scene_id,
+        stage="gate0",
+        input_digest=result_input_digest,
+        ordinal=0,
+    )
+    if result.result_id != expected_result_id:
+        raise DomainValidationError("Gate 0 result was not locally minted for this input")
 
 
 def run_gate0(
@@ -424,16 +621,34 @@ def run_gate0(
     if not isinstance(id_factory, IdFactory) or id_factory.program_version != program_version:
         raise DomainValidationError("IdFactory must match program_version")
 
+    try:
+        prompt_values = tuple(compiled_prompts)
+    except TypeError:
+        prompt_values = ()
     failed: set[str] = set()
-    _fail(failed, SCHEMA_INTEGRITY, DOMAIN_SCHEMA_VERSION == "3.0")
-    _fail(failed, DIGEST_INTEGRITY, vec.canonical_output_sha256 == _vec_output_digest(vec))
+    prompt_schema_ok, prompt_digest_ok, budget_ok, safety_ok = _check_prompts(
+        prompt_values
+    )
+    _fail(
+        failed,
+        SCHEMA_INTEGRITY,
+        DOMAIN_SCHEMA_VERSION == "3.0" and prompt_schema_ok,
+    )
+    _fail(
+        failed,
+        DIGEST_INTEGRITY,
+        vec.canonical_output_sha256 == _vec_output_digest(vec) and prompt_digest_ok,
+    )
 
     all_ids = (*_vec_ids(vec), ast.projection_id, *(item.node_id for item in projection_nodes(ast)))
     _fail(
         failed,
         ID_INTEGRITY,
         len(all_ids) == len(set(all_ids))
-        and all(_is_machine_id(item) for item in _all_bound_ids(vec, ast)),
+        and all(_is_machine_id(item) for item in _all_bound_ids(vec, ast))
+        # A generic ``id:<sha>`` does not prove that A6 allocated the AST.
+        # Bind its exact identity back to the canonical VEC/compiler pair.
+        and _check_canonical_projection_ids(vec, ast, id_factory),
     )
     _fail(failed, TICK_INTEGRITY, _check_ticks(vec))
     _fail(failed, BOUNDARY_INTEGRITY, _check_boundaries(vec))
@@ -443,7 +658,6 @@ def run_gate0(
     except (DomainValidationError, KeyError, TypeError, ValueError):
         projection_ok = False
     _fail(failed, PROJECTION_IDENTITY, projection_ok)
-    budget_ok, safety_ok = _check_prompts(tuple(compiled_prompts))
     _fail(failed, PROMPT_BUDGET, budget_ok)
     _fail(failed, SAFETY_BOUNDARY, safety_ok)
     _fail(failed, CLAIM_CEILING, claim_ceiling == TEXT_VALIDATED)
@@ -459,10 +673,10 @@ def run_gate0(
             source_id=f"video-manifest:{ast.projection_id}",
             digest=canonical_sha256(video.manifest),
         ),
-        *(SourceRef(
-            source_id=f"compiled-prompt:{ordinal}:{item.signature.stage.value}",
-            digest=canonical_sha256(item),
-        ) for ordinal, item in enumerate(compiled_prompts)),
+        *(
+            _compiled_prompt_evidence_ref(ordinal, item)
+            for ordinal, item in enumerate(prompt_values)
+        ),
     )
     failed_check_ids = tuple(item for item in GATE0_CHECK_IDS if item in failed)
     target_artifact_ids = tuple(dict.fromkeys((vec.contract_id, ast.projection_id)))
@@ -497,4 +711,5 @@ __all__ = [
     "GATE0_CHECK_IDS",
     "TEXT_VALIDATED",
     "run_gate0",
+    "validate_gate0_result",
 ]

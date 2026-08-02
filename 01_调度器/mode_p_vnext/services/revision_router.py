@@ -13,6 +13,7 @@ from dataclasses import dataclass
 
 from mode_p_vnext.domain.artifact import DomainValidationError
 from mode_p_vnext.domain.evidence import RevisionFailureType, RevisionRequest
+from mode_p_vnext.domain.facts import require_opaque_id
 
 
 class RevisionRouteKind(str, enum.Enum):
@@ -30,8 +31,7 @@ class RevisionScope:
     allowed_field_paths: tuple[str, ...]
 
     def __post_init__(self) -> None:
-        if not isinstance(self.target_artifact_id, str) or not self.target_artifact_id:
-            raise DomainValidationError("target_artifact_id must be non-empty")
+        require_opaque_id(self.target_artifact_id, "target_artifact_id")
         if self.route_kind is RevisionRouteKind.REJECT:
             raise DomainValidationError("a RevisionScope cannot authorize REJECT")
         paths = tuple(self.allowed_field_paths)

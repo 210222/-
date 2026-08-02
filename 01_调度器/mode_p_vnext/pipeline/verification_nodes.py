@@ -40,6 +40,7 @@ from mode_p_vnext.domain.projection import ProjectionAST
 from mode_p_vnext.domain.vec import VisualExecutionContract
 from mode_p_vnext.ports.media_renderer import MediaRenderOutput, MediaRenderRequest
 from mode_p_vnext.ports.media_verifier import MediaVerificationOutput
+from mode_p_vnext.services.deterministic_gates import validate_gate0_result
 from mode_p_vnext.services.projection_compiler import StoryboardProjection, VideoProjection
 from mode_p_vnext.services.revision_router import RevisionScope, validate_revision_request
 
@@ -229,9 +230,17 @@ def build_media_evidence(
     program_version: str,
 ) -> MediaEvidence:
     _require_factory(id_factory, program_version)
-    frame_values = tuple(frames)
-    if set(item.frame_index for item in frame_values) != set(plan.frame_indices):
+    supplied_frames = tuple(frames)
+    if not all(type(item) is FrameEvidence for item in supplied_frames):
+        raise DomainValidationError("frame evidence must use exact FrameEvidence values")
+    frame_by_index = {item.frame_index: item for item in supplied_frames}
+    if (
+        len(supplied_frames) != len(plan.frame_indices)
+        or len(frame_by_index) != len(supplied_frames)
+        or set(frame_by_index) != set(plan.frame_indices)
+    ):
         raise DomainValidationError("frame evidence must cover the exact deterministic plan")
+    frame_values = tuple(frame_by_index[index] for index in plan.frame_indices)
     if any(item.media_run_id != media_run.run_id for item in frame_values):
         raise DomainValidationError("frame evidence must bind the exact media run")
     evidence_id = _local_id(
@@ -295,10 +304,49 @@ def build_visual_verification(
         raise DomainValidationError("verifier_output must be an exact media verifier DTO")
     if plan.vec_artifact_id != vec.contract_id:
         raise DomainValidationError("frame plan does not bind the supplied VEC")
+    expected_plan_id = _local_id(
+        id_factory,
+        kind=ArtifactKind.FRAME_EVIDENCE_PLAN,
+        episode_id=vec.episode_id,
+        scene_id=vec.scene_id,
+        stage="media:frame-plan",
+        value={
+            "vec_artifact_id": vec.contract_id,
+            "checks": tuple(plan.checks),
+            "frame_indices": tuple(plan.frame_indices),
+        },
+    )
+    if plan.plan_id != expected_plan_id:
+        raise DomainValidationError("frame plan is not the canonical local plan")
     if media_evidence.media_run_id != media_run.run_id:
         raise DomainValidationError("media evidence does not bind the supplied media run")
+    if media_evidence.frame_evidence_plan_artifact_id != plan.plan_id:
+        raise DomainValidationError("media evidence does not bind the supplied frame plan")
+    if media_evidence.media_run_artifact_id != media_run.run_id:
+        raise DomainValidationError("media evidence does not bind the supplied media run artifact")
+    expected_evidence_id = _local_id(
+        id_factory,
+        kind=ArtifactKind.MEDIA_EVIDENCE,
+        episode_id=vec.episode_id,
+        scene_id=vec.scene_id,
+        stage="media:evidence",
+        value={
+            "plan": plan,
+            "run": media_run,
+            "frames": tuple(media_evidence.frame_evidence),
+        },
+    )
+    if media_evidence.evidence_id != expected_evidence_id:
+        raise DomainValidationError("media evidence is not the canonical local aggregate")
     if tuple(verifier_output.frames) != tuple(media_evidence.frame_evidence):
         raise DomainValidationError("verifier output must bind the canonical MediaEvidence frames")
+    if not any(
+        media_run.run_id in attribution.supporting_evidence
+        for attribution in verifier_output.attributions
+    ):
+        raise DomainValidationError(
+            "media verifier attribution must bind the exact media run"
+        )
     verification_id = _local_id(
         id_factory,
         kind=ArtifactKind.VISUAL_VERIFICATION_RESULT,
@@ -345,8 +393,15 @@ def build_dp_review_packet(
         raise DomainValidationError("both delivery views must consume the exact ProjectionAST")
     if type(gate0) is not DeterministicGateResult or not gate0.passed:
         raise DomainValidationError("fresh DP cannot start before a passed canonical Gate 0")
-    if gate0.target_artifact_ids != (vec.contract_id, ast.projection_id):
-        raise DomainValidationError("Gate 0 result does not bind the exact VEC and projection")
+    validate_gate0_result(
+        result=gate0,
+        vec=vec,
+        ast=ast,
+        storyboard=storyboard,
+        video=video,
+        id_factory=id_factory,
+        program_version=program_version,
+    )
     require_opaque_id(episode_direction_artifact_id, "episode_direction_artifact_id")
     require_opaque_id(scene_intent_artifact_id, "scene_intent_artifact_id")
     fact_ids = {item.fact_id for item in facts.facts}
@@ -557,9 +612,19 @@ def assemble_fresh_dp_review(
         raise DomainValidationError(
             "DP evidence inputs must be references already visible in its ReviewPacket"
         )
+    packet_target_ids = {
+        packet.episode_direction_artifact_id,
+        packet.scene_intent_artifact_id,
+        packet.vec_artifact_id,
+        *packet.projection_artifact_ids,
+    }
     scope_by_target = {item.target_artifact_id: item for item in scopes}
     if len(scope_by_target) != len(scopes):
         raise DomainValidationError("revision scopes must have unique targets")
+    if not set(scope_by_target).issubset(packet_target_ids):
+        raise DomainValidationError(
+            "revision scope target must be explicitly visible in the ReviewPacket"
+        )
 
     revisions: list[RevisionRequest] = []
     for ordinal, item in enumerate(draft.revision_requests):
