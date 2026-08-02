@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 
 import pytest
 
 from mode_p_vnext.tests._baseline_cohort_support import (
     LEDGER_PATH,
     PROJECT_ROOT,
+    SOURCE_HASH_MODE,
     assert_registered_v4_collection,
+    cohort_source_sha256,
     collect_ids,
     load_ledger,
     validate_registered_cohorts,
@@ -34,7 +35,8 @@ def test_registered_legacy_source_has_expected_hash():
     ledger = load_ledger()
     legacy = ledger["cohorts"]["legacy_ep35_s1_post_freeze"]
     source = PROJECT_ROOT / legacy["source_path"]
-    assert hashlib.sha256(source.read_bytes()).hexdigest() == legacy["source_sha256"]
+    assert legacy["source_hash_mode"] == SOURCE_HASH_MODE
+    assert cohort_source_sha256(source) == legacy["source_sha256"]
     assert legacy["design_source_for_vnext"] is False
     assert "master_continuity_board" in legacy["legacy_contracts_not_permitted_in_vnext"]
 

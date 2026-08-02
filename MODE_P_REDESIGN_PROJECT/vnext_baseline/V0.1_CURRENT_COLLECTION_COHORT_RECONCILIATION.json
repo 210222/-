@@ -45,6 +45,7 @@
     "legacy_ep35_s1_post_freeze": {
       "classification": "POST_FREEZE_EXTERNAL_SCENARIO_REGRESSION",
       "source_path": "01_调度器/mode_p/test_ep35_s1_pipeline.py",
+      "source_hash_mode": "CANONICAL_UTF8_LF_OR_BINARY_RAW_V1",
       "source_sha256": "5bf7163355246d002e687f7bae6ec03113cd0d4cdfb8ef1293809e736ddc9216",
       "selection": ["test_ep35_s1_pipeline.py"],
       "count": 95,

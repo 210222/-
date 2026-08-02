@@ -11,6 +11,10 @@ import pytest
 from mode_p_vnext.director_vnext1.completion_control import CompletionControl
 from mode_p_vnext.director_vnext1.control import DirectorDdoControl
 from mode_p_vnext.feature_gate import FeatureGate
+from mode_p_vnext.tests._baseline_cohort_support import (
+    SOURCE_HASH_MODE,
+    cohort_source_sha256,
+)
 from mode_p_vnext.rebuild_control import (
     ControlError,
     RebuildControl,
@@ -174,9 +178,13 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
         "01_调度器/mode_p_vnext/tests/_baseline_cohort_support.py"
         in a0["allowed_paths"]
     )
-    assert "a0_v4_cohort" in {
+    assert (
+        "01_调度器/mode_p_vnext/tests/test_r3_2_baseline_cohort_reconciliation.py"
+        in a0["allowed_paths"]
+    )
+    assert {"a0_v4_cohort", "a0_v4_cohort_portability_regression"}.issubset({
         command["name"] for command in a0["verification_commands"]
-    }
+    })
 
     a6 = next(task for task in document["tasks"] if task["task_id"] == "A6")
     assert {
@@ -263,7 +271,8 @@ def test_current_v4_cohort_ledger_is_canonical_and_history_stays_read_only():
 
     current_source = current["cohorts"]["legacy_ep35_s1_post_freeze"]
     source_path = root / current_source["source_path"]
-    actual_source_sha = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    assert current_source["source_hash_mode"] == SOURCE_HASH_MODE
+    actual_source_sha = cohort_source_sha256(source_path)
     assert actual_source_sha == current_source["source_sha256"]
     assert current["reconciled_change"]["current_source_sha256"] == actual_source_sha
     assert current["reconciled_change"]["node_id_set_changed"] is False
@@ -731,6 +740,15 @@ def test_artifact_hashes_are_portable_across_git_line_endings(tmp_path):
     binary_lf_hash = _sha256_file(binary_path)
     binary_path.write_bytes(b"\x00a\r\n")
     assert _sha256_file(binary_path) != binary_lf_hash
+
+
+def test_current_v4_cohort_source_hash_is_portable_across_git_line_endings(tmp_path):
+    source_path = tmp_path / "registered_source.py"
+    source_path.write_bytes(b"def value():\n    return 1\n")
+    lf_hash = cohort_source_sha256(source_path)
+
+    source_path.write_bytes(b"def value():\r\n    return 1\r\n")
+    assert cohort_source_sha256(source_path) == lf_hash
 
 
 def test_a10_requires_hash_bound_media_and_owner_gates(tmp_path):

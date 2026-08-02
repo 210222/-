@@ -16,6 +16,8 @@ import sys
 from pathlib import Path
 from typing import Any, Iterable, Set
 
+from mode_p_vnext.rebuild_control import _sha256_file
+
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 MODE_P_DIR = PROJECT_ROOT / "01_调度器" / "mode_p"
@@ -25,6 +27,7 @@ LEDGER_PATH = (
     / "vnext_baseline"
     / "V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json"
 )
+SOURCE_HASH_MODE = "CANONICAL_UTF8_LF_OR_BINARY_RAW_V1"
 
 
 def load_ledger() -> dict[str, Any]:
@@ -35,6 +38,12 @@ def load_ledger() -> dict[str, Any]:
 def _ids_sha256(ids: Iterable[str]) -> str:
     canonical = "\n".join(sorted(ids)) + "\n"
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def cohort_source_sha256(path: Path) -> str:
+    """Hash a registered source independently of Git checkout EOL policy."""
+
+    return _sha256_file(path)
 
 
 def collect_ids(*selection: str) -> Set[str]:
@@ -88,7 +97,8 @@ def validate_registered_cohorts(
 
     source = PROJECT_ROOT / legacy["source_path"]
     assert source.is_file(), f"registered legacy source is missing: {source}"
-    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+    assert legacy.get("source_hash_mode") == SOURCE_HASH_MODE
+    source_hash = cohort_source_sha256(source)
     assert source_hash == legacy["source_sha256"], "registered legacy source changed"
 
     assert len(all_ids) == ledger["current_collection"]["count"]

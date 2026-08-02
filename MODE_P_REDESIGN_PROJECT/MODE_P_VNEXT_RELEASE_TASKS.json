@@ -88,6 +88,7 @@
         "01_调度器/mode_p_vnext/rebuild_control.py",
         "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
         "01_调度器/mode_p_vnext/tests/_baseline_cohort_support.py",
+        "01_调度器/mode_p_vnext/tests/test_r3_2_baseline_cohort_reconciliation.py",
         "01_调度器/mode_p/test_active_entrypoints.py",
         "01_调度器/mode_p/test_ep35_s1_pipeline.py",
         "01_调度器/mode_p_vnext/README.md",
@@ -138,6 +139,12 @@
         {
           "name": "a0_v4_cohort",
           "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_v9_4_v4_compatibility.py", "-q", "-p", "no:cacheprovider"],
+          "cwd": "01_调度器",
+          "timeout_seconds": 300
+        },
+        {
+          "name": "a0_v4_cohort_portability_regression",
+          "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_r3_2_baseline_cohort_reconciliation.py", "-q", "-p", "no:cacheprovider"],
           "cwd": "01_调度器",
           "timeout_seconds": 300
         },
