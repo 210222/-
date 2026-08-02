@@ -1,0 +1,111 @@
+{
+  "schema_name": "mode_p_vnext_a1_exact_fact_pair_binding_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A1",
+  "created_at": "2026-08-03T00:09:33+08:00",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "applicable_sections": [
+      "section 4.3",
+      "section 5.2",
+      "section 6",
+      "section 8",
+      "section 9",
+      "section 13",
+      "section 15 A1",
+      "section 16"
+    ]
+  },
+  "revalidation": {
+    "reason": "A5 fail-close evidence A5_TYPED_FACT_PAIR_FAIL_CLOSE_031 demonstrated that the previously frozen VEC contract approved fact IDs and opaque handles as independent sets. The A1 root repair makes their ordered pairing an explicit canonical domain invariant before any downstream package is revalidated.",
+    "previous_failure_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A5_TYPED_FACT_PAIR_FAIL_CLOSE_031.json",
+    "previous_failure_disposition": "HISTORICAL_FAIL_CLOSE_RECORD_NOT_COMPLETION_PROOF",
+    "minimality": "The repair changes no model Draft surface, no time semantics, no source-span behavior, no provider prompt, no v4 code, and no production switch. It preserves the existing VEC fields as one equal-length ordered mapping and exposes only a derived read-only pair view."
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/domain/vec.py",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_EXACT_FACT_PAIR_BINDING_REPAIR_032.json"
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_调度器/mode_p_vnext/domain/vec.py": "bef5d3dd012c9b990ff358632a8f44f55fe4a824a35b4dad7290b81b48a3c3c9",
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py": "a0ed49a7d5fa2be174f6827e00d032330524e5db6d8d8536c1f8188036c3b33b"
+  },
+  "root_repair": {
+    "invariant": "source_fact_ids and approved_fact_handles are equal-length ordered tuples. At index n they form one exact approved (fact_id, fact_handle) pair, never two independently approved sets.",
+    "canonical_view": "VisualExecutionContract.approved_fact_pairs is derived only from those immutable tuples and is not a second persisted representation.",
+    "enforcement": [
+      "VisualExecutionContract rejects unequal ID and handle tuple lengths.",
+      "ReferenceRequirement rejects any pair absent from approved_fact_pairs.",
+      "AudioEvent rejects any pair absent from approved_fact_pairs.",
+      "The implementation never derives pairing from ID prefixes, statement text, free text, source spans, or timing."
+    ],
+    "rejected_alternatives": [
+      "Do not patch VECAssembler alone: independently deserialized or tampered VEC contracts would remain structurally vulnerable.",
+      "Do not retain independent-membership compatibility behavior: it accepts a counterfeit typed binding.",
+      "Do not add a second persistent fact mapping or parse free text to reconstruct one."
+    ]
+  },
+  "checks": [
+    {"name": "canonical_artifact_envelope", "exit_code": 0},
+    {"name": "canonical_24000_tick_timebase", "exit_code": 0},
+    {"name": "draft_artifact_separation", "exit_code": 0},
+    {"name": "no_duplicate_domain_authority", "exit_code": 0},
+    {"name": "domain_schemas_frozen_for_downstream", "exit_code": 0},
+    {"name": "legacy_read_adapter_only", "exit_code": 0},
+    {"name": "normalized_source_contract", "exit_code": 0},
+    {"name": "local_fact_assembler_ownership", "exit_code": 0},
+    {"name": "typed_fact_semantics", "exit_code": 0},
+    {"name": "opaque_fact_handles_and_ids", "exit_code": 0},
+    {"name": "source_span_provenance_only", "exit_code": 0},
+    {"name": "generation_capability_profile", "exit_code": 0},
+    {"name": "duration_intent_not_raw_ticks", "exit_code": 0},
+    {"name": "typed_reference_binding_intent", "exit_code": 0},
+    {"name": "typed_dialogue_binding_intent", "exit_code": 0},
+    {"name": "exact_fact_id_handle_pair_binding", "exit_code": 0}
+  ],
+  "verification_results": [
+    {
+      "name": "a1_domain_model",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_a1_domain_model.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "12 passed in 0.18s"
+    }
+  ],
+  "supplemental_regressions": [
+    {
+      "name": "a5_vec_assembly",
+      "exit_code": 0,
+      "summary": "15 passed in 0.18s; the existing local assembler emits the exact fact pairs from FactRegistry order."
+    },
+    {
+      "name": "a6_projection_compiler",
+      "exit_code": 0,
+      "summary": "24 passed in 0.31s"
+    },
+    {
+      "name": "a7_dual_loop",
+      "exit_code": 0,
+      "summary": "20 passed in 0.41s"
+    },
+    {
+      "name": "a0_through_a7_v4_security_regression",
+      "exit_code": 0,
+      "summary": "205 passed in 11.68s across A0-A7 registered suites, v4 compatibility, security, and active entrypoint checks."
+    }
+  ],
+  "downstream_contract": {
+    "A5": "must preserve FactRegistry order when it assembles the VEC and retain the A1 exact-pair mutation regressions as part of deterministic VEC validation.",
+    "A7": "must consume VisualExecutionContract.approved_fact_pairs in Gate 0 as redundant defense-in-depth when its own work package is selected; A1 does not modify A7 implementation.",
+    "A2_A10": "remain invalidated until each ReleaseLedger-selected package has revalidated the strengthened A1 contract."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "external_submission": false
+  }
+}

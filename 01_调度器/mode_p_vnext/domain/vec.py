@@ -526,6 +526,15 @@ class ReferenceRequirement:
 
 @dataclass(frozen=True)
 class VisualExecutionContract:
+    """The sole local VEC authority with an exact approved-fact mapping.
+
+    ``source_fact_ids`` and ``approved_fact_handles`` are parallel immutable
+    tuples.  Their shared ordinal is part of the canonical contract: index
+    ``n`` describes one approved ``(fact_id, fact_handle)`` pair, rather than
+    two independently approved sets.  The director sees handles only; local
+    assembly preserves the corresponding opaque IDs for auditability.
+    """
+
     ARTIFACT_KIND: ClassVar[ArtifactKind] = ArtifactKind.VISUAL_EXECUTION_CONTRACT
 
     contract_id: str
@@ -550,6 +559,17 @@ class VisualExecutionContract:
     canonical_input_sha256: str
     canonical_output_sha256: str
 
+    @property
+    def approved_fact_pairs(self) -> tuple[tuple[str, str], ...]:
+        """Return the canonical, ordered ID-to-handle approval mapping.
+
+        This is deliberately a derived read-only view, not another persistent
+        representation.  It lets every local verifier consume the exact pair
+        without guessing from IDs, handles, text, prefixes, or source spans.
+        """
+
+        return tuple(zip(self.source_fact_ids, self.approved_fact_handles))
+
     def __post_init__(self) -> None:
         for field_name in (
             "contract_id",
@@ -568,15 +588,24 @@ class VisualExecutionContract:
             raise DomainValidationError("scene_timeline must match scene_id")
         if not isinstance(self.capability_profile, GenerationCapabilityProfile):
             raise DomainValidationError("capability_profile must be canonical")
-        for field_name in ("source_fact_ids", "approved_fact_handles"):
-            values = _text_tuple(getattr(self, field_name), field_name, require_items=True)
-            if field_name == "source_fact_ids":
-                for value in values:
-                    require_opaque_id(value, "source_fact_id")
-            else:
-                for value in values:
-                    require_opaque_handle(value, "approved_fact_handle")
-            object.__setattr__(self, field_name, values)
+        source_fact_ids = _text_tuple(
+            self.source_fact_ids, "source_fact_ids", require_items=True
+        )
+        approved_fact_handles = _text_tuple(
+            self.approved_fact_handles,
+            "approved_fact_handles",
+            require_items=True,
+        )
+        for value in source_fact_ids:
+            require_opaque_id(value, "source_fact_id")
+        for value in approved_fact_handles:
+            require_opaque_handle(value, "approved_fact_handle")
+        if len(source_fact_ids) != len(approved_fact_handles):
+            raise DomainValidationError(
+                "source_fact_ids and approved_fact_handles must have the same ordered length"
+            )
+        object.__setattr__(self, "source_fact_ids", source_fact_ids)
+        object.__setattr__(self, "approved_fact_handles", approved_fact_handles)
         for field_name, item_type, required in (
             ("curve_points", VisualCurvePoint, True),
             ("decisions", DirectorDecision, True),
@@ -700,14 +729,18 @@ class VisualExecutionContract:
     def _validate_bindings(
         self, shots: dict[str, VisualShot], beats: dict[str, VisualBeat]
     ) -> None:
-        approved_ids = set(self.source_fact_ids)
-        approved_handles = set(self.approved_fact_handles)
+        approved_fact_pairs = frozenset(self.approved_fact_pairs)
         references = {item.requirement_id: item for item in self.reference_requirements}
         audio = {item.event_id: item for item in self.audio_events}
 
         for requirement in self.reference_requirements:
-            if requirement.source_fact_id not in approved_ids or requirement.source_fact_handle not in approved_handles:
-                raise DomainValidationError("ReferenceRequirement fact binding is not approved")
+            if (
+                requirement.source_fact_id,
+                requirement.source_fact_handle,
+            ) not in approved_fact_pairs:
+                raise DomainValidationError(
+                    "ReferenceRequirement must use an exact approved fact ID/handle pair"
+                )
             if requirement.shot_id not in shots:
                 raise DomainValidationError("ReferenceRequirement shot target must resolve")
             shot = shots[requirement.shot_id]
@@ -720,8 +753,10 @@ class VisualExecutionContract:
                     raise DomainValidationError("ReferenceRequirement must be back-referenced by its VisualBeat")
 
         for event in self.audio_events:
-            if event.source_fact_id not in approved_ids or event.source_fact_handle not in approved_handles:
-                raise DomainValidationError("AudioEvent fact binding is not approved")
+            if (event.source_fact_id, event.source_fact_handle) not in approved_fact_pairs:
+                raise DomainValidationError(
+                    "AudioEvent must use an exact approved fact ID/handle pair"
+                )
             if event.shot_id not in shots or event.visual_beat_id not in beats:
                 raise DomainValidationError("AudioEvent typed target must resolve")
             shot = shots[event.shot_id]

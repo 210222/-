@@ -67,6 +67,7 @@ FACT_ID_1 = "id:" + "1" * 64
 FACT_ID_2 = "id:" + "2" * 64
 FACT_HANDLE_1 = "fh:" + "a" * 64
 FACT_HANDLE_2 = "fh:" + "b" * 64
+FACT_HANDLE_3 = "fh:" + "c" * 64
 DIGEST_A = "a" * 64
 DIGEST_B = "b" * 64
 
@@ -381,6 +382,39 @@ def test_vec_contract_freezes_one_unit_per_shot_n_plus_one_and_bidirectional_bin
     bad_shot = dataclasses.replace(vec.shots[0], reference_requirement_ids=())
     with pytest.raises(DomainValidationError, match="back-referenced"):
         dataclasses.replace(vec, shots=(bad_shot, vec.shots[1]))
+
+
+def test_vec_fact_id_handle_pairs_are_exact_not_independent_approved_sets():
+    vec = _vec()
+
+    assert vec.approved_fact_pairs == (
+        (FACT_ID_1, FACT_HANDLE_1),
+        (FACT_ID_2, FACT_HANDLE_2),
+    )
+
+    mismatched_reference = dataclasses.replace(
+        vec.reference_requirements[0], source_fact_id=FACT_ID_2
+    )
+    with pytest.raises(DomainValidationError, match="exact approved fact ID/handle pair"):
+        dataclasses.replace(vec, reference_requirements=(mismatched_reference,))
+
+    mismatched_audio = dataclasses.replace(
+        vec.audio_events[0], source_fact_handle=FACT_HANDLE_1
+    )
+    with pytest.raises(DomainValidationError, match="exact approved fact ID/handle pair"):
+        dataclasses.replace(vec, audio_events=(mismatched_audio,))
+
+    with pytest.raises(DomainValidationError, match="same ordered length"):
+        dataclasses.replace(
+            vec,
+            approved_fact_handles=vec.approved_fact_handles + (FACT_HANDLE_3,),
+        )
+
+    with pytest.raises(DomainValidationError, match="exact approved fact ID/handle pair"):
+        dataclasses.replace(
+            vec,
+            approved_fact_handles=(FACT_HANDLE_2, FACT_HANDLE_1),
+        )
 
 
 def test_services_and_compat_do_not_define_second_persistent_domain_types():
