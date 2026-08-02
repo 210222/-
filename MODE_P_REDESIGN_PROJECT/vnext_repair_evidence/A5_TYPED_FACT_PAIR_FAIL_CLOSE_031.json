@@ -1,0 +1,83 @@
+{
+  "schema_name": "mode_p_vnext_a5_fail_close_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A5",
+  "created_at": "2026-08-02T16:05:00+00:00",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "applicable_sections": [
+      "section 4.3",
+      "section 5.2",
+      "section 8",
+      "section 9",
+      "section 13",
+      "section 15 A1/A5/A7",
+      "section 16"
+    ]
+  },
+  "classification": "PRIOR_FROZEN_DOMAIN_AND_GATE_INVARIANT_FAILURE",
+  "summary": "The current VEC stores approved fact IDs and handles as unrelated sets. A reference or audio binding can therefore combine the fact_id of one approved fact with the fact_handle of another approved fact. Both VisualExecutionContract validation and the current Gate 0 binding check accept this counterfeit pair.",
+  "reproducible_observations": [
+    {
+      "name": "registered_a5_verification",
+      "command": "python -m pytest mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider",
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "15 passed in 0.19s"
+    },
+    {
+      "name": "reference_fact_id_handle_pair_mismatch",
+      "method": "Construct a valid VEC, replace one ReferenceRequirement.source_fact_id with another approved fact ID while retaining the original approved handle, and reconstruct the frozen VEC type.",
+      "vec_constructor_result": "ACCEPTED",
+      "gate0_binding_result": true
+    },
+    {
+      "name": "audio_fact_id_handle_pair_mismatch",
+      "method": "Construct a valid VEC, replace one AudioEvent.source_fact_id with another approved fact ID while retaining the original approved handle, and reconstruct the frozen VEC type.",
+      "vec_constructor_result": "ACCEPTED",
+      "gate0_binding_result": true
+    }
+  ],
+  "code_evidence": [
+    {
+      "path": "01_调度器/mode_p_vnext/domain/vec.py",
+      "location": "VisualExecutionContract._validate_bindings",
+      "finding": "It tests fact_id membership and fact_handle membership independently, so it cannot prove that both values resolve to the same FactRegistry member."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/services/deterministic_gates.py",
+      "location": "_check_bindings",
+      "finding": "Gate 0 repeats the independent-set check and therefore cannot close the malformed-pair path."
+    },
+    {
+      "path": "01_调度器/mode_p_vnext/services/vec_assembler.py",
+      "location": "assemble_vec",
+      "finding": "The assembler emits correct pairs for its happy path, but its output type and Gate 0 do not make the pair relationship an independently verifiable invariant."
+    }
+  ],
+  "root_cause": "A1 froze a VEC representation that retained parallel ID and handle collections but did not encode or validate their exact pairing. A7 later consumed the same weakened representation and duplicated its independent-membership check. A5 cannot repair this without modifying the already frozen A1 domain contract and the downstream A7 gate.",
+  "required_repair_order": [
+    "Invalidate the completed A1-to-A4 dependency chain because its evidence cannot prove the exact typed-binding invariant.",
+    "At A1, make the approved fact ID-to-handle relationship canonical and reject any ReferenceRequirement or AudioEvent whose pair is not an exact approved pair.",
+    "At A5, revalidate deterministic assembly against the strengthened frozen A1 contract without adding compatibility fields or free-text inference.",
+    "At A7, make Gate 0 fail the same pair-mismatch mutations and ensure downstream review inputs preserve the exact mapping.",
+    "Revalidate every downstream package only after its registered work package is selected by ReleaseLedger."
+  ],
+  "rejected_repairs": [
+    "Do not patch only A5: its assembler already emits correct pairs, and a local assertion would not protect independently deserialized or tampered VEC artifacts.",
+    "Do not retain the independent-set check as a compatibility mode: it leaves a counterfeit binding accepted.",
+    "Do not infer a pairing from fact text, ID prefixes, natural-language labels, or source spans."
+  ],
+  "disposition": "FAIL_CLOSED_A5_NOT_COMPLETE",
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A5_TYPED_FACT_PAIR_FAIL_CLOSE_031.json"
+  ],
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "external_submission": false
+  }
+}
