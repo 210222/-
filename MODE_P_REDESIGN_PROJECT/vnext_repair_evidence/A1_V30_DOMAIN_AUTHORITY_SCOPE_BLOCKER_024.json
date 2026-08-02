@@ -1,0 +1,118 @@
+{
+  "schema_name": "mode_p_vnext_a1_domain_authority_scope_blocker_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A1",
+  "created_at": "2026-08-02T11:01:33+08:00",
+  "owner": "codex-a1-v30-domain-revalidation-after-a0-portability-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "relevant_sections": ["5.1", "6", "15 A1"]
+  },
+  "classification": "ARCHITECTURE_INVARIANT_AND_RELEASE_OWNERSHIP_CONFLICT",
+  "verdict": "FAIL_CLOSED",
+  "root_causes": [
+    "A1 verification checked only source_normalizer, fact_assembler, and compat for duplicate domain classes instead of scanning all production mode_p_vnext modules. Sixteen same-name canonical classes therefore remained outside mode_p_vnext.domain while no_duplicate_domain_authority was reported as passed.",
+    "The ReleaseLedger does not give A1 ownership of any offending source. Two offending files are assigned to A6 and six offending files are not assigned to any A0-A10 work package, so A1 cannot repair its required invariant within its declared allowed paths.",
+    "FactAssembler validates that a statement is contained somewhere inside a source span, not that the complete span canonically equals the statement. A scene-wide span can therefore be accepted as provenance for one short fact, contrary to architecture v3.0 section 6 exact-boundary semantics."
+  ],
+  "duplicate_canonical_authorities": [
+    "CapabilityAdaptationRecord@01_调度器/mode_p_vnext/adapters/delivery/capability.py",
+    "BlockingBeat@01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "BlockingCommit@01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "VisualCurvePoint@01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "VisualShot@01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "VisualExecutionContract@01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+    "ProjectionManifest@01_调度器/mode_p_vnext/director_vnext1/projection.py",
+    "OutcomeAttribution@01_调度器/mode_p_vnext/director_vnext1/revision.py",
+    "RevisionRequest@01_调度器/mode_p_vnext/director_vnext1/revision.py",
+    "CanonicalTimeline@01_调度器/mode_p_vnext/schema/canonical_timeline.py",
+    "ScriptFact@01_调度器/mode_p_vnext/schema/fact_registry.py",
+    "FactRegistry@01_调度器/mode_p_vnext/schema/fact_registry.py",
+    "ProjectionNode@01_调度器/mode_p_vnext/services/projection_compiler.py",
+    "ProjectionAST@01_调度器/mode_p_vnext/services/projection_compiler.py",
+    "ProjectionManifest@01_调度器/mode_p_vnext/services/projection_compiler.py",
+    "SourceSpan@01_调度器/mode_p_vnext/storyboard_projection.py"
+  ],
+  "active_reference_examples": [
+    "mode_p_vnext.timeline_validator imports schema.canonical_timeline",
+    "mode_p_vnext.fact_coverage imports schema.fact_registry",
+    "mode_p_vnext.pipeline.verification_nodes imports services.projection_compiler",
+    "mode_p_vnext.adapters.delivery.storyboard_adapter imports services.projection_compiler",
+    "mode_p_vnext.video_projection imports storyboard_projection"
+  ],
+  "ownership_audit": {
+    "owned_by_a6": [
+      "01_调度器/mode_p_vnext/adapters/delivery/capability.py",
+      "01_调度器/mode_p_vnext/services/projection_compiler.py"
+    ],
+    "unowned_by_a0_a10": [
+      "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+      "01_调度器/mode_p_vnext/director_vnext1/projection.py",
+      "01_调度器/mode_p_vnext/director_vnext1/revision.py",
+      "01_调度器/mode_p_vnext/schema/canonical_timeline.py",
+      "01_调度器/mode_p_vnext/schema/fact_registry.py",
+      "01_调度器/mode_p_vnext/storyboard_projection.py"
+    ],
+    "a1_can_repair_with_current_allowed_paths": false,
+    "task_path_ownership_rebaseline_required": true
+  },
+  "failure_first_results": [
+    {
+      "name": "registered_a1_before_missing_invariant_coverage",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "11 passed; this result was insufficient because the duplicate-authority test scanned only four selected modules"
+    },
+    {
+      "name": "broad_source_span_probe",
+      "command": "deterministic Python probe widening a valid fact draft source_start to the scene start",
+      "exit_code": 1,
+      "summary": "ACCEPTED_BROAD_SOURCE_SPAN"
+    },
+    {
+      "name": "a1_after_architecture_invariant_coverage",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 1,
+      "summary": "10 passed, 2 failed: complete-span equality was not enforced and 16 duplicate canonical authorities were detected"
+    }
+  ],
+  "failed_checks": [
+    {"name": "no_duplicate_domain_authority", "exit_code": 1},
+    {"name": "source_span_provenance_only", "exit_code": 1},
+    {"name": "domain_schemas_frozen_for_downstream", "exit_code": 1}
+  ],
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/test_a1_domain_model.py"
+  ],
+  "required_action": {
+    "immediate": "Fail A1 and retain the failing invariant tests; do not complete A1 or modify out-of-scope sources.",
+    "upstream": "Invalidate A0 and repair ReleaseLedger ownership so removal or conversion of every duplicate persistent authority occurs before A1 can freeze the canonical domain. The new ownership must remain disjoint and must not defer the A1 invariant to A6.",
+    "a1_after_rebaseline": "Enforce canonical whole-span equivalence in FactAssembler and ScriptFact provenance validation, migrate duplicate types to canonical imports or explicit non-persistent observations, run all registered and affected legacy/v4 regressions, and generate new A1 Evidence."
+  },
+  "deepseek_v4_advisory_runs": [
+    {
+      "mode": "stable system prefix plus dynamic A1 input; Read/Grep/Glob only; max_turns=6",
+      "cache_read_input_tokens": 120192,
+      "cache_creation_input_tokens": 0,
+      "outcome": "MAX_TURNS_WITHOUT_VERDICT"
+    },
+    {
+      "mode": "byte-identical prefix and dynamic input; Read/Grep/Glob only; max_turns=12",
+      "cache_read_input_tokens": 265728,
+      "cache_creation_input_tokens": 0,
+      "outcome": "MAX_TURNS_WITHOUT_VERDICT"
+    },
+    {
+      "mode": "single-turn no-tools adjudication from verified evidence summary",
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "outcome": "EMITTED_DSML_TOOL_REQUEST_TEXT_INSTEAD_OF_CONTRACT_JSON"
+    }
+  ],
+  "model_disposition": "NON_AUTHORITATIVE_ADVISORY_FAILURE; cache-hit optimization is proven, but Claude Code tool-loop and no-tools contract handling must be repaired in A4 before model output can be accepted as a typed Draft.",
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false
+}

@@ -299,6 +299,22 @@ def test_local_fact_assembler_validates_deduplicates_and_mints_opaque_handles():
         )
 
 
+def test_fact_source_span_must_match_the_complete_canonical_statement():
+    source = _source()
+    draft = _drafts(source)[0]
+    broad_span = dataclasses.replace(draft, source_start=0)
+
+    with pytest.raises(DomainValidationError, match="complete canonical statement"):
+        FactAssembler().assemble(
+            normalized_source=source,
+            normalized_source_artifact_id="normalized-source:1",
+            drafts=(broad_span,),
+            source_kind=FactKind.SCRIPT,
+            producer_stage="I0.fact_assembler",
+            created_at_utc=UTC,
+        )
+
+
 def test_fact_semantics_and_source_spans_are_typed_provenance_only():
     source, envelope = _assembled()
     dialogue = envelope.payload.by_semantic(__import__("mode_p_vnext.domain", fromlist=["FactSemantic"]).FactSemantic.DIALOGUE)[0]
@@ -383,18 +399,49 @@ def test_vec_contract_freezes_one_unit_per_shot_n_plus_one_and_bidirectional_bin
         dataclasses.replace(vec, shots=(bad_shot, vec.shots[1]))
 
 
-def test_services_and_compat_do_not_define_second_persistent_domain_types():
+def test_vnext_production_modules_do_not_redefine_canonical_domain_types():
+    import mode_p_vnext.domain.artifact as artifact
+    import mode_p_vnext.domain.blocking as blocking
+    import mode_p_vnext.domain.decisions as decisions
+    import mode_p_vnext.domain.direction as direction
+    import mode_p_vnext.domain.evidence as evidence
+    import mode_p_vnext.domain.facts as facts
+    import mode_p_vnext.domain.ids as ids
+    import mode_p_vnext.domain.knowledge as knowledge
+    import mode_p_vnext.domain.projection as projection
+    import mode_p_vnext.domain.release as release
+    import mode_p_vnext.domain.time as time
+    import mode_p_vnext.domain.vec as vec
+
     canonical = {
-        "ArtifactEnvelope", "NormalizedSource", "FactRegistry", "ScriptFact", "DurationIntent",
-        "GenerationCapabilityProfile", "GenerationUnit", "ReferenceBindingIntent", "DialogueBindingIntent",
-        "VisualExecutionContract", "ProjectionAST",
+        name
+        for module in (
+            artifact,
+            blocking,
+            decisions,
+            direction,
+            evidence,
+            facts,
+            ids,
+            knowledge,
+            projection,
+            release,
+            time,
+            vec,
+        )
+        for name in module.CANONICAL_DOMAIN_TYPES
     }
-    for module in (
-        __import__("mode_p_vnext.services.source_normalizer", fromlist=["*"]),
-        __import__("mode_p_vnext.services.fact_assembler", fromlist=["*"]),
-        __import__("mode_p_vnext.compat.legacy_facts", fromlist=["*"]),
-        __import__("mode_p_vnext.compat.legacy_checkpoint", fromlist=["*"]),
-    ):
-        tree = ast.parse(Path(module.__file__).read_text(encoding="utf-8"))
-        defined = {node.name for node in tree.body if isinstance(node, ast.ClassDef)}
-        assert not canonical & defined
+    package_root = Path(__file__).resolve().parents[1]
+    duplicates: list[str] = []
+    for source_path in sorted(package_root.rglob("*.py")):
+        relative = source_path.relative_to(package_root)
+        if "domain" in relative.parts or "tests" in relative.parts:
+            continue
+        tree = ast.parse(source_path.read_text(encoding="utf-8"))
+        duplicates.extend(
+            f"{node.name}@{relative.as_posix()}"
+            for node in tree.body
+            if isinstance(node, ast.ClassDef) and node.name in canonical
+        )
+
+    assert not duplicates, "duplicate canonical domain authorities: " + ", ".join(duplicates)
