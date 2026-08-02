@@ -1,0 +1,72 @@
+{
+  "task_id": "A10",
+  "title": "Live vNext text-shadow preflight exposes an I0 structured-contract conflict",
+  "status": "FAILED_CLOSE_PRECEDING_A4_CONTRACT_CONFLICT",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "applicable_sections": ["section 6", "section 13", "section 15 A4", "section 15 A8", "section 15 A10", "section 17"]
+  },
+  "classification": "PRECEDING_A4_STRUCTURED_DRAFT_SURFACE_CONFLICT",
+  "live_run": {
+    "kind": "A8_TEXT_SHADOW_PREFLIGHT_IN_A10_SCOPE",
+    "run_id": "a10-live-vnext-shadow-20260802",
+    "requested_model": "deepseek-v4-pro",
+    "resolved_model": "deepseek-v4-pro",
+    "source_sha256": "00d5e4c2f6987e05df79dae495b8b2ba6ac02b8156365755927b2dd6687fea75",
+    "i0_call": {
+      "accepted_by_transport": true,
+      "latency_ms": 130592,
+      "claim_ceiling": "TEXT_VALIDATED",
+      "provider": "claude_deepseek"
+    },
+    "side_effect_boundary": {
+      "external_media_started": false,
+      "v4_write": false,
+      "production_switch_authorized": false
+    }
+  },
+  "root_cause": {
+    "observed_output": "The real I0 Draft emitted natural-language scene_hint values such as 雨后站台 and 旧城火车站.",
+    "local_rejection": "The deterministic I0 assembler rejects every scene_hint except the exact current machine partition ID scene-a10-rain-platform: I0 scene_hint may only name the current explicit partition.",
+    "contradiction": "The A4 provider-visible schema exposes optional scene_hint to the model, while the downstream local validator treats that field as a canonical machine partition identifier. Under v3.0, models may produce Draft semantics but must not mint or own canonical IDs. The live model therefore follows the natural-language meaning of the field and is correctly rejected by the local runtime.",
+    "why_source_rewrite_is_not_a_repair": "Changing titles or prose in this one raw script cannot make an arbitrary model omit or reproduce a machine ID. It would only mask the conflicting provider-visible contract and would fail again on another legitimate script."
+  },
+  "required_fail_closed_action": {
+    "current_package": "A10 must stop without media acceptance, owner approval, VEC/Projection claim, v4 write, or production switch.",
+    "correct_preceding_owner": "A4 owns prompts, schema registry, structured provider transport, and A4 tests. Its provider-visible I0 Draft surface must be repaired so local code, not the model, owns the current scene partition identifier.",
+    "downstream_effect": "Because A4 behavior changes all provider-driven downstream stages, A4 and every dependent completed package A5 through A9 require ReleaseLedger invalidation and revalidation before A10 may restart."
+  },
+  "minimal_repair_constraints": [
+    "Do not relax local canonical-ID validation by accepting arbitrary free-text scene labels.",
+    "Do not instruct the model to invent or echo a canonical ID as a substitute for local ownership.",
+    "Do not create a second fact, VEC, Projection, or time authority.",
+    "Constrain or remove the provider-visible I0 scene_hint transport field, and have deterministic local code attach the already-known current partition where required.",
+    "Retain a fail-closed live-provider regression that rejects natural-label-to-machine-ID leakage without treating a model response as canonical evidence."
+  ],
+  "artifact_hashes": {
+    "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/a10-live-rain-platform-20260802/input/live_scene_source.txt": "00d5e4c2f6987e05df79dae495b8b2ba6ac02b8156365755927b2dd6687fea75",
+    "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/a10-live-vnext-shadow-20260802/RUN.json": "7dcc82b348a3bba31425f3c3be1070e323d5330380558e2415c195dcf4b7b45a",
+    "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/a10-live-vnext-shadow-20260802/TEXT_SHADOW_RUN.json": "a3e99ec1ecd47be2d48cc19ba5836d814746f364468f4fd72d73bd6d077820a5",
+    "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/a10-live-vnext-shadow-20260802/stage_records/I0.json": "45da097b3b6665ac745ec648337890b5dcc377e108c488f6179b1e50e41e2c2b"
+  },
+  "observed_preceding_boundary_hashes": {
+    "01_调度器/mode_p_vnext/pipeline/ingest_nodes.py": "e729556fd4577044a8bc56afb90031cea95bfd65eb629a8fbf4a4a154a28ef82",
+    "01_调度器/mode_p_vnext/prompts/schema_registry.py": "200913eae94fa7f358b99a49a7605a13c02cc361591e7a8e56b4eaa1b0ee98a3",
+    "01_调度器/mode_p_vnext/prompts/compiler.py": "3c82adf68e2704e5d6019959b8e63a5a031ac56a86b5f11dd7a5388b84f1ce3b"
+  },
+  "changed_paths": [
+    "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/a10-live-rain-platform-20260802/input/live_scene_source.txt",
+    "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/a10-live-vnext-shadow-20260802/RUN.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/a10-live-vnext-shadow-20260802/TEXT_SHADOW_RUN.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/a10-live-vnext-shadow-20260802/stage_records/I0.json",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A10_REAL_PROVIDER_I0_CONTRACT_CONFLICT_029.json"
+  ],
+  "manual_gates": {
+    "media_visual_acceptance": false,
+    "owner_production_approval": false
+  },
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "completion_claimed": false
+}
