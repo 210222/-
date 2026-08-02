@@ -123,6 +123,13 @@ class StateGraph:
         self._by_id = MappingProxyType({node.node_id: node for node in values})
         self._owners = MappingProxyType(owners)
         self._output_types = MappingProxyType(output_types)
+        self._known_fields = frozenset(
+            set(owners).union(
+                field_name
+                for node in values
+                for field_name in node.input_fields
+            )
+        )
 
     @staticmethod
     def _validate_acyclic(nodes: Sequence[NodeSpec], owners: Mapping[str, str]) -> None:
@@ -336,6 +343,12 @@ class StateGraph:
         mutation from being mistaken for an already-accepted artifact.
         """
         seeds = _texts(changed_fields, "changed_fields", required=True)
+        unknown = tuple(field_name for field_name in seeds if field_name not in self._known_fields)
+        if unknown:
+            raise StateInvariantError(
+                "changed fields are not declared in StateGraph: "
+                + ", ".join(unknown)
+            )
         affected: list[str] = []
         pending_fields = list(seeds)
         cursor = 0

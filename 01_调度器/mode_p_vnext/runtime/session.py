@@ -306,7 +306,15 @@ class RunSession:
                 raise RunSessionError(f"persisted ArtifactRef for '{field_name}' no longer verifies")
         return state
 
-    def state(self) -> PersistentGraphState:
+    def _state_from_current_pointer(self) -> PersistentGraphState:
+        """Replay only the state named by the durable current pointer.
+
+        Recovery deliberately calls this lower-level reader before it examines
+        orphaned committed children.  Public state access below additionally
+        requires that such a child has been explicitly recovered, so a crash
+        between commit promotion and pointer publication cannot be mistaken for
+        a safe earlier state.
+        """
         pointer = self._read_pointer()
         if pointer is None:
             return PersistentGraphState.empty(self.run_id)
@@ -316,6 +324,40 @@ class RunSession:
         state = self._replay(pending.commit_id)
         if canonical_sha256(state.to_dict()) != pointer["state_sha256"]:
             raise RunSessionError("current pointer is not bound to the replayed state")
+        return state
+
+    def _committed_recovery_candidates(
+        self, base: PersistentGraphState
+    ) -> tuple[PendingNodeWrite, ...]:
+        """Find complete direct children that were promoted before pointer publication."""
+        commits_root = self.run_dir / "commits"
+        if not commits_root.is_dir() or commits_root.is_symlink():
+            raise RunSessionError("commits root is unsafe")
+        base_hash = canonical_sha256(base.to_dict())
+        candidates: list[PendingNodeWrite] = []
+        for commit_dir in sorted(commits_root.iterdir(), key=lambda path: path.name):
+            if not commit_dir.is_dir() or commit_dir.is_symlink():
+                raise RunSessionError("commits contains an unsafe entry")
+            pending = NodeTransaction.read_committed(commit_dir)
+            if pending.commit_id == base.current_commit_id:
+                continue
+            if (
+                pending.parent_commit_id == base.current_commit_id
+                and pending.base_state_sha256 == base_hash
+            ):
+                candidates.append(pending)
+        return tuple(candidates)
+
+    def state(self) -> PersistentGraphState:
+        """Return state only when no committed crash boundary remains unresolved."""
+        state = self._state_from_current_pointer()
+        candidates = self._committed_recovery_candidates(state)
+        if len(candidates) == 1:
+            raise RunSessionError(
+                "unresolved committed recovery candidate; call recover_pending before state use"
+            )
+        if len(candidates) > 1:
+            raise RunSessionError("multiple committed children make recovery ambiguous")
         return state
 
     def checkpoint(self) -> Path:
@@ -388,18 +430,8 @@ class RunSession:
                     )
                 except NodeTransactionError as exc:
                     raise RunSessionError(str(exc)) from exc
-            base = self.state()
-            base_hash = canonical_sha256(base.to_dict())
-            candidates: list[PendingNodeWrite] = []
-            commits_root = self.run_dir / "commits"
-            for commit_dir in sorted(commits_root.iterdir(), key=lambda path: path.name):
-                if not commit_dir.is_dir() or commit_dir.is_symlink():
-                    raise RunSessionError("commits contains an unsafe entry")
-                pending = NodeTransaction.read_committed(commit_dir)
-                if pending.commit_id == base.current_commit_id:
-                    continue
-                if pending.parent_commit_id == base.current_commit_id and pending.base_state_sha256 == base_hash:
-                    candidates.append(pending)
+            base = self._state_from_current_pointer()
+            candidates = self._committed_recovery_candidates(base)
             if not candidates:
                 return ()
             if len(candidates) != 1:

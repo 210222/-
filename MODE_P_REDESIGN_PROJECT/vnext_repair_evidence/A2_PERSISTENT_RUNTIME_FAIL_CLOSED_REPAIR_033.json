@@ -1,0 +1,151 @@
+{
+  "schema_name": "mode_p_vnext_a2_persistent_runtime_fail_closed_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A2",
+  "created_at": "2026-08-03T00:27:02+08:00",
+  "owner": "codex-a2-persistent-graph-20260803",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_COMPLETE_VERIFICATION_INPUT",
+    "applicable_sections": [
+      "section 5",
+      "section 11",
+      "section 14",
+      "section 15 A2",
+      "section 17"
+    ]
+  },
+  "revalidation": {
+    "reason": "A1 exact fact ID/handle pair repair invalidated every downstream package. Revalidation of A2 found two independent fail-open paths in the persistent runtime before any later package was allowed to rely on it.",
+    "previous_failure_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A5_TYPED_FACT_PAIR_FAIL_CLOSE_031.json",
+    "previous_a2_completion_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_V30_PERSISTENT_RUNTIME_REVALIDATION_019.json",
+    "previous_a2_disposition": "HISTORICAL_INVALIDATED_NOT_CURRENT_COMPLETION_PROOF",
+    "implementation_changed_after_claim": true
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/pipeline/graph.py",
+    "01_调度器/mode_p_vnext/runtime/session.py",
+    "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_PERSISTENT_RUNTIME_FAIL_CLOSED_REPAIR_033.json"
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_调度器/mode_p_vnext/pipeline/graph.py": "6585c2bb7a95b0ca1cca75d52089371b50bcc4cb7c0af6b89a77a5148c6eb866",
+    "01_调度器/mode_p_vnext/runtime/session.py": "03e8da5b52d08511211f6007d7d2c0891f09f63bc027d6bb6477f77f6f61bc43",
+    "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py": "a9c3dc8528639400409ed90028d702427216b0e73af66c02dd3c61156ec7d8c4"
+  },
+  "root_repairs": [
+    {
+      "invariant": "The public persistent state may not silently expose a pre-crash parent when an atomically promoted direct child exists without a durable current-pointer publication.",
+      "prechange_failure": "After NodeTransaction.promote and before CURRENT.json publication, RunSession.state returned the old state. A new producer could therefore capture that stale state and create a competing branch without first recovering the already committed child.",
+      "repair": "RunSession now separates raw pointer replay from public state access. Public state access scans complete direct children, fails closed for one unresolved recovery candidate or multiple ambiguous children, and requires recover_pending to publish the only reproducible candidate.",
+      "proof": "test_unrecovered_committed_child_blocks_stale_state_use_until_explicit_recovery verifies that state and snapshot capture fail before recovery, then the committed I0 node alone becomes accepted after explicit recovery. The existing ambiguous-child regression verifies both state and recovery fail closed."
+    },
+    {
+      "invariant": "Every field-level invalidation must name a field declared by the frozen StateGraph; an unmodeled or misspelled route cannot silently preserve stale accepted state.",
+      "prechange_failure": "StateGraph.invalidation_closure accepted any non-empty field name. An unknown field produced an empty closure and a no-op invalidation result.",
+      "repair": "StateGraph records the immutable union of graph-owned and declared-input fields and rejects unknown invalidation seeds before it computes a closure or transaction.",
+      "proof": "test_undeclared_field_invalidation_fails_closed_without_mutating_state verifies that an unknown adapter-or-fact route raises StateInvariantError and preserves the exact pre-request state."
+    }
+  ],
+  "a1_dependency_boundary": {
+    "strengthened_input": "A1 now makes each VEC fact ID/opaque-handle pair an exact canonical binding.",
+    "a2_preservation": "A2 stores only immutable ArtifactRefs and digest-bound graph transitions. It does not reinterpret fact IDs, handles, source text, source spans, time, VEC, or Projection; any changed canonical artifact is bound by its complete digest and cannot be submitted against a stale state digest.",
+    "no_duplicate_authority": "No canonical domain type, fact mapping, time system, VEC, ProjectionAST, Director decision, or provider behavior was added in A2."
+  },
+  "checks": [
+    {
+      "name": "persistent_state_graph",
+      "exit_code": 0
+    },
+    {
+      "name": "checkpoint_resume",
+      "exit_code": 0
+    },
+    {
+      "name": "pending_write_atomicity",
+      "exit_code": 0
+    },
+    {
+      "name": "content_addressed_artifacts",
+      "exit_code": 0
+    },
+    {
+      "name": "field_level_invalidation",
+      "exit_code": 0
+    },
+    {
+      "name": "capability_profile_invalidation",
+      "exit_code": 0
+    },
+    {
+      "name": "stale_concurrent_result_rejected",
+      "exit_code": 0
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a2_persistent_graph",
+      "argv": [
+        "{python}",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_a2_persistent_graph.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "15 passed in 5.67s"
+    }
+  ],
+  "supplemental_regressions": [
+    {
+      "name": "a2_historical_compatibility_regression",
+      "exit_code": 0,
+      "summary": "49 passed in 7.30s across A2 plus legacy session, transaction, dependency-invalidation, and lock regressions; these modules remain historical compatibility surfaces, not v3 runtime authorities."
+    },
+    {
+      "name": "a0_a1_a2_a8_v4_security_regression",
+      "exit_code": 0,
+      "summary": "112 passed in 22.76s across A0 control, rebuild control, A1, A2, A8 text shadow, v4 compatibility, security, and active-entrypoint checks."
+    },
+    {
+      "name": "a0_through_a8_v4_security_regression",
+      "exit_code": 0,
+      "summary": "212 passed in 22.21s across A0-A8 registered suites, v4 compatibility, security, and active-entrypoint checks."
+    },
+    {
+      "name": "changed_module_compile_check",
+      "exit_code": 0,
+      "summary": "python -m compileall -q completed for graph.py, session.py, and the A2 test module."
+    },
+    {
+      "name": "git_diff_check",
+      "exit_code": 0,
+      "summary": "git diff --check passed for all A2 implementation and test paths."
+    }
+  ],
+  "authority_boundary": {
+    "canonical_domain": "mode_p_vnext.domain",
+    "runtime_ledger": "A2 records immutable ArtifactRef metadata, deterministic graph signatures, commit-chain state, checkpoints, content-addressed storage, and invalidation evidence only. It never owns or mutates canonical domain payloads.",
+    "pending_recovery_policy": "Uncommitted staging is quarantined. Exactly one atomically promoted direct child is recoverable only through explicit recover_pending. An unresolved or ambiguous committed child makes public state fail closed.",
+    "field_invalidation_policy": "Only fields declared by the StateGraph may seed a field invalidation; capability and selected knowledge snapshots retain their dedicated deterministic invalidation routes.",
+    "legacy_lifecycle_modules": "HISTORICAL_COMPATIBILITY_ONLY; mode_p_vnext.runtime does not import session_state, atomic_commit, or dependency_invalidation as a v3 graph authority.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A3 knowledge flow, A4 provider, A5 compiler or VEC, A6 Projection, A7 Gate/DP, A8 vertical composition, A9 evaluation, or A10 media implementation was changed.",
+    "No v4 production file, FeatureGate, provider invocation, Director or DP runtime, external submission, real media run, visual acceptance, or owner approval was started or claimed.",
+    "No model output was granted authority over IDs, hashes, ticks, boundaries, typed bindings, VEC, ProjectionAST, state transitions, or invalidation."
+  ],
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "external_submission": false
+  }
+}

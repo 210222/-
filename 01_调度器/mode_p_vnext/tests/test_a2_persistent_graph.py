@@ -251,6 +251,29 @@ def test_pending_write_is_never_recovered_but_committed_crash_boundary_is(tmp_pa
     assert tuple(resumed.state().accepted) == ("I0",)
 
 
+def test_unrecovered_committed_child_blocks_stale_state_use_until_explicit_recovery(
+    tmp_path: Path,
+) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-4a", graph=_graph())
+    source = _artifact(ArtifactKind.NORMALIZED_SOURCE, "committed-gap")
+    pending = session.runner(owner="writer").prepare(
+        "I0",
+        artifacts={"source": source},
+        input_digests={"raw_source": source.source_provenance[0].digest},
+        base_state_sha256=session.capture_execution_snapshot().base_state_sha256,
+    )
+    NodeTransaction.promote(session.run_dir, pending)
+
+    resumed = RunSession.open(session.run_dir, graph=_graph())
+    with pytest.raises(RunSessionError, match="unresolved committed recovery candidate"):
+        resumed.state()
+    with pytest.raises(RunSessionError, match="unresolved committed recovery candidate"):
+        resumed.capture_execution_snapshot()
+
+    assert resumed.recover_pending(owner="recovery") == ("I0",)
+    assert tuple(resumed.state().accepted) == ("I0",)
+
+
 def test_content_addressed_artifacts_and_cache_reject_mutation(tmp_path: Path) -> None:
     session = RunSession.create(tmp_path / "runs", run_id="run-5", graph=_graph())
     source = _artifact(ArtifactKind.NORMALIZED_SOURCE, "content")
@@ -293,6 +316,20 @@ def test_field_invalidation_is_minimal_and_adapter_scoped(tmp_path: Path) -> Non
     )
     assert result.invalidated_node_ids == ("I0", "E0", "B1", "VIDEO")
     assert not session.state().accepted
+
+
+def test_undeclared_field_invalidation_fails_closed_without_mutating_state(tmp_path: Path) -> None:
+    session = RunSession.create(tmp_path / "runs", run_id="run-6a", graph=_graph())
+    _complete(session)
+    before = session.state().to_dict()
+
+    with pytest.raises(StateInvariantError, match="not declared in StateGraph"):
+        session.invalidate(
+            changed_field_digests={"unknown_adapter_or_fact_route": _digest("7")},
+            reason="an unmodeled input changed",
+        )
+
+    assert session.state().to_dict() == before
 
 
 def test_capability_profile_invalidation_keeps_director_and_knowledge_selection(tmp_path: Path) -> None:
@@ -447,14 +484,40 @@ def test_pointer_tampering_and_ambiguous_committed_recovery_fail_closed(tmp_path
         RunSession.open(session.run_dir, graph=_graph()).state()
 
     ambiguous = RunSession.create(tmp_path / "runs", run_id="run-11", graph=_graph())
+    crash_boundary_state = PersistentGraphState.empty("run-11")
     for label in ("ambiguous-a", "ambiguous-b"):
         artifact = _artifact(ArtifactKind.NORMALIZED_SOURCE, label)
-        pending = ambiguous.runner(owner=f"writer-{label}").prepare(
-            "I0",
-            artifacts={"source": artifact},
+        artifact_ref = ambiguous.artifacts.put(artifact)
+        commit_id, generation_id = NodeTransaction.new_identity("I0")
+        next_state = _graph().apply(
+            crash_boundary_state,
+            node_id="I0",
+            outputs={"source": artifact_ref},
             input_digests={"raw_source": artifact.source_provenance[0].digest},
-            base_state_sha256=ambiguous.capture_execution_snapshot().base_state_sha256,
+            knowledge_snapshot_digest=None,
+            capability_profile_digest=None,
+            commit_id=commit_id,
+        )
+        pending = NodeTransaction.prepare(
+            ambiguous.run_dir,
+            transaction_kind="node",
+            base_state=crash_boundary_state,
+            next_state=next_state,
+            parent_commit_id="",
+            commit_id=commit_id,
+            generation_id=generation_id,
+            transition={
+                "kind": "node",
+                "node_id": "I0",
+                "graph_digest": _graph().digest,
+                "outputs": {"source": artifact_ref.to_dict()},
+                "input_digests": {"raw_source": artifact.source_provenance[0].digest},
+                "knowledge_snapshot_digest": None,
+                "capability_profile_digest": None,
+            },
         )
         NodeTransaction.promote(ambiguous.run_dir, pending)
+    with pytest.raises(RunSessionError, match="multiple committed children"):
+        RunSession.open(ambiguous.run_dir, graph=_graph()).state()
     with pytest.raises(RunSessionError, match="multiple committed children"):
         RunSession.open(ambiguous.run_dir, graph=_graph()).recover_pending(owner="recovery")
