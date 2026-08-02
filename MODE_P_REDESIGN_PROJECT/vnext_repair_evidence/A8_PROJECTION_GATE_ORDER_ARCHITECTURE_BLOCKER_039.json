@@ -1,0 +1,113 @@
+{
+  "kind": "MODE_P_VNEXT_A8_ARCHITECTURE_CONFLICT",
+  "task_id": "A8",
+  "status": "FAILED_CLOSED",
+  "created_at_utc": "2026-08-02T18:04:54Z",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "applicable_sections": [
+      "§3",
+      "§10",
+      "§13",
+      "§15 A8"
+    ]
+  },
+  "release_ledger_state_at_detection": {
+    "current_task": "A8",
+    "completed_tasks": [
+      "A0",
+      "A1",
+      "A2",
+      "A3",
+      "A4",
+      "A5",
+      "A6",
+      "A7"
+    ],
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "conflict": {
+    "section_3_system_graph": {
+      "declared_order": "Local VEC Assembler -> Deterministic Gate 0 -> Fresh Independent DP -> ProjectionAST",
+      "source": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md lines 82-90"
+    },
+    "sections_10_and_13_required_dependencies": {
+      "declared_order": "VEC -> ProjectionAST -> delivery projections",
+      "gate_requirement": "Gate 0 must include Projection identity, and a Gate 0 failure must not call DP.",
+      "source": "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md lines 305-315 and 339-342"
+    },
+    "current_a8_composition": {
+      "persisted_order": [
+        "I0",
+        "E0",
+        "S1",
+        "K1",
+        "B0",
+        "K2",
+        "B1",
+        "VEC",
+        "Projection",
+        "G0",
+        "DP"
+      ],
+      "source": "01_调度器/mode_p_vnext/cli.py _A8_NODE_ORDER and run_text_shadow",
+      "reason": "This is the only order in which the existing single canonical ProjectionAST can be supplied to Gate 0 for its required Projection-identity check before DP is called."
+    }
+  },
+  "root_cause": "The frozen authority simultaneously draws ProjectionAST after DP and requires a single ProjectionAST to be available to Gate 0 before DP. The A8 task registry explicitly cites §3, §6, §11, and §15 A8, so a construction implementation cannot treat the §3 edge as an inactive historical diagram.",
+  "rejected_implementations": [
+    {
+      "option": "Move Projection after DP to follow the §3 graph literally.",
+      "rejection": "Gate 0 would have no ProjectionAST whose identity it can validate before DP, violating §13."
+    },
+    {
+      "option": "Create Projection before Gate 0 and retain the current A8 order.",
+      "rejection": "This selects the §§10/13 interpretation over the explicitly cited §3 graph without a frozen authority clarification."
+    },
+    {
+      "option": "Create a provisional ProjectionAST for Gate 0 and another one after DP.",
+      "rejection": "This creates two projection authorities and violates the single-ProjectionAST rule in §10."
+    },
+    {
+      "option": "Remove Projection identity from Gate 0 so Projection can stay after DP.",
+      "rejection": "That changes the A7-owned Gate 0 contract and contradicts §13; it is outside A8 ownership."
+    }
+  ],
+  "failure_action": {
+    "action": "Fail-close A8 and retain its next-task position in ReleaseLedger.",
+    "reason": "No allowed A8-only change can prove compliance with every cited frozen requirement. No old plan, test fixture, or current implementation order may resolve the conflict by implication."
+  },
+  "required_recovery": [
+    "Freeze a successor architecture authority that explicitly defines the single ProjectionAST lifecycle and the required ordering of Projection, Gate 0, and fresh DP.",
+    "Rebase ReleaseLedger against that successor authority before re-claiming A8; do not reuse this A8 failure as completion evidence.",
+    "Only after the rebase returns A8 as the unique task may the text-shadow composition be repaired and re-verified."
+  ],
+  "checks": [
+    {
+      "name": "release_ledger_audit_at_detection",
+      "exit_code": 0,
+      "result": "ReleaseLedger audit returned ok=true with no controller-integrity issues before the architecture conflict was recorded."
+    },
+    {
+      "name": "frozen_authority_hash",
+      "exit_code": 0,
+      "result": "The normalized-LF SHA-256 of the sole v3.0 architecture authority is a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a."
+    },
+    {
+      "name": "projection_gate_dependency_trace",
+      "exit_code": 1,
+      "result": "The cited §3 order and the §§10/13 dependency requirements are mutually unsatisfiable for one canonical ProjectionAST; failure is intentional and fail-closed."
+    }
+  ],
+  "scope_exclusions": [
+    "No v4 source, FeatureGate, production entry, production state, or production switch was modified.",
+    "No external media renderer, verifier, media run, frame evidence, or owner approval was started.",
+    "No A8 implementation file or test was modified after this architecture conflict was detected.",
+    "Pre-existing user worktree changes remain unstaged and untouched."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "completion_claimed": false
+}
