@@ -184,9 +184,21 @@ class EvidenceVerifiedPromotion:
             *counterexamples,
             self.applicability_scope_digest,
         }
-        if evidence and not chain.issubset(evidence):
+        chain_entries = (
+            *observations,
+            self.outcome_attribution_digest,
+            self.pattern_candidate_digest,
+            *corroborating,
+            *counterexamples,
+            self.applicability_scope_digest,
+        )
+        if len(chain_entries) != len(chain):
             raise DomainValidationError(
-                "evidence_digests must bind every structured experience link"
+                "structured experience promotion links must be distinct"
+            )
+        if evidence and set(evidence) != chain:
+            raise DomainValidationError(
+                "evidence_digests must bind exactly the structured experience links"
             )
         object.__setattr__(self, "evidence_digests", evidence)
         object.__setattr__(self, "media_observation_digests", observations)
@@ -483,6 +495,32 @@ def _candidate_security_events(
     )
     if claim_event is not None:
         events.append(claim_event)
+    # The decision view deliberately contains only a narrow metadata subset,
+    # but every value in that subset is still data at this boundary.  Scanning
+    # only ``raw_evidence`` or the card claim would leave an instruction-shaped
+    # director question, tag, constraint, or tradeoff able to reach a model.
+    director_visible_metadata = {
+        "decision_domain": (candidate.decision_domain,),
+        "director_question": (candidate.director_question,),
+        "query_tags": candidate.query_tags,
+        "positive_closure_requirements": candidate.positive_closure_requirements,
+        "negative_routing_constraints": candidate.negative_routing_constraints,
+        "must_not_decide": candidate.must_not_decide,
+        "counter_examples": candidate.card.counter_examples,
+        "non_applicability": candidate.non_applicability,
+    }
+    for field_name, values in director_visible_metadata.items():
+        for ordinal, value in enumerate(values):
+            event = inspect_untrusted_text(
+                envelope_untrusted_text(
+                    source_id=f"card:{candidate.card_id}:{field_name}:{ordinal}",
+                    source_kind="knowledge_card_metadata",
+                    project_id=context.project_id,
+                    content=value,
+                )
+            )
+            if event is not None:
+                events.append(event)
     return tuple(events)
 
 
@@ -850,6 +888,7 @@ def _retrieval_input_digest(
     return canonical_sha256(
         {
             "scene_id": diagnosis.scene_id,
+            "diagnosis_sha256": canonical_sha256(diagnosis),
             "stage": stage.value,
             "catalog_index_sha256": catalog.index_sha256,
             "context": {

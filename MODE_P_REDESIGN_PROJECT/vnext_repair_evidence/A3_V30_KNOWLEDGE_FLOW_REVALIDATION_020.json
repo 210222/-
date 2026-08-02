@@ -1,0 +1,88 @@
+{
+  "schema_name": "mode_p_vnext_a3_knowledge_flow_revalidation_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A3",
+  "created_at": "2026-08-02T08:08:00+08:00",
+  "owner": "codex-a3-v30-knowledge-flow-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_COMPLETE_VERIFICATION_INPUT",
+    "applicable_sections": ["section 4", "section 5", "section 11", "section 12", "section 15 A3"]
+  },
+  "revalidation": {
+    "reason": "The A0 V4 cohort-authority repair invalidated downstream completion records. This Evidence rebinds the complete A3 knowledge-flow ownership set to the locked v3.0 architecture and records fail-closed repairs discovered during current-state review.",
+    "previous_a3_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A3_V30_KNOWLEDGE_FLOW_013.json",
+    "previous_a3_evidence_disposition": "HISTORICAL_READ_ONLY_NOT_CURRENT_COMPLETION_PROOF",
+    "implementation_changed_after_claim": true,
+    "repaired_hazards": [
+      "The K1/K2 retrieval input digest and snapshot identity now bind the complete SceneDiagnosis, so a changed diagnosis for the same scene cannot alias a prior KnowledgeSnapshot.",
+      "Instruction-shaped text in every metadata surface that can reach the Director decision view is quarantined before selection, not only in raw evidence or the card claim.",
+      "Evidence promotion now requires distinct media, attribution, pattern, corroboration, counterexample, and applicability links, and evidence_digests must bind exactly that complete chain."
+    ]
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/knowledge_retriever.py",
+    "01_调度器/mode_p_vnext/knowledge_flow.py",
+    "01_调度器/mode_p_vnext/knowledge_snapshot.py",
+    "01_调度器/mode_p_vnext/tests/test_a3_knowledge_flow.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A3_V30_KNOWLEDGE_FLOW_REVALIDATION_020.json"
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_调度器/mode_p_vnext/services/knowledge_retriever.py": "4735cd5ec2793f9ec1732ef489b29ba462f157b9f5a07d7580cb2e203b2211c5",
+    "01_调度器/mode_p_vnext/knowledge_flow.py": "1ab49a622b8b592281b33f65fd5618d6908271c556e12072f0a980aaaec86d16",
+    "01_调度器/mode_p_vnext/knowledge_snapshot.py": "355ca438a6125f4015ff4f180a0a479ec9338f708c1ae6c7f1702385cc912c7a",
+    "01_调度器/mode_p_vnext/tests/test_a3_knowledge_flow.py": "78ce97217b42b8d6d334ce6a34f9c2367f88df183778f6a653f31c24b6e8c164"
+  },
+  "checks": [
+    {"name": "single_k1_k2_implementation", "exit_code": 0},
+    {"name": "replayable_snapshot", "exit_code": 0},
+    {"name": "untrusted_text_isolation", "exit_code": 0},
+    {"name": "director_conflict_ownership", "exit_code": 0},
+    {"name": "evidence_gated_promotion", "exit_code": 0},
+    {"name": "unselected_knowledge_excluded", "exit_code": 0}
+  ],
+  "verification_results": [
+    {
+      "name": "a3_knowledge_flow",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_a3_knowledge_flow.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "19 passed in 0.22s"
+    }
+  ],
+  "precompletion_results": [
+    {
+      "name": "a3_knowledge_security_conflict_budget_snapshot_vertical_regression",
+      "command": "python -m pytest mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_v3_1_knowledge_auditor.py mode_p_vnext/tests/test_v3_3_conflict_graph.py mode_p_vnext/tests/test_v3_5_retrieval_budget.py mode_p_vnext/tests/test_v3_6_knowledge_snapshot.py mode_p_vnext/tests/test_v9_1_vertical_integration.py mode_p_vnext/tests/test_v9_5_security.py mode_p_vnext/tests/test_cpl_1_knowledge.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "63 passed, 81 subtests passed in 0.99s"
+    },
+    {
+      "name": "a0_a1_a2_v4_isolation_regression",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p/test_active_entrypoints.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "64 passed in 10.31s"
+    }
+  ],
+  "authority_boundary": {
+    "canonical_domain": "mode_p_vnext.domain",
+    "canonical_k1_k2_selector": "mode_p_vnext.services.knowledge_retriever.KnowledgeRetriever",
+    "canonical_snapshot": "ArtifactEnvelope[mode_p_vnext.domain.knowledge.KnowledgeSnapshot]",
+    "legacy_receipts": "Historical compatibility only. They are not accepted by the canonical retriever, cannot mint a canonical ArtifactEnvelope, and are excluded from v3.0 runtime state.",
+    "director_conflicts": "Only explicit conflict records requiring a Director decision are emitted; conflict options are never auto-selected.",
+    "promotion": "A candidate remains outside K1/K2 until its complete evidence chain is independently verified and human-approved.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A4 provider or prompt implementation, A5 timeline or VEC, A6 Projection, A7 Gate or DP/media, or later package was changed.",
+    "No CLI rewiring, external media call, Director execution, DP execution, production runtime change, or production switch was started.",
+    "No textual, structural, or simulated check is represented as visual acceptance."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false,
+  "media_visual_acceptance": false
+}
