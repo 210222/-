@@ -1,0 +1,91 @@
+{
+  "task_id": "A10",
+  "title": "Real media evidence and hash-bound owner preview approval",
+  "status": "FAILED_CLOSE_EXTERNAL_MEDIA_PREREQUISITE_UNAVAILABLE",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "applicable_sections": ["section 13", "section 15 A10", "section 17", "section 18"]
+  },
+  "classification": "EXTERNAL_MEDIA_PREREQUISITE_UNAVAILABLE",
+  "root_cause": {
+    "finding": "The active A7 media adapters are intentionally fail-closed NoopMediaRenderer and NoopMediaVerifier. No configured real renderer, verifier, existing A10 packet, or locally reviewable media asset exists. The current Windows environment exposes only claude.cmd/claude.ps1, while the frozen A4 adapter requires a native claude.exe and explicitly rejects a cmd shim.",
+    "why_not_a_test_problem": "Architecture v3.0 section 17 forbids text tests from claiming visual acceptance. A non-empty JSON object, a fixture, or a generated placeholder cannot replace a real media run, frame evidence, a same-scene v4/vNext comparison, or the owner's independent decision.",
+    "why_not_self_repaired": "A10 may write only its tests, operations protocol, A10 run directory, and A10 evidence. It may not modify the A7-owned media adapter implementation, the A0-owned release controller, v4, a FeatureGate, or release-state fields directly. Replacing a Noop adapter or accepting a cmd shim inside A10 would violate exclusive task ownership and the frozen native-Windows transport invariant."
+  },
+  "observations": [
+    {
+      "name": "native_claude_transport",
+      "result": "No claude.exe is resolvable. The available Claude Code installation is version 2.1.214 through claude.cmd/claude.ps1, which the v3.0 structured adapter rejects by design on Windows."
+    },
+    {
+      "name": "media_adapter_boundary",
+      "result": "NoopMediaRenderer and NoopMediaVerifier raise unavailable errors rather than fabricate a provider result or frame evidence."
+    },
+    {
+      "name": "media_asset_preflight",
+      "result": "No A10 release-run directory, MEDIA_VISUAL_ACCEPTANCE packet, or locally reviewable image/video asset was found in the project workspace."
+    },
+    {
+      "name": "production_boundary",
+      "result": "production_entry remains v4_unchanged and production_switch_authorized remains false; no external media, v4 mutation, owner approval, or production switch was performed."
+    }
+  ],
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/test_a10_media_release_readiness.py",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_OPERATIONS_V3.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A10_MEDIA_RUNTIME_BLOCKER_028.json"
+  ],
+  "repair_delivered_within_a10_scope": [
+    "An A10 operations protocol that requires local physical media/frame files, SHA256 verification, same-scene v4/vNext attribution, rollback evidence, and independent owner approval.",
+    "A registered A10 readiness test that rejects controller-minimum JSON, validates actual external evidence when present, and emits an auditable skip rather than a false pass when no external packet exists."
+  ],
+  "artifact_hashes": {
+    "01_调度器/mode_p_vnext/tests/test_a10_media_release_readiness.py": "020d02d6778b4e2c8adbc127dfd2be3af3f17ab637a1eeeeb7afbea356f45191",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_OPERATIONS_V3.md": "ae035ba5e36a5f521e43dbf673f156b64a2f230bb1deee9e7a3f6d1075b9809d"
+  },
+  "observed_boundary_hashes": {
+    "01_调度器/mode_p_vnext/adapters/media/renderer.py": "cd813f6059d1cf7af5dd258f74344c2438b2f5d0afe938b0b5ad00ac7fa8ea55",
+    "01_调度器/mode_p_vnext/adapters/media/verifier.py": "d5cf96a0055f7d0939eea6d4dd504726d74759d01d4b3512ee743ec805586e37",
+    "01_调度器/mode_p_vnext/adapters/model/claude_deepseek.py": "c0fb1a9dacf875cf3215c1ce956f9e397825e4817f8056611a4006a55b055853",
+    "01_调度器/mode_p_vnext/release_control.py": "48d1479c9f6a4178f203c2659e1e33a6d882f66c317a64a224cd87e0c7ac78f4"
+  },
+  "verification_results": [
+    {
+      "name": "a10_media_release_readiness",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a10_media_release_readiness.py -q -p no:cacheprovider",
+      "result": "1 passed, 1 skipped. The skip is an auditable external-media-absent condition and is not a media-acceptance claim."
+    },
+    {
+      "name": "a7_fail_closed_media_boundary",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider",
+      "result": "20 passed; the registered A7 boundary continues to reject fabricated renderer/verifier outcomes."
+    },
+    {
+      "name": "a10_v4_entrypoint",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "result": "15 passed; v4 remains the active production entrypoint."
+    },
+    {
+      "name": "release_ledger_audit",
+      "exit_code": 0,
+      "command": "python -m mode_p_vnext.release_control audit",
+      "result": "ok=true before fail-close; no architecture or ledger drift was introduced."
+    }
+  ],
+  "required_external_or_replanned_work": [
+    "Provision an actual media renderer and verifier capable of producing and preserving v4 and vNext same-scene runs, or authorize a new architecture-controlled ownership change that activates such an adapter and invalidates affected downstream evidence.",
+    "Provision the frozen native Windows text transport required for a fresh vNext raw-source-to-Projection run; do not use a cmd/PowerShell shim as a substitute.",
+    "After a genuine A10 media packet exists, the project owner must independently inspect it and personally create the hash-bound OWNER_PREVIEW_APPROVAL."
+  ],
+  "manual_gates": {
+    "media_visual_acceptance": false,
+    "owner_production_approval": false
+  },
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "completion_claimed": false
+}
