@@ -288,6 +288,8 @@ def test_blocking_and_vec_are_deterministic_local_authority(id_factory, blocking
 
     assert first == second
     assert first.contract_id.startswith("id:")
+    assert first.execution_design_artifact_id.startswith("id:")
+    assert first.blocking_commit_artifact_id == blocking_commit.commit_id
     assert first.canonical_input_sha256 != first.canonical_output_sha256
     final_fields = {
         name: getattr(first, name)
@@ -426,6 +428,42 @@ def test_invalid_blocking_ordinal_and_wrong_dialogue_semantic_fail_closed(id_fac
             id_factory=IdFactory(program_version="different-approved-program"),
             program_version=PROGRAM_VERSION,
         )
+
+
+def test_blocking_commit_rejects_mismatched_program_identity() -> None:
+    with pytest.raises(DomainValidationError, match="Blocking program_version"):
+        assemble_blocking_commit(
+            draft=make_blocking_draft(),
+            episode_id=EPISODE_ID,
+            scene_id=SCENE_ID,
+            id_factory=IdFactory(program_version="other-approved-program"),
+            program_version=PROGRAM_VERSION,
+        )
+
+
+@pytest.mark.parametrize(
+    "transition_intents",
+    (
+        (),
+        ("hard cut", "unconsumed transition"),
+    ),
+)
+def test_vec_rejects_incomplete_or_unconsumed_transition_intents(
+    id_factory, blocking_commit, transition_intents
+) -> None:
+    with pytest.raises(DomainValidationError, match="exactly one transition intent"):
+        build_vec(
+            id_factory,
+            blocking_commit,
+            draft=replace(make_draft(), transition_intents=transition_intents),
+        )
+
+
+def test_vec_exposes_no_caller_override_for_local_artifact_identities() -> None:
+    parameters = inspect.signature(assemble_vec).parameters
+
+    assert "execution_design_artifact_id" not in parameters
+    assert "blocking_commit_artifact_id" not in parameters
 
 
 def test_assembler_has_no_legacy_fact_or_timing_inference_path() -> None:

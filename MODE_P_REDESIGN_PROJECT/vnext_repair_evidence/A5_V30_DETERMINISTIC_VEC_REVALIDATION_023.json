@@ -1,0 +1,99 @@
+{
+  "schema_name": "mode_p_vnext_a5_deterministic_vec_revalidation_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A5",
+  "created_at": "2026-08-02T19:49:05+08:00",
+  "owner": "codex-a5-v30-deterministic-vec-repair-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_COMPLETE_VERIFICATION_INPUT",
+    "applicable_sections": ["section 7", "section 8", "section 9", "section 15 A5", "section 16"]
+  },
+  "revalidation": {
+    "reason": "A5 was previously failed closed after future A6/A7 migration fixtures were incorrectly treated as an A5 completion gate. The frozen queue makes A6 and A7 separate downstream migrations and prohibits A5 from editing them. This revalidation proves A5 against its registered command, completed dependencies A0-A4, release controls, security assertions, and unchanged v4 production isolation while preserving the downstream fixture mismatch as explicit future migration input.",
+    "previous_failure_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A5_CROSS_PACKAGE_ARCHITECTURE_BLOCKER_022.json",
+    "previous_failure_evidence_disposition": "HISTORICAL_FAIL_CLOSE_RECORD_NOT_CURRENT_COMPLETION_PROOF",
+    "implementation_changed_after_claim": true,
+    "repaired_hazards": [
+      "Blocking assembly now rejects mismatched IdFactory and approved program versions before any canonical identity can be generated.",
+      "VEC assembly no longer accepts caller-supplied execution-design or Blocking artifact identities; both bindings are selected by local deterministic code.",
+      "Every interior ShotBoundary now requires exactly one creative transition intent. Missing intents are not replaced with a default cut and surplus intents are not silently ignored."
+    ]
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/blocking_assembler.py",
+    "01_调度器/mode_p_vnext/services/vec_assembler.py",
+    "01_调度器/mode_p_vnext/tests/test_a5_vec_assembly.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A5_V30_DETERMINISTIC_VEC_REVALIDATION_023.json"
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_调度器/mode_p_vnext/services/blocking_assembler.py": "a3ffd766c6e494d3da7aa58f551119d9ada4d218cc58773c8e89909d0246aa4c",
+    "01_调度器/mode_p_vnext/services/timeline_allocator.py": "b269e9b74d5902906d3b0134f85b173f6d518bebf8af5788ce0ea04d34f93590",
+    "01_调度器/mode_p_vnext/services/vec_assembler.py": "3b2c63a60d06e99a9856f9ddfcfdbb3df4ab5965afee5c332d67f863f53b78f0",
+    "01_调度器/mode_p_vnext/tests/test_a5_vec_assembly.py": "cce784b768d555a2bffad21983e3ceeababa4bd8697309a4ece45dfc538306f3"
+  },
+  "checks": [
+    {"name": "drafts_contain_creative_choices_only", "exit_code": 0},
+    {"name": "local_ids_hashes_and_ticks", "exit_code": 0},
+    {"name": "local_binding_and_boundary_assembly", "exit_code": 0},
+    {"name": "explicit_visual_beats", "exit_code": 0},
+    {"name": "deterministic_vec_rebuild", "exit_code": 0},
+    {"name": "typed_reference_binding", "exit_code": 0},
+    {"name": "typed_dialogue_audio_binding", "exit_code": 0},
+    {"name": "no_fact_id_or_statement_parsing", "exit_code": 0},
+    {"name": "per_shot_generation_cap", "exit_code": 0},
+    {"name": "scene_duration_not_capped_at_15s", "exit_code": 0},
+    {"name": "dialogue_phase_tick_placement", "exit_code": 0},
+    {"name": "source_span_never_used_as_timing", "exit_code": 0},
+    {"name": "requirements_bound_to_shot_or_beat", "exit_code": 0},
+    {"name": "free_text_intents_not_bound", "exit_code": 0}
+  ],
+  "verification_results": [
+    {
+      "name": "a5_vec_assembly",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_a5_vec_assembly.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "15 passed in 0.24s"
+    }
+  ],
+  "precompletion_results": [
+    {
+      "name": "a0_through_a5_release_security_v4_regression",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_rebuild_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py mode_p_vnext/tests/test_v9_5_security.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "159 passed in 11.17s"
+    }
+  ],
+  "deferred_migration_inputs": [
+    {
+      "work_packages": ["A6", "A7"],
+      "paths": [
+        "01_调度器/mode_p_vnext/tests/test_a6_projection_compiler.py",
+        "01_调度器/mode_p_vnext/tests/test_a7_dual_loop.py"
+      ],
+      "current_condition": "The fixtures still instantiate pre-v3 Draft and Fact shapes and therefore do not yet execute their downstream assertions.",
+      "disposition": "FUTURE_WORK_PACKAGE_MIGRATION_INPUT_NOT_A5_COMPLETION_PROOF",
+      "constraint": "They must be migrated to the frozen v3 canonical domain in their owning work packages without adding compatibility fields or weakening A5 invariants, and must pass before final system completion."
+    }
+  ],
+  "authority_boundary": {
+    "draft": "The model supplies only creative BlockingDraft and ExecutionDesignDraft choices, DurationIntent, and typed opaque-handle binding intents. It cannot select canonical identities, ticks, placements, requirements, or graph boundaries.",
+    "blocking": "BlockingCommit identities, beat identities, state identities, digest binding, and state chaining are local deterministic outputs bound to one approved program version.",
+    "timeline": "The 24000-tick capability profile maps DurationIntent to each GenerationUnit independently. A Scene is the adjacent sum of Shot placements and is not capped at fifteen seconds.",
+    "vec": "VEC identities, typed fact resolution, per-VisualBeat dialogue placement, N+1 boundaries, and the canonical output digest are local deterministic outputs. Source spans remain provenance only.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A6 Projection implementation, A7 dual-loop implementation, later-package implementation, v4 production code, or production switch was changed.",
+    "No external provider, Director, DP, renderer, or media call was started.",
+    "No text, structure, simulated VEC, or test result is represented as visual acceptance."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false,
+  "media_visual_acceptance": false
+}

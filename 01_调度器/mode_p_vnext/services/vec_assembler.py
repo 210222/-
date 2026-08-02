@@ -165,8 +165,6 @@ def assemble_vec(
     id_factory: IdFactory,
     program_version: str,
     capability_profile: GenerationCapabilityProfile | None = None,
-    execution_design_artifact_id: str | None = None,
-    blocking_commit_artifact_id: str | None = None,
 ) -> VisualExecutionContract:
     """Create the sole local executable authority from approved typed inputs.
 
@@ -191,16 +189,15 @@ def assemble_vec(
     if blocking_commit.scene_id != scene_id:
         raise DomainValidationError("blocking_commit scene_id must match the VEC scene")
     _require_fact_scope(facts, episode_id=episode_id, scene_id=scene_id)
+    expected_transition_count = len(draft.shots) - 1
+    if len(draft.transition_intents) != expected_transition_count:
+        raise DomainValidationError(
+            "ExecutionDesignDraft must declare exactly one transition intent per interior boundary"
+        )
 
     profile = capability_profile or GenerationCapabilityProfile.sd20_default()
     if not isinstance(profile, GenerationCapabilityProfile):
         raise DomainValidationError("capability_profile must be canonical")
-    supplied_execution_id = execution_design_artifact_id
-    supplied_blocking_id = blocking_commit_artifact_id
-    if supplied_execution_id is not None:
-        _require_text(supplied_execution_id, "execution_design_artifact_id")
-    if supplied_blocking_id is not None:
-        _require_text(supplied_blocking_id, "blocking_commit_artifact_id")
 
     input_digest = canonical_sha256(
         {
@@ -211,11 +208,9 @@ def assemble_vec(
             "scene_id": scene_id,
             "program_version": program_version,
             "capability_profile": profile,
-            "execution_design_artifact_id": supplied_execution_id,
-            "blocking_commit_artifact_id": supplied_blocking_id,
         }
     )
-    execution_id = supplied_execution_id or _local_id(
+    execution_id = _local_id(
         id_factory,
         episode_id=episode_id,
         scene_id=scene_id,
@@ -223,7 +218,7 @@ def assemble_vec(
         input_digest=input_digest,
         ordinal=0,
     )
-    blocking_id = supplied_blocking_id or blocking_commit.commit_id
+    blocking_id = blocking_commit.commit_id
     contract_id = _local_id(
         id_factory,
         episode_id=episode_id,
@@ -507,11 +502,7 @@ def assemble_vec(
             scene_tick = generation_units[ordinal - 1].scene_placement.interval.end_tick
             before_state_id = shots[ordinal - 1].visual_beats[-1].end_state_id
             after_state_id = shots[ordinal].visual_beats[0].start_state_id
-            transition_intent = (
-                draft.transition_intents[ordinal - 1]
-                if ordinal - 1 < len(draft.transition_intents)
-                else "cut"
-            )
+            transition_intent = draft.transition_intents[ordinal - 1]
         boundaries.append(
             ShotBoundary(
                 boundary_id=_local_id(

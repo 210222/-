@@ -10,7 +10,12 @@ the model is allowed to produce.
 
 from __future__ import annotations
 
-from mode_p_vnext.domain.artifact import DOMAIN_SCHEMA_VERSION, ArtifactKind, canonical_sha256
+from mode_p_vnext.domain.artifact import (
+    DOMAIN_SCHEMA_VERSION,
+    ArtifactKind,
+    DomainValidationError,
+    canonical_sha256,
+)
 from mode_p_vnext.domain.blocking import BlockingBeat, BlockingCommit, BlockingDraft
 from mode_p_vnext.domain.ids import IdFactory
 
@@ -25,6 +30,23 @@ def assemble_blocking_commit(
     schema_version: str = DOMAIN_SCHEMA_VERSION,
 ) -> BlockingCommit:
     """Produce the sole local B0 authority from a validated BlockingDraft."""
+
+    if not isinstance(draft, BlockingDraft):
+        raise DomainValidationError("draft must be a BlockingDraft")
+    if not isinstance(id_factory, IdFactory):
+        raise DomainValidationError("id_factory must be an IdFactory")
+    for value, field_name in (
+        (episode_id, "episode_id"),
+        (scene_id, "scene_id"),
+        (program_version, "program_version"),
+        (schema_version, "schema_version"),
+    ):
+        if not isinstance(value, str) or not value.strip():
+            raise DomainValidationError(f"{field_name} must be non-empty")
+    if id_factory.program_version != program_version:
+        raise DomainValidationError(
+            "id_factory program_version must match the approved Blocking program_version"
+        )
 
     # -- 1.  generate a stable input digest so rebuilds are deterministic ------
     input_digest = canonical_sha256(
