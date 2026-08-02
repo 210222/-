@@ -614,6 +614,10 @@ def _conflict_records(
         identifiers = tuple(sorted(conflict.get("card_ids", [])))
         if len(identifiers) == 2:
             pairs.add(identifiers)
+    if len(pairs) > policy.conflict_record_limit:
+        raise ValueError(
+            "conflict record budget exhausted; cannot hide Director-owned conflicts"
+        )
     records: list[Mapping[str, Any]] = []
     for left, right in sorted(pairs):
         if len(records) >= policy.conflict_record_limit:

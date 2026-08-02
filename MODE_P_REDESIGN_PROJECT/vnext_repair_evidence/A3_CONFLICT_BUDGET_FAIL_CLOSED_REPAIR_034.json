@@ -1,0 +1,120 @@
+{
+  "schema_name": "mode_p_vnext_a3_conflict_budget_fail_closed_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A3",
+  "created_at": "2026-08-03T00:36:41.7269938+08:00",
+  "owner": "codex-a3-knowledge-flow-20260803",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "SOLE_NORMATIVE_BASELINE",
+    "applicable_sections": [
+      "section 4",
+      "section 12",
+      "section 15 A3",
+      "section 17"
+    ]
+  },
+  "changed_paths": [
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/services/knowledge_retriever.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a3_knowledge_flow.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A3_CONFLICT_BUDGET_FAIL_CLOSED_REPAIR_034.json"
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/services/knowledge_retriever.py": "c87679f33e707fe13d3af9e2028e0785ffbfa37e3bd0ad652967abd8db8c4afa",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a3_knowledge_flow.py": "506409b2279675f00282010ae9a6dbb3cf6b678f7554cad43b8b4d3ab69faa9e"
+  },
+  "root_repair": {
+    "invariant": "Every discovered K1/K2 knowledge conflict remains Director-owned: all conflict options are exposed together in the canonical decision view, or retrieval fails closed. A prompt-budget limit must never silently convert an unexposed conflict option into an automatically selected primary capsule.",
+    "prechange_failure": "_conflict_records silently stopped after RetrievalPolicy.conflict_record_limit. _select_metadata only excluded option IDs from the retained records, so a later discovered conflict pair could be omitted from the Director view and its candidates could re-enter the primary selection pool.",
+    "repair": "_conflict_records now rejects any discovered pair count above conflict_record_limit before record construction. The canonical retriever therefore cannot produce a snapshot or DecisionView that hides a Director-owned conflict because of a bounded prompt budget.",
+    "deterministic_authority": "Pair discovery, budgeting, rejection, selected-capsule IDs, exclusions, snapshot identity and replay are local deterministic code. No model output decides whether a conflict is exposed, rejected or selected.",
+    "regression_proof": "test_conflict_budget_overflow_fails_closed_instead_of_hiding_director_conflicts creates two conflict pairs under a one-record budget and proves that retrieval raises ValueError rather than selecting either hidden pair."
+  },
+  "a1_dependency_boundary": {
+    "upstream_authority": "A1 exact fact ID/opaque-handle bindings remain upstream canonical inputs.",
+    "a3_preservation": "A3 consumes only the scoped deterministic knowledge metadata and sealed artifact identities. It does not reinterpret fact IDs, handles, source text, source spans, time, VEC, ProjectionAST, or Director decisions.",
+    "no_duplicate_authority": "No second K1/K2 retriever, KnowledgeSnapshot authority, Director decision owner, provider authority, VEC authority or Projection authority was introduced."
+  },
+  "checks": [
+    {
+      "name": "single_k1_k2_implementation",
+      "exit_code": 0
+    },
+    {
+      "name": "replayable_snapshot",
+      "exit_code": 0
+    },
+    {
+      "name": "untrusted_text_isolation",
+      "exit_code": 0
+    },
+    {
+      "name": "director_conflict_ownership",
+      "exit_code": 0
+    },
+    {
+      "name": "evidence_gated_promotion",
+      "exit_code": 0
+    },
+    {
+      "name": "unselected_knowledge_excluded",
+      "exit_code": 0
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a3_knowledge_flow",
+      "argv": [
+        "{python}",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_a3_knowledge_flow.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_\u8c03\u5ea6\u5668",
+      "exit_code": 0,
+      "summary": "20 passed in 0.23s"
+    }
+  ],
+  "supplemental_regressions": [
+    {
+      "name": "a3_legacy_compatibility_and_knowledge_regression",
+      "exit_code": 0,
+      "summary": "44 passed in 0.94s across A3 plus historical conflict-graph, retrieval-budget, snapshot, and vertical-integration compatibility surfaces; historical adapters remain read-only delegates to the single canonical retriever."
+    },
+    {
+      "name": "a0_through_a8_v4_security_active_entrypoints_regression",
+      "exit_code": 0,
+      "summary": "213 passed in 23.53s across A0 control, rebuild control, A1-A8 registered suites, v4 compatibility, security, and active-entrypoint checks."
+    },
+    {
+      "name": "changed_paths_diff_check",
+      "exit_code": 0,
+      "summary": "git diff --check passed for the A3 retriever and test paths."
+    }
+  ],
+  "authority_boundary": {
+    "single_runtime_retriever": "mode_p_vnext.services.knowledge_retriever.KnowledgeRetriever is the sole canonical K1/K2 selection and snapshot authority.",
+    "historical_adapters": "mode_p_vnext.knowledge_flow and mode_p_vnext.knowledge_snapshot are historical compatibility surfaces only; they do not create a canonical runtime KnowledgeSnapshot.",
+    "untrusted_text": "Raw knowledge bodies, sensitive paths, runtime instructions, injection-shaped text and unselected capsule contents are excluded from the Director prompt view and canonical snapshot.",
+    "conflict_ownership": "The Director owns visual conflict choice. The retriever may deterministically detect, expose, quarantine or fail close; it may not resolve or hide a conflict through budget truncation.",
+    "promotion_boundary": "Experience or media candidates remain outside K1/K2 until structured evidence verification and explicit human approval complete the promotion chain.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A0, A1, A2, A4, A5, A6, A7, A8, A9 or A10 implementation was changed.",
+    "No v4 production path, FeatureGate, production switch, external submission, provider invocation, real media run, visual acceptance or owner approval was started, enabled or claimed.",
+    "No model output was granted authority over IDs, hashes, time, boundaries, bindings, VEC, ProjectionAST, conflict resolution, snapshot identity or replay."
+  ],
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "external_submission": false
+  }
+}

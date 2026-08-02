@@ -24,6 +24,7 @@ from mode_p_vnext.knowledge_flow import (
     KnowledgeCandidate,
     KnowledgeCatalog,
     RetrievalContext,
+    RetrievalPolicy,
 )
 from mode_p_vnext.knowledge_security import envelope_untrusted_text
 from mode_p_vnext.schema.decision_card import DecisionCard
@@ -447,6 +448,28 @@ def test_conflicts_remain_director_owned_and_are_not_auto_selected() -> None:
     assert len(result.conflicts) == 1
     assert result.conflicts[0]["requires_director_decision"] is True
     assert set(result.conflicts[0]["option_card_ids"]) == {"K-CONFLICT-A", "K-CONFLICT-B"}
+
+
+def test_conflict_budget_overflow_fails_closed_instead_of_hiding_director_conflicts() -> None:
+    """A prompt budget may not silently turn an unexposed conflict into a selection."""
+
+    retriever = KnowledgeRetriever(
+        policy=RetrievalPolicy(primary_card_limit=4, conflict_record_limit=1)
+    )
+    candidates = (
+        _candidate("K-CONFLICT-A", contradicts=("K-CONFLICT-B",)),
+        _candidate("K-CONFLICT-B", contradicts=("K-CONFLICT-A",)),
+        _candidate("K-CONFLICT-C", contradicts=("K-CONFLICT-D",)),
+        _candidate("K-CONFLICT-D", contradicts=("K-CONFLICT-C",)),
+    )
+
+    with pytest.raises(ValueError, match="conflict record budget exhausted"):
+        retriever.retrieve(
+            diagnosis=_diagnosis(),
+            catalog=KnowledgeCatalog(candidates),
+            context=_context(),
+            stage=KnowledgeStage.K1,
+        )
 
 
 def test_k1_fail_closes_mislabelled_execution_knowledge_and_emits_compact_view() -> None:
