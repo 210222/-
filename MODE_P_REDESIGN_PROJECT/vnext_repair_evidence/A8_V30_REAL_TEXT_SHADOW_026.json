@@ -1,0 +1,130 @@
+{
+  "task_id": "A8",
+  "title": "Run one real resumable raw-source-to-Projection shadow through the top-level CLI",
+  "status": "COMPLETION_CANDIDATE",
+  "architecture_version": "3.0",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "applicable_sections": ["section 3", "section 6", "section 10", "section 11", "section 13", "section 15 A8", "section 17"]
+  },
+  "root_cause_and_repair": {
+    "root_cause": "The only public Shadow command was a deliberately structural historical path. It did not start from raw source, did not persist the v3 state graph, did not compose I0/E0/S1/K1/B0/K2/B1/VEC/Projection/G0/DP, and could not prove a resume boundary or a text-only claim ceiling.",
+    "repair": "Added the separate top-level text-shadow command. It normalizes raw source, receives only stage Drafts through the A4 structured port, locally assembles facts/IDs/hashes/ticks/bindings/VEC/Projection/Gate0/DP results, atomically accepts each A8 graph node through A2 RunSession, and rehydrates accepted nodes from immutable records without calling their provider stages again.",
+    "integrity_hardening": "A8 stage audit records are now bound to the exact preflighted stage version, schema digest, and approved-input digest. Custom immutable run/stage/result records require no-overwrite atomic publication and fail closed when that primitive is unavailable."
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/adapters/storage/__init__.py",
+    "01_调度器/mode_p_vnext/adapters/storage/shadow_run.py",
+    "01_调度器/mode_p_vnext/cli.py",
+    "01_调度器/mode_p_vnext/pipeline/episode_nodes.py",
+    "01_调度器/mode_p_vnext/pipeline/ingest_nodes.py",
+    "01_调度器/mode_p_vnext/pipeline/scene_nodes.py",
+    "01_调度器/mode_p_vnext/tests/test_a8_real_shadow.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A8_V30_REAL_TEXT_SHADOW_026.json"
+  ],
+  "checks": [
+    {
+      "name": "single_real_cli_entry",
+      "exit_code": 0,
+      "result": "python -m mode_p_vnext exposes text-shadow as the sole A8 raw-source command; the historical shadow command remains explicitly structural-only."
+    },
+    {
+      "name": "unknown_script_vertical",
+      "exit_code": 0,
+      "result": "A temporary raw script unknown to the runtime passed through the public CLI handler using only external-port test doubles and real local composition."
+    },
+    {
+      "name": "raw_source_to_fact_registry",
+      "exit_code": 0,
+      "result": "Raw bytes are normalized by SourceNormalizer, sent to I0 as Draft-only facts, and sealed by FactAssembler into the canonical FactRegistry envelope."
+    },
+    {
+      "name": "canonical_ingest_to_projection",
+      "exit_code": 0,
+      "result": "The exercised graph commits I0,E0,S1,K1,B0,K2,B1,VEC,Projection,G0,DP and emits canonical VEC and ProjectionAST artifact IDs."
+    },
+    {
+      "name": "accepted_nodes_not_recalled",
+      "exit_code": 0,
+      "result": "A paused run resumes from S1 and a completed run reopens without repeating I0/E0/S1/B0/B1 provider calls or the fresh DP call; immutable stage records and accepted ArtifactRefs are revalidated."
+    },
+    {
+      "name": "no_golden_vec_injection",
+      "exit_code": 0,
+      "result": "The test port has no VEC, contract ID, or tick output surface. VEC is independently reconstructed from canonical B1/B0/facts and equality-checked before acceptance."
+    },
+    {
+      "name": "text_validated_claim_ceiling",
+      "exit_code": 0,
+      "result": "All structured-call audits, run records, terminal results, and DP audits require TEXT_VALIDATED; no text path records visual acceptance."
+    },
+    {
+      "name": "typed_ingest_provenance",
+      "exit_code": 0,
+      "result": "FactRegistry stores locally minted opaque IDs/handles and exact source-span provenance. The resulting VEC contains local ticks but no source_start/source_end timing fields."
+    },
+    {
+      "name": "complete_v30_state_graph",
+      "exit_code": 0,
+      "result": "The A8 StateGraph has one owner per frozen output field and persistent A2 atomic node acceptance for the complete v3 text path."
+    },
+    {
+      "name": "run_record_digest_tamper_rejected",
+      "exit_code": 0,
+      "result": "Mutating hash-bound RUN.json makes reopening fail before any provider or DP call."
+    },
+    {
+      "name": "no_v4_write_or_external_media",
+      "exit_code": 0,
+      "result": "A8 storage rejects a v4-root target before any write; terminal records assert external_media_started=false, v4_write=false, and production_switch_authorized=false."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a8_real_shadow",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a8_real_shadow.py -q -p no:cacheprovider",
+      "result": "5 passed"
+    },
+    {
+      "name": "a8_v4_isolation",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "6 passed"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_to_a8_registered_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "exit_code": 0,
+      "command": "python -m pytest test_a0_release_control.py, test_active_entrypoints.py, test_rebuild_control.py, test_a1_domain_model.py, test_a2_persistent_graph.py, test_a3_knowledge_flow.py, test_a4_structured_provider.py, test_a5_vec_assembly.py, test_a6_projection_compiler.py, test_a7_dual_loop.py, test_a8_real_shadow.py, test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "199 passed"
+    },
+    {
+      "name": "cli_and_historical_shadow_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_v6_8_engineering_cli.py mode_p_vnext/tests/test_v10_1_shadow_entry.py -q -p no:cacheprovider",
+      "result": "13 passed"
+    },
+    {
+      "name": "historical_ddo_workspace_drift_observed",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "exit_code": 1,
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider --maxfail=1",
+      "result": "175 tests passed before historical test_ddo_0_control failed because pre-existing user changes drifted completed DDO artifact hashes under director_vnext1. The DDO queue is historical read-only under v3.0, none of those paths is in A8 scope, and no such change was staged or modified."
+    }
+  ],
+  "scope_exclusions": [
+    "No v4 production source, FeatureGate, production state, or production entry was modified.",
+    "No external media renderer, verifier, approval adapter, media run, frame evidence, or production switch was started.",
+    "Tests replace only external structured-text and fresh-DP ports; all normalization, assembly, persistence, VEC, Projection, Gate0, and DP canonical assembly are real local code paths.",
+    "The host lacks a native claude.exe transport, so no live external text-provider run is claimed by this Evidence.",
+    "Pre-existing tracked and untracked user workspace changes remain outside this A8 delta and were not staged."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "completion_claimed": false
+}
