@@ -1,0 +1,60 @@
+"""Frozen, non-production evaluation support for MODE:P vNext A9.
+
+The package deliberately owns evaluation metadata only.  It neither creates
+nor rewrites canonical facts, decisions, VECs, ProjectionASTs, media assets,
+or runtime code.
+"""
+
+from .prompt_lab import (
+    ARCHITECTURE_DOCUMENT_PATH,
+    ARCHITECTURE_SHA256,
+    EXPECTED_TEXT_SHADOW_NODES,
+    TEXT_CLAIM_CEILING,
+    TEXTUAL_QUALITY_RUBRIC_SHA256,
+    CandidateEvaluation,
+    EvaluationError,
+    EvaluationMetrics,
+    EvaluationReport,
+    FrozenEvaluationPolicy,
+    FrozenEvaluator,
+    FrozenEvaluatorError,
+    GoldenCase,
+    HoldoutCase,
+    HoldoutCandidate,
+    RuntimeInvariantSnapshot,
+    TraceLineage,
+    assert_no_text_only_media_claim,
+    authoritative_architecture_sha256,
+    candidate_from_text_shadow_result,
+    evaluate_holdout_candidates,
+    evaluator_implementation_sha256,
+    freeze_evaluator,
+    pareto_dominates,
+)
+
+__all__ = [
+    "ARCHITECTURE_DOCUMENT_PATH",
+    "ARCHITECTURE_SHA256",
+    "EXPECTED_TEXT_SHADOW_NODES",
+    "TEXT_CLAIM_CEILING",
+    "TEXTUAL_QUALITY_RUBRIC_SHA256",
+    "CandidateEvaluation",
+    "EvaluationError",
+    "EvaluationMetrics",
+    "EvaluationReport",
+    "FrozenEvaluationPolicy",
+    "FrozenEvaluator",
+    "FrozenEvaluatorError",
+    "GoldenCase",
+    "HoldoutCase",
+    "HoldoutCandidate",
+    "RuntimeInvariantSnapshot",
+    "TraceLineage",
+    "assert_no_text_only_media_claim",
+    "authoritative_architecture_sha256",
+    "candidate_from_text_shadow_result",
+    "evaluate_holdout_candidates",
+    "evaluator_implementation_sha256",
+    "freeze_evaluator",
+    "pareto_dominates",
+]

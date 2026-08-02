@@ -1,0 +1,98 @@
+{
+  "task_id": "A9",
+  "title": "Evaluate unseen scripts with frozen quality, cost, latency, and architecture-drift checks",
+  "status": "COMPLETION_CANDIDATE",
+  "architecture_version": "3.0",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "applicable_sections": ["section 13", "section 14", "section 15 A9", "section 16", "section 17"]
+  },
+  "root_cause_and_repair": {
+    "root_cause": "A8 supplies hash-bound TEXT_VALIDATED raw-source-to-Projection records, but no v3.0-owned evaluator previously froze both Golden and holdout identities before comparison, bound a candidate to the A8 run/result records, or prevented an evaluation result from being reinterpreted as media/visual acceptance. Historical holdout modules are read-only migration inputs and cannot supply that v3.0 authority.",
+    "repair": "Added a pure A9 evaluation package. FrozenEvaluationPolicy seals only opaque Golden/Holdout IDs plus NormalizedSource digests, the v3.0 authority hash, evaluator implementation digest, and a frozen TEXTUAL_CONTRACT quality rubric. A candidate must match the presealed holdout identity and binds digest-only source-to-fact-to-draft-to-decision-to-VEC-to-Projection-to-output lineage to validated A8 run and result records.",
+    "integrity_hardening": "The evaluator rehashes the authority and every evaluation source file before ranking, rejects statically visible evaluator write/mutation sites, rejects Golden/holdout ID or source-digest overlap, cryptographically binds every Pareto metric value to its measurement record, and fails closed on authority, graph, claim-ceiling, v4, media, or owner-approval drift."
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/evaluation/__init__.py",
+    "01_调度器/mode_p_vnext/evaluation/prompt_lab.py",
+    "01_调度器/mode_p_vnext/tests/test_a9_prompt_lab.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A9_V30_FROZEN_HOLDOUT_EVALUATION_027.json"
+  ],
+  "evaluator_integrity_observed": {
+    "evaluator_implementation_sha256": "6daee3d53ebb135b007011f531ca51429723da8fb99e3d086355375db2c2fc59",
+    "quality_rubric_sha256": "5968005fa79cfa6e417d4a3a465f93ec47072b6ed6584e0b9aaa072aea4f8b5e",
+    "runtime_write_sites": []
+  },
+  "checks": [
+    {
+      "name": "frozen_evaluator",
+      "exit_code": 0,
+      "result": "FrozenEvaluationPolicy requires the sole v3.0 authority path/hash, deterministic Golden/Holdout ordering, a hash-bound evaluator implementation, frozen TEXTUAL_CONTRACT rubric, and runtime_mutation_policy=FORBID. Evaluation rechecks these immutable inputs before ranking."
+    },
+    {
+      "name": "golden_holdout_separation",
+      "exit_code": 0,
+      "result": "GoldenCase and HoldoutCase retain only opaque IDs and NormalizedSource SHA-256 values. The frozen policy rejects registry ID/source overlap, while every candidate must match a presealed holdout ID and its exact source digest."
+    },
+    {
+      "name": "candidate_keep_discard",
+      "exit_code": 0,
+      "result": "Candidates with a complete v3.0 text boundary enter comparison; invariant violations are explicit DISCARD results, dominated valid candidates are DISCARD with dominator IDs, and only non-dominated valid candidates are KEEP. A batch with no KEEP candidate is explicitly FAIL_CLOSED."
+    },
+    {
+      "name": "quality_cost_latency_complexity_pareto",
+      "exit_code": 0,
+      "result": "The frozen evaluator compares higher TEXTUAL_CONTRACT quality and lower cost_units, latency_ms, and complexity_units. Quality/telemetry values are bound to a measurement-record SHA-256 and a frozen textual rubric; they are not visual scores."
+    },
+    {
+      "name": "no_runtime_self_modification",
+      "exit_code": 0,
+      "result": "The A9 evaluator is a frozen dataclass/pure report producer with no persistence API. Before every evaluation it hashes its package sources and scans them for write/mutation calls or mutation-capable imports; observed runtime_write_sites is empty."
+    },
+    {
+      "name": "architecture_invariant_regression",
+      "exit_code": 0,
+      "result": "Candidate validation rejects authority path/hash drift, any accepted-node sequence other than I0,E0,S1,K1,B0,K2,B1,VEC,Projection,G0,DP, non-TEXT_VALIDATED claims, wrong frozen rubric, v4 writes, and production-switch assertions. The A8 adapter additionally validates canonical hash-bound run/result records and their source/output lineage bindings."
+    },
+    {
+      "name": "no_text_only_media_claim",
+      "exit_code": 0,
+      "result": "EvaluationReport is capped at TEXT_VALIDATED and hard-requires external_media_started=false, media_visual_acceptance=false, owner_preview_approval=false, and production_switch_authorized=false. Incoming visual acceptance or owner-preview claims are discarded rather than elevated."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a9_prompt_lab",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a9_prompt_lab.py -q -p no:cacheprovider",
+      "result": "20 passed"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_to_a9_registered_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "exit_code": 0,
+      "command": "python -m pytest test_a0_release_control.py, test_active_entrypoints.py, test_rebuild_control.py, test_a1_domain_model.py, test_a2_persistent_graph.py, test_a3_knowledge_flow.py, test_a4_structured_provider.py, test_a5_vec_assembly.py, test_a6_projection_compiler.py, test_a7_dual_loop.py, test_a8_real_shadow.py, test_a9_prompt_lab.py, test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "219 passed"
+    },
+    {
+      "name": "frozen_evaluator_integrity_probe",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "exit_code": 0,
+      "command": "python -c import mode_p_vnext.evaluation.prompt_lab and print authority/evaluator/rubric hashes plus runtime write-site scan",
+      "result": "Authority SHA-256 matched a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a; evaluator implementation SHA-256 matched 6daee3d53ebb135b007011f531ca51429723da8fb99e3d086355375db2c2fc59; runtime_write_sites was empty."
+    }
+  ],
+  "scope_exclusions": [
+    "A9 creates no canonical facts, Director decisions, IDs, ticks, Boundaries, VECs, ProjectionASTs, runtime configuration, prompts, or model outputs; it reads digest-only lineage and immutable A8 result metadata.",
+    "No v4 production source, FeatureGate, production state, production entry, or production switch was modified; v4 remains the sole production entry.",
+    "No external media renderer, verifier, media run, frame evidence, visual acceptance, owner preview approval, or live external provider call was started or claimed.",
+    "The A9 test uses synthetic hash references only to exercise the evaluator boundary. They are explicitly not a substitute for A10 real media evidence or user approval.",
+    "Pre-existing tracked and untracked user workspace changes remain outside this A9 delta and were not staged or modified."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "completion_claimed": false
+}
