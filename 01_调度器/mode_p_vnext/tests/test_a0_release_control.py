@@ -5,6 +5,7 @@ from __future__ import annotations
 import fnmatch
 import hashlib
 import json
+from pathlib import Path
 
 import pytest
 
@@ -526,6 +527,114 @@ def test_task_path_ownership_and_evidence_patterns_are_disjoint():
         or "/tests/" in path
         for path in a10.allowed_paths
     )
+
+
+def test_a1_owns_every_existing_duplicate_domain_authority_migration():
+    """A1 must be able to retire old authorities before freezing the domain.
+
+    A later work package must use a new implementation path instead of
+    sharing an old duplicate-authority path with A1.  This keeps the v3.0
+    ownership graph disjoint while making architecture section 5.1
+    achievable at the A1 gate.
+    """
+    import ast
+    import mode_p_vnext.domain.artifact as artifact
+    import mode_p_vnext.domain.blocking as blocking
+    import mode_p_vnext.domain.decisions as decisions
+    import mode_p_vnext.domain.direction as direction
+    import mode_p_vnext.domain.evidence as evidence
+    import mode_p_vnext.domain.facts as facts
+    import mode_p_vnext.domain.ids as ids
+    import mode_p_vnext.domain.knowledge as knowledge
+    import mode_p_vnext.domain.projection as projection
+    import mode_p_vnext.domain.release as release
+    import mode_p_vnext.domain.time as time
+    import mode_p_vnext.domain.vec as vec
+
+    canonical = {
+        name
+        for module in (
+            artifact,
+            blocking,
+            decisions,
+            direction,
+            evidence,
+            facts,
+            ids,
+            knowledge,
+            projection,
+            release,
+            time,
+            vec,
+        )
+        for name in module.CANONICAL_DOMAIN_TYPES
+    }
+    package_root = Path(__file__).resolve().parents[1]
+    duplicate_paths: set[str] = set()
+    for source_path in sorted(package_root.rglob("*.py")):
+        relative = source_path.relative_to(package_root)
+        if "domain" in relative.parts or "tests" in relative.parts:
+            continue
+        tree = ast.parse(source_path.read_text(encoding="utf-8"))
+        if any(
+            isinstance(node, ast.ClassDef) and node.name in canonical
+            for node in tree.body
+        ):
+            duplicate_paths.add(
+                "01_调度器/mode_p_vnext/"
+                + source_path.relative_to(package_root).as_posix()
+            )
+
+    legacy_migration_paths = {
+        "01_调度器/mode_p_vnext/adapters/delivery/capability.py",
+        "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+        "01_调度器/mode_p_vnext/director_vnext1/projection.py",
+        "01_调度器/mode_p_vnext/director_vnext1/revision.py",
+        "01_调度器/mode_p_vnext/schema/canonical_timeline.py",
+        "01_调度器/mode_p_vnext/schema/fact_registry.py",
+        "01_调度器/mode_p_vnext/services/projection_compiler.py",
+        "01_调度器/mode_p_vnext/storyboard_projection.py",
+    }
+    tasks = ReleaseControl.default().load_tasks()
+    owners = {
+        source_path: [
+            task.task_id
+            for task in tasks
+            if any(
+                fnmatch.fnmatchcase(source_path, pattern)
+                for pattern in task.allowed_paths
+            )
+        ]
+        for source_path in duplicate_paths
+    }
+    assert all(owner_ids == ["A1"] for owner_ids in owners.values()), owners
+
+    legacy_owners = {
+        source_path: [
+            task.task_id
+            for task in tasks
+            if any(
+                fnmatch.fnmatchcase(source_path, pattern)
+                for pattern in task.allowed_paths
+            )
+        ]
+        for source_path in legacy_migration_paths
+    }
+    assert all(owner_ids == ["A1"] for owner_ids in legacy_owners.values()), (
+        legacy_owners
+    )
+
+    a1 = next(task for task in tasks if task.task_id == "A1")
+    assert {
+        "known_legacy_domain_authorities_retired",
+        "semantic_equivalent_persistent_type_audit",
+    }.issubset(a1.required_checks)
+
+    a6 = next(task for task in tasks if task.task_id == "A6")
+    assert "01_调度器/mode_p_vnext/services/projection_compiler_v30.py" in a6.allowed_paths
+    assert "01_调度器/mode_p_vnext/adapters/delivery_v30/**" in a6.allowed_paths
+    assert "01_调度器/mode_p_vnext/services/projection_compiler.py" not in a6.allowed_paths
+    assert "01_调度器/mode_p_vnext/adapters/delivery/**" not in a6.allowed_paths
 
 
 def _minimal_release_task(task_id, depends_on, pending_status):

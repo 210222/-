@@ -65,6 +65,13 @@ python -m mode_p_vnext.release_control claim <task> --owner <unique-run-id>
 该任务精确的 `A<id>_*.json`。用户工作区中 claim 前存在的无关改动属于用户，不得
 暂存、覆盖或删除。
 
+A1 冻结领域前，必须收敛 `mode_p_vnext` 内全部同名或语义等价的旧持久类型；这也
+包括 `director_vnext1`、旧 `schema`、旧 Projection 与旧 delivery 岛。上述路径只可
+被转换为显式只读兼容适配或退役，不得成为 v3 运行权威。为保持工作包所有权不重叠，
+A6 必须在注册表指定的全新 v3.0 Projection compiler 与 delivery adapter 路径实现，
+不得重新占用 A1 已收敛的旧路径。A0 只裁定迁移所有权；A1 的完成门仍须证明已知
+旧权威归零，并审计改名后的语义等价持久类型，不能以“路径已归 A1”代替实现验收。
+
 开发期间可运行 focused test 和相关回归；完成时必须运行注册表中该任务的全部
 `verification_commands`。测试必须使用仓库 fixture 或临时目录，不能依赖个人盘符、
 用户名或未提交的历史输出。外部 fixture 必须显式分类。

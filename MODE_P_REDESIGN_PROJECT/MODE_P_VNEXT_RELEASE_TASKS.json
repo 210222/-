@@ -171,6 +171,14 @@
         "01_调度器/mode_p_vnext/compat/**",
         "01_调度器/mode_p_vnext/services/source_normalizer.py",
         "01_调度器/mode_p_vnext/services/fact_assembler.py",
+        "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+        "01_调度器/mode_p_vnext/director_vnext1/projection.py",
+        "01_调度器/mode_p_vnext/director_vnext1/revision.py",
+        "01_调度器/mode_p_vnext/schema/canonical_timeline.py",
+        "01_调度器/mode_p_vnext/schema/fact_registry.py",
+        "01_调度器/mode_p_vnext/storyboard_projection.py",
+        "01_调度器/mode_p_vnext/services/projection_compiler.py",
+        "01_调度器/mode_p_vnext/adapters/delivery/**",
         "01_调度器/mode_p_vnext/tests/test_a1_*.py",
         "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_*.json"
       ],
@@ -179,6 +187,8 @@
         "canonical_24000_tick_timebase",
         "draft_artifact_separation",
         "no_duplicate_domain_authority",
+        "known_legacy_domain_authorities_retired",
+        "semantic_equivalent_persistent_type_audit",
         "domain_schemas_frozen_for_downstream",
         "legacy_read_adapter_only",
         "normalized_source_contract",
@@ -366,8 +376,8 @@
         "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §10, §15 A6, §16"
       ],
       "allowed_paths": [
-        "01_调度器/mode_p_vnext/services/projection_compiler.py",
-        "01_调度器/mode_p_vnext/adapters/delivery/**",
+        "01_调度器/mode_p_vnext/services/projection_compiler_v30.py",
+        "01_调度器/mode_p_vnext/adapters/delivery_v30/**",
         "01_调度器/mode_p_vnext/tests/test_a6_*.py",
         "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A6_*.json"
       ],

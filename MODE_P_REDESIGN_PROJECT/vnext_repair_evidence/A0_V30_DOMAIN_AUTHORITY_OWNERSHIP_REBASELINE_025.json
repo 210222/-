@@ -1,0 +1,125 @@
+{
+  "schema_name": "mode_p_vnext_a0_domain_authority_ownership_rebaseline_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A0",
+  "created_at": "2026-08-02T11:58:58+08:00",
+  "owner": "codex-a0-v30-domain-ownership-rebaseline-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "relevant_sections": ["5.1", "14", "15 A0", "15 A1", "15 A6"]
+  },
+  "trigger": {
+    "failed_task": "A1",
+    "failure_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A1_V30_DOMAIN_AUTHORITY_SCOPE_BLOCKER_024.json",
+    "classification": "UPSTREAM_RELEASE_OWNERSHIP_DEFECT"
+  },
+  "root_cause": "The A1 gate requires every persistent domain authority, including historical islands, to converge on mode_p_vnext.domain, but the ReleaseLedger did not let A1 modify any of the eight legacy source paths containing sixteen duplicate canonical class definitions. Six paths were unowned and two old Projection/delivery paths were incorrectly reserved for future A6 implementation, making the A1 invariant impossible without violating disjoint task ownership.",
+  "failure_first_results": [
+    {
+      "name": "a1_duplicate_authority_ownership_before_repair",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py -q -p no:cacheprovider -k a1_owns_every_existing_duplicate_domain_authority_migration",
+      "exit_code": 1,
+      "summary": "Eight duplicate-authority migration paths were either unowned or owned by A6 instead of A1."
+    },
+    {
+      "name": "a1_architecture_invariants_remain_open",
+      "command": "python -m pytest mode_p_vnext/tests/test_a1_domain_model.py -q -p no:cacheprovider",
+      "exit_code": 1,
+      "summary": "10 passed, 2 failed: complete canonical source-span equality and sixteen duplicate domain definitions remain for A1 implementation."
+    }
+  ],
+  "repair_decision": {
+    "a1_legacy_migration_paths": [
+      "01_调度器/mode_p_vnext/director_vnext1/contracts.py",
+      "01_调度器/mode_p_vnext/director_vnext1/projection.py",
+      "01_调度器/mode_p_vnext/director_vnext1/revision.py",
+      "01_调度器/mode_p_vnext/schema/canonical_timeline.py",
+      "01_调度器/mode_p_vnext/schema/fact_registry.py",
+      "01_调度器/mode_p_vnext/storyboard_projection.py",
+      "01_调度器/mode_p_vnext/services/projection_compiler.py",
+      "01_调度器/mode_p_vnext/adapters/delivery/**"
+    ],
+    "a6_new_implementation_paths": [
+      "01_调度器/mode_p_vnext/services/projection_compiler_v30.py",
+      "01_调度器/mode_p_vnext/adapters/delivery_v30/**"
+    ],
+    "a1_completion_remains_fail_closed": true,
+    "known_authorities_must_be_retired": true,
+    "semantic_equivalent_persistent_types_must_be_audited": true,
+    "ownership_alone_does_not_satisfy_a1": true
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json"
+  ],
+  "checks": [
+    {"name": "single_release_ledger", "exit_code": 0},
+    {"name": "legacy_queues_historical", "exit_code": 0},
+    {"name": "legacy_controllers_superseded", "exit_code": 0},
+    {"name": "one_lock_one_next_task", "exit_code": 0},
+    {"name": "task_path_ownership_disjoint", "exit_code": 0},
+    {"name": "phase_status_progression", "exit_code": 0},
+    {"name": "bounded_control_output", "exit_code": 0},
+    {"name": "portable_canonical_hashes", "exit_code": 0},
+    {"name": "single_architecture_document_locked", "exit_code": 0},
+    {"name": "v23_rejected_as_historical", "exit_code": 0},
+    {"name": "active_guidance_version_converged", "exit_code": 0},
+    {"name": "architecture_drift_blocks_claim", "exit_code": 0},
+    {"name": "manual_release_gates", "exit_code": 0},
+    {"name": "portable_registered_verification", "exit_code": 0},
+    {"name": "current_v4_cohort_authority", "exit_code": 0},
+    {"name": "production_v4_unchanged", "exit_code": 0}
+  ],
+  "precompletion_results": [
+    {
+      "name": "all_a0_registered_verification",
+      "command": "Run all five A0 verification_commands exactly as registered",
+      "exit_code": 0,
+      "summary": "77 passed: A0 21, v4 entrypoint 15, v4 cohort 6, portability regression 4, control regression 31."
+    },
+    {
+      "name": "release_ledger_audit",
+      "command": "python -m mode_p_vnext.release_control audit",
+      "exit_code": 0,
+      "summary": "ok=true, issues=[]"
+    },
+    {
+      "name": "patch_integrity",
+      "command": "git diff --check",
+      "exit_code": 0,
+      "summary": "No whitespace errors."
+    }
+  ],
+  "deepseek_v4_flash_advisory": {
+    "transport": "Claude Code CLI through the configured DeepSeek Anthropic endpoint",
+    "model": "deepseek-v4-flash",
+    "effort": "max",
+    "tools": [],
+    "turns": 1,
+    "input_tokens": 3977,
+    "output_tokens": 6518,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "verdict": "ACCEPT_DRAFT",
+    "accepted_advice": [
+      "Keep A1 completion blocked until implementations contain no duplicate canonical authorities.",
+      "Allow the A0 ownership regression to keep passing after A1 retires the old definitions.",
+      "Require semantic-equivalent persistent type audit in addition to same-name scanning."
+    ],
+    "acceptance_authority": false,
+    "cache_disposition": "First flash review established a stable compact prefix but reported no provider cache creation or read; no cache-hit claim is made."
+  },
+  "non_goals": [
+    "No A1 implementation or duplicate legacy class was changed in A0.",
+    "No A2-A10 implementation was started or completed.",
+    "No v4 runtime, v4 production source, or production entry was changed.",
+    "No Director runtime, external media, external submission, or production switch was started.",
+    "No model output was accepted as an ID, hash, tick, boundary, binding, VEC, Projection, Evidence, or ledger authority."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false
+}
