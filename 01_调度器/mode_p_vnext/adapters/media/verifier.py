@@ -1,30 +1,25 @@
-"""No-op media verifier — fails closed without a real verifier.
+"""Fail-closed A7 verifier adapter; no external media is inspected.
 
-Architecture ref: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.0 §9.4 / §14 A7.
-
-Verification is impossible without a real media stack, so the no-op verifier
-raises instead of returning fabricated frame evidence.
+Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0 sections
+3-4, 13, and 15 A7.
 """
 
 from __future__ import annotations
 
-from mode_p_vnext.domain.evidence import (
-    FrameEvidence,
-    FrameEvidencePlan,
-    MediaRunRecord,
-)
+from mode_p_vnext.domain.evidence import FrameEvidencePlan, MediaRunRecord
 from mode_p_vnext.ports.media_verifier import (
+    MediaVerificationOutput,
     MediaVerificationUnavailableError,
     MediaVerifierPort,
 )
 
 
 class NoopMediaVerifier:
-    """Fail-closed verifier: never fabricates FrameEvidence."""
+    """Never fabricates a media verification Draft."""
 
     def verify(
         self, plan: FrameEvidencePlan, media_run: MediaRunRecord
-    ) -> tuple[FrameEvidence, ...]:
+    ) -> MediaVerificationOutput:
         raise MediaVerificationUnavailableError(
             "no real media verifier is configured; frame evidence is unavailable"
         )

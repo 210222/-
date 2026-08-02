@@ -1,0 +1,126 @@
+{
+  "task_id": "A7",
+  "title": "Implement deterministic Gate 0, fresh independent DP, and media evidence ports",
+  "status": "COMPLETION_CANDIDATE",
+  "architecture_version": "3.0",
+  "architecture_inputs": {
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a"
+  },
+  "root_cause_and_repair": {
+    "root_cause": "The retired A7 implementation still consumed the removed pre-v3 VEC segment model and duplicate service-side Gate0Result, hashed free-text capability summaries, generated ReviewPacket identities outside IdFactory, allowed unbounded revision routing, and contained a visual-verification builder that always wrote passed=true. Its registered fixture also constructed removed v2 Draft fields, so most checks failed before exercising the dual-loop boundary.",
+    "repair": "Gate 0 now emits only the A1-frozen DeterministicGateResult and revalidates canonical v3 schema, complete VEC digest, machine IDs, per-shot local ticks, N+1 boundaries, bidirectional typed bindings, the sole ProjectionAST identity, compiled prompt budgets, safety boundaries, and the TEXT_VALIDATED claim ceiling. ReviewPacket contains only approved opaque references and exact artifact IDs. Local IdFactory creates packet, fresh-session, DP result, RevisionRequest, media-run, frame-plan, media-evidence, and visual-verification identities. A fresh DP context is recomputed from the exact packet and attempt ordinal, rejects history or forbidden inputs as DP_INPUT_BLOCKED, and may only submit a bounded Draft that local code converts to canonical RevisionRequest artifacts. RevisionRouter can only return bounded creative fields to the Director Draft stage, deterministically recompile a projection, or reject. Media and approval ports return non-authoritative Draft DTOs; only fail-closed no-op adapters exist in A7 and no external media or approval was started.",
+    "rejected_shortcuts": [
+      "No compatibility aliases or restored v2 segment, projection, Gate0Result, or free-text capability surfaces were added.",
+      "No DP output may contain a replacement VEC, canonical ID, hash, tick, projection, or out-of-packet evidence reference.",
+      "No revision request directly mutates a VEC or ProjectionAST; creative changes return to an allowlisted Director Draft path.",
+      "No text-only path defaults or promotes visual verification to passed.",
+      "No external renderer, verifier, approval adapter, production switch, or v4 code path was activated or modified.",
+      "No A8 or later-package path and no unrelated user workspace change was modified or staged."
+    ]
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/deterministic_gates.py",
+    "01_调度器/mode_p_vnext/services/revision_router.py",
+    "01_调度器/mode_p_vnext/pipeline/verification_nodes.py",
+    "01_调度器/mode_p_vnext/ports/media_renderer.py",
+    "01_调度器/mode_p_vnext/ports/media_verifier.py",
+    "01_调度器/mode_p_vnext/ports/approval.py",
+    "01_调度器/mode_p_vnext/adapters/media/__init__.py",
+    "01_调度器/mode_p_vnext/adapters/media/renderer.py",
+    "01_调度器/mode_p_vnext/adapters/media/verifier.py",
+    "01_调度器/mode_p_vnext/tests/test_a7_dual_loop.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A7_V30_DUAL_LOOP_BOUNDARY_025.json"
+  ],
+  "artifact_hashes": {
+    "01_调度器/mode_p_vnext/services/deterministic_gates.py": "e10b16270873e3bfe4956a3ec586e6aeeb4416907c7d2e02297f1457713d0114",
+    "01_调度器/mode_p_vnext/services/revision_router.py": "bcb44a50f1ddd9a51f69d22807f4e97ea0791bb13304f20efd552cb299f52d49",
+    "01_调度器/mode_p_vnext/pipeline/verification_nodes.py": "01334edf2109ac02f173cddec8acbf09e4445a222781ec220fe967bc837f19f4",
+    "01_调度器/mode_p_vnext/ports/media_renderer.py": "e8f95c231526a00363e120b3cf853814633c2ccf3ba0821894542c4ee477bdea",
+    "01_调度器/mode_p_vnext/ports/media_verifier.py": "c938cbfd88fb55ec951c8896cd635956e1d59a1c8c4599075cd4ccaad3a833a4",
+    "01_调度器/mode_p_vnext/ports/approval.py": "71d76ced9eb511c2a790c14f4a2be3677ea5ea5b1d9111c06bfee8ce1c7f4ca5",
+    "01_调度器/mode_p_vnext/adapters/media/__init__.py": "f8dc700bfaaf36859be0eb859373d07a0c1830a91ba6526ed556fe8d60365309",
+    "01_调度器/mode_p_vnext/adapters/media/renderer.py": "cd813f6059d1cf7af5dd258f74344c2438b2f5d0afe938b0b5ad00ac7fa8ea55",
+    "01_调度器/mode_p_vnext/adapters/media/verifier.py": "d5cf96a0055f7d0939eea6d4dd504726d74759d01d4b3512ee743ec805586e37",
+    "01_调度器/mode_p_vnext/tests/test_a7_dual_loop.py": "c8f23313a5a3c0b660ec7388c37afe235db01e6925604edc0a4c1071de320a32"
+  },
+  "checks": [
+    {
+      "name": "deterministic_gate_zero",
+      "exit_code": 0,
+      "result": "Exact canonical Gate result; v3 digest, ID, tick, N+1 boundary, typed binding, single projection, prompt budget, safety, and claim-ceiling checks are deterministic and fail closed."
+    },
+    {
+      "name": "fresh_independent_dp_packet",
+      "exit_code": 0,
+      "result": "ReviewPacket carries only approved opaque references and exact canonical artifact bindings; packet and session IDs are locally recomputed and history/forbidden inputs emit DP_INPUT_BLOCKED."
+    },
+    {
+      "name": "dp_only_emits_bounded_revision_request",
+      "exit_code": 0,
+      "result": "The DP Draft contains neither persistent IDs nor replacement authority; local code resolves only in-packet evidence and creates canonical bounded RevisionRequest and review-result artifacts."
+    },
+    {
+      "name": "bounded_revision_router",
+      "exit_code": 0,
+      "result": "Field paths, facts, targets, failure types, and budget are allowlisted; routes are Director Draft revision, deterministic projection recompile, or rejection, never VEC mutation."
+    },
+    {
+      "name": "text_cannot_claim_visual_acceptance",
+      "exit_code": 0,
+      "result": "Text status stops at TEXT_VALIDATED; visual verification requires explicit verifier output bound to canonical media evidence, and approval remains an inactive A10 human Draft port."
+    },
+    {
+      "name": "media_outcome_attribution",
+      "exit_code": 0,
+      "result": "Gate, media-render, and media-verifier failures produce machine-readable canonical OutcomeAttribution values with their exact causal layer."
+    },
+    {
+      "name": "canonical_projection_and_evidence_consumption",
+      "exit_code": 0,
+      "result": "Gate and DP consume the exact shared ProjectionAST identity, canonical manifests, canonical Gate result, and SourceRef-bound evidence without a second authority."
+    },
+    {
+      "name": "external_media_not_started",
+      "exit_code": 0,
+      "result": "A7 exposes only fail-closed NoopMediaRenderer and NoopMediaVerifier adapters; no approval adapter, media run, frame evidence, or external call was started."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a7_dual_loop",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider",
+      "summary": "20 passed in 0.47s"
+    },
+    {
+      "name": "a7_v4_isolation",
+      "exit_code": 0,
+      "command": "python -m pytest mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "summary": "6 passed in 3.10s"
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "a0_through_a7_release_security_v4_regression",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_rebuild_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_a7_dual_loop.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py mode_p_vnext/tests/test_v9_5_security.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "203 passed in 12.05s"
+    },
+    {
+      "name": "workspace_scope_and_diff_check",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "exit_code": 0,
+      "summary": "A7 implementation delta is limited to ten registered allowlist files plus this Evidence; all pre-existing tracked and untracked user changes remain outside the declared A7 delta."
+    }
+  ],
+  "scope_exclusions": [
+    "No external media was rendered or verified and no owner approval was requested or recorded.",
+    "No A8-A10 implementation, evaluation, release-run, or real-media path was entered.",
+    "No v4 production code, production entry, FeatureGate, or production switch was changed.",
+    "No unrelated tracked or untracked user workspace change was staged or modified."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "completed_at_utc": "2026-08-02T13:12:38.6008491Z"
+}
