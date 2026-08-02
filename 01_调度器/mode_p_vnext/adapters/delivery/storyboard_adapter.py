@@ -98,9 +98,9 @@ def render_storyboard(
             attention=node_attribute(node, "attention", str),
             decision_ids=node.decision_ids,
             reference_requirement_ids=node_attribute(
-                node, "shot_reference_requirement_ids", tuple
+                node, "node_reference_requirement_ids", tuple
             ),
-            audio_event_ids=node_attribute(node, "shot_audio_event_ids", tuple),
+            audio_event_ids=node_attribute(node, "node_audio_event_ids", tuple),
             entering_boundary_id=_boundary_id(node, "entering_boundary"),
             exiting_boundary_id=_boundary_id(node, "exiting_boundary"),
         )
@@ -111,16 +111,16 @@ def render_storyboard(
     if profile is not None:
         reference_ids = {
             item_id
-            for node in projection.ast.nodes
+            for node in projection.nodes
             for item_id in node_attribute(
-                node, "shot_reference_requirement_ids", tuple
+                node, "node_reference_requirement_ids", tuple
             )
         }
         if len(reference_ids) > profile.reference_slots:
             affected = tuple(
                 node.node_id
-                for node in projection.ast.nodes
-                if node_attribute(node, "shot_reference_requirement_ids", tuple)
+                for node in projection.nodes
+                if node_attribute(node, "node_reference_requirement_ids", tuple)
             )
             records = (
                 adaptation_record(

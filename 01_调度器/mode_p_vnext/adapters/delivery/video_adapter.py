@@ -70,8 +70,8 @@ def _format_node(node: ProjectionNode) -> str:
         f"camera={node_attribute(node, 'camera', str)}; "
         f"lighting={node_attribute(node, 'lighting', str)}; "
         f"performance={node_attribute(node, 'performance', str)}; "
-        f"references={node_attribute(node, 'shot_reference_requirement_ids', tuple)}; "
-        f"audio={node_attribute(node, 'shot_audio_event_ids', tuple)}; "
+        f"references={node_attribute(node, 'node_reference_requirement_ids', tuple)}; "
+        f"audio={node_attribute(node, 'node_audio_event_ids', tuple)}; "
         f"boundaries={entering['boundary_id']}->{exiting['boundary_id']}"
     )
 

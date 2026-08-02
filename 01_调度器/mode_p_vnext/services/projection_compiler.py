@@ -27,7 +27,7 @@ from mode_p_vnext.domain.time import TickRange
 from mode_p_vnext.domain.vec import StoryboardRole, VisualExecutionContract
 
 
-COMPILER_VERSION = "3.0.0"
+COMPILER_VERSION = "3.0.1"
 STORYBOARD_ADAPTER_VERSION = "storyboard-adapter-v3.0.0"
 VIDEO_ADAPTER_VERSION = "video-adapter-v3.0.0"
 
@@ -124,6 +124,25 @@ def node_attribute(node: ProjectionNode, name: str, expected_type: type) -> Any:
     return value
 
 
+def _require_canonical_vec_output_digest(vec: VisualExecutionContract) -> None:
+    """Reject a structurally valid VEC whose declared final digest is stale.
+
+    ``VisualExecutionContract`` is a frozen domain value, but the Projection
+    boundary must still verify that its declared canonical output digest binds
+    every final field before it derives another persistent artifact from it.
+    """
+
+    final_fields = {
+        name: getattr(vec, name)
+        for name in vec.__dataclass_fields__
+        if name not in {"ARTIFACT_KIND", "canonical_output_sha256"}
+    }
+    if vec.canonical_output_sha256 != canonical_sha256(final_fields):
+        raise DomainValidationError(
+            "VEC canonical_output_sha256 does not match its canonical final fields"
+        )
+
+
 @dataclass(frozen=True)
 class StoryboardProjection:
     """Ordered sparse view whose nodes remain owned by one canonical AST."""
@@ -134,6 +153,7 @@ class StoryboardProjection:
 
     def __post_init__(self) -> None:
         _validate_projection_view(self.ast, self.nodes, self.manifest)
+        _validate_storyboard_view(self.ast, self.nodes)
 
     @property
     def adapter_version(self) -> str:
@@ -150,6 +170,7 @@ class VideoProjection:
 
     def __post_init__(self) -> None:
         _validate_projection_view(self.ast, self.nodes, self.manifest)
+        _validate_video_view(self.ast, self.nodes)
 
     @property
     def adapter_version(self) -> str:
@@ -163,7 +184,9 @@ def _validate_projection_view(
 ) -> None:
     if type(ast) is not ProjectionAST or type(manifest) is not ProjectionManifest:
         raise DomainValidationError("projection views require exact canonical domain types")
-    values = tuple(nodes)
+    if not isinstance(nodes, tuple):
+        raise DomainValidationError("projection view nodes must be an immutable tuple")
+    values = nodes
     if not values or not all(type(node) is ProjectionNode for node in values):
         raise DomainValidationError("projection view nodes must be canonical ProjectionNode values")
     ast_nodes = projection_nodes(ast)
@@ -176,6 +199,52 @@ def _validate_projection_view(
         raise DomainValidationError("projection manifest does not bind its canonical AST")
     if manifest.source_node_ids != tuple(node.node_id for node in ast_nodes):
         raise DomainValidationError("projection manifest source_node_ids do not cover the AST")
+
+
+def _validate_storyboard_view(
+    ast: ProjectionAST, nodes: tuple[ProjectionNode, ...]
+) -> None:
+    """Allow only an ordered sparse AST view with every required beat present."""
+
+    ast_nodes = projection_nodes(ast)
+    valid_roles = frozenset(item.value for item in StoryboardRole)
+    roles_by_id = {
+        node.node_id: node_attribute(node, "storyboard_role", str)
+        for node in ast_nodes
+    }
+    if not set(roles_by_id.values()).issubset(valid_roles):
+        raise DomainValidationError("StoryboardProjection contains an unknown storyboard role")
+    selected_ids = {node.node_id for node in nodes}
+    if tuple(node for node in ast_nodes if node.node_id in selected_ids) != nodes:
+        raise DomainValidationError(
+            "StoryboardProjection nodes must retain canonical AST order"
+        )
+    required_ids = {
+        node.node_id
+        for node in ast_nodes
+        if roles_by_id[node.node_id] == StoryboardRole.REQUIRED.value
+    }
+    if not required_ids.issubset(selected_ids):
+        raise DomainValidationError(
+            "StoryboardProjection must retain every required VisualBeat"
+        )
+    if any(
+        roles_by_id[node.node_id] == StoryboardRole.OMIT.value for node in nodes
+    ):
+        raise DomainValidationError(
+            "StoryboardProjection must not include an omitted VisualBeat"
+        )
+
+
+def _validate_video_view(
+    ast: ProjectionAST, nodes: tuple[ProjectionNode, ...]
+) -> None:
+    """Video is the complete ordered AST view, never a caller-selected subset."""
+
+    if nodes != projection_nodes(ast):
+        raise DomainValidationError(
+            "VideoProjection must retain every canonical AST node in source order"
+        )
 
 
 def _compile_node_attributes(
@@ -209,6 +278,21 @@ def _compile_node_attributes(
     shot_voices = tuple(
         _voice_payload(voice_by_event[item_id]) for item_id in shot.audio_event_ids
     )
+    node_reference_ids = tuple(
+        item_id
+        for item_id in shot.reference_requirement_ids
+        if references[item_id].visual_beat_id in {None, beat.beat_id}
+    )
+    node_audio_ids = tuple(beat.audio_event_ids)
+    node_references = tuple(
+        _reference_payload(references[item_id]) for item_id in node_reference_ids
+    )
+    node_audio = tuple(
+        _audio_payload(audio_events[item_id]) for item_id in node_audio_ids
+    )
+    node_voices = tuple(
+        _voice_payload(voice_by_event[item_id]) for item_id in node_audio_ids
+    )
     return {
         "node_kind": "visual_beat",
         "compiler_version": compiler_version,
@@ -239,9 +323,14 @@ def _compile_node_attributes(
         "beat_reference_requirement_ids": beat.reference_requirement_ids,
         "shot_audio_event_ids": shot.audio_event_ids,
         "beat_audio_event_ids": beat.audio_event_ids,
-        "reference_bindings": shot_references,
-        "audio_bindings": shot_audio,
-        "voice_bindings": shot_voices,
+        "node_reference_requirement_ids": node_reference_ids,
+        "node_audio_event_ids": node_audio_ids,
+        "shot_reference_bindings": shot_references,
+        "shot_audio_bindings": shot_audio,
+        "shot_voice_bindings": shot_voices,
+        "reference_bindings": node_references,
+        "audio_bindings": node_audio,
+        "voice_bindings": node_voices,
         "entering_boundary": _boundary_payload(entering_boundary),
         "exiting_boundary": _boundary_payload(exiting_boundary),
     }
@@ -269,6 +358,10 @@ def compile_projection_ast(
     _require_text(scene_id, "scene_id")
     _require_text(program_version, "program_version")
     _require_text(compiler_version, "compiler_version")
+    if compiler_version != COMPILER_VERSION:
+        raise DomainValidationError(
+            f"compiler_version must match canonical projection compiler {COMPILER_VERSION}"
+        )
     if id_factory.program_version != program_version:
         raise DomainValidationError("IdFactory program_version must match program_version")
     if vec.episode_id != episode_id or vec.scene_id != scene_id:
@@ -277,6 +370,7 @@ def compile_projection_ast(
         raise DomainValidationError("BlockingCommit identity must match the compilation context")
     if vec.blocking_commit_artifact_id != blocking_commit.commit_id:
         raise DomainValidationError("VEC must bind the supplied BlockingCommit exactly")
+    _require_canonical_vec_output_digest(vec)
 
     commit_beat_ids = {item.beat_id for item in blocking_commit.beats}
     if any(shot.blocking_beat_id not in commit_beat_ids for shot in vec.shots):
@@ -297,6 +391,15 @@ def compile_projection_ast(
         raise DomainValidationError("every VEC Shot requires entering and exiting Boundaries")
 
     vec_digest = canonical_sha256(vec)
+    # IDs name a compiler-owned projection artifact, not merely its VEC input.
+    # A semantic compiler release must therefore select a disjoint deterministic
+    # identity namespace even when it receives the same canonical VEC.
+    projection_input_digest = canonical_sha256(
+        {
+            "vec_digest": vec_digest,
+            "compiler_version": compiler_version,
+        }
+    )
     capability_profile_digest = canonical_sha256(vec.capability_profile)
     reference_binding_digest = canonical_sha256(vec.reference_requirements)
     audio_binding_digest = canonical_sha256(
@@ -322,7 +425,7 @@ def compile_projection_ast(
                 episode_id=episode_id,
                 scene_id=scene_id,
                 stage="projection:visual-beat",
-                input_digest=vec_digest,
+                input_digest=projection_input_digest,
                 ordinal=ordinal,
             )
             nodes.append(
@@ -356,7 +459,7 @@ def compile_projection_ast(
         episode_id=episode_id,
         scene_id=scene_id,
         stage="projection:ast",
-        input_digest=vec_digest,
+        input_digest=projection_input_digest,
         ordinal=0,
     )
     return ProjectionAST(

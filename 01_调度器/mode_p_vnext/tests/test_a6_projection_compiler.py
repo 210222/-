@@ -375,6 +375,27 @@ class TestSingleProjectionAST:
         assert type(first) is ProjectionAST
         assert all(type(node) is ProjectionNode for node in first.nodes)
 
+    def test_projection_identity_binds_the_frozen_compiler_version(
+        self,
+        ast: ProjectionAST,
+        id_factory: IdFactory,
+        vec: VisualExecutionContract,
+    ) -> None:
+        projection_input_digest = canonical_sha256(
+            {
+                "vec_digest": canonical_sha256(vec),
+                "compiler_version": projection_compiler.COMPILER_VERSION,
+            }
+        )
+        assert ast.projection_id == id_factory.create(
+            artifact_kind=ArtifactKind.PROJECTION_AST,
+            episode_id=EPISODE_ID,
+            scene_id=SCENE_ID,
+            stage="projection:ast",
+            input_digest=projection_input_digest,
+            ordinal=0,
+        )
+
     def test_ast_binds_vec_and_every_visualbeat_once(
         self, ast: ProjectionAST, vec: VisualExecutionContract
     ) -> None:
@@ -443,6 +464,41 @@ class TestSingleProjectionAST:
                 program_version="foreign",
             )
 
+    def test_compile_rejects_stale_canonical_vec_output_digest(
+        self,
+        vec: VisualExecutionContract,
+        blocking_commit: BlockingCommit,
+        id_factory: IdFactory,
+    ) -> None:
+        stale_digest_vec = replace(vec, canonical_output_sha256="0" * 64)
+
+        with pytest.raises(DomainValidationError, match="canonical_output_sha256"):
+            compile_projection_ast(
+                vec=stale_digest_vec,
+                blocking_commit=blocking_commit,
+                episode_id=EPISODE_ID,
+                scene_id=SCENE_ID,
+                id_factory=id_factory,
+                program_version=PROGRAM_VERSION,
+            )
+
+    def test_compile_rejects_unfrozen_projection_compiler_version(
+        self,
+        vec: VisualExecutionContract,
+        blocking_commit: BlockingCommit,
+        id_factory: IdFactory,
+    ) -> None:
+        with pytest.raises(DomainValidationError, match="compiler_version must match"):
+            compile_projection_ast(
+                vec=vec,
+                blocking_commit=blocking_commit,
+                episode_id=EPISODE_ID,
+                scene_id=SCENE_ID,
+                id_factory=id_factory,
+                program_version=PROGRAM_VERSION,
+                compiler_version="foreign-projection-compiler",
+            )
+
 
 # required_check: storyboard_visualbeat_selection
 class TestStoryboardVisualBeatSelection:
@@ -490,6 +546,41 @@ class TestStoryboardVisualBeatSelection:
         ast_by_id = {node.node_id: node for node in ast.nodes}
         assert all(ast_by_id[node.node_id] is node for node in storyboard.nodes)
 
+    def test_storyboard_view_rejects_omit_or_reordered_node_injection(
+        self, ast: ProjectionAST
+    ) -> None:
+        storyboard = derive_storyboard(ast)
+        omitted = next(
+            node
+            for node in ast.nodes
+            if node_attribute(node, "storyboard_role", str)
+            == StoryboardRole.OMIT.value
+        )
+        with pytest.raises(DomainValidationError, match="StoryboardProjection"):
+            projection_compiler.StoryboardProjection(
+                ast=ast,
+                nodes=(*storyboard.nodes, omitted),
+                manifest=storyboard.manifest,
+            )
+        with pytest.raises(DomainValidationError, match="StoryboardProjection"):
+            projection_compiler.StoryboardProjection(
+                ast=ast,
+                nodes=tuple(reversed(storyboard.nodes)),
+                manifest=storyboard.manifest,
+            )
+        missing_required = tuple(
+            node
+            for node in storyboard.nodes
+            if node_attribute(node, "storyboard_role", str)
+            != StoryboardRole.REQUIRED.value
+        )
+        with pytest.raises(DomainValidationError, match="required VisualBeat"):
+            projection_compiler.StoryboardProjection(
+                ast=ast,
+                nodes=missing_required,
+                manifest=storyboard.manifest,
+            )
+
 
 # required_check: video_full_node_projection
 class TestVideoFullNodeProjection:
@@ -534,6 +625,29 @@ class TestVideoFullNodeProjection:
         }
         assert audio_ids == {item.event_id for item in vec.audio_events}
 
+    def test_video_view_rejects_missing_or_reordered_ast_node_injection(
+        self, ast: ProjectionAST
+    ) -> None:
+        video = derive_video(ast)
+        with pytest.raises(DomainValidationError, match="VideoProjection"):
+            projection_compiler.VideoProjection(
+                ast=ast,
+                nodes=video.nodes[:-1],
+                manifest=video.manifest,
+            )
+        with pytest.raises(DomainValidationError, match="VideoProjection"):
+            projection_compiler.VideoProjection(
+                ast=ast,
+                nodes=tuple(reversed(video.nodes)),
+                manifest=video.manifest,
+            )
+        with pytest.raises(DomainValidationError, match="immutable tuple"):
+            projection_compiler.VideoProjection(
+                ast=ast,
+                nodes=list(video.nodes),
+                manifest=video.manifest,
+            )
+
 
 # required_check: shared_tick_state_and_bindings
 class TestSharedTickStateAndBindings:
@@ -570,6 +684,55 @@ class TestSharedTickStateAndBindings:
                 "voice_requirements": vec.voice_requirements,
             }
         )
+
+    def test_beat_bound_reference_and_audio_do_not_escape_their_target_beat(
+        self, ast: ProjectionAST, vec: VisualExecutionContract
+    ) -> None:
+        shot = vec.shots[1]
+        prop_beat, dialogue_beat, _omitted_beat = shot.visual_beats
+        prop_requirement = vec.reference_requirements[1]
+        dialogue_event = vec.audio_events[0]
+        nodes_by_beat = {node.source_beat_id: node for node in ast.nodes}
+        prop_node = nodes_by_beat[prop_beat.beat_id]
+        dialogue_node = nodes_by_beat[dialogue_beat.beat_id]
+
+        assert tuple(
+            item["requirement_id"]
+            for item in node_attribute(prop_node, "reference_bindings", tuple)
+        ) == (prop_requirement.requirement_id,)
+        assert node_attribute(dialogue_node, "reference_bindings", tuple) == ()
+        assert node_attribute(prop_node, "audio_bindings", tuple) == ()
+        assert tuple(
+            item["event_id"]
+            for item in node_attribute(dialogue_node, "audio_bindings", tuple)
+        ) == (dialogue_event.event_id,)
+
+        storyboard = derive_storyboard(
+            ast, adapter_version=storyboard_adapter_version
+        )
+        storyboard_delivery = render_storyboard(storyboard)
+        panels_by_beat = {
+            panel.beat_id: panel for panel in storyboard_delivery.panels
+        }
+        assert panels_by_beat[prop_beat.beat_id].audio_event_ids == ()
+        assert panels_by_beat[dialogue_beat.beat_id].reference_requirement_ids == ()
+
+        profile = CapabilityProfile("scope-test", "1", 10_000, 10, True)
+        video = derive_video(
+            ast,
+            adapter_version=video_adapter_version,
+            capability_profile_digest=capability_profile_digest(profile),
+        )
+        video_delivery = render_video(video, profile=profile)
+        lines_by_node = {
+            node.node_id: line
+            for chunk in video_delivery.prompt_chunks
+            for line in chunk.text.splitlines()
+            for node in video.nodes
+            if line.startswith(f"[node {node.node_id} ")
+        }
+        assert "audio=()" in lines_by_node[prop_node.node_id]
+        assert "references=()" in lines_by_node[dialogue_node.node_id]
 
 
 # required_check: adapter_only_recompile

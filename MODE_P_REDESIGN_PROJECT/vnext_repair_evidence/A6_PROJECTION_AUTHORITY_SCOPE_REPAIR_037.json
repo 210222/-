@@ -1,0 +1,150 @@
+{
+  "schema_name": "mode_p_vnext_a6_projection_authority_scope_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A6",
+  "created_at": "2026-08-03T01:24:11+08:00",
+  "owner": "codex-a6-projection-20260803",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "SOLE_NORMATIVE_BASELINE",
+    "applicable_sections": [
+      "section 10",
+      "section 15 A6",
+      "section 16",
+      "section 17"
+    ]
+  },
+  "changed_paths": [
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/services/projection_compiler.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/adapters/delivery/storyboard_adapter.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/adapters/delivery/video_adapter.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a6_projection_compiler.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A6_PROJECTION_AUTHORITY_SCOPE_REPAIR_037.json"
+  ],
+  "artifact_hash_algorithm": "SHA-256 over UTF-8 text with CRLF normalized to LF, matching the ReleaseLedger canonical text-hash rule.",
+  "artifact_hashes_at_evidence_creation": {
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/services/projection_compiler.py": "6d09d9cf437b5f6c9db2cfc1c50e63b4859e85423025cc4a490c9e2791e87078",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/adapters/delivery/storyboard_adapter.py": "bd36e729c4750e094ef115678fdeacc755414faa1e2c00107ba09ade0cb9a1f0",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/adapters/delivery/video_adapter.py": "e11ff1eeeb073bc9033b79f993002b050ae7956f5de7e6345a8d83278f1eab63",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a6_projection_compiler.py": "fc100c62f5ad45dcdc7c43bf6ad82376085e2e611826b80c584596357a9099a0"
+  },
+  "root_repair": {
+    "invariant": "A6 has exactly one canonical ProjectionAST compiled from a verified canonical VEC. Storyboard and video are typed, deterministic views over its ordered nodes; an adapter may serialize or record an explicit capability adaptation, but may never create a shot, beat, tick, state, reference binding, audio binding, or alternate projection authority.",
+    "prechange_failure": "The compiler accepted a VEC whose canonical_output_sha256 was syntactically valid but stale, accepted a caller-selected compiler_version, and allocated ProjectionAST/node IDs only from the VEC digest. It also copied shot-wide binding payloads into every VisualBeat node, so a beat-targeted reference or audio event could be emitted at unrelated beats. Direct StoryboardProjection and VideoProjection construction further allowed mutable, omitted, or reordered node views that did not exactly represent the canonical AST selection.",
+    "repair": "Projection compilation first reconstructs and verifies the VEC canonical output digest. The compiler version is frozen at 3.0.1 and is included with the VEC digest in the deterministic input digest used for every ProjectionAST and ProjectionNode ID, so a semantic compiler release cannot reuse the prior identity namespace. Node payloads retain whole-shot source context only for provenance while exposed reference/audio/voice payloads are filtered to the node's own VisualBeat. Storyboard and video view constructors now require immutable canonical ordering, required storyboard coverage, no OMIT node, and an exact full-node video view. Delivery adapters consume only the node-scoped payloads and record capability adaptations only for nodes actually selected by the projection.",
+    "deterministic_authority": "The model remains limited to upstream Draft intent. Local code verifies the VEC hash, freezes the compiler version, allocates ProjectionAST/node IDs, preserves canonical ticks/states/boundaries, selects typed bindings, and derives both delivery views. No adapter or model output receives authority to alter the canonical projection graph.",
+    "regression_proof": "New A6 regressions reproduce stale VEC digest acceptance, unfrozen compiler version injection, compiler-version-free identity allocation, cross-beat reference/audio leakage, invalid direct storyboard/video view construction, and mutable node collections. The repaired focused suite passed 30 tests."
+  },
+  "checks": [
+    {
+      "name": "single_projection_ast",
+      "exit_code": 0
+    },
+    {
+      "name": "storyboard_visualbeat_selection",
+      "exit_code": 0
+    },
+    {
+      "name": "video_full_node_projection",
+      "exit_code": 0
+    },
+    {
+      "name": "shared_tick_state_and_bindings",
+      "exit_code": 0
+    },
+    {
+      "name": "adapter_only_recompile",
+      "exit_code": 0
+    },
+    {
+      "name": "canonical_projection_type_identity",
+      "exit_code": 0
+    },
+    {
+      "name": "projection_envelope_roundtrip",
+      "exit_code": 0
+    },
+    {
+      "name": "no_duplicate_projection_authority",
+      "exit_code": 0
+    },
+    {
+      "name": "capability_adaptation_recorded",
+      "exit_code": 0
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a6_projection_compiler",
+      "argv": [
+        "{python}",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_a6_projection_compiler.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_\u8c03\u5ea6\u5668",
+      "exit_code": 0,
+      "summary": "30 passed in 0.40s"
+    },
+    {
+      "name": "a6_v4_isolation",
+      "argv": [
+        "{python}",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_v9_4_v4_compatibility.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_\u8c03\u5ea6\u5668",
+      "exit_code": 0,
+      "summary": "6 passed in 2.64s"
+    }
+  ],
+  "supplemental_regressions": [
+    {
+      "name": "a0_through_a9_prompt_security_v4_active_entrypoints_regression",
+      "exit_code": 0,
+      "summary": "249 passed, 4 subtests passed in 24.39s across A0 control, rebuild control, A1-A9, prompt injection, v4 compatibility, security, and active-entrypoint checks."
+    },
+    {
+      "name": "changed_modules_compile_check",
+      "exit_code": 0,
+      "summary": "python -m compileall -q completed for projection_compiler.py, storyboard_adapter.py, video_adapter.py, and test_a6_projection_compiler.py."
+    },
+    {
+      "name": "changed_paths_diff_check",
+      "exit_code": 0,
+      "summary": "git diff --check passed for all A6 implementation, adapter, test, and Evidence paths."
+    },
+    {
+      "name": "release_ledger_audit",
+      "exit_code": 0,
+      "summary": "python -m mode_p_vnext.release_control audit returned no issues before completion."
+    }
+  ],
+  "authority_boundary": {
+    "projection_boundary": "ProjectionAST remains the sole canonical projection type. Its identity is owned by the current local compiler and is bound to both canonical VEC content and the frozen compiler release.",
+    "view_boundary": "Storyboard uses an ordered sparse selection that includes every required VisualBeat; video uses the complete canonical node sequence. Both retain the exact canonical tick interval, state IDs, boundaries, provenance, and node-scoped typed binding IDs.",
+    "adapter_boundary": "Delivery adapters only format selected projection nodes and add deterministic CapabilityAdaptationRecord evidence. They cannot add, remove, reorder, retime, bind, or reinterpret canonical nodes.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A0-A5 or A7-A10 implementation was changed.",
+    "No v4 production entry, FeatureGate, production switch, provider invocation, external submission, real media run, visual acceptance, or owner approval was started, enabled, or claimed.",
+    "No model output was granted authority over IDs, hashes, ticks, timelines, states, boundaries, bindings, ProjectionAST, delivery projections, or capability records."
+  ],
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "external_submission": false
+  }
+}
