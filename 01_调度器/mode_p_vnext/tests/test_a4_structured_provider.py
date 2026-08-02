@@ -188,6 +188,16 @@ def test_compiler_rejects_undeclared_transport_input_before_serialization() -> N
         )
 
 
+def test_compiler_rejects_nonfinite_approved_input_before_serialization() -> None:
+    """Provider prompts and their digests must be strict deterministic JSON."""
+
+    with pytest.raises(ValueError, match="approved_input must be JSON-serializable"):
+        PromptCompiler().compile(
+            stage_signatures()[Stage.B1],
+            {"scene_id": float("nan")},
+        )
+
+
 def test_registered_schemas_match_the_canonical_creative_draft_contracts() -> None:
     """A provider-valid Draft must decode without alternate field aliases."""
 

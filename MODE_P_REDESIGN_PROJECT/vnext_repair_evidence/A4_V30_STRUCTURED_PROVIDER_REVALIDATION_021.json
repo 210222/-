@@ -1,0 +1,88 @@
+{
+  "schema_name": "mode_p_vnext_a4_structured_provider_revalidation_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A4",
+  "created_at": "2026-08-02T18:48:01+08:00",
+  "owner": "codex-a4-v30-stage-signatures-20260802",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "LOCKED_COMPLETE_VERIFICATION_INPUT",
+    "applicable_sections": ["section 6", "section 8", "section 12", "section 15 A4"]
+  },
+  "revalidation": {
+    "reason": "The A0 v4 cohort-authority repair invalidated downstream completion records. This Evidence rebinds the A4 stage-signature and provider-port surface to the sole v3.0 authority after a current-state source review.",
+    "previous_a4_evidence": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A4_V30_STRUCTURED_PROVIDER_014.json",
+    "previous_a4_evidence_disposition": "HISTORICAL_READ_ONLY_NOT_CURRENT_COMPLETION_PROOF",
+    "implementation_changed_after_claim": true,
+    "repaired_hazards": [
+      "PromptCompiler now serializes approved input with allow_nan=False, so NaN and Infinity cannot enter the provider prompt or its deterministic input digest.",
+      "A live A0 control regression verifies next-task selection from the first incomplete ledger task; a pre-existing untracked A4 blocker allegation of a hard-coded A1 selector was therefore not used as authority or completion proof."
+    ]
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/prompts/compiler.py",
+    "01_调度器/mode_p_vnext/tests/test_a4_structured_provider.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A4_V30_STRUCTURED_PROVIDER_REVALIDATION_021.json"
+  ],
+  "artifact_hashes_at_evidence_creation": {
+    "01_调度器/mode_p_vnext/prompts/signatures.py": "b4554299a027621631b3804648c8a767198b4de290e974cad41c0f0b0f967163",
+    "01_调度器/mode_p_vnext/prompts/fragments.py": "0e89a85beaa49cf719e79b4fef49af645d90e35e81173d05a4196f64f6bf987d",
+    "01_调度器/mode_p_vnext/prompts/budgets.py": "8d21233fcf2a99fb4fd49a2a0ee51c60df81578a60d1451a84fcf335e20de424",
+    "01_调度器/mode_p_vnext/prompts/compiler.py": "3c82adf68e2704e5d6019959b8e63a5a031ac56a86b5f11dd7a5388b84f1ce3b",
+    "01_调度器/mode_p_vnext/prompts/schema_registry.py": "200913eae94fa7f358b99a49a7605a13c02cc361591e7a8e56b4eaa1b0ee98a3",
+    "01_调度器/mode_p_vnext/ports/structured_text.py": "150980f3077fcbf3282236daf9d0f9bad288bb07a44ebce6b0afef052eeabf03",
+    "01_调度器/mode_p_vnext/adapters/model/claude_deepseek.py": "c0fb1a9dacf875cf3215c1ce956f9e397825e4817f8056611a4006a55b055853",
+    "01_调度器/mode_p_vnext/tests/test_a4_structured_provider.py": "f275d77f32d4c6b6388a22ba2e1ea7e2b4561b1158ee402a9678fc8ffe573d4d"
+  },
+  "checks": [
+    {"name": "stage_signatures_declared", "exit_code": 0},
+    {"name": "prompt_schema_separate_transport", "exit_code": 0},
+    {"name": "b1_prompt_under_12000_chars", "exit_code": 0},
+    {"name": "b1_schema_under_4500_chars", "exit_code": 0},
+    {"name": "native_windows_binary_first", "exit_code": 0},
+    {"name": "one_scoped_contract_repair", "exit_code": 0},
+    {"name": "i0_fact_extraction_signature", "exit_code": 0},
+    {"name": "source_span_repair_ceiling", "exit_code": 0},
+    {"name": "model_does_not_mint_ids_or_ticks", "exit_code": 0},
+    {"name": "typed_binding_intents_in_b1_schema", "exit_code": 0},
+    {"name": "free_text_not_binding_transport", "exit_code": 0},
+    {"name": "strict_json_nonfinite_input_rejected", "exit_code": 0}
+  ],
+  "verification_results": [
+    {
+      "name": "a4_structured_provider",
+      "argv": ["{python}", "-m", "pytest", "mode_p_vnext/tests/test_a4_structured_provider.py", "-q", "-p", "no:cacheprovider"],
+      "cwd": "01_调度器",
+      "exit_code": 0,
+      "summary": "21 passed in 0.24s"
+    }
+  ],
+  "precompletion_results": [
+    {
+      "name": "a0_a1_a2_a3_a4_a5_security_v4_regression",
+      "command": "python -m pytest mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_v9_5_security.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py mode_p/test_active_entrypoints.py -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "124 passed in 10.28s"
+    }
+  ],
+  "authority_boundary": {
+    "i0": "The provider may return only FactExtractionDraft fields. FactAssembler remains the sole local owner of source-span validation, canonical fact IDs, opaque handles, registry membership, provenance, and hashes.",
+    "b1": "The provider may return only creative Draft values, DurationIntent, and typed reference/dialogue binding intents. It cannot mint canonical IDs, hashes, ticks, timelines, VEC, ProjectionAST, or requirements.",
+    "binding": "Reference and dialogue are carried only as typed intent fields. Free text remains explanatory and is not a machine-binding transport; the later local VEC assembler verifies approved-handle membership and semantic responsibility.",
+    "provider": "Only the native structured-schema provider port is accepted. On Windows it selects claude.exe rather than a cmd shim; unsupported native-schema capability fails before any model call; schema transport remains separate from prompt text; one RepairBudget permits exactly one scoped ContractPatch.",
+    "prompt": "Prompt text excludes the output schema, is preflight budgeted, and now rejects nonfinite JSON values before a provider invocation or input-digest computation.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A5 timeline/VEC implementation, A6 Projection implementation, A7 media/approval implementation, later-package implementation, v4 production code, or production switch was changed.",
+    "No external provider, Director, DP, renderer, or media call was started.",
+    "No text, schema, structure, or simulated provider result is represented as visual acceptance."
+  ],
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false,
+  "director_runtime_started": false,
+  "external_submission": false,
+  "media_visual_acceptance": false
+}

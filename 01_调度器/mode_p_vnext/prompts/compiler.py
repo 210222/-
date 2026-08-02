@@ -93,7 +93,11 @@ class PromptCompiler:
             raise TypeError("approved_input must be a mapping")
         try:
             return json.dumps(
-                dict(approved_input), ensure_ascii=False, sort_keys=True, separators=(",", ":")
+                dict(approved_input),
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+                allow_nan=False,
             )
         except (TypeError, ValueError) as exc:
             raise ValueError("approved_input must be JSON-serializable") from exc
