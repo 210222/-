@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass, fields
+from types import MappingProxyType
 from typing import Any, Mapping
 
 from .budgets import BudgetReport, PromptBudgetGate
@@ -27,6 +28,66 @@ class DraftSchema:
     @property
     def character_count(self) -> int:
         return len(self.canonical_json)
+
+
+class _FrozenSchemaDict(dict[str, Any]):
+    """A JSON-serializable mapping that cannot alter a sealed schema."""
+
+    def __init__(self, values: Mapping[str, Any]) -> None:
+        dict.__init__(self)
+        dict.update(self, values)
+
+    @staticmethod
+    def _immutable(*_args: object, **_kwargs: object) -> None:
+        raise TypeError("schema document is immutable")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    clear = _immutable
+    pop = _immutable
+    popitem = _immutable
+    setdefault = _immutable
+    update = _immutable
+
+    def __ior__(self, _other: object) -> "_FrozenSchemaDict":
+        self._immutable()
+        raise AssertionError("unreachable")
+
+
+class _FrozenSchemaList(list[Any]):
+    """A JSON-serializable list that cannot alter a sealed schema."""
+
+    def __init__(self, values: list[Any]) -> None:
+        list.__init__(self, values)
+
+    @staticmethod
+    def _immutable(*_args: object, **_kwargs: object) -> None:
+        raise TypeError("schema document is immutable")
+
+    __setitem__ = _immutable
+    __delitem__ = _immutable
+    __iadd__ = _immutable
+    __imul__ = _immutable
+    append = _immutable
+    clear = _immutable
+    extend = _immutable
+    insert = _immutable
+    pop = _immutable
+    remove = _immutable
+    reverse = _immutable
+    sort = _immutable
+
+
+def _freeze_schema_document(value: Any) -> Any:
+    """Recursively seal the shared schema authority without losing JSON support."""
+
+    if isinstance(value, Mapping):
+        return _FrozenSchemaDict(
+            {str(key): _freeze_schema_document(item) for key, item in value.items()}
+        )
+    if isinstance(value, list):
+        return _FrozenSchemaList([_freeze_schema_document(item) for item in value])
+    return value
 
 
 _SCHEMAS: Mapping[Stage, Mapping[str, Any]] = {
@@ -200,6 +261,16 @@ _SCHEMAS: Mapping[Stage, Mapping[str, Any]] = {
         },
     },
 }
+
+# A StageSchema is local deterministic authority.  The compiler, native
+# transport and local decoder may all read this same document, but no caller
+# may mutate it after its canonical JSON and digest have been established.
+_SCHEMAS = MappingProxyType(
+    {
+        stage: _freeze_schema_document(document)
+        for stage, document in _SCHEMAS.items()
+    }
+)
 
 
 def _repair_schema_document(signature: StageSignature) -> Mapping[str, Any]:
@@ -375,7 +446,7 @@ class DraftSchemaRegistry:
     def repair_schema_for(self, signature: StageSignature) -> DraftSchema:
         """Resolve the separately transported, non-recursive ContractPatch schema."""
 
-        document = _repair_schema_document(signature)
+        document = _freeze_schema_document(_repair_schema_document(signature))
         _assert_repair_contract(signature, document)
         canonical = _canonical_json(document)
         report = PromptBudgetGate.validate_schema(signature, canonical)

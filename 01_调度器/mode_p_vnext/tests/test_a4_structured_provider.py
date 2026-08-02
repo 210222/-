@@ -434,6 +434,67 @@ def test_schema_is_a_dedicated_transport_field_not_prompt_text() -> None:
     assert request.system_message != request.user_message
 
 
+def test_schema_contract_is_deeply_immutable_at_registry_and_transport_boundaries() -> None:
+    """A runner must not alter the schema whose digest seals the text call."""
+
+    schema = DraftSchemaRegistry().schema_for(stage_signatures()[Stage.E0])
+    original_additional_properties = schema.document["additionalProperties"]
+    try:
+        with pytest.raises(TypeError, match="immutable"):
+            schema.document["additionalProperties"] = True
+        with pytest.raises(TypeError, match="immutable"):
+            schema.document["properties"]["final_vec"] = {"type": "object"}
+    finally:
+        # The pre-repair registry is mutable.  Restore it even when the new
+        # assertions intentionally fail so this regression cannot taint peers.
+        try:
+            schema.document["additionalProperties"] = original_additional_properties
+            schema.document["properties"].pop("final_vec", None)
+        except TypeError:
+            pass
+
+    repair_schema = DraftSchemaRegistry().repair_schema_for(
+        stage_signatures()[Stage.I0]
+    )
+    with pytest.raises(TypeError, match="immutable"):
+        repair_schema.document["properties"]["values"][
+            "additionalProperties"
+        ] = False
+
+    mutation_blocked: list[bool] = []
+
+    def runner(request: StructuredTransportRequest) -> dict:
+        original = request.json_schema["additionalProperties"]
+        try:
+            request.json_schema["additionalProperties"] = True
+        except TypeError:
+            mutation_blocked.append(True)
+        else:
+            mutation_blocked.append(False)
+            request.json_schema["additionalProperties"] = original
+        return {
+            "payload": {
+                "dramatic_promise": "Responsibility makes certainty fracture under pressure.",
+                "audience_contract": "Each scene reveals a concrete emotional cost.",
+                "tension_curve": ["confidence", "pressure"],
+                "visual_principles": ["preserve readable action"],
+                "continuity_priorities": ["preserve screen direction"],
+                "unresolved_questions": [],
+            }
+        }
+
+    adapter = ClaudeDeepSeekStructuredAdapter(runner=runner, executable="claude.exe")
+    draft, evidence = adapter.generate(
+        stage_signatures()[Stage.E0],
+        {"episode_id": "EP35"},
+        GenerationPolicy(requested_model="deepseek-v4-pro"),
+    )
+
+    assert mutation_blocked == [True]
+    assert draft.contract_name == "EpisodeDirectionDraft"
+    assert evidence.schema_digest == schema.digest
+
+
 def test_i0_uses_the_same_structured_port_without_creative_fields() -> None:
     requests = []
     adapter = ClaudeDeepSeekStructuredAdapter(

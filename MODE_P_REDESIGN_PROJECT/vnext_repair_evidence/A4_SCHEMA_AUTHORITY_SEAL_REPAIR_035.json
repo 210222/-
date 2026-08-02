@@ -1,0 +1,142 @@
+{
+  "schema_name": "mode_p_vnext_a4_schema_authority_seal_evidence",
+  "schema_version": "1.0.0",
+  "task_id": "A4",
+  "created_at": "2026-08-03T00:52:01.7627353+08:00",
+  "owner": "codex-a4-structured-provider-20260803",
+  "architecture_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "role": "SOLE_NORMATIVE_BASELINE",
+    "applicable_sections": [
+      "section 5",
+      "section 6",
+      "section 8",
+      "section 12",
+      "section 15 A4",
+      "section 17"
+    ]
+  },
+  "changed_paths": [
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/prompts/schema_registry.py",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a4_structured_provider.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A4_SCHEMA_AUTHORITY_SEAL_REPAIR_035.json"
+  ],
+  "artifact_hash_algorithm": "SHA-256 over UTF-8 text with CRLF normalized to LF, matching the ReleaseLedger canonical text-hash rule.",
+  "artifact_hashes_at_evidence_creation": {
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/prompts/schema_registry.py": "30701a3eacd46c36505c1292f202bf56643a3a0c4bbfbdb8e3b5ba2dd2832d87",
+    "01_\u8c03\u5ea6\u5668/mode_p_vnext/tests/test_a4_structured_provider.py": "93ebe02065428385b20a930294523179a76325e37bfa66e804745953f3e0c1e8"
+  },
+  "root_repair": {
+    "invariant": "For every I0/E0/S1/B0/B1 Draft and every scoped ContractPatch, the local registry, separately transmitted native JSON Schema, schema digest, prompt evidence and local decoder must refer to one immutable deterministic contract. No runner, provider response, compatibility layer or caller may alter that contract after its canonical JSON and digest are established.",
+    "prechange_failure": "DraftSchemaRegistry exposed shared mutable nested dictionaries. The adapter passed that same object to a runner and then used it again for local validation. A runner could mutate required fields, additionalProperties or binding restrictions after the schema digest was computed, causing the actual transport and validation rules to diverge from TextCallEvidence without a detectable failure.",
+    "repair": "The static stage registry is now a MappingProxyType of recursively sealed JSON-serializable mappings and lists. ContractPatch schemas are sealed by the same recursive function before their digest and budget are established. The native transport can still serialize the exact schema, while ordinary mutation through the registry or StructuredTransportRequest raises TypeError before it can change the contract.",
+    "deterministic_authority": "Schema shape, canonical JSON, schema digest, budget and local validation remain local deterministic runtime authority. The model receives only a separately transported immutable Draft or ContractPatch schema and can return only candidate Draft fields; it cannot mint IDs, hashes, ticks, timelines, VEC, ProjectionAST or mutate the contract that constrains it.",
+    "regression_proof": "test_schema_contract_is_deeply_immutable_at_registry_and_transport_boundaries first reproduces the pre-repair mutable-schema path, then proves root and nested registry mutation plus runner-boundary mutation are blocked. It also proves the repair schema is sealed, so the one scoped contract-repair route cannot reopen the bypass."
+  },
+  "a1_a3_dependency_boundary": {
+    "source_and_fact_boundary": "I0 remains a typed FactExtractionDraft only. NormalizedSource, source spans, fact IDs, opaque fact handles and FactRegistry authority remain owned by A1 deterministic assembly.",
+    "knowledge_boundary": "A4 consumes only the A3 screened decision view and does not reimplement K1/K2 retrieval, snapshot selection, conflict ownership or promotion.",
+    "no_duplicate_authority": "No canonical domain type, source normalization, time system, typed binding assembler, VEC, ProjectionAST, Director decision runtime or compatibility behavior was added or reinterpreted."
+  },
+  "checks": [
+    {
+      "name": "stage_signatures_declared",
+      "exit_code": 0
+    },
+    {
+      "name": "prompt_schema_separate_transport",
+      "exit_code": 0
+    },
+    {
+      "name": "b1_prompt_under_12000_chars",
+      "exit_code": 0
+    },
+    {
+      "name": "b1_schema_under_4500_chars",
+      "exit_code": 0
+    },
+    {
+      "name": "native_windows_binary_first",
+      "exit_code": 0
+    },
+    {
+      "name": "one_scoped_contract_repair",
+      "exit_code": 0
+    },
+    {
+      "name": "i0_fact_extraction_signature",
+      "exit_code": 0
+    },
+    {
+      "name": "source_span_repair_ceiling",
+      "exit_code": 0
+    },
+    {
+      "name": "model_does_not_mint_ids_or_ticks",
+      "exit_code": 0
+    },
+    {
+      "name": "typed_binding_intents_in_b1_schema",
+      "exit_code": 0
+    },
+    {
+      "name": "free_text_not_binding_transport",
+      "exit_code": 0
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a4_structured_provider",
+      "argv": [
+        "{python}",
+        "-m",
+        "pytest",
+        "mode_p_vnext/tests/test_a4_structured_provider.py",
+        "-q",
+        "-p",
+        "no:cacheprovider"
+      ],
+      "cwd": "01_\u8c03\u5ea6\u5668",
+      "exit_code": 0,
+      "summary": "23 passed in 0.26s"
+    }
+  ],
+  "supplemental_regressions": [
+    {
+      "name": "a0_through_a8_prompt_security_v4_active_entrypoints_regression",
+      "exit_code": 0,
+      "summary": "240 passed, 4 subtests passed in 23.29s across A0 control, rebuild control, A1-A8, prompt injection, prompt lab, v4 compatibility, security, and active-entrypoint checks."
+    },
+    {
+      "name": "changed_modules_compile_check",
+      "exit_code": 0,
+      "summary": "python -m compileall -q completed for schema_registry.py and test_a4_structured_provider.py."
+    },
+    {
+      "name": "changed_paths_diff_check",
+      "exit_code": 0,
+      "summary": "git diff --check passed for both implementation and regression-test paths."
+    }
+  ],
+  "authority_boundary": {
+    "stage_contracts": "I0, E0, S1, B0 and B1 retain declarative stage signatures and bounded separately transported schemas; the schema is not copied into prompt text.",
+    "provider_boundary": "Only the native Windows binary structured transport is eligible. Unsupported native schema capability fails before model I/O; a ContractPatch remains the only repair shape and its budget remains one.",
+    "i0_boundary": "I0 may return only source-anchored typed fact candidates. It cannot select scene partitions, create fact IDs or artifact IDs, declare validation, make creative choices or derive timeline information from source spans.",
+    "b1_boundary": "B1 remains a Draft-only creative surface. It may express DurationIntent and typed reference/dialogue binding intents, but it cannot produce absolute ticks, final timelines, canonical IDs, hashes, requirements, VEC or ProjectionAST. Free text cannot become binding transport.",
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false
+  },
+  "non_goals": [
+    "No A0, A1, A2, A3, A5, A6, A7, A8, A9 or A10 implementation was changed.",
+    "No v4 production path, FeatureGate, production switch, external submission, provider invocation, real media run, visual acceptance or owner approval was started, enabled or claimed.",
+    "No model output was granted authority over source normalization, fact IDs, opaque handles, hashes, ticks, duration allocation, Boundary, typed binding validation, VEC, ProjectionAST or Director decisions."
+  ],
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "media_visual_acceptance": false,
+    "owner_production_approval": false,
+    "external_submission": false
+  }
+}
