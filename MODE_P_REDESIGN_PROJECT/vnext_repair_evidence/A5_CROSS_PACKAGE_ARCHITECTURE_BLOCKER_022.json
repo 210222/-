@@ -1,0 +1,66 @@
+{
+  "task_id": "A5",
+  "kind": "CROSS_PACKAGE_ARCHITECTURE_BLOCKER",
+  "classification": "V3_CANONICAL_DRAFT_TEST_MISMATCH",
+  "detected_at": "2026-08-02T11:13:27.9987784Z",
+  "authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "sections": [
+      "§7",
+      "§8",
+      "§9",
+      "§15 A5",
+      "§16"
+    ]
+  },
+  "summary": "The downstream A6 and A7 regression fixtures instantiate pre-v3 free-form draft shapes instead of the frozen v3 typed creative Draft contract. They fail before any projection or dual-loop assertion can execute.",
+  "observed_failure": {
+    "command": [
+      "python",
+      "-m",
+      "pytest",
+      "mode_p_vnext/tests/test_a6_projection_compiler.py",
+      "mode_p_vnext/tests/test_a7_dual_loop.py",
+      "-q",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "cwd": "01_调度器",
+    "exit_code": 1,
+    "summary": "10 passed, 34 errors in 0.69s",
+    "first_failure": "TypeError: VisualBeatDraft.__init__() missing 1 required positional argument: 'visual_beat_ordinal'"
+  },
+  "root_cause": {
+    "canonical_v3_contract": [
+      "VisualBeatDraft requires an explicit sequential visual_beat_ordinal.",
+      "ShotDesignDraft requires local-compatible shot_ordinal, DurationIntent, GenerationMode, typed reference_binding_intents, typed dialogue_binding_intents, and creative_notes.",
+      "ExecutionDesignDraft accepts only creative transition intents and handoff intent; it does not own timing, fact identity, or free-text binding authority."
+    ],
+    "stale_fixture_surface": [
+      "A6/A7 omit visual_beat_ordinal and shot_ordinal.",
+      "A6/A7 supply duration_weight rather than a typed DurationIntent.",
+      "A6/A7 supply free-text audio_intents and reference_intents instead of typed opaque fact-handle bindings.",
+      "Those fixtures therefore cannot represent the v3 authority boundary that A5 must compile."
+    ]
+  },
+  "affected_contract": "A6 Projection and A7 dual-loop regressions must consume canonical v3 A5 outputs assembled from typed creative drafts; stale test fixtures cannot define, extend, or override that contract.",
+  "artifact_hashes": {
+    "01_调度器/mode_p_vnext/domain/vec.py": "bd20f1e71ec171b68fb8a957e5d5bb44c5249f3cdc2061810bb8882e54539c62",
+    "01_调度器/mode_p_vnext/tests/test_a6_projection_compiler.py": "61898b1266da930562daeeddc033565c74605ecfb784110b5e5a044c16d0faa6",
+    "01_调度器/mode_p_vnext/tests/test_a7_dual_loop.py": "356d6e2e22f86224fea19ca59a7d0b62057eb1d5f8474200329087ad05b936b2"
+  },
+  "a5_attempt": {
+    "focused_verification": "mode_p_vnext/tests/test_a5_vec_assembly.py: 15 passed in 0.25s",
+    "status": "reverted before failure closure",
+    "reason": "The construction protocol prohibits completing or retaining an A5 migration while required cross-package regression evidence contradicts the frozen v3 contract."
+  },
+  "required_resolution": [
+    "At the owning A6/A7 work packages, replace stale fixtures with canonical v3 typed Draft, BlockingCommit, and FactRegistry construction.",
+    "Do not restore duration_weight, free-text audio_intents, free-text reference_intents, default timing, or model-supplied machine identities as compatibility shims.",
+    "Re-run A6 and A7 registered regressions, then recover and re-execute A5 from the ledger in a new claimed work package."
+  ],
+  "production_impact": "none",
+  "production_entry": "v4_unchanged",
+  "production_switch_authorized": false
+}
