@@ -1,4 +1,4 @@
-<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.0 -->
+<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.1 -->
 
 # MODE:P v4.0 - Minimal-Context Director/DP Runtime
 
@@ -84,24 +84,26 @@ Gate reports, or fixed revision-round limits as active MODE:P behavior.
 
 ## Implementation work
 
-### vNext architecture-v3.0 release gate
+### vNext architecture-v3.1 release gate
 
-vNext engineering is governed only by the architecture-v3.0 ReleaseLedger:
+vNext engineering is governed only by the architecture-v3.1 ReleaseLedger:
 
-- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md`
+- `MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md`
 - `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_TASKS.json`
 - `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE_STATE.json`
-- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md`
+- `MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3_1.md`
 - `.claude/commands/mode-p-vnext-rebuild.md`
 
 For `/mode-p-vnext-rebuild`, run `python -m mode_p_vnext.release_control
 audit/status/next/claim/complete/fail/recover/invalidate` from `01_调度器`.
 The model must not directly edit machine state, exclusive locks, completion
-lists, release gates, or task checkboxes. v2.0-v2.3 architecture documents and
-R, DDO, CPL, and V0-V10 controllers are historical/read-only evidence after the
-v3.0 rebase; v2.3 is explicitly rejected. A10 media
-acceptance and owner approval are separate hash-bound gates; the model must
-never record owner approval for the user. Until a separately authorized
+lists, release gates, or task checkboxes. v3.0 is superseded by the v3.1
+Projection/Gate-0/DP conflict repair; v2.0-v2.2 and all R, DDO, CPL, and V0-V10
+controllers are historical/read-only evidence; v2.3 remains explicitly
+rejected. A10 media acceptance and owner approval are separate hash-bound
+gates; the model must never record owner approval for the user. After a
+completed package is verified, committed, and pushed, continue with the next
+single ReleaseLedger package automatically. Until a separately authorized
 production-switch task succeeds, v4 remains the sole production path.
 
 The following legacy instructions apply only `/mode-p-rebuild`, never

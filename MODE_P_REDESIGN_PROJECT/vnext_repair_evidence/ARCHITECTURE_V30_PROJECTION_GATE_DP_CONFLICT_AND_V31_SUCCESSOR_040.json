@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0",
+  "kind": "ARCHITECTURE_CONFLICT_EVIDENCE",
+  "evidence_id": "ARCH-V30-PROJECTION-GATE-DP-040",
+  "status": "RESOLVED_BY_COMPLETE_SUCCESSOR_AUTHORITY",
+  "discovered_from": {
+    "architecture_version": "3.0",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+    "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+    "failure_evidence": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A8_PROJECTION_GATE_ORDER_ARCHITECTURE_BLOCKER_039.json",
+      "sha256": "d280520ab35f5ecacc90a25c8849830691296922b27a3a65d7a8bcd78cc85b13"
+    }
+  },
+  "conflicting_normative_claims": [
+    {
+      "location": "section 3 system diagram",
+      "claim": "VEC -> Gate 0 -> Fresh DP -> ProjectionAST"
+    },
+    {
+      "location": "section 10 projection chain",
+      "claim": "VEC -> ProjectionAST -> StoryboardProjection / VideoProjection"
+    },
+    {
+      "location": "section 13 Gate 0",
+      "claim": "Gate 0 validates Projection identity and Gate 0 failure must not call DP"
+    }
+  ],
+  "reproducible_conflict": {
+    "premise_1": "Projection identity cannot be deterministically checked before a ProjectionAST exists.",
+    "premise_2": "Storyboard/Video coherence cannot be checked before both views are derived from that ProjectionAST.",
+    "premise_3": "DP cannot run when Gate 0 fails, so DP cannot be the creator of an object that Gate 0 is required to validate first.",
+    "conclusion": "No execution order satisfies all v3.0 clauses. Treating the diagram as informal would silently select one old clause over another and violates the fail-closed authority rule."
+  },
+  "alternatives_considered": [
+    {
+      "option": "Keep Gate 0 before ProjectionAST",
+      "rejected_because": "It makes Projection identity and dual-view coherence uncheckable at Gate 0, or forces Gate 0 to validate a non-canonical placeholder."
+    },
+    {
+      "option": "Let DP create or repair ProjectionAST",
+      "rejected_because": "It gives DP visual-design and deterministic artifact authority, violating Director sovereignty and local runtime ownership."
+    },
+    {
+      "option": "Treat ProjectionAST as a post-DP output while deriving views earlier",
+      "rejected_because": "It creates two visual sources of truth and breaks canonical ProjectionAST identity."
+    }
+  ],
+  "decision": {
+    "authority_version": "3.1",
+    "selected_order": [
+      "VEC",
+      "local deterministic ProjectionAST",
+      "StoryboardProjection and VideoProjection from that same ProjectionAST",
+      "Gate 0 validates VEC, projection identity, dual-view coherence, security, and freshness",
+      "Fresh independent DP receives only the Gate-0-bound ReviewPacket",
+      "READY or bounded RevisionRequest",
+      "TEXT_VALIDATED is the text-only ceiling"
+    ],
+    "revision_semantics": "A RevisionRequest is locally validated, supersedes the candidate for acceptance without mutation, and invalidates from the earliest eligible Director-owned stage. It cannot create or modify ProjectionAST."
+  },
+  "successor_authority": {
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903",
+    "role": "SOLE_NORMATIVE_BASELINE",
+    "completeness_check": "The successor contains the single order in its decision, data-flow diagram, Projection/Gate/DP contract, state graph, invalidation rules, work-package table, traceability matrix, and completion definition."
+  },
+  "release_ledger_rebase_scope": {
+    "completed_packages_to_invalidate_in_reverse_dependency_order": [
+      "A7",
+      "A6",
+      "A5",
+      "A4",
+      "A3",
+      "A2",
+      "A1",
+      "A0"
+    ],
+    "failed_package_released": "A8",
+    "reason": "All prior completed records bind the v3.0 architecture SHA and their acceptance proof depends on a contradictory execution order. Historical Evidence is retained under invalidated_records, never deleted or counted as v3.1 completion."
+  },
+  "invariants_preserved": [
+    "Director remains the sole visual design authority",
+    "models emit only Draft/typed intent/candidate/RevisionRequest",
+    "local deterministic code owns ID/hash/ticks/timeline/N+1/bindings/VEC/ProjectionAST",
+    "source spans remain provenance only",
+    "per-Shot 15-second capability limit and one CinematicShot per GenerationUnit remain intact",
+    "Storyboard and Video remain same-ProjectionAST derivations",
+    "text cannot claim visual acceptance",
+    "v4 remains the sole production entry and production switch remains false",
+    "A10 owner preview approval remains user-only"
+  ],
+  "verification_requirements": [
+    "ReleaseControl must reject v3.1 active-guidance or architecture-hash drift before next/claim.",
+    "ReleaseControl rebase must bind this conflict Evidence path and hash to the v3.1 rebase record.",
+    "A7/A8 regressions must prove Gate 0 consumes an existing ProjectionBundle, failed Gate 0 does not invoke DP, DP receives a Gate-0-bound packet, and text never claims media acceptance.",
+    "All prior v3.0 completion records must be invalidated before the rebase; no manual state mutation is valid."
+  ],
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false
+  }
+}

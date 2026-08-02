@@ -1,13 +1,20 @@
-<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.0 -->
+<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.1 -->
+
+> Active v3.1 governance (which overrides every legacy descriptive note below):
+> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md`,
+> `MODE_P_VNEXT_CONSTRUCTION_V3_1.md`,
+> `MODE_P_VNEXT_RELEASE_TASKS.json`, and `MODE_P_VNEXT_RELEASE_STATE.json`.
+> v3.0 is historical under the recorded Projection/Gate-0/DP conflict repair;
+> it cannot be used as active authority or completion evidence.
 
 # MODE:P Director Intelligence - 重构项目章程
 
 > vNext 重构入口：`/mode-p-vnext-rebuild [task_id]`
 >
-> vNext v3.0 唯一权威架构：
-> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md`
+> vNext v3.1 唯一权威架构：
+> `vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md`
 >
-> vNext v3.0 工程协议：`MODE_P_VNEXT_CONSTRUCTION_V3.md`
+> vNext v3.1 工程协议：`MODE_P_VNEXT_CONSTRUCTION_V3_1.md`
 >
 > vNext v3 任务与状态：`MODE_P_VNEXT_RELEASE_TASKS.json`、
 > `MODE_P_VNEXT_RELEASE_STATE.json`
@@ -18,7 +25,7 @@
 > 架构文档、R、DDO、CPL、V0–V10 任务均只作历史证据；v2.3 已被全项目审查否决。
 > 生产 v4 仍是只读产品行为基线和唯一生产入口，不是 vNext 施工任务源。
 
-> 状态：v3.0 活动管道重构与回归验证中。
+> 状态：v3.1 活动管道按 ReleaseLedger 顺序施工、验证和回归中。
 > 实施入口：`IMPLEMENTATION_PLAN.md`
 > 运行规范：`LOOP_SPEC.md`
 > Claude Code 重构接力协议：`CLAUDE_CODE_REBUILD_LOOP.md`

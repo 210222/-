@@ -99,7 +99,7 @@ class ReleaseControl(RebuildControl):
         """Return issues that must block both task selection and claim.
 
         The base controller verifies task ordering and locked inputs at claim
-        time.  v3 additionally makes operator-facing guidance part of the
+        time.  Architecture v3 additionally makes operator-facing guidance part of the
         authority boundary: a correct JSON ledger with stale instructions is
         not a safe construction state.
         """
@@ -151,18 +151,22 @@ class ReleaseControl(RebuildControl):
                     "registry locked inputs do not equal the architecture bundle"
                 )
 
-            if version == "3.0":
+            if version.startswith("3."):
                 if len(raw_documents) != 1:
-                    issues.append("architecture v3.0 requires one normative document")
+                    issues.append(
+                        f"architecture v{version} requires one normative document"
+                    )
                 elif raw_documents[0].get("role") != "SOLE_NORMATIVE_BASELINE":
                     issues.append(
-                        "architecture v3.0 document role must be "
+                        f"architecture v{version} document role must be "
                         "SOLE_NORMATIVE_BASELINE"
                     )
 
                 historical = registry.get("historical_architecture_documents")
                 if not isinstance(historical, list):
-                    issues.append("v3.0 registry lacks historical architecture records")
+                    issues.append(
+                        f"v{version} registry lacks historical architecture records"
+                    )
                 else:
                     by_version = {
                         str(item.get("version")): item
@@ -180,11 +184,20 @@ class ReleaseControl(RebuildControl):
                             issues.append(
                                 f"v{old_version} is not marked historical read-only"
                             )
+                    if version == "3.1" and by_version.get("3.0", {}).get(
+                        "disposition"
+                    ) != "SUPERSEDED_BY_V3_1_ARCHITECTURE_CONFLICT_REPAIR":
+                        issues.append(
+                            "v3.0 is not explicitly superseded by the v3.1 conflict repair"
+                        )
 
                 guidance = registry.get("active_guidance")
                 if not isinstance(guidance, list) or not guidance:
-                    issues.append("v3.0 registry lacks active guidance declarations")
+                    issues.append(
+                        f"v{version} registry lacks active guidance declarations"
+                    )
                 else:
+                    expected_marker = f"MODE_P_VNEXT_AUTHORITY: architecture-v{version}"
                     seen_paths = set()
                     for item in guidance:
                         if not isinstance(item, dict):
@@ -197,6 +210,10 @@ class ReleaseControl(RebuildControl):
                         ) or not marker:
                             issues.append("active guidance entry lacks path or marker")
                             continue
+                        if marker != expected_marker:
+                            issues.append(
+                                f"active guidance marker must be {expected_marker}: {rel_path}"
+                            )
                         if rel_path in seen_paths:
                             issues.append(f"duplicate active guidance path: {rel_path}")
                             continue
@@ -407,7 +424,10 @@ class ReleaseControl(RebuildControl):
         return issues
 
     def rebase_architecture(
-        self, version: str, document_paths: Sequence[Path]
+        self,
+        version: str,
+        document_paths: Sequence[Path],
+        conflict_evidence_path: Optional[Path] = None,
     ) -> Dict[str, Any]:
         if self.lock_path.exists():
             raise ControlError("cannot rebase architecture while a lock exists")
@@ -439,6 +459,62 @@ class ReleaseControl(RebuildControl):
                 )
             documents.append({"path": rel_path, "sha256": _sha256_file(resolved)})
 
+        if conflict_evidence_path is None:
+            raise ControlError(
+                "architecture rebase requires bound Architecture Conflict Evidence"
+            )
+        resolved_conflict_evidence = conflict_evidence_path.resolve()
+        try:
+            conflict_evidence_rel = resolved_conflict_evidence.relative_to(
+                self.root
+            ).as_posix()
+        except ValueError as exc:
+            raise ControlError(
+                "architecture conflict evidence must be stored inside project"
+            ) from exc
+        if (
+            not resolved_conflict_evidence.is_file()
+            or _is_symlink_or_junction(resolved_conflict_evidence)
+        ):
+            raise ControlError(
+                "architecture conflict evidence must be a regular file: "
+                f"{conflict_evidence_rel}"
+            )
+        try:
+            conflict_payload = _read_json(resolved_conflict_evidence)
+        except (ControlError, ValueError) as exc:
+            raise ControlError(
+                "architecture conflict evidence must be valid JSON"
+            ) from exc
+        successor = conflict_payload.get("successor_authority")
+        if conflict_payload.get("kind") != "ARCHITECTURE_CONFLICT_EVIDENCE":
+            raise ControlError(
+                "architecture conflict evidence has an invalid kind"
+            )
+        if not isinstance(successor, dict):
+            raise ControlError(
+                "architecture conflict evidence lacks successor_authority"
+            )
+        if successor.get("path") != documents[0]["path"]:
+            raise ControlError(
+                "architecture conflict evidence successor path does not bind "
+                "the rebase document"
+            )
+        if successor.get("sha256") != documents[0]["sha256"]:
+            raise ControlError(
+                "architecture conflict evidence successor hash does not bind "
+                "the rebase document"
+            )
+        decision = conflict_payload.get("decision")
+        if not isinstance(decision, dict) or decision.get("authority_version") != version:
+            raise ControlError(
+                "architecture conflict evidence does not bind the rebase version"
+            )
+        conflict_evidence = {
+            "path": conflict_evidence_rel,
+            "sha256": _sha256_file(resolved_conflict_evidence),
+        }
+
         expected = {item["path"]: item["sha256"] for item in documents}
         registry = self._load_tasks_document()
         if str(registry.get("architecture_version")) != version:
@@ -457,6 +533,7 @@ class ReleaseControl(RebuildControl):
                 "previous_version": state.get("architecture_version"),
                 "new_version": version,
                 "documents": documents,
+                "conflict_evidence": conflict_evidence,
                 "rebased_at": _utc_now(),
             }
         )
@@ -468,6 +545,7 @@ class ReleaseControl(RebuildControl):
                 "architecture_documents": documents,
                 "architecture_document": documents[-1],
                 "architecture_rebases": rebases,
+                "active_architecture_conflict_evidence": conflict_evidence,
                 "status": first_task.pending_status,
                 "next_task": first_task.task_id,
                 "release_gate_evidence": {},
@@ -476,6 +554,7 @@ class ReleaseControl(RebuildControl):
                 "a10_gate_status": "MEDIA_EVIDENCE_REQUIRED",
                 "external_submission": False,
                 "production_switch_authorized": False,
+                "last_failure": None,
                 "updated_at": _utc_now(),
             }
         )
@@ -692,6 +771,7 @@ def build_parser() -> argparse.ArgumentParser:
     rebase = sub.add_parser("rebase-architecture")
     rebase.add_argument("--version", required=True)
     rebase.add_argument("--document", required=True, action="append", type=Path)
+    rebase.add_argument("--conflict-evidence", required=True, type=Path)
 
     media = sub.add_parser("record-media-acceptance")
     media.add_argument("--owner", required=True)
@@ -761,7 +841,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             return 0
         if args.command == "rebase-architecture":
             _print_json(
-                control.rebase_architecture(args.version, args.document)
+                control.rebase_architecture(
+                    args.version,
+                    args.document,
+                    args.conflict_evidence,
+                )
             )
             return 0
         if args.command == "record-media-acceptance":

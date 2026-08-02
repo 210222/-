@@ -1,4 +1,7 @@
-<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.0 -->
+<!-- MODE_P_VNEXT_HISTORICAL: architecture-v3.0 -->
+
+> HISTORICAL_READ_ONLY — superseded by `MODE_P_VNEXT_OPERATIONS_V3_1.md` under
+> the complete v3.1 authority. It is retained only as historical evidence.
 
 # MODE:P vNext v3.0 A10 媒体证据操作协议
 

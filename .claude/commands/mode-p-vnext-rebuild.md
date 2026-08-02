@@ -1,93 +1,94 @@
 ---
-description: Execute exactly one isolated MODE:P vNext engineering task from the architecture-v3.0 ReleaseLedger; never switch production.
+description: Sequentially execute the current MODE:P vNext architecture-v3.1 ReleaseLedger package, verify it, commit/push it, then continue with the next single package; never switch production.
 argument-hint: [optional exact next A-task id]
 allowed-tools: Read, Glob, Grep, Write, Edit, Bash
 ---
 
-<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.0 -->
+<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.1 -->
 
-# MODE:P vNext Architecture-v3.0 Construction
-
-Execute exactly one engineering round for `$ARGUMENTS` according to
-`MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md`.
+# MODE:P vNext Architecture-v3.1 construction
 
 The sole architecture is
-`MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md`.
-The sole task registry and state are `MODE_P_VNEXT_RELEASE_TASKS.json` and
-`MODE_P_VNEXT_RELEASE_STATE.json`. v2.0-v2.3 architecture documents and R,
-DDO, CPL, V0-V10 queues are historical evidence only; v2.3 is rejected and
-cannot select or complete work.
+`MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md`.
+The sole active construction protocol is
+`MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3_1.md`; the sole registry
+and state are `MODE_P_VNEXT_RELEASE_TASKS.json` and
+`MODE_P_VNEXT_RELEASE_STATE.json`.
 
-## Hard boundary
+v3.0 is superseded by the recorded Projection/Gate-0/DP conflict repair.
+v2.0–v2.2, v2.3, R, DDO, CPL, V0–V10, and `director_vnext1` are historical
+evidence only; v2.3 is rejected. They cannot select, complete, or reinterpret
+v3.1 work.
 
-- Implement only the one A0-A10 task returned by `release_control next`.
-- Modify only that task's `allowed_paths`; do not enter a second task.
-- Architecture v3.0 outranks the construction plan and current code. On a gap,
-  write failure evidence and fail the current task; never choose an old design.
-- Models may make creative Draft choices but must not mint IDs, hashes, ticks,
-  boundaries or machine bindings. Local code owns deterministic assembly.
-- Do not invoke creative models or media tools unless the selected task
-  explicitly registers that effect. A0-A7 cannot start external media.
-- Do not run `/mode-p-pilot`, `/mode-p-accept`, or alter the active entry.
-- Do not import v4 runtime modules, knowledge indexes, caches, Sessions,
-  delivery or fallback behavior into vNext.
-- Treat v4 only as a read-only black-box regression and rollback baseline.
-- Text validation never authorizes media acceptance.
+## Hard boundaries
+
+- Use exactly one returned A0–A10 package at a time; modify only its allowed paths.
+- v3.1 outranks the task plan, existing code, tests, prompts, and old Evidence.
+  On drift, record evidence, fail-close/invalidate as required, and repair the
+  authoritative control plane. Do not choose an old design silently.
+- Director is the sole visual designer. Models may emit only Drafts, typed
+  intents, candidates, and bounded RevisionRequests. Local code owns IDs,
+  hashes, 24000 ticks, Boundary, typed binding, VEC, and ProjectionAST.
+- The sole review order is `VEC -> ProjectionAST -> Storyboard/Video -> Gate 0
+  -> Fresh DP`. Gate 0 failure never calls DP; DP cannot create or modify a
+  ProjectionAST; text never claims visual acceptance.
+- Do not invoke external media before A10, alter a v4 entrypoint, import v4
+  runtime behavior into vNext, call `/mode-p-pilot` or `/mode-p-accept`, or
+  enable a feature/production switch. `production_entry=v4_unchanged` and
+  `production_switch_authorized=false` remain true.
 - Never call `record-owner-approval` for the user.
-- A green A-task never authorizes production; `production_entry` remains
-  `v4_unchanged` and `production_switch_authorized` remains false.
 
-## Start — the sole ReleaseLedger is mandatory
+## Sequential execution
 
-1. From `01_调度器`, run `python -m mode_p_vnext.release_control audit`.
-   Stop without implementation edits if it fails.
-2. Run `python -m mode_p_vnext.release_control status` and
-   `python -m mode_p_vnext.release_control next`.
-3. `$ARGUMENTS`, when present, must equal the exact returned A-task. Reject all
-   R, DDO, CPL and V task IDs.
-4. Create one unique owner/run ID and claim with
-   `release_control claim <task_id> --owner <run-id>`.
-5. Retain the token. Read the one v3.0 document, the task's `spec_refs`, direct
-   dependencies, `required_checks`, `verification_commands` and `allowed_paths`.
-6. Never directly edit state, lock, completion lists, release gates or old
-   queue status.
+From `01_调度器`, run:
 
-## Execute one round
+```text
+python -m mode_p_vnext.release_control audit
+python -m mode_p_vnext.release_control status
+python -m mode_p_vnext.release_control next
+```
 
-1. A successful claim is the only valid `IN_PROGRESS` transition.
-2. Establish a failing focused test or another mechanically reproducible
-   observation before changing behavior.
-3. Implement the smallest complete architecture-v3.0 behavior inside the
-   claimed task's paths.
-4. Run every registered verification command and relevant affected regression.
-5. Write one `A<id>_*.json` Evidence containing `task_id`, all `changed_paths`,
-   named check results, architecture input hash and diagnostic notes. The
-   controller is the authority for `verification_results` and 产物哈希.
-6. Complete only through
-   `release_control complete ... --evidence ...`; it re-runs immutable
-   `verification_commands`, validates scope/dependencies, and records hashes.
-7. If architecture or execution fails, write failure evidence and call
-   `release_control fail`; do not skip forward.
-8. Commit and push only the completed task's exact files, then stop.
+Proceed only with a clean audit. `$ARGUMENTS`, if supplied, must equal the
+returned A-task. Claim it with a unique owner ID, retain its token, inspect its
+requirements/ownership/dependencies/failure modes, then establish a focused
+failure or mechanical observation before implementation.
 
-## Recovery
+```text
+python -m mode_p_vnext.release_control claim <task_id> --owner <run-id>
+python -m mode_p_vnext.release_control complete <task_id> --owner <run-id> --token <token> --evidence <A-task-evidence.json>
+python -m mode_p_vnext.release_control fail <task_id> --owner <run-id> --token <token> --evidence <failure-evidence.json>
+python -m mode_p_vnext.release_control recover
+python -m mode_p_vnext.release_control invalidate <task_id> --owner <run-id> --reason <reason>
+```
 
-If state and lock disagree, run `release_control audit` and stop. Recover only
-through `release_control recover`; without `--force` it refuses a live owner
-PID. Reopen drifted completion only through `release_control invalidate`.
-Architecture changes require all affected completions to be invalidated, the
-single new authority document registered and `rebase-architecture` executed
-before any new claim.
+Implement the smallest complete v3.1 behavior within the claimed paths. Run all
+registered verification and affected cross-package invariants. Write Evidence
+with complete changed paths and diagnostics, then use `release_control complete`
+so the controller re-runs the registered commands and records hashes. Stage only
+the claimed package's files, commit, and push.
 
-## Completion
+After a successful push, automatically repeat `audit -> status -> next` and
+continue with the next one package. Sequential continuation does not authorize
+claiming or editing two packages together.
 
-For one completed task, report its Evidence, commit, pushed branch, and the next
-A-task with `PRODUCTION_ENTRY: v4_unchanged`. Even after A10 report:
+## Recovery and user boundary
 
-~~~text
-ARCHITECTURE_V3_IMPLEMENTED
+Use `recover` for stale locks, `invalidate` for drifted completion, and
+`rebase-architecture --conflict-evidence ...` only after a complete successor
+authority, all affected invalidations, and active-guidance/registry convergence.
+Never edit state, locks, completion lists, or release gates directly.
+
+Treat normal failures—tests, dependencies, paths, evidence, Git non-fast-forward
+or ordinary conflicts—as self-service diagnosis/repair work. Preserve preexisting
+user worktree changes and never stage them. Ask only for an irreversible
+user-data action, v4/production switch, paid/public external action, unavailable
+external credential/media with no valid local proof, irreducible semantic fork,
+or user-only A10 approval.
+
+Even after A10, report only:
+
+```text
+ARCHITECTURE_V31_IMPLEMENTED
 PRODUCTION_SWITCH: NOT_PERFORMED
-NEXT_EXPLICIT_STEP: separate production-switch proposal
-~~~
-
-Do not start Shadow, media generation, or production switching automatically.
+NEXT_EXPLICIT_STEP: separately authorized production-switch proposal
+```

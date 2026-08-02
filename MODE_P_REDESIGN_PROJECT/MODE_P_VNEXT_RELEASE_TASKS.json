@@ -1,11 +1,11 @@
 {
   "schema_version": "2.0",
-  "queue_id": "mode_p_vnext_architecture_v3_0_2026_08_01",
-  "architecture_version": "3.0",
+  "queue_id": "mode_p_vnext_architecture_v3_1_2026_08_03",
+  "architecture_version": "3.1",
   "architecture_documents": [
     {
-      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
-      "sha256": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a",
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+      "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903",
       "role": "SOLE_NORMATIVE_BASELINE"
     }
   ],
@@ -29,32 +29,37 @@
       "version": "2.3",
       "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V2.3_AMENDMENT.md",
       "disposition": "REJECTED_BY_WHOLE_SYSTEM_AUDIT"
+    },
+    {
+      "version": "3.0",
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md",
+      "disposition": "SUPERSEDED_BY_V3_1_ARCHITECTURE_CONFLICT_REPAIR"
     }
   ],
   "active_guidance": [
     {
       "path": "CLAUDE.md",
-      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.0"
+      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.1"
     },
     {
       "path": ".claude/commands/mode-p-vnext-rebuild.md",
-      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.0"
+      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.1"
     },
     {
       "path": "MODE_P_REDESIGN_PROJECT/README.md",
-      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.0"
+      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.1"
     },
     {
-      "path": "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md",
-      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.0"
+      "path": "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3_1.md",
+      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.1"
     },
     {
       "path": "01_调度器/mode_p_vnext/README.md",
-      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.0"
+      "marker": "MODE_P_VNEXT_AUTHORITY: architecture-v3.1"
     }
   ],
   "locked_verification_inputs": {
-    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md": "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a"
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
   },
   "status_after_all": "PRODUCTION_SWITCH_PROPOSAL_ELIGIBLE",
   "terminal_claim_ceiling": "OWNER_APPROVED_PREVIEW",
@@ -78,10 +83,10 @@
       "task_id": "A0",
       "phase": "BASELINE_REPAIR",
       "pending_status": "BASELINE_REPAIR_REQUIRED",
-      "title": "Converge all active guidance and fail-close control on the architecture-v3.0 baseline",
+      "title": "Converge v3.1 active guidance, conflict-evidence-bound rebase, and fail-close control",
       "depends_on": [],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §0-§2, §14-§18"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §0-§2, §10-§13"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/release_control.py",
@@ -96,6 +101,7 @@
         "MODE_P_REDESIGN_PROJECT/README.md",
         "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V2.md",
         "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md",
+        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3_1.md",
         "MODE_P_REDESIGN_PROJECT/vnext_baseline/V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json",
         "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/ARCHITECTURE_V23_REJECTION_AND_V30_REBASE_001.md",
         "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_CONSTRUCTION_PLAN_AUDIT_V3.0.md",
@@ -115,6 +121,9 @@
         "portable_canonical_hashes",
         "single_architecture_document_locked",
         "v23_rejected_as_historical",
+        "v30_conflict_successor_registered",
+        "rebase_conflict_evidence_bound",
+        "sequential_continuation_protocol",
         "active_guidance_version_converged",
         "architecture_drift_blocks_claim",
         "manual_release_gates",
@@ -148,7 +157,9 @@
           "timeout_seconds": 300
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A1",
@@ -157,7 +168,7 @@
       "title": "Freeze the canonical domain, ingest assembly, time capability, and typed binding intents",
       "depends_on": ["A0"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §5-§8, §15 A1"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §4-§6, §11 A1"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/domain/**",
@@ -192,7 +203,9 @@
           "timeout_seconds": 300
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A2",
@@ -201,7 +214,7 @@
       "title": "Connect the persistent state graph, checkpoints, transactions, concurrency, and invalidation",
       "depends_on": ["A1"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §5, §11, §15 A2"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §4, §8, §11 A2"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/pipeline/state.py",
@@ -232,7 +245,9 @@
           "timeout_seconds": 360
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A3",
@@ -241,7 +256,7 @@
       "title": "Unify K1/K2 retrieval, snapshots, conflicts, and evidence-gated promotion",
       "depends_on": ["A2"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §4, §12, §15 A3"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §3, §6, §11 A3"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/services/knowledge_retriever.py",
@@ -266,7 +281,9 @@
           "timeout_seconds": 300
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A4",
@@ -275,7 +292,7 @@
       "title": "Implement declarative stage signatures, bounded prompts, and the structured provider port",
       "depends_on": ["A3"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §6, §8, §12, §15 A4"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §3-§6, §11 A4"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/prompts/**",
@@ -305,7 +322,9 @@
           "timeout_seconds": 300
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A5",
@@ -314,7 +333,7 @@
       "title": "Compile creative drafts into deterministic Blocking, per-shot Timeline, and VEC",
       "depends_on": ["A4"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §7-§9, §15 A5, §16"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §5-§6, §11 A5, §12"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/services/blocking_assembler.py",
@@ -347,7 +366,9 @@
           "timeout_seconds": 360
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A6",
@@ -356,7 +377,7 @@
       "title": "Compile storyboard and video from one canonical ProjectionAST",
       "depends_on": ["A5"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §10, §15 A6, §16"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §7.1, §11 A6, §12"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/services/projection_compiler.py",
@@ -389,7 +410,9 @@
           "timeout_seconds": 240
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A7",
@@ -398,7 +421,7 @@
       "title": "Implement deterministic Gate 0, fresh independent DP, and media evidence ports",
       "depends_on": ["A6"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §3-§4, §13, §15 A7"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §3.2, §7.2-§7.3, §11 A7"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/services/deterministic_gates.py",
@@ -413,8 +436,11 @@
       ],
       "required_checks": [
         "deterministic_gate_zero",
+        "projection_bundle_precedes_gate_zero",
+        "gate_zero_failure_blocks_dp",
         "fresh_independent_dp_packet",
-        "dp_only_emits_bounded_revision_request",
+        "dp_outcome_exactly_ready_or_bounded_revision_request",
+        "gate_zero_receipt_binds_fresh_dp",
         "bounded_revision_router",
         "text_cannot_claim_visual_acceptance",
         "media_outcome_attribution",
@@ -435,7 +461,9 @@
           "timeout_seconds": 240
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A8",
@@ -444,7 +472,7 @@
       "title": "Run one real resumable raw-source-to-Projection shadow through the top-level CLI",
       "depends_on": ["A7"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §3, §6, §11, §15 A8"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §6-§8, §11 A8"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/pipeline/ingest_nodes.py",
@@ -466,7 +494,9 @@
         "no_golden_vec_injection",
         "text_validated_claim_ceiling",
         "typed_ingest_provenance",
-        "complete_v30_state_graph",
+        "complete_v31_state_graph",
+        "projection_bundle_precedes_gate_zero",
+        "gate_zero_receipt_binds_fresh_dp",
         "run_record_digest_tamper_rejected",
         "no_v4_write_or_external_media"
       ],
@@ -484,7 +514,9 @@
           "timeout_seconds": 240
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A9",
@@ -493,7 +525,7 @@
       "title": "Evaluate unseen scripts with frozen quality, cost, latency, and architecture-drift checks",
       "depends_on": ["A8"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §15 A9, §17"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §10-§12, §11 A9"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/evaluation/**",
@@ -517,7 +549,9 @@
           "timeout_seconds": 600
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     },
     {
       "task_id": "A10",
@@ -526,11 +560,11 @@
       "title": "Collect real media evidence and hash-bound owner preview approval without switching production",
       "depends_on": ["A9"],
       "spec_refs": [
-        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md §13, §15 A10, §18"
+        "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md §9, §11 A10, §13"
       ],
       "allowed_paths": [
         "01_调度器/mode_p_vnext/tests/test_a10_*.py",
-        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_OPERATIONS_V3.md",
+        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_OPERATIONS_V3_1.md",
         "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/**",
         "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A10_*.json"
       ],
@@ -561,7 +595,9 @@
           "timeout_seconds": 300
         }
       ],
-      "locked_verification_inputs": {}
+      "locked_verification_inputs": {
+        "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+      }
     }
   ]
 }

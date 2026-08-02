@@ -231,7 +231,7 @@ class ActiveCommandTests(unittest.TestCase):
         self.assertIn("Do not start /mode-p-accept automatically", text)
         self.assertNotIn("Agent", meta["allowed-tools"])
 
-    def test_vnext_rebuild_is_isolated_and_cannot_switch_production(self) -> None:
+    def _historical_v30_vnext_rebuild_is_isolated_and_cannot_switch_production(self) -> None:
         text = _read(".claude/commands/mode-p-vnext-rebuild.md")
         meta = _frontmatter(text)
         self.assertIn("vNext engineering task", meta["description"])
@@ -311,6 +311,57 @@ class ActiveCommandTests(unittest.TestCase):
             "生产切换是独立项目",
         ):
             self.assertIn(marker, construction)
+
+    def test_vnext_rebuild_is_isolated_and_cannot_switch_production(self) -> None:
+        text = _read(".claude/commands/mode-p-vnext-rebuild.md")
+        meta = _frontmatter(text)
+        self.assertIn("vNext architecture-v3.1", meta["description"])
+        self.assertNotIn("Agent", meta["allowed-tools"])
+        required = (
+            "MODE_P_VNEXT_CONSTRUCTION_V3_1.md",
+            "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+            "MODE_P_VNEXT_RELEASE_TASKS.json",
+            "MODE_P_VNEXT_RELEASE_STATE.json",
+            "release_control audit",
+            "release_control status",
+            "release_control next",
+            "release_control claim",
+            "release_control complete",
+            "release_control fail",
+            "release_control recover",
+            "release_control invalidate",
+            "one returned A0–A10 package",
+            "VEC -> ProjectionAST -> Storyboard/Video -> Gate 0",
+            "production_entry=v4_unchanged",
+            "production_switch_authorized=false",
+            "Never call `record-owner-approval` for the user.",
+            "automatically repeat `audit -> status -> next`",
+        )
+        for marker in required:
+            self.assertIn(marker, text)
+        for forbidden in (
+            "python -m run_mode_p submit",
+            "python -m mode_p_pilot",
+            "python -m batch_dp",
+            "python -m mode_p_vnext.rebuild_control claim",
+            "MODE_P_VNEXT_LOOP_REPAIR_PLAN.md",
+            "MODE_P_VNEXT_REPAIR_TASKS.json",
+        ):
+            self.assertNotIn(forbidden, text)
+
+        root_guidance = _read("CLAUDE.md")
+        construction = _read(
+            "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3_1.md"
+        )
+        self.assertIn("MODE_P_VNEXT_AUTHORITY: architecture-v3.1", root_guidance)
+        self.assertIn("architecture-v3.1 ReleaseLedger", root_guidance)
+        self.assertIn("Continuous one-package execution loop", construction)
+        self.assertIn(
+            "VEC -> ProjectionAST -> StoryboardProjection + VideoProjection",
+            construction,
+        )
+        self.assertIn("Gate failure does not call DP", construction)
+        self.assertIn("production_switch_authorized=false", construction)
 
     def test_real_model_acceptance_is_an_explicit_separate_command(self) -> None:
         rebuild = _read(".claude/commands/mode-p-rebuild.md")
@@ -400,8 +451,8 @@ class CanonicalRoleContractTests(unittest.TestCase):
 
     def test_root_guidance_has_no_deleted_or_legacy_active_command(self) -> None:
         text = _read("CLAUDE.md")
-        self.assertIn("MODE_P_VNEXT_AUTHORITY: architecture-v3.0", text)
-        self.assertIn("architecture-v3.0 ReleaseLedger", text)
+        self.assertIn("MODE_P_VNEXT_AUTHORITY: architecture-v3.1", text)
+        self.assertIn("architecture-v3.1 ReleaseLedger", text)
         self.assertIn("current Claude Code task is the orchestrator", text)
         self.assertIn("persistent `mode-p-director` subagent", text)
         self.assertIn("new `mode-p-dp` subagent", text)

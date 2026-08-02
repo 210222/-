@@ -1,0 +1,74 @@
+{
+  "task_id": "A0",
+  "kind": "RELEASE_CONTROL_REVALIDATION_EVIDENCE",
+  "architecture_authority": {
+    "version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+  },
+  "changed_paths": [
+    ".claude/commands/mode-p-vnext-rebuild.md",
+    "01_调度器/mode_p/test_active_entrypoints.py",
+    "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+    "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3_1.md",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A0_V31_CONTROL_PLANE_REBASE_REVALIDATION_041.json"
+  ],
+  "controlled_preclaim_rebase_artifacts": {
+    "conflict_evidence": {
+      "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/ARCHITECTURE_V30_PROJECTION_GATE_DP_CONFLICT_AND_V31_SUCCESSOR_040.json",
+      "sha256": "8b6a19be3a1fa90aa5015cecdeef71ba1fc25b22c0dacbef4cf311736fb23176"
+    },
+    "rebase_rule": "ReleaseControl.rebase_architecture requires a regular in-project ARCHITECTURE_CONFLICT_EVIDENCE whose successor path, SHA256, and authority_version bind exactly to the requested one-document rebase.",
+    "invalidation": "A7 through A0 were invalidated in reverse dependency order by ReleaseLedger before the v3.1 rebase; prior Evidence remains preserved in invalidated_records and grants no v3.1 completion."
+  },
+  "root_cause_and_repair": {
+    "root_cause": "v3.0 placed Gate 0/DP before ProjectionAST in one normative graph while requiring Gate 0 to validate projection identity and another normative section required ProjectionAST before Storyboard/Video.",
+    "repair": "The frozen v3.1 authority defines one executable order: VEC -> locally compiled ProjectionAST -> same-source Storyboard/Video -> Gate 0 -> Fresh DP. Active guidance, registry locks, controller validation, tests, and ReleaseLedger state converge on that authority.",
+    "v4_isolation": "A regression initially detected a frozen v4 collection hash change caused only by a renamed test method. The repair restored the original test ID and updated only its v3.1 assertions, preserving the registered v4 test collection exactly."
+  },
+  "checks": [
+    {"name": "single_release_ledger", "exit_code": 0},
+    {"name": "legacy_queues_historical", "exit_code": 0},
+    {"name": "legacy_controllers_superseded", "exit_code": 0},
+    {"name": "one_lock_one_next_task", "exit_code": 0},
+    {"name": "task_path_ownership_disjoint", "exit_code": 0},
+    {"name": "phase_status_progression", "exit_code": 0},
+    {"name": "bounded_control_output", "exit_code": 0},
+    {"name": "portable_canonical_hashes", "exit_code": 0},
+    {"name": "single_architecture_document_locked", "exit_code": 0},
+    {"name": "v23_rejected_as_historical", "exit_code": 0},
+    {"name": "v30_conflict_successor_registered", "exit_code": 0},
+    {"name": "rebase_conflict_evidence_bound", "exit_code": 0},
+    {"name": "sequential_continuation_protocol", "exit_code": 0},
+    {"name": "active_guidance_version_converged", "exit_code": 0},
+    {"name": "architecture_drift_blocks_claim", "exit_code": 0},
+    {"name": "manual_release_gates", "exit_code": 0},
+    {"name": "portable_registered_verification", "exit_code": 0},
+    {"name": "current_v4_cohort_authority", "exit_code": 0},
+    {"name": "production_v4_unchanged", "exit_code": 0}
+  ],
+  "registered_verification_observation": [
+    {"name": "a0_release_control", "result": "20 passed"},
+    {"name": "a0_v4_entrypoint", "result": "15 passed"},
+    {"name": "a0_v4_cohort", "result": "6 passed"},
+    {"name": "a0_control_regression", "result": "31 passed"}
+  ],
+  "claim_delta_observation": {
+    "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+    "created": [],
+    "modified": [
+      ".claude/commands/mode-p-vnext-rebuild.md",
+      "01_调度器/mode_p/test_active_entrypoints.py",
+      "01_调度器/mode_p_vnext/tests/test_a0_release_control.py",
+      "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3_1.md"
+    ],
+    "deleted": [],
+    "conclusion": "All post-claim implementation changes are owned by A0. Preexisting user changes were not declared, staged, or modified."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "text_claim_ceiling": "TEXT_VALIDATED"
+  }
+}

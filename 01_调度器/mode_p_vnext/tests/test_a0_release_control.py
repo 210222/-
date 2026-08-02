@@ -1,4 +1,4 @@
-"""A0 freezes one architecture-v3.0 construction ledger and v4 safety."""
+"""A0 freezes one architecture-v3.1 construction ledger and v4 safety."""
 
 from __future__ import annotations
 
@@ -25,10 +25,10 @@ from mode_p_vnext.release_control import (
 
 ARCHITECTURE_REL = (
     "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
-    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md"
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md"
 )
 ARCHITECTURE_BUNDLE = {ARCHITECTURE_REL}
-AUTHORITY_MARKER = "MODE_P_VNEXT_AUTHORITY: architecture-v3.0"
+AUTHORITY_MARKER = "MODE_P_VNEXT_AUTHORITY: architecture-v3.1"
 CURRENT_COHORT_LEDGER_REL = (
     "MODE_P_REDESIGN_PROJECT/vnext_baseline/"
     "V0.1_CURRENT_COLLECTION_COHORT_RECONCILIATION.json"
@@ -86,7 +86,7 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     control = ReleaseControl.default()
     document = _read_json(control.tasks_path)
     assert document["schema_version"] == "2.0"
-    assert document["architecture_version"] == "3.0"
+    assert document["architecture_version"] == "3.1"
     assert document["authority"] == "SOLE_VNEXT_CONSTRUCTION_LEDGER"
     assert document["terminal_claim_ceiling"] == "OWNER_APPROVED_PREVIEW"
     assert document["status_after_all"] == "PRODUCTION_SWITCH_PROPOSAL_ELIGIBLE"
@@ -165,6 +165,9 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
     a0 = next(task for task in document["tasks"] if task["task_id"] == "A0")
     assert "single_architecture_document_locked" in a0["required_checks"]
     assert "v23_rejected_as_historical" in a0["required_checks"]
+    assert "v30_conflict_successor_registered" in a0["required_checks"]
+    assert "rebase_conflict_evidence_bound" in a0["required_checks"]
+    assert "sequential_continuation_protocol" in a0["required_checks"]
     assert "active_guidance_version_converged" in a0["required_checks"]
     assert "architecture_drift_blocks_claim" in a0["required_checks"]
     assert "current_v4_cohort_authority" in a0["required_checks"]
@@ -191,6 +194,12 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
 
     a7 = next(task for task in document["tasks"] if task["task_id"] == "A7")
     assert "canonical_projection_and_evidence_consumption" in a7["required_checks"]
+    assert {
+        "projection_bundle_precedes_gate_zero",
+        "gate_zero_failure_blocks_dp",
+        "dp_outcome_exactly_ready_or_bounded_revision_request",
+        "gate_zero_receipt_binds_fresh_dp",
+    }.issubset(a7["required_checks"])
     assert [item["name"] for item in a7["verification_commands"]] == [
         "a7_dual_loop",
         "a7_v4_isolation",
@@ -201,7 +210,9 @@ def test_release_registry_matches_architecture_work_packages_and_phases():
         "raw_source_to_fact_registry",
         "canonical_ingest_to_projection",
         "typed_ingest_provenance",
-        "complete_v30_state_graph",
+        "complete_v31_state_graph",
+        "projection_bundle_precedes_gate_zero",
+        "gate_zero_receipt_binds_fresh_dp",
         "run_record_digest_tamper_rejected",
         "no_v4_write_or_external_media",
     }.issubset(a8["required_checks"])
@@ -230,7 +241,7 @@ def test_architecture_bundle_hashes_are_locked_and_current():
     assert expected == actual
 
     state = control.load_state()
-    assert state["architecture_version"] == "3.0"
+    assert state["architecture_version"] == "3.1"
     assert state["architecture_documents"] == [
         {"path": item["path"], "sha256": item["sha256"]}
         for item in document["architecture_documents"]
@@ -275,7 +286,7 @@ def test_current_v4_cohort_ledger_is_canonical_and_history_stays_read_only():
     assert historical_source["source_sha256"] != actual_source_sha
 
 
-def test_v30_root_contracts_are_explicit_and_fail_closed():
+def _historical_v30_root_contracts_are_explicit_and_fail_closed():
     root = ReleaseControl.default().root
     architecture = (root / ARCHITECTURE_REL).read_text(encoding="utf-8")
 
@@ -302,6 +313,34 @@ def test_v30_root_contracts_are_explicit_and_fail_closed():
         assert marker in architecture
 
 
+def test_v31_root_contracts_are_explicit_and_fail_closed():
+    root = ReleaseControl.default().root
+    architecture = (root / ARCHITECTURE_REL).read_text(encoding="utf-8")
+
+    for marker in (
+        "NORMATIVE_SINGLE_AUTHORITY",
+        "SUPERSEDED_BY_V3_1_ARCHITECTURE_CONFLICT_REPAIR",
+        "REJECTED_BY_WHOLE_SYSTEM_AUDIT",
+        "NormalizedSource",
+        "local FactAssembler",
+        "FactRegistry",
+        "TICKS_PER_SECOND = 24000",
+        "GenerationUnit(CinematicShot)",
+        "must satisfy `0 < duration_ticks <= capability.max_generation_ticks`",
+        "source_start",
+        "must never enter a cinematic time formula",
+        "DialogueBindingIntent",
+        "ReferenceBindingIntent",
+        "Only typed intents can become machine bindings",
+        "`< 12000` characters",
+        "VEC -> ProjectionAST -> {StoryboardProjection, VideoProjection}",
+        "Gate 0 failure MUST NOT invoke DP",
+        "TEXT_VALIDATED",
+        "production_entry=v4_unchanged",
+    ):
+        assert marker in architecture
+
+
 def test_v23_is_registered_as_rejected_history_not_active_authority():
     control = ReleaseControl.default()
     document = _read_json(control.tasks_path)
@@ -314,6 +353,9 @@ def test_v23_is_registered_as_rejected_history_not_active_authority():
     assert all(
         historical[version]["disposition"] == "HISTORICAL_READ_ONLY"
         for version in ("2.0", "2.1", "2.2")
+    )
+    assert historical["3.0"]["disposition"] == (
+        "SUPERSEDED_BY_V3_1_ARCHITECTURE_CONFLICT_REPAIR"
     )
     assert all(
         "V2." not in item["path"]
@@ -404,7 +446,7 @@ def test_release_control_has_one_legal_next_task_and_at_most_one_matching_lock()
     assert all(not path.exists() for path in historical_locks)
 
 
-def test_construction_entry_and_readme_route_only_to_release_control():
+def _historical_construction_entry_and_readme_route_only_to_release_control():
     root = ReleaseControl.default().root
     command = (
         root / ".claude" / "commands" / "mode-p-vnext-rebuild.md"
@@ -415,18 +457,18 @@ def test_construction_entry_and_readme_route_only_to_release_control():
     construction = (
         root
         / "MODE_P_REDESIGN_PROJECT"
-        / "MODE_P_VNEXT_CONSTRUCTION_V3.md"
+        / "MODE_P_VNEXT_CONSTRUCTION_V3_1.md"
     ).read_text(encoding="utf-8")
 
     assert "python -m mode_p_vnext.release_control" in command
     assert "MODE_P_VNEXT_RELEASE_TASKS.json" in command
     assert "MODE_P_VNEXT_RELEASE_STATE.json" in command
-    assert "historical evidence only" in command
+    assert "v3.0 is superseded" in command
     assert "v2.3 is rejected" in command
     assert "python -m mode_p_vnext.rebuild_control claim" not in command
     assert "Never call `record-owner-approval` for the user." in command
 
-    assert "MODE_P_VNEXT_CONSTRUCTION_V3.md" in readme
+    assert "MODE_P_VNEXT_CONSTRUCTION_V3_1.md" in readme
     assert "MODE_P_VNEXT_RELEASE_TASKS.json" in readme
     assert "python -m mode_p_vnext.release_control" in readme
     assert "v2.3 已正式否决" in construction
@@ -434,7 +476,7 @@ def test_construction_entry_and_readme_route_only_to_release_control():
     assert "独占写入所有权" in construction
 
     root_guidance = (root / "CLAUDE.md").read_text(encoding="utf-8")
-    assert "architecture-v3.0 ReleaseLedger" in root_guidance
+    assert "architecture-v3.1 ReleaseLedger" in root_guidance
     assert "mode_p_vnext.release_control" in root_guidance
     assert "mode_p_vnext.rebuild_control\naudit/status" not in root_guidance
 
@@ -443,7 +485,7 @@ def test_construction_entry_and_readme_route_only_to_release_control():
         "CLAUDE.md",
         ".claude/commands/mode-p-vnext-rebuild.md",
         "MODE_P_REDESIGN_PROJECT/README.md",
-        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3.md",
+        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3_1.md",
         "01_调度器/mode_p_vnext/README.md",
     }
     for item in registry["active_guidance"]:
@@ -458,6 +500,58 @@ def test_construction_entry_and_readme_route_only_to_release_control():
     ).read_text(encoding="utf-8")
     assert "HISTORICAL_READ_ONLY" in historical_construction
     assert "REJECTED_BY_WHOLE_SYSTEM_AUDIT" in historical_construction
+
+
+def test_v31_construction_entry_and_readme_route_only_to_release_control():
+    root = ReleaseControl.default().root
+    command = (
+        root / ".claude" / "commands" / "mode-p-vnext-rebuild.md"
+    ).read_text(encoding="utf-8")
+    readme = (root / "MODE_P_REDESIGN_PROJECT" / "README.md").read_text(
+        encoding="utf-8"
+    )
+    construction = (
+        root
+        / "MODE_P_REDESIGN_PROJECT"
+        / "MODE_P_VNEXT_CONSTRUCTION_V3_1.md"
+    ).read_text(encoding="utf-8")
+
+    assert "MODE_P_VNEXT_AUTHORITY: architecture-v3.1" in command
+    assert "python -m mode_p_vnext.release_control" in command
+    assert "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md" in command
+    assert "v3.0 is superseded" in command
+    assert "Never call `record-owner-approval` for the user." in command
+    assert "automatically repeat `audit -> status -> next`" in command
+    assert "MODE_P_VNEXT_CONSTRUCTION_V3_1.md" in readme
+    assert "MODE_P_VNEXT_RELEASE_TASKS.json" in readme
+    assert "MODE_P_VNEXT_AUTHORITY: architecture-v3.1" in construction
+    assert "Continuous one-package execution loop" in construction
+    assert "sequential continuation" in construction
+    assert "VEC -> ProjectionAST -> StoryboardProjection + VideoProjection" in construction
+
+    root_guidance = (root / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "architecture-v3.1 ReleaseLedger" in root_guidance
+    assert "mode_p_vnext.release_control" in root_guidance
+
+    registry = _read_json(ReleaseControl.default().tasks_path)
+    assert {item["path"] for item in registry["active_guidance"]} == {
+        "CLAUDE.md",
+        ".claude/commands/mode-p-vnext-rebuild.md",
+        "MODE_P_REDESIGN_PROJECT/README.md",
+        "MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_CONSTRUCTION_V3_1.md",
+        "01_调度器/mode_p_vnext/README.md",
+    }
+    for item in registry["active_guidance"]:
+        content = (root / item["path"]).read_text(encoding="utf-8")
+        assert item["marker"] == AUTHORITY_MARKER
+        assert AUTHORITY_MARKER in content
+
+    historical_v30 = (
+        root
+        / "MODE_P_REDESIGN_PROJECT"
+        / "MODE_P_VNEXT_CONSTRUCTION_V3.md"
+    ).read_text(encoding="utf-8")
+    assert "MODE_P_VNEXT_HISTORICAL: architecture-v3.0" in historical_v30
 
 
 def test_a0_cannot_enable_external_media_or_production():
@@ -642,12 +736,12 @@ def test_claim_cli_summary_is_bounded():
     assert len(json.dumps(summary)) < 512
 
 
-def test_v3_active_guidance_drift_blocks_next_and_claim(tmp_path):
+def test_v31_active_guidance_drift_blocks_next_and_claim(tmp_path):
     architecture = (
         tmp_path
         / "MODE_P_REDESIGN_PROJECT"
         / "vnext_repair_evidence"
-        / "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md"
+        / "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md"
     )
     architecture.parent.mkdir(parents=True, exist_ok=True)
     architecture.write_text("single v3 authority\n", encoding="utf-8")
@@ -659,8 +753,8 @@ def test_v3_active_guidance_drift_blocks_next_and_claim(tmp_path):
     task = _minimal_release_task("A0", [], "BASELINE_REPAIR_REQUIRED")
     tasks = {
         "schema_version": "2.0",
-        "queue_id": "test-v3",
-        "architecture_version": "3.0",
+        "queue_id": "test-v31",
+        "architecture_version": "3.1",
         "architecture_documents": [
             {
                 "path": architecture_rel,
@@ -675,10 +769,14 @@ def test_v3_active_guidance_drift_blocks_next_and_claim(tmp_path):
                 "disposition": (
                     "REJECTED_BY_WHOLE_SYSTEM_AUDIT"
                     if version == "2.3"
-                    else "HISTORICAL_READ_ONLY"
+                    else (
+                        "SUPERSEDED_BY_V3_1_ARCHITECTURE_CONFLICT_REPAIR"
+                        if version == "3.0"
+                        else "HISTORICAL_READ_ONLY"
+                    )
                 ),
             }
-            for version in ("2.0", "2.1", "2.2", "2.3")
+            for version in ("2.0", "2.1", "2.2", "2.3", "3.0")
         ],
         "active_guidance": [
             {"path": "CLAUDE.md", "marker": AUTHORITY_MARKER}
@@ -691,7 +789,7 @@ def test_v3_active_guidance_drift_blocks_next_and_claim(tmp_path):
     state = _minimal_release_state()
     state.update(
         {
-            "architecture_version": "3.0",
+            "architecture_version": "3.1",
             "architecture_documents": [
                 {"path": architecture_rel, "sha256": architecture_hash}
             ],
@@ -707,6 +805,84 @@ def test_v3_active_guidance_drift_blocks_next_and_claim(tmp_path):
         control.next_task()
     with pytest.raises(ControlError, match="active guidance authority marker drift"):
         control.claim("A0", "drift-test")
+
+
+def test_v31_rebase_requires_hash_bound_conflict_evidence(tmp_path):
+    architecture = (
+        tmp_path
+        / "MODE_P_REDESIGN_PROJECT"
+        / "vnext_repair_evidence"
+        / "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md"
+    )
+    architecture.parent.mkdir(parents=True, exist_ok=True)
+    architecture.write_text("complete v3.1 authority\n", encoding="utf-8")
+    architecture_rel = architecture.relative_to(tmp_path).as_posix()
+    architecture_hash = _sha256_file(architecture)
+    task = _minimal_release_task("A0", [], "BASELINE_REPAIR_REQUIRED")
+    task["locked_verification_inputs"] = {architecture_rel: architecture_hash}
+    tasks = {
+        "schema_version": "2.0",
+        "queue_id": "test-v31-rebase",
+        "architecture_version": "3.1",
+        "architecture_documents": [
+            {
+                "path": architecture_rel,
+                "sha256": architecture_hash,
+                "role": "SOLE_NORMATIVE_BASELINE",
+            }
+        ],
+        "locked_verification_inputs": {architecture_rel: architecture_hash},
+        "authority": "SOLE_VNEXT_CONSTRUCTION_LEDGER",
+        "status_after_all": "DONE",
+        "tasks": [task],
+    }
+    state = _minimal_release_state()
+    state.update({"architecture_version": "3.0", "architecture_documents": []})
+    control = ReleaseControl(tmp_path)
+    _write_json(control.tasks_path, tasks)
+    _write_json(control.state_path, state)
+
+    with pytest.raises(
+        ControlError, match="requires bound Architecture Conflict Evidence"
+    ):
+        control.rebase_architecture("3.1", [architecture])
+
+    conflict_evidence = architecture.parent / "CONFLICT.json"
+    _write_json(
+        conflict_evidence,
+        {
+            "kind": "ARCHITECTURE_CONFLICT_EVIDENCE",
+            "successor_authority": {
+                "path": architecture_rel,
+                "sha256": "0" * 64,
+            },
+            "decision": {"authority_version": "3.1"},
+        },
+    )
+    with pytest.raises(ControlError, match="successor hash does not bind"):
+        control.rebase_architecture("3.1", [architecture], conflict_evidence)
+
+    _write_json(
+        conflict_evidence,
+        {
+            "kind": "ARCHITECTURE_CONFLICT_EVIDENCE",
+            "successor_authority": {
+                "path": architecture_rel,
+                "sha256": architecture_hash,
+            },
+            "decision": {"authority_version": "3.1"},
+        },
+    )
+    rebased = control.rebase_architecture("3.1", [architecture], conflict_evidence)
+    assert rebased["architecture_version"] == "3.1"
+    assert rebased["last_failure"] is None
+    assert rebased["active_architecture_conflict_evidence"] == {
+        "path": conflict_evidence.relative_to(tmp_path).as_posix(),
+        "sha256": _sha256_file(conflict_evidence),
+    }
+    assert rebased["architecture_rebases"][-1]["conflict_evidence"] == (
+        rebased["active_architecture_conflict_evidence"]
+    )
 
 
 def test_architecture_rebase_rejects_an_amendment_stack(tmp_path):

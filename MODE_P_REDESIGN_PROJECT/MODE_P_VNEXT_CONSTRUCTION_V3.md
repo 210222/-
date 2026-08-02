@@ -1,4 +1,8 @@
-<!-- MODE_P_VNEXT_AUTHORITY: architecture-v3.0 -->
+<!-- MODE_P_VNEXT_HISTORICAL: architecture-v3.0 -->
+
+> HISTORICAL_READ_ONLY — superseded by `MODE_P_VNEXT_CONSTRUCTION_V3_1.md` and
+> `MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md`. The retained text below records
+> the former v3.0 procedure and must not select, interpret, or complete work.
 
 # MODE:P vNext 架构 v3.0 施工协议
 
