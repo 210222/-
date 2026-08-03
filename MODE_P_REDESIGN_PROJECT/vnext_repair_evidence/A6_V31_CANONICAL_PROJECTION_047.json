@@ -1,0 +1,138 @@
+{
+  "task_id": "A6",
+  "kind": "CANONICAL_PROJECTION_V31_REPAIR_EVIDENCE",
+  "architecture_authority": {
+    "version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/projection_compiler.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/__init__.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/storyboard_adapter.py",
+    "01_调度器/mode_p_vnext/adapters/delivery/video_adapter.py",
+    "01_调度器/mode_p_vnext/tests/test_a6_projection_compiler.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A6_V31_CANONICAL_PROJECTION_047.json"
+  ],
+  "root_cause_and_repair": {
+    "root_causes": [
+      "projection_compiler.py declared 'Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0 §10, §15 A6, and §16' — the superseded v3.0 authority with section numbers that do not exist in v3.1 (projection is v3.1 §7, A6 is §11). The same authority-drift class recorded for A4/A5 had re-emerged in the A6 package.",
+      "The projection identity namespace was frozen under v3.0-era release names: COMPILER_VERSION '3.0.1', 'storyboard-adapter-v3.0.0', and 'video-adapter-v3.0.0'. v3.1 §3.3 requires semantic compiler releases to select a disjoint deterministic identity namespace; names claiming the superseded version kept a silent authority-downgrade surface in every node attribute and manifest.",
+      "The A6 test module header still declared the 'frozen v3.0 single-projection invariant'.",
+      "Coverage gaps: no test proved an adapter never invents time/state/boundary values (storyboard panels or video lines), no test proved adapter-version AND capability-digest re-derivation leaves AST nodes untouched while changing only the manifest, and no test pinned the frozen compiler version on every AST node."
+    ],
+    "repair": [
+      "Rebound the compiler module docstring to the v3.1 authority (§7, §11 A6, §12).",
+      "Bumped the identity namespace consistently: COMPILER_VERSION 3.0.1 -> 3.1.0, STORYBOARD_ADAPTER_VERSION and VIDEO_ADAPTER_VERSION in projection_compiler.py -> v3.1.0, and the matching module constants storyboard_adapter_version / video_adapter_version in the two adapters -> v3.1.0, so manifest/adapter-version equality checks keep passing across derive and render.",
+      "Rebound the A6 test module header to v3.1 and updated the adapter-only-recompile fixture version strings.",
+      "Added 4 adversarial tests: test_storyboard_panels_preserve_exact_node_ticks_states_and_boundaries (every panel field equals its AST node's interval, state chain, beat/shot ids, entering/exiting boundary ids, phase, subject_state, attention); test_adapter_version_and_capability_changes_never_touch_ast_nodes (different adapter version AND different capability profile digest leave node object identity and projection_ast_digest unchanged; only manifest adapter/capability digests differ); test_video_chunk_lines_are_pure_node_serializations (every formatted line's node/beat/shot/ticks/state header must exactly match the canonical node and its source node id must be listed in the chunk); test_manifest_binds_frozen_compiler_version_on_every_node.",
+      "Environment repair (user-authorized A6 completion blocker): added repo-root .gitattributes (*.py text eol=lf plus a self-referential rule) and normalized the working tree of 94 tracked .py files to LF in place. This permanently resolves the A4/A5/A6-recorded CRLF checkout drift (core.autocrlf=true materialized CRLF from LF blobs on Windows, while hash-bound v4 baseline tests read raw disk bytes against the LF-normalized frozen ledger). Committed independently as f922538, outside the A6 package, so the A6 commit stays a pure package commit. Bonus effect: three further hash-bound baseline checks (v0_1, two r3_2_*) also turn green."
+    ],
+    "declared_design_boundaries": [
+      "mode_p_vnext/domain/projection.py is outside A6 allowed_paths and is unchanged. ProjectionAST, ProjectionNode, ProjectionManifest, and CapabilityAdaptationRecord are canonical domain types; the compiler re-exports them and the tests prove no duplicate authority class exists (no_duplicate_projection_authority).",
+      "ProjectionNode carries no explicit source-span provenance field (fixed domain type). Provenance is bound indirectly: source_beat_id / source_shot_id resolve into the VEC's approved fact registry, and the manifest binds vec/binding digests. This satisfies v3.1 §7.1 'shared provenance' at the artifact-digest level.",
+      "COMPILER_VERSION and the adapter version strings are identity namespaces (they feed the disjoint deterministic projection ID derivation), not architecture-version claims. The bump to 3.1.0 deliberately changes projection IDs for an identical VEC — the disjoint-namespace behavior v3.1 §3.3 prescribes for a semantic compiler release.",
+      "The only capability adaptations are REFERENCE_SLOT_BUDGET_EXCEEDED (storyboard, semantic_loss=True), INTERNAL_CUT_SEGMENT_PER_SHOT, and PROMPT_NODE_ALIGNED_CHUNKING (video, semantic_loss=False). Adaptation records never mutate AST nodes; they are pure traceable annotations bound to the manifest's capability digest.",
+      "A shot-scoped reference requirement (visual_beat_ordinal=None) is attached to every VisualBeat node of its Shot (node_reference_requirement_ids includes the shot-level requirement on each node) — the projection of a shot-scoped binding per v3.1 §5, verified against the VEC's typed bindings.",
+      "Compiler/adapter releases use a frozen-in-code version pair; any future release changes the namespace and re-derivation, which is out of scope of the currently claimed A6 package."
+    ]
+  },
+  "checks": [
+    {
+      "name": "single_projection_ast",
+      "exit_code": 0,
+      "proof": "compile_projection_ast is deterministic and canonical (test_compile_is_deterministic_and_canonical: two compiles are equal, exact ProjectionAST type, all nodes exact ProjectionNode type); the AST binds the frozen compiler version into its identity (test_projection_identity_binds_the_frozen_compiler_version); it binds exactly the VEC and every VisualBeat once with the same vec_digest on every node (test_ast_binds_vec_and_every_visualbeat_once); it preserves scene ticks, beat states, and exactly the N+1 boundary set (test_ast_preserves_scene_ticks_states_and_n_plus_one_boundaries); foreign commits, foreign program authority, stale VEC digests, and unfrozen compiler versions all fail closed (three rejection tests)."
+    },
+    {
+      "name": "storyboard_visualbeat_selection",
+      "exit_code": 0,
+      "proof": "derive_storyboard keeps every required VisualBeat, excludes every omit beat, and preserves AST order (test_storyboard_includes_required_and_excludes_omit, test_capacity_keeps_ast_order_and_only_drops_optional); max_panels can never drop a required beat (test_capacity_cannot_drop_required_beats); the sparse view reuses the exact AST node objects (test_sparse_view_reuses_exact_ast_nodes); injecting an omit node, reordering, or dropping a required beat is rejected at StoryboardProjection construction (test_storyboard_view_rejects_omit_or_reordered_node_injection)."
+    },
+    {
+      "name": "video_full_node_projection",
+      "exit_code": 0,
+      "proof": "derive_video returns the complete ordered node view with object identity to the AST (test_video_is_the_complete_ordered_visualbeat_projection); omit beats and execution fields survive (test_video_keeps_omit_beats_and_execution_fields); typed reference and audio bindings are carried per node and jointly cover the VEC's full requirement/event sets (test_video_carries_typed_reference_and_audio_bindings); missing, reordered, or list-injected nodes are rejected at VideoProjection construction (test_video_view_rejects_missing_or_reordered_ast_node_injection)."
+    },
+    {
+      "name": "shared_tick_state_and_bindings",
+      "exit_code": 0,
+      "proof": "Common storyboard/video nodes are object-identical with identical intervals and decision ids (test_common_storyboard_and_video_nodes_are_identical); the manifest is canonical, binds the AST digest, covers every source node, and matches node vec_digest (test_manifest_is_canonical_and_binds_ast_and_all_nodes); binding digests recompute to the VEC inputs (test_binding_digests_match_vec_inputs); beat-bound references and audio never escape their target beat in AST nodes, storyboard panels, or video lines (test_beat_bound_reference_and_audio_do_not_escape_their_target_beat); new test_storyboard_panels_preserve_exact_node_ticks_states_and_boundaries pins every panel field to its node."
+    },
+    {
+      "name": "adapter_only_recompile",
+      "exit_code": 0,
+      "proof": "Changing only the adapter version keeps node object identity and the AST digest, changing only the manifest adapter_version (test_adapter_version_change_only_changes_manifest); adapters are pure and never invent node ids (test_adapters_are_pure_and_never_invent_node_ids); a profile must be bound into the manifest before render or rendering fails closed (test_profile_must_be_bound_before_render); chunking preserves each node exactly once under a small prompt budget (test_video_chunking_preserves_each_node_exactly_once); new test_adapter_version_and_capability_changes_never_touch_ast_nodes proves the same for simultaneous adapter-version and capability-digest change."
+    },
+    {
+      "name": "canonical_projection_type_identity",
+      "exit_code": 0,
+      "proof": "The compiler exports the exact domain types (projection_compiler.ProjectionAST is domain.projection.ProjectionAST, same for ProjectionNode/ProjectionManifest; delivery_capability.CapabilityAdaptationRecord is the domain type) — test_service_exports_exact_domain_types; the projection envelope round-trips the canonical AST with the exact payload digest (test_canonical_ast_is_accepted_by_projection_envelope) and rejects a non-canonical payload (test_envelope_rejects_noncanonical_projection_payload)."
+    },
+    {
+      "name": "projection_envelope_roundtrip",
+      "exit_code": 0,
+      "proof": "ArtifactEnvelope.create over the compiled ProjectionAST produces canonical_json_bytes that round-trip byte-exactly through JSON decode/encode with the projection_id intact (test_canonical_ast_is_accepted_by_projection_envelope); an empty-node AST fails closed at envelope creation (test_envelope_rejects_noncanonical_projection_payload)."
+    },
+    {
+      "name": "no_duplicate_projection_authority",
+      "exit_code": 0,
+      "proof": "Source-inspection guard proves the compiler defines no 'class ProjectionAST'/'class ProjectionNode'/'class ProjectionManifest' and the capability module defines no 'class CapabilityAdaptationRecord' (test_service_and_adapter_define_no_duplicate_authority_classes); service exports are the exact domain classes (test_service_exports_exact_domain_types)."
+    },
+    {
+      "name": "capability_adaptation_recorded",
+      "exit_code": 0,
+      "proof": "Every video capability degradation produces canonical traceable CapabilityAdaptationRecord values whose source_node_ids are subset of the AST and whose capability digest and adapter version match the manifest (test_every_video_degradation_uses_canonical_traceable_record); storyboard reference-slot exhaustion records REFERENCE_SLOT_BUDGET_EXCEEDED with semantic_loss=True (test_storyboard_reference_budget_loss_is_explicit)."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a6_projection_compiler",
+      "command": "python -m pytest mode_p_vnext/tests/test_a6_projection_compiler.py -q -p no:cacheprovider",
+      "result": "34 passed",
+      "exit_code": 0
+    },
+    {
+      "name": "a6_v4_isolation",
+      "command": "python -m pytest mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "6 passed",
+      "exit_code": 0,
+      "resolution": "The A4/A5-recorded CRLF checkout drift is fixed: repo-root .gitattributes (*.py text eol=lf) now forces LF materialization on every checkout, and the current working tree was normalized to LF in place (user-authorized environment fix, committed independently as f922538, outside the A6 package). The frozen V0.1 cohort ledger LF hash now equals raw disk bytes; vNext code still does not modify, import, or activate any v4 path."
+    }
+  ],
+  "related_regression": [
+    {
+      "command": "python -m compileall -q mode_p_vnext/services/projection_compiler.py mode_p_vnext/adapters/delivery mode_p_vnext/tests/test_a6_projection_compiler.py",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "186 passed",
+      "exit_code": 0,
+      "note": "The A4/A5-recorded CRLF hash pair (test_a0_release_control.py::test_current_v4_cohort_ledger_is_canonical_and_history_stays_read_only, test_v9_4_v4_compatibility.py::test_v4_collection_matches_registered_cohorts) now passes after the .gitattributes environment fix (f922538); no v4 file, ledger, or baseline test was modified."
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "full_vnext_collection",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "1004 passed, 1 skipped, 27 failed, 8 errors, 420 subtests passed",
+      "exit_code": 1,
+      "classification": "HISTORICAL_READ_ONLY_BASELINE_DRIFT_OUTSIDE_A6_SCOPE",
+      "root_cause": "Remaining failure/error set: test_a9_prompt_lab 18, test_a7_dual_loop 8 errors + 3 failed, r3_2_* 3, ddo_0 1, a8_real_shadow 2 (total 27 failed, 8 errors). Over the A5/A6-pre-fix informational run the delta is +5 passed / -5 failed: the 4 newly added A6 adversarial tests pass, and the CRLF hash-bound checks now pass after the .gitattributes environment fix (v9_4 pair, test_a0_release_control, v0_1, and 2 of the r3_2_* checks). All 34 A6 registered tests pass; architecture v3.1 §2 keeps these artifacts read-only and §10 prohibits using them as v3.1 completion proof.",
+      "disposition": "Recorded without modifying historical evidence, v4 production code, user data, or external media."
+    }
+  ],
+  "claim_delta_observation": {
+    "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+    "implementation_delta": "Only the five A6-allowed source/test files and this Evidence file changed after the A6 claim, plus the user-authorized environment fix commit f922538 (repo-root .gitattributes + in-place LF normalization of 94 tracked .py working-tree files) which is deliberately outside the A6 package. Existing user-owned untracked paths (.agents/, .codex/, .reasonix/, AGENTS.md, 01_调度器/_complete_a5.sh, 01_调度器/mode_p_vnext/adapters/storage/, historical untracked evidence) remain outside changed_paths and are neither staged nor committed.",
+    "controller_action": "ReleaseLedger complete revalidates the frozen architecture hash, compares claim-time and complete-time manifests, reruns the registered A6 commands, captures artifact hashes, and rejects undeclared or out-of-scope changes."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "text_claim_ceiling": "TEXT_VALIDATED"
+  }
+}

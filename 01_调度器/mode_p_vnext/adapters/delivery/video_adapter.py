@@ -19,7 +19,7 @@ from mode_p_vnext.services.projection_compiler import (
 )
 
 
-video_adapter_version = "video-adapter-v3.0.0"
+video_adapter_version = "video-adapter-v3.1.0"
 
 
 @dataclass(frozen=True)

@@ -1,4 +1,4 @@
-"""Pure v3 delivery adapters over one canonical ProjectionAST authority."""
+"""Pure v3.1 delivery adapters over one canonical ProjectionAST authority."""
 
 from mode_p_vnext.adapters.delivery.capability import (
     CapabilityAdaptationRecord,

@@ -19,7 +19,7 @@ from mode_p_vnext.services.projection_compiler import (
 )
 
 
-storyboard_adapter_version = "storyboard-adapter-v3.0.0"
+storyboard_adapter_version = "storyboard-adapter-v3.1.0"
 
 
 @dataclass(frozen=True)

@@ -1,10 +1,11 @@
-"""A6 acceptance tests for the frozen v3.0 single-projection invariant."""
+"""A6 acceptance tests for the frozen v3.1 single-projection invariant."""
 
 from __future__ import annotations
 
 from dataclasses import replace
 import inspect
 import json
+import re
 
 import pytest
 
@@ -738,8 +739,8 @@ class TestSharedTickStateAndBindings:
 # required_check: adapter_only_recompile
 class TestAdapterOnlyRecompile:
     def test_adapter_version_change_only_changes_manifest(self, ast: ProjectionAST) -> None:
-        first = derive_video(ast, adapter_version="video-adapter-v3.0.0")
-        second = derive_video(ast, adapter_version="video-adapter-v3.1.0")
+        first = derive_video(ast, adapter_version="video-adapter-v3.1.0")
+        second = derive_video(ast, adapter_version="video-adapter-v3.2.0")
         assert all(left is right for left, right in zip(first.nodes, second.nodes))
         assert first.ast is second.ast is ast
         assert first.manifest.projection_ast_digest == second.manifest.projection_ast_digest
@@ -883,3 +884,105 @@ class TestCapabilityAdaptationRecorded:
         assert record.adaptation_code == "REFERENCE_SLOT_BUDGET_EXCEEDED"
         assert record.semantic_loss is True
         assert record.source_node_ids
+
+
+# required_check: shared_tick_state_and_bindings / adapter_only_recompile
+class TestAdapterNeverInventsProjectionData:
+    def test_storyboard_panels_preserve_exact_node_ticks_states_and_boundaries(
+        self, ast: ProjectionAST
+    ) -> None:
+        """v3.1 §7.1: an adapter formats; it never invents time, state, or boundary."""
+        storyboard = derive_storyboard(
+            ast, adapter_version=storyboard_adapter_version
+        )
+        delivery = render_storyboard(storyboard)
+        nodes_by_id = {node.node_id: node for node in ast.nodes}
+        for panel in delivery.panels:
+            node = nodes_by_id[panel.source_node_id]
+            assert (panel.start_tick, panel.end_tick) == (
+                node.interval.start_tick,
+                node.interval.end_tick,
+            )
+            assert (panel.start_state_id, panel.end_state_id) == (
+                node.start_state_id,
+                node.end_state_id,
+            )
+            assert (panel.beat_id, panel.shot_id) == (
+                node.source_beat_id,
+                node.source_shot_id,
+            )
+            entering = node.attributes["entering_boundary"]
+            exiting = node.attributes["exiting_boundary"]
+            assert panel.entering_boundary_id == entering["boundary_id"]
+            assert panel.exiting_boundary_id == exiting["boundary_id"]
+            assert panel.phase == node.attributes["phase"]
+            assert panel.subject_state == node.attributes["subject_state"]
+            assert panel.attention == node.attributes["attention"]
+
+    def test_adapter_version_and_capability_changes_never_touch_ast_nodes(
+        self, ast: ProjectionAST
+    ) -> None:
+        """v3.1 §7.1/§8: adapter-only changes alter the manifest, never the AST."""
+        profile_a = CapabilityProfile("cap-a", "1", 100_000, 10, True)
+        profile_b = CapabilityProfile("cap-b", "2", 50_000, 4, False)
+        first = derive_video(
+            ast,
+            adapter_version="video-adapter-v3.1.0",
+            capability_profile_digest=capability_profile_digest(profile_a),
+        )
+        second = derive_video(
+            ast,
+            adapter_version="video-adapter-v3.2.0",
+            capability_profile_digest=capability_profile_digest(profile_b),
+        )
+        assert all(left is right for left, right in zip(first.nodes, second.nodes))
+        assert first.ast is second.ast is ast
+        assert first.manifest.projection_ast_digest == second.manifest.projection_ast_digest
+        assert first.manifest.adapter_version != second.manifest.adapter_version
+        assert (
+            first.manifest.capability_profile_digest
+            != second.manifest.capability_profile_digest
+        )
+
+    def test_video_chunk_lines_are_pure_node_serializations(
+        self, ast: ProjectionAST
+    ) -> None:
+        """v3.1 §7.1: every formatted line is exactly one canonical node's data."""
+        profile = CapabilityProfile("pure", "1", 100_000, 10, True)
+        projection = derive_video(
+            ast,
+            adapter_version=video_adapter_version,
+            capability_profile_digest=capability_profile_digest(profile),
+        )
+        delivery = render_video(projection, profile=profile)
+        nodes_by_id = {node.node_id: node for node in ast.nodes}
+        node_line_pattern = re.compile(
+            r"^\[node (\S+) beat (\S+) shot (\S+) ticks (\d+)-(\d+) "
+            r"state (\S+)->(\S+)\]"
+        )
+        for chunk in delivery.prompt_chunks:
+            assert chunk.source_node_ids
+            assert set(chunk.source_node_ids) <= set(nodes_by_id)
+            for line in chunk.text.splitlines():
+                match = node_line_pattern.match(line)
+                assert match, "video lines must begin with the canonical node header"
+                node = nodes_by_id[match.group(1)]
+                assert match.group(2) == node.source_beat_id
+                assert match.group(3) == node.source_shot_id
+                assert (int(match.group(4)), int(match.group(5))) == (
+                    node.interval.start_tick,
+                    node.interval.end_tick,
+                )
+                assert match.group(6) == node.start_state_id
+                assert match.group(7) == node.end_state_id
+                assert match.group(1) in chunk.source_node_ids
+
+    def test_manifest_binds_frozen_compiler_version_on_every_node(
+        self, ast: ProjectionAST
+    ) -> None:
+        """v3.1 §3.3: the frozen compiler release is part of node and manifest identity."""
+        manifest = derive_video(ast).manifest
+        assert manifest.compiler_version == projection_compiler.COMPILER_VERSION
+        assert {
+            node_attribute(node, "compiler_version", str) for node in ast.nodes
+        } == {projection_compiler.COMPILER_VERSION}

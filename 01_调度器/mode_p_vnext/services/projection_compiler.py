@@ -1,7 +1,7 @@
-"""Compile both delivery views from the sole canonical v3 ProjectionAST.
+"""Compile both delivery views from the sole canonical v3.1 ProjectionAST.
 
-Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0 §10,
-§15 A6, and §16.  This module deliberately imports (and re-exports) the
+Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1 §7,
+§11 A6, and §12.  This module deliberately imports (and re-exports) the
 projection domain types; it must never define competing ProjectionAST,
 ProjectionNode, or ProjectionManifest classes.
 """
@@ -27,9 +27,9 @@ from mode_p_vnext.domain.time import TickRange
 from mode_p_vnext.domain.vec import StoryboardRole, VisualExecutionContract
 
 
-COMPILER_VERSION = "3.0.1"
-STORYBOARD_ADAPTER_VERSION = "storyboard-adapter-v3.0.0"
-VIDEO_ADAPTER_VERSION = "video-adapter-v3.0.0"
+COMPILER_VERSION = "3.1.0"
+STORYBOARD_ADAPTER_VERSION = "storyboard-adapter-v3.1.0"
+VIDEO_ADAPTER_VERSION = "video-adapter-v3.1.0"
 
 
 def _require_text(value: str, field_name: str) -> str:
