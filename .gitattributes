@@ -1,6 +1,10 @@
-# Deterministic line endings: Python sources are LF both in the index and on
+# Deterministic line endings: text sources are LF both in the index and on
 # disk, on every platform. Fixes the recorded v4-baseline CRLF checkout drift
 # (frozen cohort ledger hashes LF-normalized content; core.autocrlf=true
-# materialized CRLF on disk, failing the hash-bound cohort tests).
+# materialized CRLF on disk, failing the hash-bound cohort tests). Markdown
+# was added after the A9 frozen evaluator proved its architecture-authority
+# check hashes the on-disk bytes (LF blob d5616edc... materialized as CRLF
+# on disk, so the read-only authority hash always drifted).
 *.py text eol=lf
+*.md text eol=lf
 .gitattributes text eol=lf
