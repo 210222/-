@@ -17,7 +17,7 @@ from typing import Any, Mapping
 import pytest
 
 
-ARCHITECTURE_SHA256 = "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a"
+ARCHITECTURE_SHA256 = "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 A10_RUNS_ROOT = PROJECT_ROOT / "MODE_P_REDESIGN_PROJECT" / "vnext_release_runs" / "A10"
 MEDIA_SUFFIXES = {".mp4", ".mov", ".webm", ".mkv", ".png", ".jpg", ".jpeg", ".webp"}
@@ -152,7 +152,7 @@ def validate_real_media_packet(payload: object, *, runs_root: Path = A10_RUNS_RO
     if evidence.get("evidence_mode") != "EXTERNAL_REAL_MEDIA":
         raise MediaEvidenceError("evidence_mode must be EXTERNAL_REAL_MEDIA")
     if evidence.get("architecture_authority_sha256") != ARCHITECTURE_SHA256:
-        raise MediaEvidenceError("architecture authority hash does not match frozen v3.0")
+        raise MediaEvidenceError("architecture authority hash does not match frozen v3.1")
     if evidence.get("production_switch_authorized") is not False:
         raise MediaEvidenceError("A10 evidence must keep production switching false")
     if "owner_preview_approval" in evidence or "owner_production_approval" in evidence:
