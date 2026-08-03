@@ -1,4 +1,4 @@
-"""A9 v3.0 frozen holdout evaluation tests.
+"""A9 v3.1 frozen holdout evaluation tests.
 
 All candidates below contain synthetic hash references only.  They exercise
 the non-production evaluator and explicitly do not stand in for media runs,
@@ -15,6 +15,7 @@ import pytest
 from mode_p_vnext.evaluation.prompt_lab import (
     ARCHITECTURE_DOCUMENT_PATH,
     ARCHITECTURE_SHA256,
+    authoritative_architecture_sha256,
     EXPECTED_TEXT_SHADOW_NODES,
     TEXT_CLAIM_CEILING,
     TEXTUAL_QUALITY_RUBRIC_SHA256,
@@ -114,6 +115,10 @@ def _candidate(
             complexity_units=complexity,
         ),
     )
+
+
+def test_authority_on_disk_matches_the_frozen_v31_hash() -> None:
+    assert authoritative_architecture_sha256() == ARCHITECTURE_SHA256
 
 
 def test_frozen_evaluator_seals_golden_identities_without_script_text() -> None:
@@ -232,7 +237,7 @@ def test_candidate_adapter_binds_a8_terminal_result_to_digest_lineage() -> None:
             "scene_id": "holdout-scene",
             "source_id": "holdout-source",
             "source_digest": template.lineage.normalized_source_sha256,
-            "program_version": "a8-v3.0",
+            "program_version": "mode-p-vnext-a8-v3.1",
             "provider_id": "native-provider",
             "dp_reviewer_id": "fresh-dp",
             "claim_ceiling": "TEXT_VALIDATED",

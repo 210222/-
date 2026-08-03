@@ -25,12 +25,12 @@ from mode_p_vnext.domain.artifact import canonical_sha256 as _runtime_canonical_
 
 ARCHITECTURE_DOCUMENT_PATH = (
     "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/"
-    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0.md"
+    "MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md"
 )
-ARCHITECTURE_SHA256 = "a8d58de8d9865d989f567b78d49c1c7de2251e061c7887b6fe2d8018797a830a"
+ARCHITECTURE_SHA256 = "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
 TEXT_CLAIM_CEILING = "TEXT_VALIDATED"
 QUALITY_SCOPE = "TEXTUAL_CONTRACT"
-EVALUATOR_VERSION = "a9-v3.0"
+EVALUATOR_VERSION = "a9-v3.1"
 EVALUATION_SCHEMA = "mode_p.vnext.a9.frozen-holdout-evaluation"
 _A8_RUN_RECORD_SCHEMA = "mode_p_vnext_a8_text_shadow_run"
 _A8_RESULT_RECORD_SCHEMA = "mode_p_vnext_a8_text_shadow_result"
@@ -149,7 +149,7 @@ def _repo_root() -> Path:
 
 
 def authoritative_architecture_sha256() -> str:
-    """Hash the sole v3.0 authority from the current repository, fail closed.
+    """Hash the sole v3.1 authority from the current repository, fail closed.
 
     This is deliberately a read-only check.  A9 cannot choose a replacement
     authority, repair it, or accept an architecture hash supplied by a caller.
@@ -158,10 +158,10 @@ def authoritative_architecture_sha256() -> str:
     repository = _repo_root().resolve()
     untrusted_path = repository / ARCHITECTURE_DOCUMENT_PATH
     if untrusted_path.is_symlink():
-        raise FrozenEvaluatorError("the v3.0 architecture authority must not be a symlink")
+        raise FrozenEvaluatorError("the v3.1 architecture authority must not be a symlink")
     path = untrusted_path.resolve()
     if not path.is_relative_to(repository) or not path.is_file():
-        raise FrozenEvaluatorError("the v3.0 architecture authority is unavailable or unsafe")
+        raise FrozenEvaluatorError("the v3.1 architecture authority is unavailable or unsafe")
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
@@ -698,9 +698,9 @@ class FrozenEvaluationPolicy:
             raise EvaluationError("holdout_cases must be in deterministic case-ID order")
         _require_sha256(self.implementation_sha256, "implementation_sha256")
         if self.architecture_path != ARCHITECTURE_DOCUMENT_PATH:
-            raise EvaluationError("A9 must use the sole v3.0 architecture path")
+            raise EvaluationError("A9 must use the sole v3.1 architecture path")
         if self.architecture_sha256 != ARCHITECTURE_SHA256:
-            raise EvaluationError("A9 must use the sole v3.0 architecture SHA-256")
+            raise EvaluationError("A9 must use the sole v3.1 architecture SHA-256")
         if self.expected_text_shadow_nodes != EXPECTED_TEXT_SHADOW_NODES:
             raise EvaluationError("A9 may not replace the frozen A8 text-shadow graph expectation")
         if self.evaluator_version != EVALUATOR_VERSION:
@@ -1011,7 +1011,7 @@ def evaluate_holdout_candidates(
     """Evaluate unseen textual candidates against one frozen, read-only policy.
 
     A policy-integrity failure or an ambiguous candidate identity raises before
-    any ranking occurs.  A candidate that violates v3.0 is represented as a
+    any ranking occurs.  A candidate that violates v3.1 is represented as a
     traceable ``DISCARD``.  If no candidate can be kept, the report is
     explicitly ``FAIL_CLOSED`` rather than a passing substitute for A10.
     """
