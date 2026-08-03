@@ -1,7 +1,7 @@
-"""v3.0 zero-model Gate 0 over the canonical VEC and ProjectionAST.
+"""v3.1 zero-model Gate 0 over the canonical VEC and ProjectionAST.
 
-Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0 sections
-3-4, 13, 15 A7, and 16.  Gate 0 never makes a creative or visual-quality
+Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1 §3.3, §7.2,
+§11 A7, and §12.  Gate 0 never makes a creative or visual-quality
 judgement.  It only proves deterministic structure, identity, timing,
 binding, projection, prompt-budget, and text-claim invariants before an
 independent DP session may start.
@@ -489,7 +489,7 @@ def _check_prompts(
             and report == canonical_prompt.budget_report
         )
         safety_ok = safety_ok and (
-            signature.version == "3.0"
+            signature.version == "3.1"
             and isinstance(approved_input, dict)
             and set(approved_input).issubset(signature.approved_input_keys)
             and not _contains_forbidden_key(payload)

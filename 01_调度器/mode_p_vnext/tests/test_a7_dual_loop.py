@@ -1,4 +1,4 @@
-"""A7 acceptance tests for the frozen v3.0 dual-loop boundary."""
+"""A7 acceptance tests for the frozen v3.1 dual-loop boundary."""
 
 from __future__ import annotations
 
@@ -440,6 +440,47 @@ class TestFreshIndependentDPPacket:
                 program_version=PROGRAM_VERSION,
             )
 
+    def test_tampered_receipt_digest_or_session_identity_is_dp_input_blocked(
+        self, packet, id_factory, gate0
+    ):
+        """The fresh context must bind the exact receipt digest and session."""
+
+        for tampered in (
+            replace(fresh_context(packet, id_factory, 2), review_packet_digest="0" * 64),
+            replace(fresh_context(packet, id_factory, 2), session_id="id:" + "0" * 64),
+        ):
+            with pytest.raises(DPInputBlockedError, match="DP_INPUT_BLOCKED"):
+                assemble_fresh_dp_review(
+                    packet=packet,
+                    context=tampered,
+                    draft=DPReviewDraft(DPReviewVerdict.APPROVED, (), ()),
+                    scopes=(),
+                    allowed_evidence_refs=(gate_result_source_ref(gate0),),
+                    id_factory=id_factory,
+                    episode_id=EPISODE_ID,
+                    scene_id=SCENE_ID,
+                    program_version=PROGRAM_VERSION,
+                )
+
+    def test_dp_cannot_cite_evidence_outside_its_packet(
+        self, packet, id_factory, gate0
+    ):
+        """DP inputs must be refs the ReviewPacket already exposes."""
+
+        foreign = SourceRef(source_id="id:" + "f" * 64, digest="0" * 64)
+        with pytest.raises(DomainValidationError, match="already visible"):
+            assemble_fresh_dp_review(
+                packet=packet,
+                context=fresh_context(packet, id_factory, 3),
+                draft=DPReviewDraft(DPReviewVerdict.APPROVED, (), ()),
+                scopes=(),
+                allowed_evidence_refs=(foreign,),
+                id_factory=id_factory,
+                episode_id=EPISODE_ID,
+                scene_id=SCENE_ID,
+                program_version=PROGRAM_VERSION,
+            )
+
     def test_prior_history_or_forbidden_input_emits_dp_input_blocked(
         self, packet, id_factory, vec, gate0
     ):
@@ -462,8 +503,46 @@ class TestFreshIndependentDPPacket:
             )
 
 
-# required_check: dp_only_emits_bounded_revision_request
+# required_check: dp_outcome_exactly_ready_or_bounded_revision_request
 class TestDPOnlyEmitsBoundedRevisionRequest:
+    def test_ready_conclusion_is_deterministic_and_bound_to_the_receipt(
+        self, packet, id_factory, gate0
+    ):
+        gate_ref = gate_result_source_ref(gate0)
+        ready = assemble_fresh_dp_review(
+            packet=packet,
+            context=fresh_context(packet, id_factory, 1),
+            draft=DPReviewDraft(DPReviewVerdict.APPROVED, (), ()),
+            scopes=(),
+            allowed_evidence_refs=(gate_ref,),
+            id_factory=id_factory,
+            episode_id=EPISODE_ID,
+            scene_id=SCENE_ID,
+            program_version=PROGRAM_VERSION,
+        )
+        assert ready.result.verdict is DPReviewVerdict.APPROVED
+        assert ready.revision_requests == ()
+        assert ready.result.review_packet_artifact_id == packet.packet_id
+        assert ready.result.revision_request_artifact_ids == ()
+        again = assemble_fresh_dp_review(
+            packet=packet,
+            context=fresh_context(packet, id_factory, 1),
+            draft=DPReviewDraft(DPReviewVerdict.APPROVED, (), ()),
+            scopes=(),
+            allowed_evidence_refs=(gate_ref,),
+            id_factory=id_factory,
+            episode_id=EPISODE_ID,
+            scene_id=SCENE_ID,
+            program_version=PROGRAM_VERSION,
+        )
+        assert again.result.result_id == ready.result.result_id
+
+    def test_verdict_enum_has_no_third_outcome(self):
+        """A text verdict is a local failure, never a third DP outcome."""
+
+        with pytest.raises(DomainValidationError, match="verdict must be a DPReviewVerdict"):
+            DPReviewDraft(verdict="READY", finding_codes=(), revision_requests=())
+
     def test_local_code_creates_request_and_result_ids(self, packet, id_factory, vec, gate0):
         gate_ref = gate_result_source_ref(gate0)
         context = fresh_context(packet, id_factory, 2)
@@ -799,6 +878,69 @@ class TestMediaOutcomeAttribution:
             0,
             3,
         )
+
+
+# required_check: projection_bundle_precedes_gate_zero
+class TestProjectionBundlePrecedesGateZero:
+    def test_gate_zero_fails_closed_without_the_complete_bundle(
+        self, id_factory, vec, projections, compiled_prompt
+    ):
+        """No bundle, no Gate 0: a missing view can never be gate-passed."""
+
+        with pytest.raises(DomainValidationError, match="exact v3 delivery views"):
+            gate(id_factory, vec, projections, compiled_prompt, storyboard=None)
+        with pytest.raises(DomainValidationError, match="exact v3 delivery views"):
+            gate(id_factory, vec, projections, compiled_prompt, video=object())
+
+    def test_gate_zero_rejects_a_manifest_not_bound_to_this_ast(
+        self, id_factory, vec, projections, compiled_prompt
+    ):
+        """A view whose manifest claims a different node set cannot pass."""
+
+        ast, storyboard, _ = projections
+        forged_manifest = replace(
+            storyboard.manifest,
+            source_node_ids=(storyboard.manifest.source_node_ids[0],),
+        )
+        with pytest.raises(DomainValidationError):
+            # The view constructor already refuses a manifest that claims a
+            # different node set; Gate 0 must never see such a view at all.
+            replace(storyboard, manifest=forged_manifest)
+        with pytest.raises(DomainValidationError):
+            # Nor can the view be re-bound to a foreign AST object.
+            replace(storyboard, ast=replace(ast, projection_id="id:" + "f" * 64))
+
+
+# required_check: gate_zero_failure_blocks_dp
+class TestGateZeroFailureBlocksDP:
+    def test_failed_gate_zero_never_creates_a_review_packet(
+        self, id_factory, facts, vec, projections, gate0, compiled_prompt
+    ):
+        """A gate failure must block the packet, not just the DP call."""
+
+        failed = gate(
+            id_factory,
+            vec,
+            projections,
+            compiled_prompt,
+            claim_ceiling="VISUAL_EVIDENCED",
+        )
+        assert not failed.passed
+        assert failed.failed_check_ids == (CLAIM_CEILING,)
+        ast, storyboard, video = projections
+        with pytest.raises(DomainValidationError, match="passed canonical Gate 0"):
+            build_dp_review_packet(
+                facts=facts,
+                vec=vec,
+                ast=ast,
+                storyboard=storyboard,
+                video=video,
+                gate0=failed,
+                episode_direction_artifact_id="id:" + "e" * 64,
+                scene_intent_artifact_id="id:" + "d" * 64,
+                id_factory=id_factory,
+                program_version=PROGRAM_VERSION,
+            )
 
 
 # required_check: canonical_projection_and_evidence_consumption

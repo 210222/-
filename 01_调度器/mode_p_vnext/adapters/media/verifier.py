@@ -1,7 +1,7 @@
 """Fail-closed A7 verifier adapter; no external media is inspected.
 
-Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0 sections
-3-4, 13, and 15 A7.
+Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1 §3.4, §7.2,
+§9, and §11 A7.
 """
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-"""v3.0 Gate/DP/media verification control nodes.
+"""v3.1 Gate/DP/media verification control nodes.
 
 Persistent evidence types are imported from ``domain.evidence`` and are never
 redeclared here.  Model/provider outputs remain non-authoritative Draft DTOs;

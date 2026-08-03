@@ -1,4 +1,4 @@
-"""Fail-closed routing for bounded v3.0 DP revision requests.
+"""Fail-closed routing for bounded v3.1 DP revision requests.
 
 The DP never patches a VEC or ProjectionAST.  A validated request either
 returns to a Director-owned Draft field, triggers a deterministic projection

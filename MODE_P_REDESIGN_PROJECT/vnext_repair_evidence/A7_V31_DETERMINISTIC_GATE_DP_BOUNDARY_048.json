@@ -1,0 +1,144 @@
+{
+  "task_id": "A7",
+  "kind": "DETERMINISTIC_GATE_FRESH_DP_V31_REPAIR_EVIDENCE",
+  "architecture_authority": {
+    "version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/deterministic_gates.py",
+    "01_调度器/mode_p_vnext/services/revision_router.py",
+    "01_调度器/mode_p_vnext/pipeline/verification_nodes.py",
+    "01_调度器/mode_p_vnext/adapters/media/renderer.py",
+    "01_调度器/mode_p_vnext/adapters/media/verifier.py",
+    "01_调度器/mode_p_vnext/tests/test_a7_dual_loop.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A7_V31_DETERMINISTIC_GATE_DP_BOUNDARY_048.json"
+  ],
+  "root_cause_and_repair": {
+    "root_causes": [
+      "deterministic_gates.py declared 'Architecture authority: MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.0 sections 3-4, 13, 15 A7, and 16' — superseded v3.0 sections that do not exist in v3.1 (Gate 0 is v3.1 §7.2, A7 is §11). The same authority-drift class recorded for A4/A5/A6 had re-emerged across the A7 package: revision_router.py, verification_nodes.py, adapters/media/renderer.py, adapters/media/verifier.py, and the A7 test module header.",
+      "Real functional defect: deterministic_gates.py line 492 pinned `signature.version == \"3.0\"` inside the SAFETY_BOUNDARY check. A4 had already bumped all five stage-signature versions to \"3.1\", so every canonically compiled B1 prompt failed safety_boundary, run_gate0 always returned passed=False, build_dp_review_packet rejected every packet ('fresh DP cannot start before a passed canonical Gate 0'), and the DP/packet/router test classes failed with 8 errors + 3 failures. The A7 acceptance surface was completely blocked by this single version-drift gate.",
+      "Coverage gaps: no explicit test proved that the complete immutable ProjectionBundle precedes Gate 0 (missing or mis-bound views), that a failed Gate 0 cannot even create a ReviewPacket, that the APPROVED verdict produces a deterministic READY conclusion bound to the receipt, that a tampered receipt digest or session identity emits DP_INPUT_BLOCKED, or that DP may cite only evidence already visible in its packet."
+    ],
+    "repair": [
+      "Rebound every A7-scope module docstring to the v3.1 authority (deterministic_gates.py §3.3/§7.2/§11 A7/§12, revision_router.py and verification_nodes.py v3.1, adapters/media/renderer.py + verifier.py §3.4/§7.2/§9/§11 A7).",
+      "Fixed the root defect: `signature.version == \"3.0\"` -> `\"3.1\"` in _check_prompts. DOMAIN_SCHEMA_VERSION == \"3.0\" at the SCHEMA_INTEGRITY gate is intentionally preserved: it is the domain schema version constant (domain/artifact.py), not an architecture version claim, per the A5/A6 precedent.",
+      "Added 7 adversarial tests: test_gate_zero_fails_closed_without_the_complete_bundle (missing view types fail closed before any Gate 0), test_gate_zero_rejects_a_manifest_not_bound_to_this_ast (a view cannot claim a different node set or be re-bound to a foreign AST), test_failed_gate_zero_never_creates_a_review_packet (a CLAIM_CEILING-failed Gate 0 cannot build a packet), test_ready_conclusion_is_deterministic_and_bound_to_the_receipt (APPROVED -> READY result bound to the packet, zero revisions, deterministic result_id), test_verdict_enum_has_no_third_outcome (text verdicts are local failures), test_tampered_receipt_digest_or_session_identity_is_dp_input_blocked (DP_INPUT_BLOCKED on digest/session tamper), test_dp_cannot_cite_evidence_outside_its_packet (evidence refs must already be visible in the ReviewPacket)."
+    ],
+    "declared_design_boundaries": [
+      "mode_p_vnext/domain/** is outside A7 allowed_paths and is unchanged. ReviewPacket, DeterministicGateResult, IndependentDPReviewResult, RevisionRequest, FrameEvidencePlan/FrameEvidence/MediaRunRecord/OutcomeAttribution, and DPReviewVerdict are canonical domain types consumed (never redefined) by the A7 services and pipeline.",
+      "The view-to-AST binding is enforced fail-closed at the StoryboardProjection/VideoProjection constructor (_validate_projection_view: manifest digest and node identity must match the AST); Gate 0's _check_projection is deep defense, and the tests prove both layers refuse a mis-bound view.",
+      "DPReviewDraft carries exactly the two DPReviewVerdict values (APPROVED/REVISION_REQUIRED); READY conclusions and bounded RevisionRequest outputs are the only two assembled DP outcomes, and every canonical ID (packet, session, review result, revision request) is locally minted by IdFactory against the ReviewPacket content.",
+      "FreshDPContext re-derives and compares both the packet id and the session id before any DP assembly; prior-history and forbidden-input refs, tampered digest, and tampered session identity all emit DP_INPUT_BLOCKED (fail closed).",
+      "Media ports stay fail-closed noops: NoopMediaRenderer/NoopMediaVerifier are the only members of adapters/media.__all__ and every call raises MediaRendererUnavailableError/MediaVerificationUnavailableError; no ApprovalAdapter exists; external media is never started (required_check external_media_not_started).",
+      "ports/approval.py, ports/media_renderer.py, ports/media_verifier.py, and adapters/media/__init__.py carried no v3.0 drift and are unchanged; ApprovalPort returns only ApprovalDecisionDraft (not a canonical record)."
+    ]
+  },
+  "checks": [
+    {
+      "name": "deterministic_gate_zero",
+      "exit_code": 0,
+      "proof": "run_gate0 returns the sole canonical DeterministicGateResult for valid v3.1 artifacts (test_valid_v3_artifacts_return_only_canonical_result: exact type, passed, GATE0_CHECK_IDS, no failed checks); identical inputs are byte-canonical (test_identical_inputs_are_deterministic); corrupted VEC digest, cross-authority projection id, forged projection id, capability divergence, prompt-budget violation, unsafe prompt injection, tampered prompt digest, malformed prompt, and claim-ceiling elevation all fail closed with the matching check id (seven rejection tests); the signature-version gate is now v3.1 so canonical B1 prompts pass safety_boundary."
+    },
+    {
+      "name": "projection_bundle_precedes_gate_zero",
+      "exit_code": 0,
+      "proof": "test_gate_zero_fails_closed_without_the_complete_bundle proves run_gate0 raises before any result when a bundle view is missing or not a v3 delivery view; test_gate_zero_rejects_a_manifest_not_bound_to_this_ast proves a view cannot claim a different node set and cannot be re-bound to a foreign AST (constructor fail-closed); existing tests prove VEC digest, id, ticks, N+1 boundaries, typed bindings, and dual-view identity are all revalidated against the bundle inside Gate 0."
+    },
+    {
+      "name": "gate_zero_failure_blocks_dp",
+      "exit_code": 0,
+      "proof": "test_failed_gate_zero_never_creates_a_review_packet proves a CLAIM_CEILING-failed Gate 0 cannot even build a ReviewPacket ('fresh DP cannot start before a passed canonical Gate 0'); every packet-fixture test additionally proves only a locally minted passed Gate 0 (validate_gate0_result) can reach DP assembly."
+    },
+    {
+      "name": "fresh_independent_dp_packet",
+      "exit_code": 0,
+      "proof": "test_packet_contains_refs_not_fact_text_or_private_state proves the packet carries only sorted fact refs, projection artifact ids, the gate result ref, and the capability digest, disjoint from facts/statements/private_reasoning/dp_history/runtime_code/telemetry/cache; unapproved fact scope, forged gate id, and outside-packet evidence refs are all rejected (test_packet_rejects_unapproved_fact_scope, test_packet_rejects_a_passed_gate_result_without_local_identity, test_dp_cannot_cite_evidence_outside_its_packet)."
+    },
+    {
+      "name": "dp_outcome_exactly_ready_or_bounded_revision_request",
+      "exit_code": 0,
+      "proof": "test_ready_conclusion_is_deterministic_and_bound_to_the_receipt proves the APPROVED verdict yields a deterministic READY result with zero revisions bound to the review packet; test_verdict_enum_has_no_third_outcome proves a text verdict is a local DomainValidationError, not a third outcome; revision-request tests prove locally minted request/result ids, bounded field paths, and out-of-packet scopes rejected."
+    },
+    {
+      "name": "gate_zero_receipt_binds_fresh_dp",
+      "exit_code": 0,
+      "proof": "packet.gate_result_refs binds the receipt result_id; test_tampered_receipt_digest_or_session_identity_is_dp_input_blocked proves a tampered review_packet_digest or session_id emits DP_INPUT_BLOCKED; test_prior_history_or_forbidden_input_emits_dp_input_blocked proves history/forbidden refs also block; assemble_fresh_dp_review re-derives packet_id and session_id locally before minting the result."
+    },
+    {
+      "name": "bounded_revision_router",
+      "exit_code": 0,
+      "proof": "RevisionScope requires an opaque local artifact id (test_revision_scope_requires_an_opaque_local_artifact_id); a creative request spends director patch budget and returns to DIRECTOR_DRAFT_REVISION, exhausted budget routes to REJECT (test_creative_request_spends_budget_and_returns_to_director_draft); PROJECTION_RECOMPILE never spends the director budget (test_projection_recompile_never_spends_director_budget); out-of-scope field paths and unseen targets are rejected."
+    },
+    {
+      "name": "text_cannot_claim_visual_acceptance",
+      "exit_code": 0,
+      "proof": "ladder_status stops at TEXT_VALIDATED and rejects a VISUAL_EVIDENCED text ceiling (test_text_only_status_stops_at_text_validated); build_visual_verification has no 'passed' default and requires verifier_output plus media_evidence (test_visual_builder_has_no_default_or_text_pass_parameter); ApprovalPort returns a Draft, not a canonical record (test_approval_port_returns_draft_not_canonical_record); MediaVerificationOutput requires outcome attribution (test_passing_media_verifier_output_requires_outcome_attribution); Gate 0 rejects any claim_ceiling above TEXT_VALIDATED (test_text_cannot_raise_its_claim_ceiling)."
+    },
+    {
+      "name": "media_outcome_attribution",
+      "exit_code": 0,
+      "proof": "gate0/render/verify attributions map to GATE0/MEDIA_RENDER/MEDIA_VERIFY layers (test_failed_gate_and_media_layers_are_machine_attributable); visual verification rejects evidence from a different frame plan (test_visual_verification_rejects_evidence_from_a_different_frame_plan); media evidence identity is order-canonical against the local frame plan (test_media_evidence_identity_uses_the_local_frame_plan_order)."
+    },
+    {
+      "name": "canonical_projection_and_evidence_consumption",
+      "exit_code": 0,
+      "proof": "test_gate_and_packet_bind_one_projection_and_canonical_evidence proves both delivery views consume the exact same ProjectionAST, Gate 0 targets that projection id, the packet exposes exactly it, and all Gate 0 evidence refs are SourceRef values; compile_projection_ast/digest provenance comes from the sealed A6 package (38e3a1b)."
+    },
+    {
+      "name": "external_media_not_started",
+      "exit_code": 0,
+      "proof": "test_only_fail_closed_noop_ports_are_active proves NoopMediaRenderer.render and NoopMediaVerifier.verify always raise their UnavailableError; test_no_approval_or_real_media_adapter_exists proves adapters/media.__all__ is exactly {NoopMediaRenderer, NoopMediaVerifier} and no ApprovalAdapter exists."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a7_dual_loop",
+      "command": "python -m pytest mode_p_vnext/tests/test_a7_dual_loop.py -q -p no:cacheprovider",
+      "result": "37 passed",
+      "exit_code": 0
+    },
+    {
+      "name": "a7_v4_isolation",
+      "command": "python -m pytest mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "6 passed",
+      "exit_code": 0
+    }
+  ],
+  "related_regression": [
+    {
+      "command": "python -m compileall -q mode_p_vnext/services/deterministic_gates.py mode_p_vnext/services/revision_router.py mode_p_vnext/pipeline/verification_nodes.py mode_p_vnext/ports mode_p_vnext/adapters/media mode_p_vnext/tests/test_a7_dual_loop.py",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_a7_dual_loop.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "223 passed",
+      "exit_code": 0
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "full_vnext_collection",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "1024 passed, 1 skipped, 22 failed, 420 subtests passed",
+      "exit_code": 1,
+      "classification": "HISTORICAL_READ_ONLY_BASELINE_DRIFT_OUTSIDE_A7_SCOPE",
+      "root_cause": "Remaining failure set: test_a9_prompt_lab 18, r3_2_* 3, ddo_0 1 (total 22 failed, 0 errors). Over the A6-fixed informational run (1004 passed / 27 failed / 8 errors) the delta is +20 passed / -5 failed / -8 errors: the A7 package turned the 8 errors + 3 failed of test_a7_dual_loop into 37 green tests (+18 net after the pre-fix 19 passing), and the two test_a8_real_shadow failures recovered because the real shadow CLI consumes the now-passing Gate 0 and fresh-DP path. All 37 A7 registered tests pass; architecture v3.1 §2 keeps these artifacts read-only and §10 prohibits using them as v3.1 completion proof.",
+      "disposition": "Recorded without modifying historical evidence, v4 production code, user data, or external media."
+    }
+  ],
+  "claim_delta_observation": {
+    "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+    "implementation_delta": "Only the six A7-allowed source/test files and this Evidence file changed after the A7 claim. Existing user-owned untracked paths (.agents/, .codex/, .reasonix/, AGENTS.md, 01_调度器/_complete_a5.sh, 01_调度器/mode_p_vnext/adapters/storage/, historical untracked evidence) remain outside changed_paths and are neither staged nor committed.",
+    "controller_action": "ReleaseLedger complete revalidates the frozen architecture hash, compares claim-time and complete-time manifests, reruns the registered A7 commands, captures artifact hashes, and rejects undeclared or out-of-scope changes."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "text_claim_ceiling": "TEXT_VALIDATED"
+  }
+}
