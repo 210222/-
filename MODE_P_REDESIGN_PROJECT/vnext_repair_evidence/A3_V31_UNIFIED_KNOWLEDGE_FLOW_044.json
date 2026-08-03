@@ -1,0 +1,108 @@
+{
+  "task_id": "A3",
+  "kind": "UNIFIED_KNOWLEDGE_FLOW_V31_REPAIR_EVIDENCE",
+  "architecture_authority": {
+    "version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/knowledge_retriever.py",
+    "01_调度器/mode_p_vnext/knowledge_flow.py",
+    "01_调度器/mode_p_vnext/tests/test_a3_knowledge_flow.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A3_V31_UNIFIED_KNOWLEDGE_FLOW_044.json"
+  ],
+  "root_cause_and_repair": {
+    "root_causes": [
+      "The historical compatibility module retained a complete, independently executable candidate-selection implementation (query matching, hard exclusions, security screening, ranking, deduplication, conflict truncation, phase selection, and diagnosis conversion). It had no current caller, but its presence could be accidentally reactivated and silently diverge from the sole K1/K2 implementation.",
+      "The legacy prompt-shaped packet exposed a source filesystem locator and caller-supplied K1 principles. It also exposed several selected metadata fields that were not included in the service-level prompt-injection scan, allowing an instruction-shaped legacy-only field or catalog identifier to bypass the canonical prompt boundary.",
+      "The compatibility snapshot alias is required for historical read-only tests, but it must remain unambiguously non-canonical and be rejected by the current replay entry point."
+    ],
+    "repair": [
+      "Removed every retired selection helper from knowledge_flow.py. The compatibility function now remains a thin archive adapter that delegates to services.knowledge_retriever.retrieve_legacy_compatibility; the service-owned _select_metadata remains the only code that can determine K1/K2 eligibility, ordering, budget use, conflict exposure, and quarantine.",
+      "Made the legacy director projection prompt-safe: local source paths are removed, a locally derived digest replaces the external source reference, and caller-supplied K1 principles remain archival packet data but are not emitted to a model payload.",
+      "Expanded the service-owned security screen to every remaining string that can appear in either canonical or compatibility prompt views, including catalog IDs and legacy-only metadata. Instruction-shaped content is quarantined before it can become selected output.",
+      "Added regression coverage proving retired selectors are absent, legacy prompt projections cannot expose a local path or caller text, legacy-only metadata and identifiers are quarantined, and a legacy archive cannot be accepted by the canonical replay method."
+    ]
+  },
+  "checks": [
+    {
+      "name": "single_k1_k2_implementation",
+      "exit_code": 0,
+      "proof": "A static regression asserts knowledge_flow exports none of the retired selection helpers, and canonical K1/K2 continues to use the one service-owned selector. Repository search found no external retired-helper references."
+    },
+    {
+      "name": "replayable_snapshot",
+      "exit_code": 0,
+      "proof": "The canonical ArtifactEnvelope[KnowledgeSnapshot] replay, integrity tamper rejection, schema rejection, and legacy-archive rejection are covered by the A3 suite."
+    },
+    {
+      "name": "untrusted_text_isolation",
+      "exit_code": 0,
+      "proof": "Raw evidence, instruction-shaped canonical metadata, legacy-only visible metadata, catalog IDs, local source paths, and caller-supplied K1 principles are each verified not to reach a prompt view."
+    },
+    {
+      "name": "director_conflict_ownership",
+      "exit_code": 0,
+      "proof": "Conflicts remain explicit Director-owned records, are not auto-selected, and overflow of the conflict record budget fails closed rather than hiding a conflict."
+    },
+    {
+      "name": "evidence_gated_promotion",
+      "exit_code": 0,
+      "proof": "Promotion tests require structured, distinct, fully bound evidence roles plus independent human approval before an ApprovedKnowledgeCapsule is returned."
+    },
+    {
+      "name": "unselected_knowledge_excluded",
+      "exit_code": 0,
+      "proof": "A2 persistent-state regression verifies that only a selected knowledge snapshot digest drives invalidation; unselected candidate churn is a strict no-op. A3 selection accounting records every nonselected candidate and its exclusion reason."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a3_knowledge_flow",
+      "command": "python -m pytest mode_p_vnext/tests/test_a3_knowledge_flow.py -q -p no:cacheprovider",
+      "result": "22 passed",
+      "exit_code": 0
+    }
+  ],
+  "related_regression": [
+    {
+      "command": "python -m compileall -q mode_p_vnext/services mode_p_vnext/pipeline mode_p_vnext/knowledge_flow.py mode_p_vnext/knowledge_snapshot.py",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_v3_3_conflict_graph.py mode_p_vnext/tests/test_v3_5_retrieval_budget.py mode_p_vnext/tests/test_v3_6_knowledge_snapshot.py mode_p_vnext/tests/test_v3_7_prompt_injection.py mode_p_vnext/tests/test_v9_1_vertical_integration.py mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "result": "76 passed, 4 subtests passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p/test_active_entrypoints.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_a7_dual_loop.py mode_p_vnext/tests/test_a8_real_shadow.py -q -p no:cacheprovider",
+      "result": "207 passed",
+      "exit_code": 0
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "full_vnext_collection",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "1006 passed, 1 skipped, 24 failed, 401 subtests passed",
+      "exit_code": 1,
+      "classification": "HISTORICAL_READ_ONLY_BASELINE_DRIFT_OUTSIDE_A3_SCOPE",
+      "root_cause": "The 24 failures are the same historical lower-authority DDO/R0/R3/V0 baseline defects already recorded for A2, while two new A3 tests increased the passing count from 1004 to 1006. They consist of stale DDO artifact hashes, R0.2 state/evidence mismatch, guarded baseline input and knowledge-hash drift, and eight unavailable golden media paths rooted at C:\\Users\\JT\\Downloads. Architecture v3.1 §2 makes these historical artifacts read-only and §10 prohibits using them as v3.1 completion proof.",
+      "disposition": "Recorded without modifying historical evidence, v4 production code, user data, or external media. The registered A3 command and the affected current-v3.1 regression matrix pass."
+    }
+  ],
+  "claim_delta_observation": {
+    "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+    "implementation_delta": "Only the three A3-allowed source/test files and this Evidence file changed after the A3 claim. Existing user-owned modified and untracked paths remain outside changed_paths and are neither staged nor committed.",
+    "controller_action": "ReleaseLedger complete revalidates the frozen architecture hash, compares the claim-time and complete-time manifests, reruns the registered A3 test, captures artifact hashes, and rejects undeclared or out-of-scope changes."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "text_claim_ceiling": "TEXT_VALIDATED"
+  }
+}

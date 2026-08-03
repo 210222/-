@@ -500,14 +500,27 @@ def _candidate_security_events(
     # only ``raw_evidence`` or the card claim would leave an instruction-shaped
     # director question, tag, constraint, or tradeoff able to reach a model.
     director_visible_metadata = {
+        # Candidate IDs are selected catalog metadata too.  They appear in
+        # canonical and legacy prompt views, therefore they must not be able
+        # to smuggle an instruction through an otherwise safe candidate.
+        "capsule_id": (candidate.card_id,),
         "decision_domain": (candidate.decision_domain,),
         "director_question": (candidate.director_question,),
         "query_tags": candidate.query_tags,
+        "applicability_conditions": candidate.card.applicability_conditions,
+        "decision_relation": (candidate.decision_relation,),
+        "linked_domains": candidate.linked_domains,
+        "director_variables": candidate.director_variables,
+        "observable_failures": candidate.observable_failures,
+        "model_adaptation": candidate.model_adaptation,
+        "visibility_risk_class": (candidate.visibility_risk_class,),
         "positive_closure_requirements": candidate.positive_closure_requirements,
         "negative_routing_constraints": candidate.negative_routing_constraints,
         "must_not_decide": candidate.must_not_decide,
         "counter_examples": candidate.card.counter_examples,
         "non_applicability": candidate.non_applicability,
+        "evidence_tier": (candidate.evidence_tier,),
+        "version": (candidate.version,),
     }
     for field_name, values in director_visible_metadata.items():
         for ordinal, value in enumerate(values):
@@ -967,7 +980,7 @@ class KnowledgeRetriever:
 
     Searching remains a metadata-only adapter.  The adapter cannot become a
     second knowledge authority: all Director-visible values and replayable
-    state are instantiated from the frozen v3.0 domain module below.
+    state are instantiated from the frozen v3.1 canonical domain module.
     """
 
     def __init__(self, *, policy: RetrievalPolicy | None = None) -> None:

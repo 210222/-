@@ -11,30 +11,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
+from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
 
 from mode_p_vnext.canonical_serialization import canonical_json_dumps, stable_hash_sha256
-from mode_p_vnext.conflict_graph import build_conflict_graph
-from mode_p_vnext.diagnosis_artifact import DiagnosisArtifact, DirectorProblemSet, validate_diagnosis_artifact
+from mode_p_vnext.diagnosis_artifact import DiagnosisArtifact
 from mode_p_vnext.knowledge_security import (
     KnowledgeSecurityEvent,
     UntrustedTextEnvelope,
-    envelope_untrusted_text,
-    inspect_untrusted_text,
 )
 from mode_p_vnext.retrieval_budget import RetrievalBudget
 from mode_p_vnext.schema.decision_card import DecisionCard
-from mode_p_vnext.schema.scene_diagnosis import KnowledgeQuery, SceneDiagnosis, generate_knowledge_query
+from mode_p_vnext.schema.scene_diagnosis import KnowledgeQuery, SceneDiagnosis
 
 
-_QUALITY_RANK = {
-    "golden_evidence": 5,
-    "render_evidence": 4,
-    "cross_project": 3,
-    "user_opinion": 2,
-    "textbook": 1,
-    "legacy_pipeline": 0,
-}
 _VALID_STAGES = frozenset({"problem", "execution"})
 _VALID_RELATIONS = frozenset({"primary", "conflict", "anti_pattern"})
 _VALID_EVIDENCE_TIERS = frozenset({"E0", "E1", "E2", "E3", "E4", "E5"})
@@ -42,10 +31,6 @@ _VALID_EVIDENCE_TIERS = frozenset({"E0", "E1", "E2", "E3", "E4", "E5"})
 
 def _hash(value: object) -> str:
     return stable_hash_sha256(canonical_json_dumps(value).encode("utf-8"))
-
-
-def _tuple(values: Iterable[str]) -> Tuple[str, ...]:
-    return tuple(str(value) for value in values if str(value))
 
 
 def _normalise(value: str) -> str:
@@ -164,7 +149,12 @@ class KnowledgeCandidate:
         }
 
     def director_payload(self) -> Dict[str, Any]:
-        """A reviewed decision capsule, deliberately excluding raw evidence."""
+        """Return a legacy prompt view without raw or local provenance data.
+
+        This is an archival compatibility shape only.  It must not expose a
+        filesystem locator, raw evidence, or caller-supplied provenance to a
+        model.  The canonical v3.1 path uses ``KnowledgeDecisionView``.
+        """
         return {
             "card_id": self.card_id,
             "title": self.card_id,
@@ -181,8 +171,9 @@ class KnowledgeCandidate:
             "visibility_risk_class": self.visibility_risk_class,
             "positive_closure_requirements": list(self.positive_closure_requirements),
             "negative_routing_constraints": list(self.negative_routing_constraints),
-            "source_refs": [self.card.source_file] if self.card.source_file else [],
-            "source_hash": self.card.source_hash,
+            # A locally derived digest keeps compatibility provenance useful
+            # without reintroducing the source path into a model payload.
+            "source_digest": self.content_sha256,
             "evidence_tier": self.evidence_tier,
             "counterexamples": list(self.card.counter_examples),
             "must_not_decide": list(self.must_not_decide),
@@ -290,11 +281,12 @@ class KnowledgePacket:
     def to_director_payload(self) -> Dict[str, Any]:
         return {
             "phase": self.phase,
-            "k1_principles": list(self.k1_principles),
             "primary_cards": [card.director_payload() for card in self.primary_cards],
             "anti_pattern_cards": [card.director_payload() for card in self.anti_pattern_cards],
             "conflict_exposures": [item.to_dict() for item in self.conflict_exposures],
             "no_match": self.no_match,
+            # ``k1_principles`` is retained on the archival packet for old
+            # readers, but it is caller-supplied text and never prompt input.
             "director_must_decide": "blocking, camera, composition, edit and final execution are not auto-selected",
         }
 
@@ -382,187 +374,6 @@ class KnowledgeRetrievalResult:
         """Deprecated compatibility name for historical callers only."""
 
         return self.selection_receipt
-
-
-def _query_terms(query: KnowledgeQuery, artifact: DiagnosisArtifact | None) -> Tuple[str, ...]:
-    terms: List[str] = list(query.dimension_questions.keys())
-    for values in query.dimension_questions.values():
-        terms.extend(values)
-    terms.extend(query.model_risk_queries)
-    terms.extend(query.user_constraint_queries)
-    if artifact and artifact.problem_set:
-        terms.extend(artifact.problem_set.knowledge_questions)
-        terms.extend(artifact.problem_set.decision_domains)
-    return tuple(_normalise(term) for term in terms if term)
-
-
-def _candidate_matches_question(candidate: KnowledgeCandidate, terms: Sequence[str]) -> bool:
-    tags = {_normalise(item) for item in candidate.query_tags}
-    domain = _normalise(candidate.decision_domain)
-    question = _normalise(candidate.director_question)
-    if not terms:
-        return False
-    for term in terms:
-        if term in tags or domain == term or term == domain:
-            return True
-        if any(tag and (tag in term or term in tag) for tag in tags):
-            return True
-        if domain and (domain in term or term in domain):
-            return True
-        if question and (question in term or term in question):
-            return True
-    return False
-
-
-def _value_matches(expected: Sequence[str], actual: str) -> bool:
-    return not expected or "*" in expected or (bool(actual) and actual in expected)
-
-
-def _is_expired(candidate: KnowledgeCandidate, context: RetrievalContext) -> bool:
-    if not candidate.valid_until:
-        return False
-    try:
-        return date.fromisoformat(candidate.valid_until) < context.current_date
-    except ValueError as exc:
-        raise ValueError(f"invalid valid_until for {candidate.card_id}: {candidate.valid_until}") from exc
-
-
-def _candidate_security_events(candidate: KnowledgeCandidate, context: RetrievalContext) -> Tuple[KnowledgeSecurityEvent, ...]:
-    events: List[KnowledgeSecurityEvent] = []
-    if candidate.raw_evidence:
-        if candidate.raw_evidence.project_id != context.project_id:
-            events.append(KnowledgeSecurityEvent(
-                event_id="SEC-" + _hash({"cross_project": candidate.card_id, "project": context.project_id})[:16],
-                category="CROSS_PROJECT_SOURCE",
-                source_id=candidate.raw_evidence.source_id,
-                project_id=context.project_id,
-                content_sha256=candidate.raw_evidence.content_sha256,
-                reason_codes=("source_project_mismatch",),
-            ))
-        event = inspect_untrusted_text(candidate.raw_evidence)
-        if event:
-            events.append(event)
-    # The card claim is treated as a reviewed capsule.  Still scan it at the
-    # activation boundary so an injected candidate can never become active.
-    claim_envelope = envelope_untrusted_text(
-        source_id=f"card:{candidate.card_id}",
-        source_kind="knowledge_card_claim",
-        project_id=context.project_id,
-        content=candidate.card.claim,
-    )
-    claim_event = inspect_untrusted_text(claim_envelope)
-    if claim_event:
-        events.append(claim_event)
-    return tuple(events)
-
-
-def _hard_exclusion_reason(
-    candidate: KnowledgeCandidate,
-    context: RetrievalContext,
-    stage: str,
-    query_terms: Sequence[str],
-) -> str | None:
-    if candidate.status != "active" or not candidate.human_reviewed:
-        return "not_human_reviewed_active"
-    if candidate.stage != stage:
-        return "stage_not_available"
-    if candidate.card.source_quality == "legacy_pipeline":
-        return "legacy_pipeline_forbidden"
-    if candidate.card_id in context.all_overrides:
-        return "overridden_by_fact_user_or_continuity"
-    if not _value_matches(candidate.project_scope, context.project_id):
-        return "project_scope_mismatch"
-    if not _value_matches(candidate.target_models, context.model_id):
-        return "model_mismatch"
-    if not _value_matches(candidate.target_modes, context.mode):
-        return "mode_mismatch"
-    if not _value_matches(candidate.aspect_ratios, context.aspect_ratio):
-        return "aspect_mismatch"
-    if not _value_matches(candidate.reference_modes, context.reference_mode):
-        return "reference_mode_mismatch"
-    if _is_expired(candidate, context):
-        return "expired"
-    context_values = {
-        _normalise(context.project_id), _normalise(context.model_id), _normalise(context.mode),
-        _normalise(context.aspect_ratio), _normalise(context.reference_mode),
-    }
-    if any(_normalise(condition) in context_values for condition in candidate.non_applicability):
-        return "non_applicability_matched"
-    if not _candidate_matches_question(candidate, query_terms):
-        return "question_mismatch"
-    return None
-
-
-def _rank_key(candidate: KnowledgeCandidate) -> Tuple[int, int, str]:
-    return (
-        -_QUALITY_RANK.get(candidate.card.source_quality, 0),
-        -candidate.card.cross_scene_repeat,
-        candidate.card_id,
-    )
-
-
-def _deduplicate(candidates: Sequence[KnowledgeCandidate]) -> Tuple[List[KnowledgeCandidate], Dict[str, str]]:
-    selected: List[KnowledgeCandidate] = []
-    exclusions: Dict[str, str] = {}
-    seen: Dict[Tuple[str, str, str], str] = {}
-    for candidate in sorted(candidates, key=_rank_key):
-        source = candidate.card.source_hash or candidate.card.source_file or candidate.card_id
-        key = (source, candidate.version, candidate.decision_domain)
-        if key in seen:
-            exclusions[candidate.card_id] = f"duplicate_of:{seen[key]}"
-            continue
-        seen[key] = candidate.card_id
-        selected.append(candidate)
-    return selected, exclusions
-
-
-def _conflict_exposures(
-    candidates: Sequence[KnowledgeCandidate],
-    policy: RetrievalPolicy,
-) -> Tuple[ConflictExposure, ...]:
-    by_id = {candidate.card_id: candidate for candidate in candidates}
-    pairs: set[Tuple[str, str]] = set()
-    for candidate in candidates:
-        for other_id in candidate.contradicts:
-            if other_id in by_id:
-                pairs.add(tuple(sorted((candidate.card_id, other_id))))
-    for conflict in build_conflict_graph([candidate.card for candidate in candidates]).conflicts:
-        ids = tuple(sorted(conflict.get("card_ids", [])))
-        if len(ids) == 2:
-            pairs.add(ids)
-    exposures: List[ConflictExposure] = []
-    for left, right in sorted(pairs):
-        if len(exposures) >= policy.conflict_record_limit:
-            break
-        question = (
-            f"Resolve the conflict between {left} and {right}; do not select a "
-            "creative winner automatically."
-        )
-        exposures.append(ConflictExposure(
-            conflict_id="KCON-" + _hash({"left": left, "right": right})[:12],
-            option_card_ids=(left, right),
-            director_question=question,
-        ))
-    return tuple(exposures)
-
-
-def _phase_for(blocking: Mapping[str, Any] | None) -> str:
-    return "execution" if blocking and blocking.get("approved") is True else "problem"
-
-
-def _diagnosis_and_artifact(
-    diagnosis: DiagnosisArtifact | SceneDiagnosis,
-) -> Tuple[SceneDiagnosis, DiagnosisArtifact | None]:
-    if isinstance(diagnosis, DiagnosisArtifact):
-        violations = validate_diagnosis_artifact(diagnosis)
-        if violations:
-            raise ValueError("invalid Phase-A diagnosis: " + "; ".join(violations))
-        return diagnosis.diagnosis, diagnosis
-    if isinstance(diagnosis, SceneDiagnosis):
-        if not diagnosis.scene_id:
-            raise ValueError("scene_id is required for knowledge retrieval")
-        return diagnosis, None
-    raise TypeError("diagnosis must be DiagnosisArtifact or SceneDiagnosis")
 
 
 def retrieve_for_diagnosis(
