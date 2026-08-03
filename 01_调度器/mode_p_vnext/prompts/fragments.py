@@ -26,6 +26,11 @@ FACT_EXTRACTION_CORE = (
     "normalized source, exactly the text between its own `source_start` and "
     "`source_end` character offsets (punctuation included): never paraphrase, "
     "summarize, add an explanation or subject, or drop trailing punctuation. "
+    "Every fact except `narrative` requires `subject_id`: the single core "
+    "entity (character, location, prop, or asset) the fact is about. When one "
+    "sentence names several entities, split it into separate facts, one per "
+    "entity, each with its own verbatim span. Never leave a character, "
+    "setting, prop, wardrobe, asset, or dialogue fact without `subject_id`. "
     "Return one JSON object that satisfies the separately "
     "transported contract."
 )
