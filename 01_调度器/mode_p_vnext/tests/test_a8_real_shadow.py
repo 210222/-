@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
+import sys
 from dataclasses import replace
 from pathlib import Path
 from typing import Any, Mapping
@@ -463,3 +465,131 @@ def test_a8_rejects_a_text_call_audit_not_bound_to_its_preflighted_input(
     assert [stage for stage, _ in provider.calls] == ["I0"]
     assert reviewer.calls == []
     assert not (run_dir / "stage_records" / "I0.json").exists()
+
+
+def test_a8_single_real_cli_entry_delegates_to_cli_main() -> None:
+    """``python -m mode_p_vnext`` is the one real CLI entry into cli.main.
+
+    The __main__ module is a pure delegation shim, the parser identifies
+    itself as that module invocation, and the module entry actually runs.
+    """
+
+    main_py = Path(cli.__file__).with_name("__main__.py")
+    source = main_py.read_text(encoding="utf-8")
+    assert "from .cli import main" in source
+    assert 'raise SystemExit(main())' in source
+    assert 'if __name__ == "__main__":' in source
+
+    parser = cli.build_parser()
+    assert parser.prog == "python -m mode_p_vnext"
+    assert callable(cli.main)
+
+    package_parent = Path(cli.__file__).resolve().parents[1]
+    run = subprocess.run(
+        [sys.executable, "-m", "mode_p_vnext", "--help"],
+        cwd=str(package_parent),
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    assert run.returncode == 0, run.stderr
+    assert "--help" in run.stdout
+    assert "text-shadow" in run.stdout
+
+
+def test_a8_fact_provenance_carries_typed_source_spans_into_the_registry_only(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    """I0 provenance is typed: exact source spans in the fact registry only.
+
+    Every fact's single source span must slice the normalized source back to
+    exactly the canonical statement at the exact character offsets, and the
+    span must carry the typed episode/scene partition identity.  Once facts
+    leave the registry and enter the VEC, only ticks remain.
+    """
+
+    provider = _RecordingStructuredProvider()
+    reviewer = _FreshDPReviewer()
+
+    code, _, run_dir = _invoke(
+        monkeypatch, capsys, tmp_path, provider=provider, reviewer=reviewer, run_id="span-run"
+    )
+    assert code == 0
+    run_record = json.loads((run_dir / "TEXT_SHADOW_RUN.json").read_text(encoding="utf-8"))
+    registry_files = list((run_dir / "artifacts" / "fact_registry").glob("*.json"))
+    assert len(registry_files) == 1
+    registry = json.loads(registry_files[0].read_text(encoding="utf-8"))["payload"]
+
+    facts = registry["facts"]
+    assert len(facts) == 4
+    for fact in facts:
+        assert len(fact["provenance"]) == 1
+        span = fact["provenance"][0]
+        assert span["source_ref"]["digest"] == run_record["source_digest"]
+        assert span["episode_id"] == "episode-1"
+        assert span["scene_id"] == "scene-1"
+        start, end = span["source_start"], span["source_end"]
+        assert isinstance(start, int) and isinstance(end, int)
+        assert 0 <= start < end <= len(_SOURCE)
+        assert _SOURCE.index(fact["statement"]) == start
+        assert _SOURCE[start:end] == fact["statement"]
+
+    vec_files = list((run_dir / "artifacts" / "visual_execution_contract").glob("*.json"))
+    assert len(vec_files) == 1
+    vec_text = json.dumps(
+        json.loads(vec_files[0].read_text(encoding="utf-8"))["payload"], ensure_ascii=False
+    )
+    assert "source_start" not in vec_text
+    assert "source_end" not in vec_text
+    assert "start_tick" in vec_text
+    assert "end_tick" in vec_text
+
+
+def test_a8_gate0_receipt_binds_the_fresh_dp_session_in_one_run(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    """The A8 run's result, Gate 0 receipt, review packet, and DP review
+    result form one hash-bound chain: Projection bundle precedes Gate 0, and
+    the fresh DP reviews only through that receipt.
+    """
+
+    provider = _RecordingStructuredProvider()
+    reviewer = _FreshDPReviewer()
+
+    code, response, run_dir = _invoke(
+        monkeypatch, capsys, tmp_path, provider=provider, reviewer=reviewer, run_id="bound-run"
+    )
+    assert code == 0
+    result = response["text_shadow"]
+    gate0_id = result["gate0_result_artifact_id"]
+    dp_result_id = result["dp_review_result_artifact_id"]
+    assert gate0_id.startswith("id:")
+    assert dp_result_id.startswith("id:")
+    assert result["dp_fresh_session_id"]
+    assert len(result["dp_audit_sha256"]) == 64
+    assert len(result["run_record_sha256"]) == 64
+
+    def _single_artifact(kind: str) -> dict[str, Any]:
+        files = list((run_dir / "artifacts" / kind).glob("*.json"))
+        assert len(files) == 1, kind
+        return json.loads(files[0].read_text(encoding="utf-8"))
+
+    gate0 = _single_artifact("gate0_result")
+    packet = _single_artifact("review_packet")
+    dp = _single_artifact("dp_review_result")
+
+    # Gate 0 is the deterministic receipt over this run's projection bundle.
+    assert gate0["payload"]["result_id"] == gate0_id
+    assert gate0["payload"]["passed"] is True
+    assert gate0["payload"]["failed_check_ids"] == []
+    assert result["projection_ast_artifact_id"] in gate0["payload"]["target_artifact_ids"]
+    assert result["vec_artifact_id"] in gate0["payload"]["target_artifact_ids"]
+
+    # The fresh DP receives the gate0 receipt through the review packet only.
+    assert gate0_id in packet["payload"]["gate_result_refs"]
+    assert dp["payload"]["review_packet_artifact_id"] == packet["payload"]["packet_id"]
+    assert packet["payload"]["packet_id"].startswith("id:")
+    assert dp["payload"]["verdict"] == DPReviewVerdict.APPROVED.value
+    assert dp["payload"]["finding_codes"] == []
+    assert dp["payload"]["revision_request_artifact_ids"] == []
+    assert len(dp["payload"]["independent_context_digest"]) == 64

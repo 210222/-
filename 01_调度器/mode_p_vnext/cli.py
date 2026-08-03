@@ -120,7 +120,7 @@ def _shadow(args: argparse.Namespace) -> Dict[str, Any]:
 
 # A8's program identity is intentionally independent from test program IDs and
 # from the historical structural-shadow implementation above.
-_A8_PROGRAM_VERSION = "mode-p-vnext-a8-v3.0"
+_A8_PROGRAM_VERSION = "mode-p-vnext-a8-v3.1"
 _A8_NODE_ORDER = (
     "I0", "E0", "S1", "K1", "B0", "K2", "B1", "VEC", "Projection", "G0", "DP",
 )
@@ -136,63 +136,63 @@ def _a8_graph() -> StateGraph:
     return StateGraph(
         (
             NodeSpec(
-                "I0", "a8-v3.0",
+                "I0", "a8-v3.1",
                 {"normalized_source": ArtifactKind.NORMALIZED_SOURCE, "fact_registry": ArtifactKind.FACT_REGISTRY},
                 input_fields=("raw_source",),
             ),
             NodeSpec(
-                "E0", "a8-v3.0",
+                "E0", "a8-v3.1",
                 {"episode_direction": ArtifactKind.EPISODE_DIRECTION_DRAFT},
                 input_fields=("fact_registry",),
             ),
             NodeSpec(
-                "S1", "a8-v3.0",
+                "S1", "a8-v3.1",
                 {"scene_intent": ArtifactKind.SCENE_INTENT_DRAFT},
                 input_fields=("fact_registry", "episode_direction"),
             ),
             NodeSpec(
-                "K1", "a8-v3.0",
+                "K1", "a8-v3.1",
                 {"k1_snapshot": ArtifactKind.KNOWLEDGE_SNAPSHOT},
                 input_fields=("episode_direction", "scene_intent"),
             ),
             NodeSpec(
-                "B0", "a8-v3.0",
+                "B0", "a8-v3.1",
                 {"blocking_draft": ArtifactKind.BLOCKING_DRAFT, "blocking_commit": ArtifactKind.BLOCKING_COMMIT},
                 input_fields=("scene_intent", "k1_snapshot"),
                 uses_knowledge_snapshot=True,
             ),
             NodeSpec(
-                "K2", "a8-v3.0",
+                "K2", "a8-v3.1",
                 {"k2_snapshot": ArtifactKind.KNOWLEDGE_SNAPSHOT},
                 input_fields=("scene_intent", "blocking_commit"),
             ),
             NodeSpec(
-                "B1", "a8-v3.0",
+                "B1", "a8-v3.1",
                 {"execution_design": ArtifactKind.EXECUTION_DESIGN_DRAFT},
                 input_fields=("fact_registry", "scene_intent", "blocking_commit", "k2_snapshot"),
                 uses_knowledge_snapshot=True,
                 uses_capability_profile=True,
             ),
             NodeSpec(
-                "VEC", "a8-v3.0",
+                "VEC", "a8-v3.1",
                 {"vec": ArtifactKind.VISUAL_EXECUTION_CONTRACT},
                 input_fields=("fact_registry", "blocking_commit", "execution_design"),
                 uses_capability_profile=True,
             ),
             NodeSpec(
-                "Projection", "a8-v3.0",
+                "Projection", "a8-v3.1",
                 {"projection_ast": ArtifactKind.PROJECTION_AST, "projection_manifest": ArtifactKind.PROJECTION_MANIFEST},
                 input_fields=("vec",),
                 uses_capability_profile=True,
             ),
             NodeSpec(
-                "G0", "a8-v3.0",
+                "G0", "a8-v3.1",
                 {"gate0_result": ArtifactKind.GATE0_RESULT},
                 input_fields=("vec", "projection_ast", "projection_manifest"),
                 uses_capability_profile=True,
             ),
             NodeSpec(
-                "DP", "a8-v3.0",
+                "DP", "a8-v3.1",
                 {"review_packet": ArtifactKind.REVIEW_PACKET, "dp_review_result": ArtifactKind.DP_REVIEW_RESULT},
                 input_fields=("fact_registry", "episode_direction", "scene_intent", "vec", "projection_ast", "gate0_result"),
                 uses_capability_profile=True,
@@ -639,7 +639,7 @@ def run_text_shadow(args: argparse.Namespace) -> Dict[str, Any]:
 
     state = storage.session.state()
     if tuple(state.accepted) != _A8_NODE_ORDER:
-        raise A8TextShadowError("A8 text shadow did not commit the complete frozen v3.0 graph")
+        raise A8TextShadowError("A8 text shadow did not commit the complete frozen v3.1 graph")
     result = {
         "status": "TEXT_VALIDATED",
         "claim_ceiling": "TEXT_VALIDATED",

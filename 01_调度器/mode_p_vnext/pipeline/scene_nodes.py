@@ -71,7 +71,7 @@ from .verification_nodes import (
 
 
 class SceneNodeError(RuntimeError):
-    """Raised when an A8 scene node cannot prove its v3.0 boundary."""
+    """Raised when an A8 scene node cannot prove its v3.1 boundary."""
 
 
 @dataclass(frozen=True)

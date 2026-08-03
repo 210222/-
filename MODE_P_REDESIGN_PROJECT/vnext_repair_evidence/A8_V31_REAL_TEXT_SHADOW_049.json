@@ -1,0 +1,149 @@
+{
+  "task_id": "A8",
+  "kind": "REAL_RESUMABLE_TEXT_SHADOW_V31_EVIDENCE",
+  "architecture_authority": {
+    "version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/cli.py",
+    "01_调度器/mode_p_vnext/pipeline/scene_nodes.py",
+    "01_调度器/mode_p_vnext/adapters/storage/__init__.py",
+    "01_调度器/mode_p_vnext/tests/test_a8_real_shadow.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A8_V31_REAL_TEXT_SHADOW_049.json"
+  ],
+  "root_cause_and_repair": {
+    "root_causes": [
+      "A8 package carried the same superseded-authority drift class recorded for A4/A5/A6/A7: cli.py pinned `_A8_PROGRAM_VERSION = \"mode-p-vnext-a8-v3.0\"` and all 11 frozen NodeSpec stage identifiers were \"a8-v3.0\", the frozen-graph error message said \"v3.0 graph\", scene_nodes.py bound the B0/B1 boundary audit to \"v3.0 boundary\", and adapters/storage/__init__.py declared \"v3.0 text-shadow composition\". A4/A5/A6/A7 had already bound the v3.1 signatures, so the A8 program identity silently claimed a superseded authority while the runtime still consumed the v3.1 canonical types.",
+      "Coverage gaps on the A8 acceptance surface: no explicit test proved `python -m mode_p_vnext` is the single real CLI entry delegating to cli.main; typed ingest provenance was proven by digest but not by exact source-spans round-tripping the normalized source; the gate0-receipt-to-fresh-DP binding was proven at the A7 service layer but not through the A8 run's own persisted artifacts."
+    ],
+    "repair": [
+      "Rebound every A8-scope identity to the v3.1 authority: `_A8_PROGRAM_VERSION` -> \"mode-p-vnext-a8-v3.1\", all 11 NodeSpec stage identifiers I0/E0/S1/K1/B0/K2/B1/VEC/Projection/G0/DP -> \"a8-v3.1\", the frozen-graph error message -> \"frozen v3.1 graph\", the scene_nodes boundary audit -> \"v3.1 boundary\", and adapters/storage/__init__.py -> \"v3.1 text-shadow composition\".",
+      "Added 3 adversarial tests to test_a8_real_shadow.py: test_a8_single_real_cli_entry_delegates_to_cli_main (the __main__ module is a pure delegation shim, the parser prog is \"python -m mode_p_vnext\", and a real subprocess `python -m mode_p_vnext --help` exits 0 and advertises the text-shadow command), test_a8_fact_provenance_carries_typed_source_spans_into_the_registry_only (each fact's single source span slices the normalized source back to exactly the canonical statement at the exact character offsets with typed episode/scene partition identity, while the VEC payload keeps only ticks and never source spans), test_a8_gate0_receipt_binds_the_fresh_dp_session_in_one_run (one hash-bound chain across the persisted gate0_result, review_packet, and dp_review_result artifacts: Gate 0 targets this run's projection_ast and vec ids, the review packet carries the gate0 receipt to the fresh DP, the DP review result binds the packet id, verdict is approved with zero findings, and the run's result record binds gate0_result_artifact_id, dp_review_result_artifact_id, dp_fresh_session_id, dp_audit_sha256, and run_record_sha256)."
+    ],
+    "declared_design_boundaries": [
+      "mode_p_vnext/domain/** is outside A8 allowed_paths and is unchanged; every A8 stage consumes canonical domain types (NormalizedSource, FactRegistry, EpisodeDirectionDraft, SceneIntentDraft, KnowledgeSnapshot, BlockingCommit, ExecutionDesignDraft, VisualExecutionContract, ProjectionAST/Manifest, DeterministicGateResult, ReviewPacket, IndependentDPReviewResult) without redefining them.",
+      "The runtime never accepts a model-owned final artifact: the structured port returns only I0/E0/S1/B0/B1 drafts, and the deterministic local runtime mints every fact handle, fact id, artifact id, tick, tick range, and program identity (IdFactory program_version \"mode-p-vnext-a8-v3.1\").",
+      "Resume rehydrates accepted nodes from the persistent state graph and immutable artifact repository without ever recalling a text provider or the DP reviewer; test_a8_resume_rehydrates_accepted_nodes_without_recalling_text_or_dp proves provider calls stop at the resume point and reviewer calls stay empty until the fresh-DP node runs.",
+      "The text-only shadow is the exclusive A8 production boundary: the run record and result both report external_media_started=False, v4_write=False, production_switch_authorized=False, and claim_ceiling TEXT_VALIDATED; no renderer, verifier, media adapter, or production switch is reachable from the text-shadow command.",
+      "The two existing user-owned untracked storage files (adapters/storage/run_records.py, adapters/storage/shadow_layout.py) are outside changed_paths and are neither staged nor committed."
+    ]
+  },
+  "checks": [
+    {
+      "name": "single_real_cli_entry",
+      "exit_code": 0,
+      "proof": "test_a8_single_real_cli_entry_delegates_to_cli_main proves __main__.py contains exactly `from .cli import main` and the guarded `raise SystemExit(main())` delegation, cli.build_parser() declares prog \"python -m mode_p_vnext\", and a real subprocess `python -m mode_p_vnext --help` exits 0 and advertises the text-shadow command; __main__.py is the module entry and cli.main is the sole real CLI handler."
+    },
+    {
+      "name": "unknown_script_vertical",
+      "exit_code": 0,
+      "proof": "test_a8_real_cli_runs_unknown_source_through_local_projection_and_fresh_dp feeds a raw unknown-original-script.txt (not a v4 episode script) through the top-level CLI and reaches TEXT_VALIDATED with accepted_nodes exactly _A8_NODE_ORDER."
+    },
+    {
+      "name": "raw_source_to_fact_registry",
+      "exit_code": 0,
+      "proof": "the full run's fact_registry artifact is exactly one file whose facts all bind provenance source_ref digest to the run record's source_digest (test_a8_real_cli... asserts sha256 of the source bytes); I0 drafts are assembled locally by FactAssembler with locally minted fh:/id: handles."
+    },
+    {
+      "name": "canonical_ingest_to_projection",
+      "exit_code": 0,
+      "proof": "the same run compiles one ProjectionAST from the local VEC and persists projection_ast + projection_manifest artifacts; result_record.json binds result[\"projection_ast_artifact_id\"] to the persisted artifact (asserted in test_a8_real_cli...)."
+    },
+    {
+      "name": "accepted_nodes_not_recalled",
+      "exit_code": 0,
+      "proof": "test_a8_resume_rehydrates_accepted_nodes_without_recalling_text_or_dp: a run paused after S1 resumes to TEXT_VALIDATED with provider calls exactly [I0,E0,S1,B0,B1] (the accepted I0/E0/S1 nodes are rehydrated, never recalled) and reviewer.calls==1 (DP runs only once); a third identical invocation reuses the run without any new provider or DP call."
+    },
+    {
+      "name": "no_golden_vec_injection",
+      "exit_code": 0,
+      "proof": "the VEC artifact in the run derives only from the local B1 execution-design draft and blocking/scene inputs; the provider supplies no contract_id/start_tick/end_tick fields (asserted over the serialized provider payloads) while the registry's typed source spans are asserted to never leak into the VEC (test_a8_fact_provenance_carries_typed_source_spans_into_the_registry_only)."
+    },
+    {
+      "name": "text_validated_claim_ceiling",
+      "exit_code": 0,
+      "proof": "result and run record both report claim_ceiling TEXT_VALIDATED and status TEXT_VALIDATED; the A8 CLI exposes no claim ceiling above TEXT_VALIDATED and no media acceptance path."
+    },
+    {
+      "name": "typed_ingest_provenance",
+      "exit_code": 0,
+      "proof": "test_a8_fact_provenance_carries_typed_source_spans_into_the_registry_only proves every fact's provenance is a single SourceSpan whose source_ref digest equals the run source digest, whose episode_id/scene_id are the typed partition identity, and whose source_start/source_end slice the normalized source to exactly the canonical statement (`_SOURCE[start:end] == statement` and `_SOURCE.index(statement) == start`); the VEC keeps only ticks (start_tick/end_tick) and no source offsets."
+    },
+    {
+      "name": "complete_v31_state_graph",
+      "exit_code": 0,
+      "proof": "every full run asserts accepted_nodes == list(cli._A8_NODE_ORDER) == (I0,E0,S1,K1,B0,K2,B1,VEC,Projection,G0,DP) and run_text_shadow rechecks the frozen graph (\"frozen v3.1 graph\") before writing the result; the state graph NodeSpec identifiers are all \"a8-v3.1\"."
+    },
+    {
+      "name": "projection_bundle_precedes_gate_zero",
+      "exit_code": 0,
+      "proof": "the persisted gate0_result artifact targets exactly this run's projection_ast and vec artifact ids (test_a8_gate0_receipt_binds_the_fresh_dp_session_in_one_run asserts result[\"projection_ast_artifact_id\"] and result[\"vec_artifact_id\"] are both in target_artifact_ids), and the A7 package separately proves run_gate0 fails closed without the complete bundle."
+    },
+    {
+      "name": "gate_zero_receipt_binds_fresh_dp",
+      "exit_code": 0,
+      "proof": "test_a8_gate0_receipt_binds_the_fresh_dp_session_in_one_run proves the persisted review_packet carries the gate0 receipt in gate_result_refs, the persisted dp_review_result binds the packet id (review_packet_artifact_id == packet_id), verdict is approved with zero findings/revisions, and the run result binds gate0_result_artifact_id, dp_review_result_artifact_id, dp_fresh_session_id, dp_audit_sha256, and run_record_sha256 in one hash-bound record."
+    },
+    {
+      "name": "run_record_digest_tamper_rejected",
+      "exit_code": 0,
+      "proof": "test_a8_rejects_tampered_hash_bound_runtime_run_record tampers TEXT_SHADOW_RUN.json after a pause at I0 and the resume exits 2 with ERROR and error_type in {TextShadowStorageError, A8TextShadowError} without any new provider call or DP review."
+    },
+    {
+      "name": "no_v4_write_or_external_media",
+      "exit_code": 0,
+      "proof": "result and run record report external_media_started=False, v4_write=False, production_switch_authorized=False; test_a8_refuses_a_v4_storage_root_before_any_shadow_write proves a v4 mode_p storage root is rejected before any shadow write (exit 2, no provider call, root never created); a8_v4_isolation (test_v9_4_v4_compatibility) re-verifies the v4 compatibility contract (6 passed)."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a8_real_shadow",
+      "command": "python -m pytest mode_p_vnext/tests/test_a8_real_shadow.py -q -p no:cacheprovider",
+      "result": "8 passed",
+      "exit_code": 0
+    },
+    {
+      "name": "a8_v4_isolation",
+      "command": "python -m pytest mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "6 passed",
+      "exit_code": 0
+    }
+  ],
+  "related_regression": [
+    {
+      "command": "python -m compileall -q mode_p_vnext/pipeline/ingest_nodes.py mode_p_vnext/pipeline/episode_nodes.py mode_p_vnext/pipeline/scene_nodes.py mode_p_vnext/adapters/storage mode_p_vnext/cli.py mode_p_vnext/__main__.py mode_p_vnext/tests/test_a8_real_shadow.py",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_a7_dual_loop.py mode_p_vnext/tests/test_a8_real_shadow.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "231 passed",
+      "exit_code": 0
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "full_vnext_collection",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "1027 passed, 1 skipped, 22 failed, 420 subtests passed",
+      "exit_code": 1,
+      "classification": "HISTORICAL_READ_ONLY_BASELINE_DRIFT_OUTSIDE_A8_SCOPE",
+      "root_cause": "Failure set is exactly the A7-baseline 22: test_a9_prompt_lab 18, ddo_0 1, r3_2_* 3. Delta vs the A7 informational run (1024 passed / 22 failed / 0 errors) is +3 passed with no new failures and no errors: the three new A8 adversarial tests pass and nothing outside A8 scope changed. All 8 A8 registered tests pass; architecture v3.1 §2 keeps these artifacts read-only and §10 prohibits using them as v3.1 completion proof.",
+      "disposition": "Recorded without modifying historical evidence, v4 production code, user data, or external media."
+    }
+  ],
+  "claim_delta_observation": {
+    "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+    "implementation_delta": "Only the four A8-allowed source/test files and this Evidence file changed after the A8 claim. Existing user-owned untracked paths (.agents/, .codex/, .reasonix/, AGENTS.md, 01_调度器/_complete_a5.sh, 01_调度器/mode_p_vnext/adapters/storage/, MODE_P_REDESIGN_PROJECT/MODE_P_VNEXT_RELEASE.lock.json, historical untracked evidence) remain outside changed_paths and are neither staged nor committed.",
+    "controller_action": "ReleaseLedger complete revalidates the frozen architecture hash, compares claim-time and complete-time manifests, reruns the registered A8 commands, captures artifact hashes, and rejects undeclared or out-of-scope changes."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "text_claim_ceiling": "TEXT_VALIDATED"
+  }
+}
