@@ -1,6 +1,6 @@
 """Deterministic local assembly of BlockingCommit from model-authored BlockingDraft.
 
-Architecture ref: frozen MODE:P vNext v3.0 authority, B0 local assembly.
+Architecture ref: frozen MODE:P vNext v3.1 authority, B0 local assembly.
 
 The model outputs only creative beat fields (ordinal, dramatic_action,
 character_states, props, gaze, action_paths, continuity_effect).  This assembler

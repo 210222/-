@@ -1,4 +1,4 @@
-"""Assemble the v3.0 Visual Execution Contract from typed creative Drafts.
+"""Assemble the v3.1 Visual Execution Contract from typed creative Drafts.
 
 The director Draft is deliberately non-executable: it contains creative
 choices, duration intents, and opaque typed binding handles only.  This module

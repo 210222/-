@@ -1,0 +1,153 @@
+{
+  "task_id": "A5",
+  "kind": "DETERMINISTIC_COMPILATION_V31_REPAIR_EVIDENCE",
+  "architecture_authority": {
+    "version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/services/blocking_assembler.py",
+    "01_调度器/mode_p_vnext/services/timeline_allocator.py",
+    "01_调度器/mode_p_vnext/services/vec_assembler.py",
+    "01_调度器/mode_p_vnext/tests/test_a5_vec_assembly.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A5_V31_DETERMINISTIC_COMPILATION_046.json"
+  ],
+  "root_cause_and_repair": {
+    "root_causes": [
+      "All three A5 service modules (blocking_assembler, timeline_allocator, vec_assembler) and the A5 test module still declared the superseded architecture v3.0 as their authority ('frozen MODE:P vNext v3.0 authority', 'Deterministic v3.0 time allocation', 'Assemble the v3.0 Visual Execution Contract', 'frozen v3.0 VEC assembly invariant set') while v3.0 is only SUPERSEDED_BY_V3_1_ARCHITECTURE_CONFLICT_REPAIR. The same authority-drift class recorded for A4 had re-emerged in the A5 package.",
+      "Adversarial coverage gaps against the 14 registered A5 checks: dialogue placement_phase was verified only for MIDDLE, leaving the opening/early/late/closing offset mappings unverified; FIRST_FRAME/LAST_FRAME multi-semantic reference responsibilities (character/wardrobe/prop/setting/asset) were unverified; no A5-layer proof that every B1 Draft dataclass carries no local id/tick/hash field; the shot-scoped (visual_beat_ordinal=None) reference back-reference was asserted with a weak `or` instead of an exact target; and the VEC's binding to the canonical 24000-tick half-open timebase was not asserted.",
+      "The scene-exit Boundary scene_tick (the exclusive scene end tick) and the entrance Boundary tick (0) were only implicitly covered by the interior-cut test, not pinned as edge invariants."
+    ],
+    "repair": [
+      "Rebound the module docstrings of blocking_assembler.py, timeline_allocator.py, vec_assembler.py, and test_a5_vec_assembly.py to the v3.1 authority.",
+      "Added 20 adversarial test cases: test_creative_drafts_carry_no_local_id_tick_or_hash_fields (all seven B1 draft types must expose no machine-role field); test_vec_binds_the_canonical_24000_tick_timebase (timebase identity, scene-local and unit-local zero start, positive durations, per-unit cap); test_shot_level_reference_binds_only_the_shot_and_no_beat; test_every_dialogue_phase_maps_inside_the_target_beat_exactly (5 phases pinned to exact offsets 0/quarter/half/three-quarters/last-tick, all inside the target Beat); test_first_last_frame_accepts_every_allowed_reference_semantic (10 cases across FIRST_FRAME/LAST_FRAME x character/prop/setting/wardrobe/asset); test_first_last_frame_rejects_dialogue_semantic (2 cases).",
+      "Tightened the loose `or` assertion in test_typed_reference_and_dialogue_bindings_are_exact_and_bidirectional to an exact per-beat back-reference check (the shot-2 beat-1 prop requirement must appear in exactly that beat and in no other)."
+    ],
+    "declared_design_boundaries": [
+      "mode_p_vnext/domain/** is outside A5 allowed_paths and is unchanged. Draft field shapes, ordinal sequences, per-Shot capability, N+1 boundary structure, ID uniqueness, bidirectional back-references, marker-inside-beat, and VoiceRequirement one-to-one enforcement are owned by the A1 domain types; A5 exercises them through real assembly.",
+      "DOMAIN_SCHEMA_VERSION remains \"3.0\". That constant is the domain-schema versioning concept (enforced by ArtifactEnvelope), distinct from the architecture v3.1 authority; domain module docstrings saying 'schema-3.0' refer to that constant, not to the superseded architecture, and were deliberately not changed.",
+      "The CLOSING phase offset (duration - 1) is the last valid tick inside the half-open [start, end) Beat interval. A marker is a position only and never asserts audio duration (v3.1 §5: real audio duration arrives later from asset metadata); AudioEvent.media_duration_ticks stays None at assembly.",
+      "TimelineAllocator maps DurationIntent only through the versioned capability profile; it never accepts weights, raw ticks, or source spans, and never truncates or compresses Shots. Structured capacity failure (impossible intent/beat combinations) is a later capability contract; no such case exists in the current SD2.0 profile.",
+      "The 5-phase offset mapping (opening/early/middle/late/closing to 0/1/4/2/4/3/4/last-tick) is a local deterministic placement policy in vec_assembler._marker_for; the new parametrized test pins the exact mapping so a future policy change fails loudly.",
+      "VEC source_fact_ids/approved_fact_handles preserve the exact approved FactRegistry order; the fixture registry and every binding test uses 64-hex opaque ids and fh: handles, matching the A1 opaque membership rule."
+    ]
+  },
+  "checks": [
+    {
+      "name": "drafts_contain_creative_choices_only",
+      "exit_code": 0,
+      "proof": "B1 Draft dataclasses (ExecutionDesignDraft, ShotDesignDraft, VisualBeatDraft, ReferenceBindingIntent, DialogueBindingIntent, VisualCurvePointDraft, DecisionDraft) expose only creative fields plus approved opaque fact_handle and ordinal selectors. New test test_creative_drafts_carry_no_local_id_tick_or_hash_fields asserts none of the seven draft types declares a field containing 'id', 'tick', 'sha256', 'digest', 'start_' or 'end_', and none of the 12 machine-role names (contract_id, beat_id, shot_id, unit_id, boundary_id, event_id, requirement_id, fact_id, state_id, point_id, decision_id, canonical_*_sha256)."
+    },
+    {
+      "name": "local_ids_hashes_and_ticks",
+      "exit_code": 0,
+      "proof": "assemble_vec exposes no caller override for execution_design_artifact_id or blocking_commit_artifact_id (test_vec_exposes_no_caller_override_for_local_artifact_identities). All IDs start with 'id:' (test_blocking_and_vec_are_deterministic_local_authority), canonical input/output digests are distinct and non-model-authored, and assemble_vec rejects a blocking_commit that the current local B0 compiler cannot rebuild (test_vec_rejects_blocking_commit_not_rebuildable_by_current_program, 2 cases). New test_vec_binds_the_canonical_24000_tick_timebase pins the only persistent timebase: 24000 ticks/second, timebase_version v3-24000-ticks-per-second, scene-local and unit-local zero start, positive durations."
+    },
+    {
+      "name": "local_binding_and_boundary_assembly",
+      "exit_code": 0,
+      "proof": "N Shots always receive exactly N+1 shared ShotBoundaries with ordinal chain 0..N, entrance/exit edges bound to blocking_commit entry/exit state ids, interior cut ticks equal to placement cut points, and before/after states chained to adjacent Shot visual-beat states (test_n_plus_one_boundaries_use_placement_cut_points_and_state_chain; domain _validate_boundaries re-verifies every boundary against placements, state chains, and decision references)."
+    },
+    {
+      "name": "explicit_visual_beats",
+      "exit_code": 0,
+      "proof": "Every Shot is assembled from explicit VisualBeatDrafts that cover the full local timeline: first beat starts at 0, last beat ends at shot end, intervals adjacent, and states form an adjacent chain (test_explicit_visual_beats_cover_each_local_shot_timeline). Zero beats fail closed ('VisualBeats must fit as non-empty local tick intervals'); domain VisualShot.__post_init__ re-verifies full coverage and adjacency."
+    },
+    {
+      "name": "deterministic_vec_rebuild",
+      "exit_code": 0,
+      "proof": "Two independent assembler invocations over the same drafts, facts, blocking commit, and IdFactory produce byte-canonical equal VECs including canonical_output_sha256 recomputed over all final fields except the self-referential digest (test_blocking_and_vec_are_deterministic_local_authority). B0 determinism is proven cross-module: assemble_vec reconstructs the exact creative Draft from a BlockingCommit and rejects any commit the active local compiler cannot reproduce (test_vec_rejects_blocking_commit_not_rebuildable_by_current_program, 2 cases; test_blocking_commit_rejects_mismatched_program_identity; test_blocking_commit_rejects_noncanonical_schema_identity)."
+    },
+    {
+      "name": "typed_reference_binding",
+      "exit_code": 0,
+      "proof": "Only typed ReferenceBindingIntents become ReferenceRequirements; resolution is exact opaque-handle membership through the approved FactRegistry (test_typed_reference_and_dialogue_bindings_are_exact_and_bidirectional, test_no_automatic_fact_binding_and_no_free_text_binding_surface). Semantic mismatches and unknown handles fail closed (test_reference_semantic_mismatch_or_unknown_handle_fails_closed, 2 cases). New tests prove FIRST_FRAME/LAST_FRAME accept exactly their five frame-capable semantics (character/prop/setting/wardrobe/asset, 10 cases) and reject a dialogue fact (2 cases)."
+    },
+    {
+      "name": "typed_dialogue_audio_binding",
+      "exit_code": 0,
+      "proof": "Only typed DialogueBindingIntents create AudioEvents with a local TickMarker inside the target VisualBeat, plus exactly one VoiceRequirement preserving the typed target (test_typed_reference_and_dialogue_bindings_are_exact_and_bidirectional; domain _validate_bindings enforces marker-inside-beat and one VoiceRequirement per event). A non-dialogue fact bound as dialogue fails closed (test_invalid_blocking_ordinal_and_wrong_dialogue_semantic_fail_closed)."
+    },
+    {
+      "name": "no_fact_id_or_statement_parsing",
+      "exit_code": 0,
+      "proof": "Source-inspection guard proves the assembler source contains no '.statement', '.source_start', or '.source_end' access, and the allocator contains no 'duration_weight' or 'allocate_shot_ticks' legacy path (test_assembler_has_no_legacy_fact_or_timing_inference_path). Fact resolution is by opaque handle only (facts.by_handle); fact IDs are copied from the approved registry, never parsed from text."
+    },
+    {
+      "name": "per_shot_generation_cap",
+      "exit_code": 0,
+      "proof": "Each GenerationUnit receives its own local timeline whose duration_ticks satisfies 0 < duration_ticks <= max_generation_ticks (360000) under the SD2.0 profile (test_duration_intents_map_to_local_generation_units_not_a_scene_cap with two EXTENDED units of 312000 ticks; new test_vec_binds_the_canonical_24000_tick_timebase asserts the per-unit cap on every unit of a full VEC; domain GenerationUnitTimeline.__post_init__ fails closed on any unit exceeding capability)."
+    },
+    {
+      "name": "scene_duration_not_capped_at_15s",
+      "exit_code": 0,
+      "proof": "SceneTimeline duration is the sum of adjacent per-Shot placements and is neither capped at nor forced to 15 seconds: two EXTENDED units produce a 624000-tick scene, explicitly asserted greater than max_generation_ticks, with adjacent placements sharing cut ticks (test_duration_intents_map_to_local_generation_units_not_a_scene_cap)."
+    },
+    {
+      "name": "dialogue_phase_tick_placement",
+      "exit_code": 0,
+      "proof": "New test_every_dialogue_phase_maps_inside_the_target_beat_exactly (5 cases) pins the exact local policy: opening=beat start, early=start+duration//4, middle=start+duration//2, late=start+(3*duration)//4, closing=start+duration-1, each marker inside the half-open Beat interval and each placement_phase preserved on the event. The pre-existing MIDDLE assertion agrees with the same formula."
+    },
+    {
+      "name": "source_span_never_used_as_timing",
+      "exit_code": 0,
+      "proof": "A dialogue fact with provenance span start 30 and one with span start 90000 produce byte-identical AudioEvent markers, both equal to the middle offset of the target Beat interval (test_dialogue_marker_is_independent_of_provenance_positions). Provenance contributes only source order/provenance per v3.1 §4; no cinematic timing value reads a span."
+    },
+    {
+      "name": "requirements_bound_to_shot_or_beat",
+      "exit_code": 0,
+      "proof": "Every ReferenceRequirement is bound to exactly one Shot; when the intent names a visual_beat_ordinal it is also bound to exactly that Beat, and otherwise (None) it is shot-scoped. New test_shot_level_reference_binds_only_the_shot_and_no_beat proves a shot-scoped requirement appears in the owning Shot's reference_requirement_ids and in no Beat's list; the tightened existing test proves the beat-scoped prop requirement appears in exactly its target Beat and not in the adjacent Beat. Domain _validate_bindings re-verifies both directions."
+    },
+    {
+      "name": "free_text_intents_not_bound",
+      "exit_code": 0,
+      "proof": "Draft free text (composition, camera, lighting, performance, creative_notes) is carried as explanatory Shot content and never parsed into bindings: with zero typed intents the assembled VEC has zero reference requirements, zero audio events, and zero voice requirements (test_no_automatic_fact_binding_and_no_free_text_binding_surface), and the legacy free-text 'reference_intents'/'audio_intents' fields do not exist on ShotDesignDraft."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a5_vec_assembly",
+      "command": "python -m pytest mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider",
+      "result": "38 passed",
+      "exit_code": 0
+    }
+  ],
+  "related_regression": [
+    {
+      "command": "python -m compileall -q mode_p_vnext/services mode_p_vnext/tests/test_a5_vec_assembly.py",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "150 passed, 2 failed",
+      "exit_code": 1,
+      "classification": "HISTORICAL_V4_BASELINE_CRLF_CHECKOUT_DRIFT_OUTSIDE_A5_SCOPE",
+      "root_cause": "The same pair recorded for A4: test_a0_release_control.py::test_current_v4_cohort_ledger_is_canonical_and_history_stays_read_only and test_v9_4_v4_compatibility.py::test_v4_collection_matches_registered_cohorts compare hashlib.sha256(read_bytes()) of the on-disk v4 source file 01_调度器/mode_p/test_ep35_s1_pipeline.py against the frozen V0.1 cohort ledger source_sha256. This Windows checkout has core.autocrlf=true and no .gitattributes, so the working-tree file is CRLF; the ledger freezes the LF-normalized repository hash. Re-verified at A5 time: on-disk CRLF file hashes to c1dfcc6030af..., while the same bytes with LF terminators hash to 5bf716335524... equal to the ledger value. This is an environment/checkout drift of the historical v4 baseline, unrelated to A5 changes (every registered A1-A5 suite and the CRLF-independent regressions pass; the only collection delta over the A4-recorded baseline is +20 passed). Fixing it would require modifying the frozen v4 cohort ledger or v4 baseline tests, which are outside A5 allowed_paths; it is recorded and left to a v4-cohort owner."
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "full_vnext_collection",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "995 passed, 1 skipped, 32 failed, 8 errors, 420 subtests passed",
+      "exit_code": 1,
+      "classification": "HISTORICAL_READ_ONLY_BASELINE_DRIFT_OUTSIDE_A5_SCOPE",
+      "root_cause": "The failure/error set is byte-identical to the A4-recorded historical baseline: test_a9_prompt_lab 18, test_a7_dual_loop 8 errors + 3 failed (not-yet-claimed packages), r3_2_* 5, v0_1 1, ddo_0 1, a8_real_shadow 2 (LF-normalized-hash baselines materialized as CRLF on this checkout), and the v9_4/a0 CRLF pair. The only delta over the A4 informational run is +20 passed, exactly the newly added A5 adversarial tests. All 38 A5 registered tests pass; architecture v3.1 §2 keeps these artifacts read-only and §10 prohibits using them as v3.1 completion proof.",
+      "disposition": "Recorded without modifying historical evidence, v4 production code, user data, or external media."
+    }
+  ],
+  "claim_delta_observation": {
+    "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+    "implementation_delta": "Only the four A5-allowed source/test files and this Evidence file changed after the A5 claim. Existing user-owned untracked paths (.agents/, AGENTS.md, 01_调度器/mode_p_vnext/adapters/storage/, and historical untracked evidence) remain outside changed_paths and are neither staged nor committed.",
+    "controller_action": "ReleaseLedger complete revalidates the frozen architecture hash, compares claim-time and complete-time manifests, reruns the registered A5 test, captures artifact hashes, and rejects undeclared or out-of-scope changes."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "text_claim_ceiling": "TEXT_VALIDATED"
+  }
+}

@@ -1,7 +1,8 @@
-"""A5 acceptance tests for the frozen v3.0 VEC assembly invariant set."""
+"""A5 acceptance tests for the frozen v3.1 VEC assembly invariant set."""
 
 from __future__ import annotations
 
+from dataclasses import fields as dataclass_fields
 from dataclasses import replace
 import inspect
 
@@ -348,7 +349,10 @@ def test_typed_reference_and_dialogue_bindings_are_exact_and_bidirectional(id_fa
     assert event.marker.tick == dialogue_beat.interval.start_tick + dialogue_beat.interval.duration_ticks // 2
     assert event.event_id in vec.shots[1].audio_event_ids
     assert event.event_id in dialogue_beat.audio_event_ids
-    assert prop_reference.requirement_id in dialogue_beat.reference_requirement_ids or prop_reference.requirement_id in vec.shots[1].visual_beats[0].reference_requirement_ids
+    # prop_reference targets shot 2 beat 1, so it must be back-referenced by
+    # exactly that beat and by no other beat in the scene.
+    assert prop_reference.requirement_id in vec.shots[1].visual_beats[0].reference_requirement_ids
+    assert prop_reference.requirement_id not in dialogue_beat.reference_requirement_ids
     assert vec.voice_requirements[0].audio_event_id == event.event_id
 
 
@@ -511,3 +515,200 @@ def test_assembler_has_no_legacy_fact_or_timing_inference_path() -> None:
     assert ".source_end" not in assembler_source
     assert "duration_weight" not in allocator_source
     assert "allocate_shot_ticks" not in allocator_source
+
+
+_MACHINE_ROLE_FIELD_NAMES = frozenset(
+    {
+        "contract_id",
+        "beat_id",
+        "shot_id",
+        "unit_id",
+        "boundary_id",
+        "event_id",
+        "requirement_id",
+        "fact_id",
+        "state_id",
+        "point_id",
+        "decision_id",
+        "canonical_input_sha256",
+        "canonical_output_sha256",
+    }
+)
+
+
+def test_creative_drafts_carry_no_local_id_tick_or_hash_fields() -> None:
+    """v3.1 §3.1/§6: a Draft is creative choices plus approved opaque handles only."""
+    draft_types = (
+        ExecutionDesignDraft,
+        ShotDesignDraft,
+        VisualBeatDraft,
+        ReferenceBindingIntent,
+        DialogueBindingIntent,
+        VisualCurvePointDraft,
+        DecisionDraft,
+    )
+    for draft_type in draft_types:
+        field_names = {item.name for item in dataclass_fields(draft_type)}
+        assert not (field_names & _MACHINE_ROLE_FIELD_NAMES), draft_type.__name__
+        assert not any(
+            "tick" in name
+            or "sha256" in name
+            or "digest" in name
+            or name.startswith("start_")
+            or name.startswith("end_")
+            for name in field_names
+        ), draft_type.__name__
+
+
+def test_vec_binds_the_canonical_24000_tick_timebase(id_factory, blocking_commit) -> None:
+    """v3.1 §5: the VEC persists only the 24000-tick half-open timebase."""
+    vec = build_vec(id_factory, blocking_commit)
+
+    assert vec.timeline.ticks_per_second == 24_000
+    assert vec.timeline.timebase_version == "v3-24000-ticks-per-second"
+    assert vec.scene_timeline.interval.start_tick == 0
+    assert all(unit.timeline.interval.start_tick == 0 for unit in vec.generation_units)
+    assert all(unit.timeline.interval.duration_ticks > 0 for unit in vec.generation_units)
+    assert all(
+        unit.timeline.duration_ticks <= vec.capability_profile.max_generation_ticks
+        for unit in vec.generation_units
+    )
+
+
+def test_shot_level_reference_binds_only_the_shot_and_no_beat(id_factory, blocking_commit) -> None:
+    """v3.1 §5: a shot-scoped reference requirement never leaks into any Beat."""
+    vec = build_vec(id_factory, blocking_commit)
+
+    character_reference = vec.reference_requirements[0]
+    assert character_reference.visual_beat_id is None
+    assert character_reference.requirement_id in vec.shots[0].reference_requirement_ids
+    assert not any(
+        character_reference.requirement_id in beat.reference_requirement_ids
+        for shot in vec.shots
+        for beat in shot.visual_beats
+    )
+
+
+@pytest.mark.parametrize(
+    ("phase", "expected_offset"),
+    (
+        (PlacementPhase.OPENING, 0),
+        (PlacementPhase.EARLY, "quarter"),
+        (PlacementPhase.MIDDLE, "half"),
+        (PlacementPhase.LATE, "three_quarters"),
+        (PlacementPhase.CLOSING, "last_tick"),
+    ),
+)
+def test_every_dialogue_phase_maps_inside_the_target_beat_exactly(
+    id_factory, blocking_commit, phase, expected_offset
+) -> None:
+    """v3.1 §5: local code places the marker at the exact phase offset in the Beat."""
+    draft = make_draft()
+    intent = DialogueBindingIntent(
+        shot_ordinal=2,
+        visual_beat_ordinal=2,
+        fact_handle=_opaque_handle("c"),
+        placement_phase=phase,
+    )
+    second = replace(draft.shots[1], dialogue_binding_intents=(intent,))
+    vec = build_vec(
+        id_factory,
+        blocking_commit,
+        draft=replace(draft, shots=(draft.shots[0], second)),
+    )
+
+    event = vec.audio_events[0]
+    beat = vec.shots[1].visual_beats[1]
+    duration = beat.interval.duration_ticks
+    if expected_offset == "last_tick":
+        expected_tick = beat.interval.start_tick + duration - 1
+    elif expected_offset == "quarter":
+        expected_tick = beat.interval.start_tick + duration // 4
+    elif expected_offset == "half":
+        expected_tick = beat.interval.start_tick + duration // 2
+    elif expected_offset == "three_quarters":
+        expected_tick = beat.interval.start_tick + (duration * 3) // 4
+    else:
+        expected_tick = beat.interval.start_tick
+    assert event.marker.tick == expected_tick
+    assert beat.interval.contains(event.marker.tick)
+    assert event.placement_phase is phase
+
+
+def _registry_with_all_semantics() -> FactRegistry:
+    return FactRegistry(
+        source_ref=SOURCE_REF,
+        facts=(
+            _fact(ordinal=1, character="a", semantic=FactSemantic.CHARACTER, span_start=10, subject_label="Mira"),
+            _fact(ordinal=2, character="b", semantic=FactSemantic.PROP, span_start=20, subject_label="pistol"),
+            _fact(ordinal=3, character="c", semantic=FactSemantic.DIALOGUE, span_start=30, subject_label="Mira", spoken_text="Don't move."),
+            _fact(ordinal=4, character="d", semantic=FactSemantic.SETTING, span_start=40, subject_label="range"),
+            _fact(ordinal=5, character="f", semantic=FactSemantic.WARDROBE, span_start=50, subject_label="trench"),
+            _fact(ordinal=6, character="e", semantic=FactSemantic.ASSET, span_start=60, subject_label="hand prop"),
+        ),
+    )
+
+
+@pytest.mark.parametrize(
+    "responsibility",
+    (ReferenceResponsibility.FIRST_FRAME, ReferenceResponsibility.LAST_FRAME),
+)
+@pytest.mark.parametrize(
+    "fact_character",
+    ("a", "b", "d", "f", "e"),
+)
+def test_first_last_frame_accepts_every_allowed_reference_semantic(
+    id_factory, blocking_commit, responsibility, fact_character
+) -> None:
+    """v3.1 §5: FIRST_FRAME/LAST_FRAME accept each frame-capable fact semantic."""
+    draft = make_draft()
+    first = replace(
+        draft.shots[0],
+        reference_binding_intents=(
+            ReferenceBindingIntent(
+                shot_ordinal=1,
+                visual_beat_ordinal=1,
+                fact_handle=_opaque_handle(fact_character),
+                responsibility=responsibility,
+            ),
+        ),
+    )
+    vec = build_vec(
+        id_factory,
+        blocking_commit,
+        facts=_registry_with_all_semantics(),
+        draft=replace(draft, shots=(first, draft.shots[1])),
+    )
+
+    assert vec.reference_requirements[0].source_fact_handle == _opaque_handle(fact_character)
+    assert vec.reference_requirements[0].responsibility is responsibility
+
+
+@pytest.mark.parametrize(
+    "responsibility",
+    (ReferenceResponsibility.FIRST_FRAME, ReferenceResponsibility.LAST_FRAME),
+)
+def test_first_last_frame_rejects_dialogue_semantic(
+    id_factory, blocking_commit, responsibility
+) -> None:
+    """v3.1 §5: dialogue is never a frame reference responsibility."""
+    draft = make_draft()
+    first = replace(
+        draft.shots[0],
+        reference_binding_intents=(
+            ReferenceBindingIntent(
+                shot_ordinal=1,
+                visual_beat_ordinal=1,
+                fact_handle=_opaque_handle("c"),
+                responsibility=responsibility,
+            ),
+        ),
+    )
+
+    with pytest.raises(DomainValidationError):
+        build_vec(
+            id_factory,
+            blocking_commit,
+            facts=_registry_with_all_semantics(),
+            draft=replace(draft, shots=(first, draft.shots[1])),
+        )

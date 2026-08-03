@@ -1,4 +1,4 @@
-"""Deterministic v3.0 time allocation for local GenerationUnits.
+"""Deterministic v3.1 time allocation for local GenerationUnits.
 
 The director may select only a :class:`DurationIntent`.  The approved local
 ``GenerationCapabilityProfile`` maps that intent to ticks.  This module never
