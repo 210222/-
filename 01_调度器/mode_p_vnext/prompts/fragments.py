@@ -22,6 +22,10 @@ FACT_EXTRACTION_CORE = (
     "window. Use only the normalized source supplied for this call. Do not make "
     "creative decisions, rewrite narrative, invent facts, identifiers, hashes, "
     "validation status, or fields that name or select a local scene partition. "
+    "For every fact, `statement` must be transcribed verbatim from the "
+    "normalized source, exactly the text between its own `source_start` and "
+    "`source_end` character offsets (punctuation included): never paraphrase, "
+    "summarize, add an explanation or subject, or drop trailing punctuation. "
     "Return one JSON object that satisfies the separately "
     "transported contract."
 )
