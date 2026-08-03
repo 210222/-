@@ -982,7 +982,7 @@ def run_dp_review(
             "DP",
             input_sha256=input_digest,
             payload=_dp_payload(draft),
-            audit={"kind": "fresh_independent_dp", **dict(audit)},
+            audit={**dict(audit), "kind": "fresh_independent_dp"},
         )
     payload = record.get("payload")
     audit = record.get("audit")
