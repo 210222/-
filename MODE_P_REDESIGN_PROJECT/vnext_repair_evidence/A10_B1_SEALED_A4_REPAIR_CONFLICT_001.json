@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0",
+  "kind": "ARCHITECTURE_CONFLICT_EVIDENCE",
+  "evidence_id": "A10-B1-SEALED-A4-REPAIR-CONFLICT-001",
+  "status": "OPEN_PENDING_V31_SUCCESSOR_REBASE",
+  "discovered_from": {
+    "architecture_version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903",
+    "run": {
+      "run_id": "a10-live-vnext-shadow-ep35-20260803",
+      "scene_id": "scene-a10-ep35",
+      "failure_1": "B1 stage record emitted a locked decision carrying two options; domain rule requires exactly one (DomainValidationError raised by services/vec_assembler.py through pipeline/scene_nodes.py)",
+      "failure_2": "B1 stage record emitted seven transition intents for six shots, including scene opening and closing fades; local VEC compiler requires exactly len(shots)-1 interior boundary intents"
+    }
+  },
+  "conflicting_normative_claims": [
+    {
+      "location": "section 10 work packages",
+      "claim": "Only the claimed task's allowed_paths may be modified; architecture, registry, implementation, test, or Evidence drift fails closed."
+    },
+    {
+      "location": "section 11 A4 ownership",
+      "claim": "A4 owns typed I0/E0/S1/B0/B1 contracts and prompt budgets; once completed, its artifact hashes are sealed in the release ledger."
+    },
+    {
+      "location": "section 11 A8/A10 ownership",
+      "claim": "A8/A10 must exercise the real provider against real raw source; defects it exposes are real acceptance blockers that the runtime must be able to absorb."
+    }
+  ],
+  "reproducible_conflict": {
+    "premise_1": "The A10 real-model shadow run exposed two B1 transport gaps: the decisions item schema did not express the locked/choice conditional semantics, and transition_intents carried no cross-field count rule (exactly one interior boundary intent per shot boundary).",
+    "premise_2": "The minimal, verified repair modifies only mode_p_vnext/prompts/schema_registry.py and mode_p_vnext/prompts/signatures.py, both sealed as A4 artifacts in MODE_P_VNEXT_RELEASE_STATE.json.",
+    "premise_3": "rebuild_control.invalidate refuses to reopen A4 because completed dependents A5-A9 exist; no revalidation or artifact-hash refresh command exists in release_control.",
+    "conclusion": "A real acceptance validation (A10) can only surface defects in a sealed deliverable (A4), but the ledger provides no legal channel to feed the repair back into the sealed package without invalidating the completed dependency chain. The fail-closed drift check and the sealed-artifact invariant cannot both hold while the repair is applied."
+  },
+  "alternatives_considered": [
+    {
+      "option": "invalidate A4 and re-run A5-A10",
+      "rejected_reason": "rebuild_control.invalidate blocks because completed dependents A5-A9 exist; re-running five sealed packages is destructive and outside the single-package claim discipline."
+    },
+    {
+      "option": "revert the B1 transport repair",
+      "rejected_reason": "A10 would remain permanently blocked on B1; the repair is domain-correct and verified by 74 focused tests plus the full vnext suite."
+    },
+    {
+      "option": "carry a runtime schema override outside prompts/",
+      "rejected_reason": "no such mechanism exists; DraftSchemaRegistry is a MappingProxyType frozen registry, and a second schema authority would violate the one-Authority invariant."
+    },
+    {
+      "option": "truncate or re-map model transition_intents locally",
+      "rejected_reason": "silently remapping creative intent onto boundaries is semantic tampering, forbidden by the exact-one-intent-per-boundary invariant."
+    }
+  ],
+  "decision": {
+    "applied_repair_commits": [
+      "43fff77 fix(vnext): B1 decision schema locked/choice conditional constraints",
+      "1e3b01c fix(vnext): express interior transition intent semantics in the B1 transport"
+    ],
+    "evidence_remaining_clean": "The two repair commits keep the working tree clean, so A10 completion delta checks remain valid; the drift audit issue on the sealed A4 artifacts is recorded here as the single known-open ledger health item.",
+    "resolution_required": "A successor rebase (v3.1 -> v3.2) must add a bounded re-seal channel for sealed packages when a real acceptance run proves their deliverable defective, preserving prior records as invalidated history per section 10."
+  },
+  "invariants_preserved": [
+    "v4_unchanged production entry",
+    "production_switch_authorized stays false",
+    "single-package claim discipline (A10 remains the only claimed task)",
+    "TEXT_VALIDATED text claim ceiling",
+    "deterministic local VEC compiler rule (exactly one transition intent per interior boundary)"
+  ],
+  "verification_requirements": [
+    "mode_p_vnext/tests/test_a4_structured_provider.py, test_a8_real_shadow.py, test_a5_vec_assembly.py all pass after the repair (74 passed)",
+    "B1 schema length 4401 < 4500 hard budget after the repair",
+    "decision oneOf semantics verified with jsonschema: locked(1 option) valid, choice(2 options) valid, locked(2 options) invalid, choice(locked_by non-empty) invalid"
+  ],
+  "production_boundary": {
+    "v4_unchanged": true,
+    "production_switch_authorized": false,
+    "owner_approval_recorded": false
+  }
+}

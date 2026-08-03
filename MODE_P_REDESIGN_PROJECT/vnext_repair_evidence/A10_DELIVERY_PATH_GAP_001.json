@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "kind": "ARCHITECTURE_CONFLICT_EVIDENCE",
+  "evidence_id": "A10-DELIVERY-PATH-GAP-001",
+  "status": "SUSPENDED_AWAITING_V32_DELIVERY_PACKAGE",
+  "discovered_from": {
+    "architecture_version": "3.1",
+    "run": {
+      "run_id": "a10-live-vnext-shadow-ep35-20260803",
+      "scene_id": "scene-a10-ep35",
+      "date_utc": "2026-08-03"
+    }
+  },
+  "conflicting_normative_claims": [
+    {
+      "location": "A10 media evidence schema (test_a10_media_release_readiness.py)",
+      "claim": "media_runs requires track=v4 and track=vnext with real rendered media, v4_vnext_comparison on the same scene_digest, vnext_runtime_binding to vec/projection/run/result records. The acceptance gate presumes the vNext track can be rendered from vNext outputs."
+    },
+    {
+      "location": "MODE:P vNext v3.1 shadow CLI (cli.py)",
+      "claim": "The CLI exposes only session/shadow/text-shadow and is documented 'never production delivery'; no command derives storyboard/video-prompt delivery from a run."
+    },
+    {
+      "location": "adapters/delivery digest contract (capability.py + video_adapter.py + storyboard_adapter.py)",
+      "claim": "Delivery adapters require capability_profile_digest(profile) == ProjectionManifest.capability_profile_digest. The manifest records the GenerationCapabilityProfile (duration) digest, while adapters accept only the delivery CapabilityProfile digest; the two types cannot match. Default invocation fails closed (verified: DomainValidationError 'delivery CapabilityProfile digest must match the ProjectionManifest')."
+    }
+  ],
+  "reproducible_findings": [
+    {
+      "finding": "No project entrypoint generates storyboard/video-prompt delivery from run artifacts. Only four CLI-capable modules exist (cli.py, release_control.py, rebuild_control.py, baseline_audit_control.py); none derives delivery.",
+      "evidence": "full-repo search for argparse/ArgumentParser and command registration"
+    },
+    {
+      "finding": "Default adapter chain is broken: derive_video(ast) succeeds, but render_video(projection, profile) without explicit capability binding raises DomainValidationError because the manifest digest (duration capability profile 0884044b...) and the delivery CapabilityProfile digest never match.",
+      "evidence": "executed against projection_ast artifact b7031e93... of run a10-live-vnext-shadow-ep35-20260803"
+    },
+    {
+      "finding": "No Markdown renderer exists over the v3.1 structured delivery (StoryboardPanel/VideoPromptChunk). The V5.2/V5.4 Golden renderers (storyboard_renderer.py, video_renderer.py) consume the v5-era DualOutputContract, not ProjectionAST; nothing bridges them.",
+      "evidence": "storyboard_renderer.py / video_renderer.py import mode_p_vnext.storyboard_projection only; git history single commit e97805f"
+    }
+  ],
+  "consequence": {
+    "statement": "A10 requires the owner to render the vNext track as real media, but the vNext system provides no legitimate path from run artifacts to renderable storyboard/video prompts. The acceptance gate therefore presumes a capability that no A-package delivered. The owner cannot produce the required media through the project; only an external patch (driver script calling derive_*/render_* with an explicit capability binding plus a locally authored markdown layout) can produce render input, and that patch is not a project capability.",
+    "severity": "RELEASE_GATE_BLOCKING_SCOPE_GAP",
+    "not_a_runtime_crash": "This is not a runtime failure; it is an acceptance-design gap: the A-series scope validated evidence-chain correctness (TEXT_VALIDATED, AST compilation, DP review) but never validated the delivery output path, while A10's media gate assumes it exists."
+  },
+  "temporary_mitigation_applied": {
+    "driver": "MODE_P_REDESIGN_PROJECT/vnext_release_runs/A10/a10-live-vnext-shadow-ep35-20260803/derive_delivery.py",
+    "what_it_does": "loads the run's projection_ast artifact, rebuilds the canonical ProjectionAST, calls official derive_storyboard/derive_video and render_storyboard/render_video with an explicit delivery CapabilityProfile binding (the documented-but-never-wired path), and formats the structured delivery into Chinese markdown. Content is 100% AST-sourced; only layout and tick->seconds conversion are local.",
+    "explicit_limitation": "The driver and its outputs are patch artifacts, not project capabilities. They must not be recorded as vNext project delivery capability in any acceptance evidence."
+  },
+  "owner_decision": {
+    "option": "suspend_a10_for_v32_delivery_package",
+    "decided_by": "owner",
+    "date_utc": "2026-08-03",
+    "consequence": "A10 remains in MEDIA_EVIDENCE_REQUIRED. No vNext-track media is rendered until a v3.2 delivery package (run-artifact to delivery CLI, markdown renderers, digest contract repair, real-run acceptance test) is planned and authorized. Patch artifacts remain in the run directory as evidence of the gap and its temporary mitigation, explicitly not a project capability."
+  },
+  "owner_decisions_required": [
+    {
+      "option": "accept_patch_as_render_input",
+      "description": "Use the patched render input (explicitly labeled as patch, content AST-sourced) to render the vNext track and complete the A10 media comparison. The comparison then measures director design quality (AST content), not vNext system delivery capability.",
+      "note": "keeps A10 moving; the gap evidence remains open for v3.2"
+    },
+    {
+      "option": "suspend_a10_for_v32_delivery_package",
+      "description": "Hold A10 in MEDIA_EVIDENCE_REQUIRED and add a v3.2 work package that implements the delivery path (CLI command + markdown renderer + digest contract repair) before any vNext-track media is required.",
+      "note": "cleanest architecture outcome; stalls the final release gate"
+    },
+    {
+      "option": "redefine_a10_media_scope",
+      "description": "Change the A10 media gate to require only the v4 track plus vNext text evidence, dropping the dual-track media comparison until the delivery package exists.",
+      "note": "requires architecture authority change to the release ledger, owner decision"
+    }
+  ],
+  "resolution_required": {
+    "successor": "v3.1 -> v3.2 rebase must add a bounded delivery-package covering: (a) run-artifact to delivery CLI, (b) markdown renderers over the v3.1 structured delivery, (c) repair of the delivery CapabilityProfile digest contract so the documented default path works, (d) an A-series acceptance test that renders delivery output from a real run artifact.",
+    "also_pending": "A4 sealed-artifact drift channel from A10_B1_SEALED_A4_REPAIR_CONFLICT_001"
+  },
+  "production_boundary": {
+    "v4_unchanged": true,
+    "production_switch_authorized": false,
+    "owner_approval_recorded": false
+  }
+}
