@@ -44,9 +44,9 @@
 
   "knowledge_files": [
     {"path": "03_知识库/03_导演知识库_v4.0.md", "sha256": "74c7ece77d6859cba021b6f1dc96a0f2f84537fefa7cab3373474fff62611239", "bytes": 42661, "source_group": "offline_archive", "disposition": "archived; forbidden for independent retrieval"},
-    {"path": "03_知识库/03_导演知识库_v5.0.md", "sha256": "6e507a7d63c185a05f4dd8609745b0b1442691434baf856dbe130747cc26576b", "bytes": 167622, "source_group": "offline_source", "disposition": "largest director rule source; extraction candidate only"},
+    {"path": "03_知识库/03_导演知识库_v5.0.md", "sha256": "c5be190919d2a88c6a784832742d373b5e3dc4a360b4082291b433c2ee7418a6", "bytes": 166209, "source_group": "offline_source", "disposition": "largest director rule source; extraction candidate only"},
     {"path": "03_知识库/04_编剧知识库_v1.1.md", "sha256": "9b33017259f361c6a57b0ae9ed0fe18ca590c1e9643c82d2189d027396a0fbcc", "bytes": 39596, "source_group": "offline_source", "disposition": "diagnosis source; script-rewriting sections isolated"},
-    {"path": "03_知识库/04_构图思维_导演用.md", "sha256": "fe5b6c9b526fd1e842077329bf3bb27264ca334f0a4fb52e0c0b63ac7d09a952", "bytes": 27644, "source_group": "offline_source", "disposition": "composition candidate; intent-to-technique mapping must be softened"},
+    {"path": "03_知识库/04_构图思维_导演用.md", "sha256": "1d35607427221fe9952bfcf76056ec90287bd755e6f3918e27136ea2c168426b", "bytes": 27643, "source_group": "offline_source", "disposition": "composition candidate; intent-to-technique mapping must be softened"},
     {"path": "03_知识库/运镜思维_导演可用运动思维.md", "sha256": "ef42f79e93ef67398b512fd4d1fc0e5f8ff3fe9568f062139f7d2e6ed85361dd", "bytes": 31180, "source_group": "offline_source", "disposition": "camera movement candidate; must not output direct shot answers"},
     {"path": "03_知识库/导演手册_视觉叙事决策框架.md", "sha256": "24cf80f1a42b3c9f1286ee729ce0390aa0b42c14b019462ba6514f2999bd9b9c", "bytes": 12663, "source_group": "offline_source", "disposition": "diagnosis workflow candidate"},
     {"path": "03_知识库/PERFORMANCE_KB.md", "sha256": "4c95aa7f36c9df459f7d527bd3e60c64568dafcde8c6f8d2f6411951e5f0b49e", "bytes": 12647, "source_group": "offline_source", "disposition": "performance visibility candidate; fixed psych mappings isolated"},
