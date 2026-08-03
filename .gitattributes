@@ -1,0 +1,6 @@
+# Deterministic line endings: Python sources are LF both in the index and on
+# disk, on every platform. Fixes the recorded v4-baseline CRLF checkout drift
+# (frozen cohort ledger hashes LF-normalized content; core.autocrlf=true
+# materialized CRLF on disk, failing the hash-bound cohort tests).
+*.py text eol=lf
+.gitattributes text eol=lf
