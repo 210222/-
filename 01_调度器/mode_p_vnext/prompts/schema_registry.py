@@ -329,7 +329,7 @@ def _assert_schema_node_matches_draft(
 def _assert_canonical_draft_contract(
     stage: Stage, document: Mapping[str, Any]
 ) -> None:
-    """Fail before provider I/O if the transport cannot decode its v3.0 Draft."""
+    """Fail before provider I/O if the transport cannot decode its v3.1 Draft."""
 
     from mode_p_vnext.domain.blocking import BlockingBeatDraft, BlockingDraft
     from mode_p_vnext.domain.decisions import DecisionDraft, VisualCurvePointDraft

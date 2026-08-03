@@ -1,4 +1,4 @@
-"""Frozen declarative model-stage signatures for the v3.0 architecture."""
+"""Frozen declarative model-stage signatures for the v3.1 architecture."""
 
 from __future__ import annotations
 
@@ -84,7 +84,7 @@ class StageSignature:
 _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
     Stage.I0: StageSignature(
         stage=Stage.I0,
-        version="3.0",
+        version="3.1",
         contract_name="FactExtractionDraft",
         semantic_goal=(
             "Extract only source-anchored script facts for deterministic local "
@@ -126,7 +126,7 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
     ),
     Stage.E0: StageSignature(
         stage=Stage.E0,
-        version="3.0",
+        version="3.1",
         contract_name="EpisodeDirectionDraft",
         semantic_goal="Choose stable episode-level dramatic direction from approved episode facts.",
         approved_input_fields=("episode facts", "episode constraints"),
@@ -143,7 +143,7 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
     ),
     Stage.S1: StageSignature(
         stage=Stage.S1,
-        version="3.0",
+        version="3.1",
         contract_name="SceneIntentDraft",
         semantic_goal="Diagnose scene change, information strategy, and Director questions.",
         approved_input_fields=("scene facts", "episode direction", "continuity state"),
@@ -161,7 +161,7 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
     ),
     Stage.B0: StageSignature(
         stage=Stage.B0,
-        version="3.0",
+        version="3.1",
         contract_name="BlockingDraft",
         semantic_goal="Choose motivated character, prop, gaze, and spatial states before execution design.",
         approved_input_fields=("scene intent", "K1 decision view", "continuity state"),
@@ -179,7 +179,7 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
     ),
     Stage.B1: StageSignature(
         stage=Stage.B1,
-        version="3.0",
+        version="3.1",
         contract_name="ExecutionDesignDraft",
         semantic_goal=(
             "Choose creative Shot and VisualBeat intent after approved blocking; "

@@ -23,8 +23,8 @@ from mode_p_vnext.ports.structured_text import (
     Violation,
     ViolationSet,
 )
-from mode_p_vnext.prompts.budgets import PromptBudgetExceeded
-from mode_p_vnext.prompts.compiler import PromptCompiler
+from mode_p_vnext.prompts.budgets import BudgetReport, PromptBudgetExceeded, PromptBudgetGate
+from mode_p_vnext.prompts.compiler import CompiledPrompt, PromptCompiler
 from mode_p_vnext.prompts.schema_registry import DraftSchemaRegistry
 from mode_p_vnext.prompts.signatures import Stage, stage_signatures
 
@@ -178,10 +178,136 @@ def test_b1_prompt_and_schema_are_preflight_budgeted() -> None:
     compact = compiler.compile(signature, {"scene_id": "EP35-S2"})
     schema = registry.schema_for(signature)
 
-    assert compact.character_count <= 12_000
-    assert schema.character_count <= 4_500
+    assert compact.character_count < 12_000
+    assert schema.character_count < 4_500
     with pytest.raises(PromptBudgetExceeded, match="B1 prompt"):
         compiler.compile(signature, {"scene_id": "EP35-S2", "scene_intent": "x" * 12_000})
+
+
+def test_b1_hard_budget_is_an_unreachable_ceiling() -> None:
+    """v3.1 §6 requires the B1 prompt body to be `< 12000` and schema `< 4500`.
+
+    Reaching the declared limit must fail closed, so the boundary values
+    12000 and 4500 themselves are rejected rather than accepted.
+    """
+
+    signature = stage_signatures()[Stage.B1]
+    PromptBudgetGate.validate_prompt(signature, "x" * 11_999)
+    with pytest.raises(PromptBudgetExceeded, match="B1 prompt"):
+        PromptBudgetGate.validate_prompt(signature, "x" * 12_000)
+    PromptBudgetGate.validate_schema(signature, "x" * 4_499)
+    with pytest.raises(PromptBudgetExceeded, match="B1 schema"):
+        PromptBudgetGate.validate_schema(signature, "x" * 4_500)
+
+
+def test_all_stage_signatures_bind_the_v31_authority_version() -> None:
+    """TextCallEvidence.signature_version audits the bound authority version.
+
+    No signature may silently fall back to a pre-v3.1 version.
+    """
+
+    assert {sig.stage for sig in stage_signatures().values()} == {
+        Stage.I0, Stage.E0, Stage.S1, Stage.B0, Stage.B1,
+    }
+    for signature in stage_signatures().values():
+        assert signature.version == "3.1"
+
+
+def test_text_call_evidence_records_v31_signature_version() -> None:
+    requests = []
+    adapter = ClaudeDeepSeekStructuredAdapter(
+        runner=lambda request: requests.append(request) or {
+            "payload": {
+                "dramatic_promise": "Responsibility makes certainty fracture under pressure.",
+                "audience_contract": "Each scene reveals a concrete emotional cost.",
+                "tension_curve": ["confidence", "pressure"],
+                "visual_principles": ["preserve readable action"],
+                "continuity_priorities": ["preserve the established screen direction"],
+                "unresolved_questions": [],
+            },
+            "resolved_model": "deepseek-v4-pro",
+        },
+        executable="claude.exe",
+    )
+    _, evidence = adapter.generate(
+        stage_signatures()[Stage.E0],
+        {"episode_id": "EP35"},
+        GenerationPolicy(requested_model="deepseek-v4-pro"),
+    )
+    assert evidence.signature_version == "3.1"
+
+
+def test_schema_digest_mismatch_fails_before_any_provider_call() -> None:
+    """A compiled schema digest that cannot be re-verified is a local failure."""
+
+    calls: list[object] = []
+    signature = stage_signatures()[Stage.E0]
+
+    class _TamperedCompiler:
+        def compile(self, _signature, _approved_input):
+            return CompiledPrompt(
+                signature=signature,
+                system_message="system",
+                user_message="user",
+                schema_digest="a" * 64,
+                approved_input_digest="b" * 64,
+                budget_report=BudgetReport(
+                    stage="E0", kind="prompt", character_count=10,
+                    hard_limit=signature.prompt_budget, soft_warning=False,
+                ),
+            )
+
+    adapter = ClaudeDeepSeekStructuredAdapter(
+        runner=lambda request: calls.append(request),
+        executable="claude.exe",
+        compiler=_TamperedCompiler(),
+    )
+    with pytest.raises(RuntimeError, match="digest mismatch"):
+        adapter.generate(
+            signature,
+            {"episode_id": "EP35"},
+            GenerationPolicy(requested_model="deepseek-v4-pro"),
+        )
+    assert calls == []
+
+
+def test_repair_values_outside_violation_scope_rejected_at_transport() -> None:
+    """A provider may only patch the exact fields named by the ViolationSet."""
+
+    violation_set = ViolationSet(
+        stage=Stage.B1,
+        draft_digest="a" * 64,
+        violations=(
+            Violation(
+                code="MISSING_REQUIRED_FIELD",
+                json_path="$.shots[0].attention",
+                expected="non-empty text",
+                observed_summary="field absent",
+            ),
+        ),
+        repair_scope=("$.shots[0].attention",),
+    )
+    adapter = ClaudeDeepSeekStructuredAdapter(
+        runner=lambda _request: {
+            "payload": {
+                "stage": "B1",
+                "draft_digest": "a" * 64,
+                "repair_scope": ["$.shots[0].attention"],
+                "values": {
+                    "$.shots[0].attention": "the invitation hand",
+                    "$.shots[0].camera": "escape the approved scope",
+                },
+            }
+        },
+        executable="claude.exe",
+    )
+    with pytest.raises(ValueError, match="invalid ContractPatch"):
+        adapter.repair(
+            stage_signatures()[Stage.B1],
+            violation_set,
+            GenerationPolicy(requested_model="deepseek-v4-pro"),
+            RepairBudget(),
+        )
 
 
 def test_compiler_rejects_undeclared_transport_input_before_serialization() -> None:

@@ -1,0 +1,138 @@
+{
+  "task_id": "A4",
+  "kind": "STAGE_SIGNATURES_AND_PROVIDER_BOUNDARY_V31_REPAIR_EVIDENCE",
+  "architecture_authority": {
+    "version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/prompts/signatures.py",
+    "01_调度器/mode_p_vnext/prompts/budgets.py",
+    "01_调度器/mode_p_vnext/prompts/schema_registry.py",
+    "01_调度器/mode_p_vnext/tests/test_a4_structured_provider.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A4_V31_STRUCTURED_PROVIDER_BOUNDARY_045.json"
+  ],
+  "root_cause_and_repair": {
+    "root_causes": [
+      "All five StageSignature declarations still bound version \"3.0\" even though architecture v3.1 is the sole authority. TextCallEvidence.signature_version would audit a pre-v3.1 version for every structured call, so a silent authority downgrade could pass all tests.",
+      "PromptBudgetGate accepted text whose length exactly equals the declared hard budget (count > limit). Architecture v3.1 §6 states the B1 prompt body must be '< 12000' characters and its schema '< 4500', so reaching the declared limit must fail closed; the boundary values 12000 and 4500 themselves were accepted.",
+      "Two v3.0-era docstrings remained in the prompts package (signatures.py module docstring and schema_registry._assert_canonical_draft_contract) while v3.0 is only SUPERSEDED_BY_V3_1_ARCHITECTURE_CONFLICT_REPAIR."
+    ],
+    "repair": [
+      "Bumped every StageSignature version to \"3.1\" (I0/E0/S1/B0/B1) and added a version-guard test asserting all five signatures bind \"3.1\" plus an evidence-level test proving TextCallEvidence.signature_version records \"3.1\" through the real adapter.",
+      "Changed PromptBudgetGate.validate_prompt/validate_schema from `count > limit` to `count >= limit` so a hard budget is an unreachable ceiling. Added boundary tests: exactly 12000 prompt characters and exactly 4500 schema characters fail; 11999 and 4499 pass.",
+      "Rewrote the two stale v3.0 docstrings to reference v3.1.",
+      "Added two adversarial transport tests: (a) a compiled schema digest that cannot be re-verified fails with RuntimeError before any provider call; (b) a provider ContractPatch whose values keys escape the ViolationSet repair scope is rejected at the transport boundary."
+    ],
+    "declared_design_boundaries": [
+      "I0 transport schema is intentionally flatter than the domain FactExtractionDraft (no confidence/qualifiers; no cross-field constraints). Cross-field semantics (subject requires subject_id, dialogue requires spoken_text, span ordering) are owned by the A1 FactAssembler, not the A4 transport. Domain types are outside A4 allowed_paths and were not changed.",
+      "S1 approved_input_keys includes knowledge_view, but in the canonical graph K1 follows S1, so S1's knowledge_view is always empty forward-occupancy; B0/B1 consume real K1/K2 views. Empty input is harmless and was not removed to preserve the pipeline call signature.",
+      "ContractPatch values are not value-typed at the transport (JSON Schema cannot express per-scope types). The A5 assembly layer must re-validate patched values when applying them.",
+      "The native runner passes --permission-mode bypassPermissions with --tools '' --safe-mode --no-session-persistence --no-chrome: the adapter is a pure text transport with no tool exposure and no session carry-over; no media or filesystem side effects are possible.",
+      "S1 knowledge_view 在 K1 之前恒为空占位(规范图时序 E0->S1->K1->B0),与 A3 K1/K2 单一实现一致,不构成绑定来源。"
+    ]
+  },
+  "checks": [
+    {
+      "name": "stage_signatures_declared",
+      "exit_code": 0,
+      "proof": "stage_signatures() declares exactly I0/E0/S1/B0/B1 with contract_name, semantic_goal, approved_input_fields, output_semantics/exclusions, prompt/schema budgets, and approved_input_keys. All five bind version \"3.1\" (new guard test test_all_stage_signatures_bind_the_v31_authority_version). Declared budgets: I0 6000/2500, E0 6000/2500, S1 8000/3500, B0 10000/4500, B1 12000/4500 (test_stage_signatures_declare_creative_stages_and_internal_i0_ingest)."
+    },
+    {
+      "name": "prompt_schema_separate_transport",
+      "exit_code": 0,
+      "proof": "The native transport sends system_message, user_message, and json_schema as distinct request fields (StructuredTransportRequest); the compiled prompt carries only the schema digest, never the schema document. Verified by test_prompt_transports_only_contract_identity_while_schema_stays_separate and test_schema_is_a_dedicated_transport_field_not_prompt_text (schema JSON absent from both system and user messages)."
+    },
+    {
+      "name": "b1_prompt_under_12000_chars",
+      "exit_code": 0,
+      "proof": "B1 prompt_budget=12000 with unreachable-ceiling semantics (count >= limit fails). Measured real compiled B1 prompt = 1202/12000. Boundary test test_b1_hard_budget_is_an_unreachable_ceiling proves 11999 passes and 12000 fails; test_b1_prompt_and_schema_are_preflight_budgeted proves over-budget input fails before provider invocation."
+    },
+    {
+      "name": "b1_schema_under_4500_chars",
+      "exit_code": 0,
+      "proof": "B1 schema_budget=4500 with the same unreachable-ceiling gate. Measured canonical B1 schema = 3661/4500. Boundary test proves 4499 passes and 4500 fails."
+    },
+    {
+      "name": "native_windows_binary_first",
+      "exit_code": 0,
+      "proof": "resolve_windows_claude_binary selects only the native claude.exe on Windows and rejects .cmd shims (test_windows_resolution_prefers_native_executable_over_cmd_shim); the runner argv is built from the resolved native executable (test_native_runner_uses_native_schema_channel_and_no_tools)."
+    },
+    {
+      "name": "one_scoped_contract_repair",
+      "exit_code": 0,
+      "proof": "RepairBudget.maximum is fixed at 1 and a transport failure never consumes it (test_only_one_whitelisted_contract_patch_can_consume_repair_budget, test_transport_failure_does_not_consume_the_single_contract_repair). The new test test_repair_values_outside_violation_scope_rejected_at_transport proves a provider patch cannot escape the ViolationSet repair scope."
+    },
+    {
+      "name": "i0_fact_extraction_signature",
+      "exit_code": 0,
+      "proof": "I0 is a bounded, non-creative ingest stage: contract FactExtractionDraft, approved_input_keys limited to normalized_source/source_digest/source_start/source_end, schema exposes only source-anchored fact fields and rejects creative or partition fields (test_i0_fact_extraction_is_schema_separated_and_not_a_director_call, test_i0_structured_provider_rejects_model_authored_scene_partition_fields, test_i0_schema_rejects_non_fact_fields_and_empty_source_statements)."
+    },
+    {
+      "name": "source_span_repair_ceiling",
+      "exit_code": 0,
+      "proof": "I0 contract repair is limited by _I0_SOURCE_SPAN_RE to $.facts[i].source_start / $.facts[i].source_end; any other path fails closed (test_i0_source_span_repair_uses_one_scoped_patch_transport, test_i0_contract_repair_cannot_escape_the_source_span_ceiling)."
+    },
+    {
+      "name": "model_does_not_mint_ids_or_ticks",
+      "exit_code": 0,
+      "proof": "No draft schema declares an ID, tick, or hash field; B1 shot schema has no start_tick, I0 fact schema has no fact_id, and additionalProperties:false rejects any injected equivalent (test_b1_schema_rejects_model_ticks_legacy_text_bindings_and_invalid_handles, test_i0_schema_rejects_non_fact_fields_and_empty_source_statements, test_adapter_rejects_non_draft_fields_after_structured_transport)."
+    },
+    {
+      "name": "typed_binding_intents_in_b1_schema",
+      "exit_code": 0,
+      "proof": "B1 schema declares ReferenceBindingIntent(shot_ordinal, visual_beat_ordinal nullable, fact_handle pattern ^fh:[0-9a-f]{64}$, responsibility enum) and DialogueBindingIntent(shot_ordinal, visual_beat_ordinal, fact_handle, placement_phase enum opening|early|middle|late|closing), field-exact against the canonical domain dataclasses (test_registered_schemas_match_the_canonical_creative_draft_contracts)."
+    },
+    {
+      "name": "free_text_not_binding_transport",
+      "exit_code": 0,
+      "proof": "The only free-text field in B1 is creative_notes (explanatory, no parser privilege); legacy 'reference_intents' free-text arrays are rejected by the schema and 'free-text reference or audio machine bindings' appears in B1 output_exclusions (test_b1_schema_rejects_model_ticks_legacy_text_bindings_and_invalid_handles, signatures.py B1 output_exclusions)."
+    }
+  ],
+  "verification_results": [
+    {
+      "name": "a4_structured_provider",
+      "command": "python -m pytest mode_p_vnext/tests/test_a4_structured_provider.py -q -p no:cacheprovider",
+      "result": "28 passed",
+      "exit_code": 0
+    }
+  ],
+  "related_regression": [
+    {
+      "command": "python -m compileall -q mode_p_vnext/prompts mode_p_vnext/ports/structured_text.py mode_p_vnext/adapters/model mode_p_vnext/tests/test_a4_structured_provider.py",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a3_knowledge_flow.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py -q -p no:cacheprovider",
+      "result": "112 passed, 2 failed",
+      "exit_code": 1,
+      "classification": "HISTORICAL_V4_BASELINE_CRLF_CHECKOUT_DRIFT_OUTSIDE_A4_SCOPE",
+      "root_cause": "test_a0_release_control.py::test_current_v4_cohort_ledger_is_canonical_and_history_stays_read_only and test_v9_4_v4_compatibility.py::test_v4_collection_matches_registered_cohorts compare hashlib.sha256(read_bytes()) of the on-disk v4 source file 01_调度器/mode_p/test_ep35_s1_pipeline.py against the frozen V0.1 cohort ledger source_sha256. This Windows checkout has core.autocrlf=true and no .gitattributes, so the working-tree file is CRLF; the ledger freezes the LF-normalized repository hash. Proof: git show HEAD:01_调度器/mode_p/test_ep35_s1_pipeline.py hashes to the ledger value 5bf716335524..., while the same bytes with CRLF line terminators hash to c1dfcc6030af... equal to the on-disk file. This is an environment/checkout drift of the historical v4 baseline, unrelated to A4 changes (the registered A4 command and every A1/A2/A3 regression pass). Fixing it would require modifying the frozen v4 cohort ledger or v4 baseline tests, which are outside A4 allowed_paths; it is recorded and left to a v4-cohort owner."
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "full_vnext_collection",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "975 passed, 1 skipped, 32 failed, 8 errors, 420 subtests passed",
+      "exit_code": 1,
+      "classification": "HISTORICAL_READ_ONLY_BASELINE_DRIFT_OUTSIDE_A4_SCOPE",
+      "root_cause": "Failures concentrate in not-yet-constructed packages (test_a9_prompt_lab 18, test_a7_dual_loop 11) and historical v4/R3.2/DDO/V0 baselines (r3_2_*, v0_1, v9_4, ddo_0, a0 cohort) that freeze LF-normalized hashes while this Windows checkout materializes CRLF (core.autocrlf=true, no .gitattributes). The same historical defect set was recorded for A2/A3; the A4 delta over the A3-recorded baseline is the CRLF environment drift plus the not-yet-claimed A7/A8/A9 packages. All 28 A4 registered tests pass; architecture v3.1 §2 keeps these artifacts read-only and §10 prohibits using them as v3.1 completion proof.",
+      "disposition": "Recorded without modifying historical evidence, v4 production code, user data, or external media."
+    }
+  ],
+  "claim_delta_observation": {
+    "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+    "implementation_delta": "Only the four A4-allowed source/test files and this Evidence file changed after the A4 claim. Existing user-owned untracked paths (A4_V30_STRUCTURED_PROVIDER_001.json, .agents/, AGENTS.md, 01_调度器/mode_p_vnext/adapters/storage/) remain outside changed_paths and are neither staged nor committed.",
+    "controller_action": "ReleaseLedger complete revalidates the frozen architecture hash, compares claim-time and complete-time manifests, reruns the registered A4 test, captures artifact hashes, and rejects undeclared or out-of-scope changes."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "text_claim_ceiling": "TEXT_VALIDATED"
+  }
+}

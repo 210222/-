@@ -21,14 +21,20 @@ class BudgetReport:
 
 
 class PromptBudgetGate:
-    """Measure complete compiled text; never truncate facts to fit a budget."""
+    """Measure complete compiled text; never truncate facts to fit a budget.
+
+    Architecture v3.1 §6 states the B1 prompt body must be ``< 12000``
+    characters and its schema ``< 4500`` characters.  A hard budget is
+    therefore an unreachable ceiling: reaching it (``count >= limit``) fails
+    closed before any provider call.  This applies uniformly to every stage.
+    """
 
     @staticmethod
     def validate_prompt(signature: StageSignature, text: str) -> BudgetReport:
         count = len(text)
-        if count > signature.prompt_budget:
+        if count >= signature.prompt_budget:
             raise PromptBudgetExceeded(
-                f"{signature.stage.value} prompt exceeds hard limit "
+                f"{signature.stage.value} prompt reaches hard limit "
                 f"{signature.prompt_budget}: {count}"
             )
         return BudgetReport(
@@ -45,9 +51,9 @@ class PromptBudgetGate:
     @staticmethod
     def validate_schema(signature: StageSignature, text: str) -> BudgetReport:
         count = len(text)
-        if count > signature.schema_budget:
+        if count >= signature.schema_budget:
             raise PromptBudgetExceeded(
-                f"{signature.stage.value} schema exceeds hard limit "
+                f"{signature.stage.value} schema reaches hard limit "
                 f"{signature.schema_budget}: {count}"
             )
         return BudgetReport(
