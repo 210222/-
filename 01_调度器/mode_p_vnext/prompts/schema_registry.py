@@ -192,7 +192,7 @@ _SCHEMAS: Mapping[Stage, Mapping[str, Any]] = {
         ],
         "properties": {
             "curve_points": {"type": "array", "minItems": 1, "maxItems": 24, "items": {"type": "object", "additionalProperties": False, "required": ["dramatic_beat_ordinal", "intensity", "explanation"], "properties": {"dramatic_beat_ordinal": {"type": "integer", "minimum": 1}, "intensity": {"type": "integer", "minimum": 0, "maximum": 100}, "explanation": {"type": "string", "maxLength": 240}}}},
-            "decisions": {"type": "array", "minItems": 1, "maxItems": 24, "items": {"type": "object", "additionalProperties": False, "required": ["scope", "basis", "locked_by", "options", "selected_index", "rationale", "tradeoff"], "properties": {"scope": {"type": "string", "maxLength": 120}, "basis": {"enum": ["locked", "choice"]}, "locked_by": {"type": "array", "maxItems": 8, "items": {"type": "string", "maxLength": 180}}, "options": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string", "maxLength": 240}}, "selected_index": {"type": "integer", "minimum": 0, "maximum": 1}, "rationale": {"type": "string", "maxLength": 240}, "tradeoff": {"type": "string", "maxLength": 240}}, "allOf": [{"if": {"properties": {"basis": {"const": "locked"}}, "required": ["basis"]}, "then": {"properties": {"options": {"maxItems": 1}, "locked_by": {"minItems": 1}}}}, {"if": {"properties": {"basis": {"const": "choice"}}, "required": ["basis"]}, "then": {"properties": {"options": {"minItems": 2, "maxItems": 2}, "locked_by": {"maxItems": 0}}}}]}},
+            "decisions": {"type": "array", "minItems": 1, "maxItems": 24, "items": {"type": "object", "additionalProperties": False, "required": ["scope", "basis", "locked_by", "options", "selected_index", "rationale", "tradeoff"], "properties": {"scope": {"type": "string", "maxLength": 120}, "basis": {"enum": ["locked", "choice"]}, "locked_by": {"type": "array", "maxItems": 8, "items": {"type": "string", "maxLength": 180}}, "options": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string", "maxLength": 240}}, "selected_index": {"type": "integer", "minimum": 0, "maximum": 1}, "rationale": {"type": "string", "maxLength": 240}, "tradeoff": {"type": "string", "maxLength": 240}}, "oneOf": [{"properties": {"basis": {"const": "locked"}, "options": {"maxItems": 1}, "locked_by": {"minItems": 1}}}, {"properties": {"basis": {"const": "choice"}, "options": {"minItems": 2, "maxItems": 2}, "locked_by": {"maxItems": 0}}}]}},
             "shots": {
                 "type": "array", "minItems": 1, "maxItems": 48,
                 "items": {
@@ -256,7 +256,7 @@ _SCHEMAS: Mapping[Stage, Mapping[str, Any]] = {
                     },
                 },
             },
-            "transition_intents": {"type": "array", "items": {"type": "string", "maxLength": 240}},
+            "transition_intents": {"type": "array", "description": "Exactly one entry per interior shot boundary (len(shots)-1 total); entry i is the transition from shot i to shot i+1; no opening or closing fade.", "items": {"type": "string", "maxLength": 240}},
             "handoff_intent": {"type": "string", "maxLength": 240},
         },
     },

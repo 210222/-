@@ -201,7 +201,7 @@ _STAGE_SIGNATURES: Mapping[Stage, StageSignature] = MappingProxyType({
             "visual beats",
             "typed reference binding intents",
             "typed dialogue binding intents",
-            "transition intents",
+            "interior transition intents (exactly one per shot boundary)",
             "handoff intent",
         ),
         output_exclusions=(
