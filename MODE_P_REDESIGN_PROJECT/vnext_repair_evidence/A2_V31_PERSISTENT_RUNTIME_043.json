@@ -1,0 +1,128 @@
+{
+  "task_id": "A2",
+  "kind": "PERSISTENT_RUNTIME_V31_REPAIR_EVIDENCE",
+  "architecture_authority": {
+    "version": "3.1",
+    "path": "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/MODE_P_VNEXT_ARCHITECTURE_REDESIGN_V3.1.md",
+    "sha256": "d5616edc209dcaba3d82a1defe5e11187145399c30143bad6e4e685eb5c4c903"
+  },
+  "changed_paths": [
+    "01_调度器/mode_p_vnext/pipeline/state.py",
+    "01_调度器/mode_p_vnext/pipeline/graph.py",
+    "01_调度器/mode_p_vnext/pipeline/invalidation.py",
+    "01_调度器/mode_p_vnext/runtime/cache.py",
+    "01_调度器/mode_p_vnext/runtime/session.py",
+    "01_调度器/mode_p_vnext/runtime/transaction.py",
+    "01_调度器/mode_p_vnext/tests/test_a2_persistent_graph.py",
+    "MODE_P_REDESIGN_PROJECT/vnext_repair_evidence/A2_V31_PERSISTENT_RUNTIME_043.json"
+  ],
+  "runtime_schema_boundary": {
+    "active_architecture_version": "3.1",
+    "persistent_runtime_schema_version": "3.1.1",
+    "reason": "3.1.1 is a fail-closed storage-layout migration for retained immutable bundle fields. It is not a successor architecture package and does not alter the frozen v3.1 authority SHA, domain schema, product semantics, or task registry. Older 3.1 runtime snapshots are deliberately rejected because they cannot prove the new adapter-only retention invariant."
+  },
+  "root_cause_and_repair": {
+    "root_causes": [
+      "The prior runtime graph recorded ArtifactRefs and a state hash, but a persisted candidate was not consistently bound through node acceptance, cache identity, pending writes, checkpoints, replay, invalidation evidence, and the producer-facing execution snapshot.",
+      "Projection, Gate 0, and DP could receive a candidate tuple only by an optional API path. A caller could omit it and let the runtime fill the current tuple while holding the write lock, which did not prove that a concurrent worker had captured the exact candidate it read.",
+      "The canonical Projection node atomically owned the AST and both delivery views, but generic node-level invalidation removed the entire bundle when only one adapter signature changed. That contradicted the v3.1 requirement that an adapter-only change invalidate only its affected delivery view before Gate 0/DP are refreshed.",
+      "Invalidation records did not distinguish newly retained immutable artifacts from superseded artifacts, weakening replay/audit evidence for a partial atomic rebuild."
+    ],
+    "repair": [
+      "PersistentGraphState, NodeAcceptance, cache keys, pending records, manifests, checkpoints, recovery, and invalidation records now bind run/graph/candidate revision/digest, validation status, and lifecycle transitions. Replay recomputes each transition and rejects stale, forged, or schema-mismatched data.",
+      "v3.1 Projection, G0, and DP execution now require an explicit paired captured candidate revision/digest. A partial tuple, stale tuple, or tuple filled only after work reaches the lock fails before acceptance.",
+      "NodeSpec now carries local deterministic per-output input dependencies. On an adapter-only Projection change, only the affected delivery artifacts are removed; the AST and unaffected delivery artifacts are persisted as retained immutable references. The next Projection commit must atomically re-present the full bundle and may reuse retained references only byte-for-byte, preventing an adapter change from rewriting visual authority.",
+      "Retention provenance and newly retained digests are serialized in the state/transition evidence. Capability and knowledge changes remain conservative full-node closures, while field changes use the declared dependency boundary."
+    ]
+  },
+  "checks": [
+    {
+      "name": "persistent_state_graph",
+      "exit_code": 0,
+      "proof": "Canonical v3.1 node order, typed ArtifactRef-only state, node input/output context, candidate lifecycle, optional DP RevisionRequest, and retained-field invariants are exercised."
+    },
+    {
+      "name": "checkpoint_resume",
+      "exit_code": 0,
+      "proof": "Committed-chain replay, checkpoint tuple binding, tamper rejection, and retained adapter-field replay are exercised without path-based recovery."
+    },
+    {
+      "name": "pending_write_atomicity",
+      "exit_code": 0,
+      "proof": "Pending writes remain non-accepted, promoted crash boundaries require explicit recovery, manifests bind candidate tuples, and malformed transition validation status is rejected."
+    },
+    {
+      "name": "content_addressed_artifacts",
+      "exit_code": 0,
+      "proof": "Artifact repository and cache records use immutable canonical references; cache identity includes the candidate tuple and artifact mutation is rejected during replay."
+    },
+    {
+      "name": "field_level_invalidation",
+      "exit_code": 0,
+      "proof": "Declared output-input dependencies prove that a storyboard-adapter change supersedes only storyboard artifacts, retains AST/video references, refreshes G0/DP, and requires an atomic full-bundle rebuild."
+    },
+    {
+      "name": "capability_profile_invalidation",
+      "exit_code": 0,
+      "proof": "Selected capability changes invalidate only accepted capability consumers and downstream closure; unchanged capability profiles are strict no-ops."
+    },
+    {
+      "name": "stale_concurrent_result_rejected",
+      "exit_code": 0,
+      "proof": "Base-state, candidate revision/digest, write-scope lock, concurrent recovery, and v3.1 Projection/G0/DP explicit tuple tests reject stale or implicit producer results."
+    }
+  ],
+  "registered_verification_observation": [
+    {
+      "name": "a2_persistent_graph",
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py -q -p no:cacheprovider",
+      "result": "24 passed",
+      "exit_code": 0
+    }
+  ],
+  "related_regression": [
+    {
+      "command": "python -m compileall -q mode_p_vnext/pipeline mode_p_vnext/runtime",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a2_persistent_graph.py mode_p_vnext/tests/test_a6_projection_compiler.py mode_p_vnext/tests/test_a7_dual_loop.py mode_p_vnext/tests/test_a8_real_shadow.py -q -p no:cacheprovider",
+      "result": "89 passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m pytest mode_p_vnext/tests/test_a0_release_control.py mode_p/test_active_entrypoints.py mode_p_vnext/tests/test_v9_4_v4_compatibility.py mode_p_vnext/tests/test_a1_domain_model.py mode_p_vnext/tests/test_a4_structured_provider.py mode_p_vnext/tests/test_a5_vec_assembly.py -q -p no:cacheprovider",
+      "result": "96 passed",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m mode_p_vnext.release_control audit",
+      "result": "ok: true while A2 claim was active",
+      "exit_code": 0
+    }
+  ],
+  "informational_results": [
+    {
+      "name": "full_vnext_collection",
+      "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+      "command": "python -m pytest mode_p_vnext/tests -q -p no:cacheprovider",
+      "result": "1004 passed, 1 skipped, 24 failed, 401 subtests passed",
+      "exit_code": 1,
+      "classification": "HISTORICAL_READ_ONLY_BASELINE_DRIFT_OUTSIDE_A2_SCOPE",
+      "root_cause": "The failures are stable across pre/post A2 runs and are limited to historical DDO/R0/R3/V0.1 control records: three stale Director queue artifact hashes, an old R0.2 state/evidence mismatch, guarded baseline-input drift, three legacy knowledge hashes, and eight unavailable golden media paths rooted at C:\\Users\\JT\\Downloads. v3.1 §2 makes DDO, R, V0–V10, director_vnext1, historical Evidence, and historical output read-only lower authority; v3.1 §1 and §10 prohibit using them as current v3.1 completion proof.",
+      "disposition": "Recorded rather than modified during A2. The active v3.1 ReleaseLedger audit is clean, all A2 registered and affected current-v3.1 regressions pass, no historical artifact is staged, and no external media or v4 path is changed."
+    }
+  ],
+  "claim_delta_observation": {
+    "authority": "manual_untrusted_until_controller_or_supervisor_audit",
+    "implementation_delta": "Only A2-allowed persistent runtime, graph, invalidation, test, and this Evidence files changed after the A2 claim. Existing user-owned modified/untracked files remain outside changed_paths and are neither staged nor committed.",
+    "controller_action": "ReleaseLedger complete revalidates the frozen v3.1 authority hash, compares claim-time and complete-time workspace manifests, reruns the registered A2 test, snapshots changed artifacts, and rejects undeclared or out-of-scope changes."
+  },
+  "production_boundary": {
+    "production_entry": "v4_unchanged",
+    "production_switch_authorized": false,
+    "external_media_started": false,
+    "text_claim_ceiling": "TEXT_VALIDATED"
+  }
+}

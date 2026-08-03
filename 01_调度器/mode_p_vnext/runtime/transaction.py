@@ -1,4 +1,4 @@
-"""Pending-to-atomic-commit protocol for the v3.0 runtime state graph.
+"""Pending-to-atomic-commit protocol for the v3.1 runtime state graph.
 
 The staging directory is intentionally *not* recoverable state.  A process
 may resume only a directory that has already been atomically renamed into
@@ -44,6 +44,12 @@ def _digest(value: object, field_name: str) -> str:
     except DomainValidationError as exc:
         raise NodeTransactionError(str(exc)) from exc
     return value  # type: ignore[return-value]
+
+
+def _non_negative_int(value: object, field_name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise NodeTransactionError(f"{field_name} must be a non-negative integer")
+    return value
 
 
 def _refs(value: Mapping[str, ArtifactRef], field_name: str) -> Mapping[str, ArtifactRef]:
@@ -103,6 +109,8 @@ class PendingNodeWrite:
     generation_id: str
     parent_commit_id: str
     base_state_sha256: str
+    base_candidate_revision: int
+    base_candidate_digest: str
     next_state: PersistentGraphState
     state_sha256: str
     transition: Mapping[str, Any]
@@ -115,6 +123,8 @@ class PendingNodeWrite:
         if self.parent_commit_id:
             _text(self.parent_commit_id, "parent_commit_id")
         _digest(self.base_state_sha256, "base_state_sha256")
+        _non_negative_int(self.base_candidate_revision, "base_candidate_revision")
+        _digest(self.base_candidate_digest, "base_candidate_digest")
         _digest(self.state_sha256, "state_sha256")
         if self.state_sha256 != canonical_sha256(self.next_state.to_dict()):
             raise NodeTransactionError("state_sha256 does not match next_state")
@@ -123,6 +133,18 @@ class PendingNodeWrite:
         frozen = MappingProxyType(dict(self.transition))
         if frozen.get("kind") != self.transaction_kind:
             raise NodeTransactionError("transition kind does not match transaction_kind")
+        if self.transaction_kind == "node":
+            if frozen.get("candidate_revision") != self.base_candidate_revision:
+                raise NodeTransactionError("node transition is not bound to its base candidate revision")
+            if frozen.get("candidate_digest") != self.base_candidate_digest:
+                raise NodeTransactionError("node transition is not bound to its base candidate digest")
+            if (
+                frozen.get("candidate_validation_status")
+                != self.next_state.candidate_validation_status.value
+            ):
+                raise NodeTransactionError(
+                    "node transition is not bound to its resulting validation status"
+                )
         object.__setattr__(self, "transition", frozen)
 
     @property
@@ -139,6 +161,8 @@ class PendingNodeWrite:
             "generation_id": self.generation_id,
             "parent_commit_id": self.parent_commit_id,
             "base_state_sha256": self.base_state_sha256,
+            "base_candidate_revision": self.base_candidate_revision,
+            "base_candidate_digest": self.base_candidate_digest,
             "next_state": self.next_state.to_dict(),
             "state_sha256": self.state_sha256,
             "transition": dict(self.transition),
@@ -148,11 +172,12 @@ class PendingNodeWrite:
     def from_dict(cls, value: Mapping[str, Any]) -> "PendingNodeWrite":
         expected = {
             "schema_name", "schema_version", "transaction_kind", "commit_id",
-            "generation_id", "parent_commit_id", "base_state_sha256", "next_state",
+            "generation_id", "parent_commit_id", "base_state_sha256",
+            "base_candidate_revision", "base_candidate_digest", "next_state",
             "state_sha256", "transition",
         }
         if not isinstance(value, Mapping) or set(value) != expected:
-            raise NodeTransactionError("pending write fields do not match the v3.0 schema")
+            raise NodeTransactionError("pending write fields do not match the v3.1 schema")
         if value.get("schema_name") != PENDING_SCHEMA_NAME or value.get("schema_version") != PERSISTENCE_SCHEMA_VERSION:
             raise NodeTransactionError("unsupported pending write schema")
         try:
@@ -162,6 +187,8 @@ class PendingNodeWrite:
                 generation_id=value["generation_id"],
                 parent_commit_id=value["parent_commit_id"],
                 base_state_sha256=value["base_state_sha256"],
+                base_candidate_revision=value["base_candidate_revision"],
+                base_candidate_digest=value["base_candidate_digest"],
                 next_state=PersistentGraphState.from_dict(value["next_state"]),
                 state_sha256=value["state_sha256"],
                 transition=value["transition"],
@@ -194,12 +221,28 @@ class NodeTransaction:
         transition: Mapping[str, Any],
     ) -> PendingNodeWrite:
         root = Path(run_dir).resolve()
+        if not isinstance(base_state, PersistentGraphState) or not isinstance(next_state, PersistentGraphState):
+            raise NodeTransactionError("transactions require persistent graph states")
+        if base_state.run_id != next_state.run_id or base_state.graph_digest != next_state.graph_digest:
+            raise NodeTransactionError("transaction states must retain run and graph identity")
+        if parent_commit_id != base_state.current_commit_id:
+            raise NodeTransactionError("transaction parent must match the base state commit")
+        if next_state.event_sequence != base_state.event_sequence + 1:
+            raise NodeTransactionError("transaction must advance the event sequence exactly once")
+        if next_state.current_commit_id != commit_id:
+            raise NodeTransactionError("transaction next state must name its commit")
+        if transaction_kind == "node" and next_state.candidate_revision != base_state.candidate_revision:
+            raise NodeTransactionError("a node transaction cannot advance candidate_revision")
+        if transaction_kind == "invalidation" and next_state.candidate_revision != base_state.candidate_revision + 1:
+            raise NodeTransactionError("an invalidation transaction must advance candidate_revision once")
         pending = PendingNodeWrite(
             transaction_kind=transaction_kind,
             commit_id=commit_id,
             generation_id=generation_id,
             parent_commit_id=parent_commit_id,
             base_state_sha256=canonical_sha256(base_state.to_dict()),
+            base_candidate_revision=base_state.candidate_revision,
+            base_candidate_digest=base_state.candidate_digest,
             next_state=next_state,
             state_sha256=canonical_sha256(next_state.to_dict()),
             transition=transition,
@@ -218,6 +261,11 @@ class NodeTransaction:
             "generation_id": pending.generation_id,
             "parent_commit_id": pending.parent_commit_id,
             "base_state_sha256": pending.base_state_sha256,
+            "base_candidate_revision": pending.base_candidate_revision,
+            "base_candidate_digest": pending.base_candidate_digest,
+            "next_candidate_revision": pending.next_state.candidate_revision,
+            "next_candidate_digest": pending.next_state.candidate_digest,
+            "next_candidate_validation_status": pending.next_state.candidate_validation_status.value,
             "state_sha256": pending.state_sha256,
             "transition_sha256": canonical_sha256(pending.transition),
             "pending_sha256": canonical_sha256(pending.to_dict()),

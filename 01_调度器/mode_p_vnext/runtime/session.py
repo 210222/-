@@ -1,4 +1,4 @@
-"""Durable v3.0 graph sessions with fail-closed recovery and concurrency."""
+"""Durable v3.1 graph sessions with fail-closed recovery and concurrency."""
 
 from __future__ import annotations
 
@@ -11,8 +11,14 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping
 
 from mode_p_vnext.concurrency_lock import LockError, SessionLock
-from mode_p_vnext.domain.artifact import ArtifactEnvelope, canonical_json_bytes, canonical_sha256, require_sha256
-from mode_p_vnext.pipeline.graph import StateGraph
+from mode_p_vnext.domain.artifact import (
+    ArtifactEnvelope,
+    ValidationStatus,
+    canonical_json_bytes,
+    canonical_sha256,
+    require_sha256,
+)
+from mode_p_vnext.pipeline.graph import V31_NODE_VERSION, StateGraph
 from mode_p_vnext.pipeline.invalidation import FieldInvalidator, InvalidationRecord, InvalidationResult
 from mode_p_vnext.pipeline.state import PERSISTENCE_SCHEMA_VERSION, ArtifactRef, PersistentGraphState, StateInvariantError
 
@@ -30,7 +36,7 @@ CHECKPOINT_SCHEMA_NAME = "mode_p_vnext_runtime_checkpoint"
 
 
 class RunSessionError(RuntimeError):
-    """Raised when a v3.0 run cannot be safely read, resumed, or advanced."""
+    """Raised when a v3.1 run cannot be safely read, resumed, or advanced."""
 
 
 def _safe_component(value: object, field_name: str) -> str:
@@ -94,6 +100,9 @@ class ExecutionSnapshot:
     run_id: str
     graph_digest: str
     base_state_sha256: str
+    candidate_revision: int
+    candidate_digest: str
+    candidate_validation_status: ValidationStatus
 
 
 class RunSession:
@@ -160,10 +169,14 @@ class RunSession:
         return self._run_record()["write_scope"]  # type: ignore[return-value]
 
     def capture_execution_snapshot(self) -> ExecutionSnapshot:
+        state = self.state()
         return ExecutionSnapshot(
             run_id=self.run_id,
             graph_digest=self.graph.digest,
-            base_state_sha256=canonical_sha256(self.state().to_dict()),
+            base_state_sha256=canonical_sha256(state.to_dict()),
+            candidate_revision=state.candidate_revision,
+            candidate_digest=state.candidate_digest,
+            candidate_validation_status=state.candidate_validation_status,
         )
 
     def runner(self, *, owner: str) -> "NodeRunner":
@@ -179,7 +192,7 @@ class RunSession:
             "graph_digest", "record_sha256",
         }
         if set(record) != expected or record.get("schema_name") != RUN_SCHEMA_NAME or record.get("schema_version") != PERSISTENCE_SCHEMA_VERSION:
-            raise RunSessionError("RUN record fields do not match the v3.0 schema")
+            raise RunSessionError("RUN record fields do not match the v3.1 schema")
         body = {key: value for key, value in record.items() if key != "record_sha256"}
         if canonical_sha256(body) != record.get("record_sha256"):
             raise RunSessionError("RUN record digest is invalid")
@@ -199,7 +212,7 @@ class RunSession:
             "manifest_sha256", "pointer_sha256",
         }
         if set(pointer) != expected or pointer.get("schema_name") != POINTER_SCHEMA_NAME or pointer.get("schema_version") != PERSISTENCE_SCHEMA_VERSION:
-            raise RunSessionError("current pointer fields do not match the v3.0 schema")
+            raise RunSessionError("current pointer fields do not match the v3.1 schema")
         body = {key: value for key, value in pointer.items() if key != "pointer_sha256"}
         if canonical_sha256(body) != pointer.get("pointer_sha256"):
             raise RunSessionError("current pointer digest is invalid")
@@ -228,11 +241,17 @@ class RunSession:
             raise RunSessionError("commit parent does not match the active state")
         if pending.base_state_sha256 != canonical_sha256(state.to_dict()):
             raise RunSessionError("commit base state does not match the active state")
+        if (
+            pending.base_candidate_revision != state.candidate_revision
+            or pending.base_candidate_digest != state.candidate_digest
+        ):
+            raise RunSessionError("commit candidate tuple does not match the active state")
         transition = pending.transition
         if pending.transaction_kind == "node":
             expected = {
                 "kind", "node_id", "graph_digest", "outputs", "input_digests",
                 "knowledge_snapshot_digest", "capability_profile_digest",
+                "candidate_revision", "candidate_digest", "candidate_validation_status",
             }
             if set(transition) != expected or transition.get("kind") != "node" or transition.get("graph_digest") != self.graph.digest:
                 raise RunSessionError("node transition fields are invalid or bound to another graph")
@@ -248,36 +267,57 @@ class RunSession:
                     knowledge_snapshot_digest=transition["knowledge_snapshot_digest"],
                     capability_profile_digest=transition["capability_profile_digest"],
                     commit_id=pending.commit_id,
+                    candidate_revision=transition["candidate_revision"],
+                    candidate_digest=transition["candidate_digest"],
+                    candidate_validation_status=ValidationStatus(
+                        transition["candidate_validation_status"]
+                    ),
                 )
-            except (KeyError, TypeError, StateInvariantError) as exc:
+            except (KeyError, TypeError, ValueError, StateInvariantError) as exc:
                 raise RunSessionError("node transition cannot be reproduced") from exc
         expected = {"kind", "record"}
         if set(transition) != expected or transition.get("kind") != "invalidation" or not isinstance(transition.get("record"), Mapping):
             raise RunSessionError("invalidation transition fields are invalid")
         try:
             record = InvalidationRecord.from_dict(transition["record"])
+            if (
+                record.source_candidate_revision != state.candidate_revision
+                or record.source_candidate_digest != state.candidate_digest
+                or record.source_candidate_validation_status
+                != state.candidate_validation_status.value
+            ):
+                raise RunSessionError("invalidation transition is bound to a stale candidate tuple")
             invalidator = FieldInvalidator(self.graph)
             if record.invalidation_kind == "capability_profile":
-                return invalidator.invalidate_capability_profile(
+                next_state = invalidator.invalidate_capability_profile(
                     state,
                     capability_profile_digest=record.changed_field_digests["capability_profile"],
                     reason=record.reason,
                     commit_id=pending.commit_id,
                 ).state
-            if record.invalidation_kind == "knowledge_snapshot":
-                return invalidator.invalidate_knowledge_snapshot(
+            elif record.invalidation_kind == "knowledge_snapshot":
+                next_state = invalidator.invalidate_knowledge_snapshot(
                     state,
                     knowledge_snapshot_digest=record.changed_field_digests["knowledge_snapshot"],
                     reason=record.reason,
                     commit_id=pending.commit_id,
                 ).state
-            return invalidator.invalidate(
-                state,
-                changed_field_digests=record.changed_field_digests,
-                reason=record.reason,
-                commit_id=pending.commit_id,
-                invalidation_kind="field",
-            ).state
+            else:
+                next_state = invalidator.invalidate(
+                    state,
+                    changed_field_digests=record.changed_field_digests,
+                    reason=record.reason,
+                    commit_id=pending.commit_id,
+                    invalidation_kind="field",
+                ).state
+            if (
+                record.next_candidate_revision != next_state.candidate_revision
+                or record.next_candidate_digest != next_state.candidate_digest
+                or record.next_candidate_validation_status
+                != next_state.candidate_validation_status.value
+            ):
+                raise RunSessionError("invalidation transition does not reproduce its candidate tuple")
+            return next_state
         except (StateInvariantError, KeyError, TypeError) as exc:
             raise RunSessionError("invalidation transition cannot be reproduced") from exc
 
@@ -294,7 +334,7 @@ class RunSession:
                 raise RunSessionError("commit directory identity does not match its record")
             chain.append(pending)
             commit_id = pending.parent_commit_id
-        state = PersistentGraphState.empty(self.run_id)
+        state = PersistentGraphState.empty(self.run_id, graph_digest=self.graph.digest)
         for pending in reversed(chain):
             expected = self._transition_state(state, pending)
             if canonical_sha256(expected.to_dict()) != pending.state_sha256 or expected.to_dict() != pending.next_state.to_dict():
@@ -317,7 +357,7 @@ class RunSession:
         """
         pointer = self._read_pointer()
         if pointer is None:
-            return PersistentGraphState.empty(self.run_id)
+            return PersistentGraphState.empty(self.run_id, graph_digest=self.graph.digest)
         pending = NodeTransaction.read_committed(self.run_dir / "commits" / pointer["commit_id"])
         if NodeTransaction.manifest_sha256(self.run_dir / "commits" / pending.commit_id) != pointer["manifest_sha256"]:
             raise RunSessionError("current pointer is not bound to the committed manifest")
@@ -344,6 +384,8 @@ class RunSession:
             if (
                 pending.parent_commit_id == base.current_commit_id
                 and pending.base_state_sha256 == base_hash
+                and pending.base_candidate_revision == base.candidate_revision
+                and pending.base_candidate_digest == base.candidate_digest
             ):
                 candidates.append(pending)
         return tuple(candidates)
@@ -368,6 +410,9 @@ class RunSession:
             "run_id": self.run_id,
             "commit_id": state.current_commit_id,
             "event_sequence": state.event_sequence,
+            "candidate_revision": state.candidate_revision,
+            "candidate_digest": state.candidate_digest,
+            "candidate_validation_status": state.candidate_validation_status.value,
             "state": state.to_dict(),
             "state_sha256": canonical_sha256(state.to_dict()),
         }
@@ -387,6 +432,10 @@ class RunSession:
                     canonical_sha256(body) == value.get("checkpoint_sha256")
                     and value.get("run_id") == self.run_id
                     and value.get("commit_id") == state.current_commit_id
+                    and value.get("candidate_revision") == state.candidate_revision
+                    and value.get("candidate_digest") == state.candidate_digest
+                    and value.get("candidate_validation_status")
+                    == state.candidate_validation_status.value
                     and value.get("state_sha256") == canonical_sha256(state.to_dict())
                     and value.get("state") == state.to_dict()
                 ):
@@ -475,6 +524,22 @@ class RunSession:
             )
         if actual.record.invalidated_node_ids != record.invalidated_node_ids:
             raise RunSessionError("invalidation scope changed while acquiring the write lock")
+        if (
+            actual.record.invalidated_artifact_digests
+            != record.invalidated_artifact_digests
+            or actual.record.retained_artifact_digests
+            != record.retained_artifact_digests
+            or
+            actual.record.source_candidate_revision != record.source_candidate_revision
+            or actual.record.source_candidate_digest != record.source_candidate_digest
+            or actual.record.source_candidate_validation_status
+            != record.source_candidate_validation_status
+            or actual.record.next_candidate_revision != record.next_candidate_revision
+            or actual.record.next_candidate_digest != record.next_candidate_digest
+            or actual.record.next_candidate_validation_status
+            != record.next_candidate_validation_status
+        ):
+            raise RunSessionError("invalidation candidate lifecycle changed while acquiring the write lock")
         pending = NodeTransaction.prepare(
             self.run_dir,
             transaction_kind="invalidation",
@@ -574,6 +639,9 @@ class NodeRunner:
         base_state_sha256: str,
         knowledge_snapshot_digest: str | None = None,
         capability_profile_digest: str | None = None,
+        candidate_revision: int | None = None,
+        candidate_digest: str | None = None,
+        candidate_validation_status: ValidationStatus | None = None,
     ) -> PendingNodeWrite:
         try:
             require_sha256(base_state_sha256, "base_state_sha256")
@@ -585,6 +653,35 @@ class NodeRunner:
             state = self.session.state()
             if canonical_sha256(state.to_dict()) != base_state_sha256:
                 raise StateInvariantError("stale concurrent result: captured base state no longer matches")
+            node = self.session.graph.node(node_id)
+            if (candidate_revision is None) != (candidate_digest is None):
+                raise StateInvariantError(
+                    "candidate_revision and candidate_digest must be supplied together"
+                )
+            if (
+                node.node_version == V31_NODE_VERSION
+                and node_id in {"Projection", "G0", "DP"}
+                and candidate_revision is None
+            ):
+                raise StateInvariantError(
+                    f"v3.1 {node_id} work requires an explicit captured candidate tuple"
+                )
+            if candidate_revision is None:
+                candidate_revision = state.candidate_revision
+            else:
+                if isinstance(candidate_revision, bool) or not isinstance(candidate_revision, int):
+                    raise StateInvariantError("candidate_revision must be a non-negative integer")
+                if candidate_revision != state.candidate_revision:
+                    raise StateInvariantError("stale candidate revision: captured candidate no longer matches")
+            if candidate_digest is None:
+                candidate_digest = state.candidate_digest
+            else:
+                try:
+                    require_sha256(candidate_digest, "candidate_digest")
+                except Exception as exc:
+                    raise StateInvariantError("candidate_digest must be a SHA-256 digest") from exc
+                if candidate_digest != state.candidate_digest:
+                    raise StateInvariantError("stale candidate digest: captured candidate no longer matches")
             refs = self._refs(artifacts)
             commit_id, generation_id = NodeTransaction.new_identity(node_id)
             next_state = self.session.graph.apply(
@@ -595,6 +692,9 @@ class NodeRunner:
                 knowledge_snapshot_digest=knowledge_snapshot_digest,
                 capability_profile_digest=capability_profile_digest,
                 commit_id=commit_id,
+                candidate_revision=candidate_revision,
+                candidate_digest=candidate_digest,
+                candidate_validation_status=candidate_validation_status,
             )
             return NodeTransaction.prepare(
                 self.session.run_dir,
@@ -612,6 +712,9 @@ class NodeRunner:
                     "input_digests": dict(input_digests),
                     "knowledge_snapshot_digest": knowledge_snapshot_digest,
                     "capability_profile_digest": capability_profile_digest,
+                    "candidate_revision": candidate_revision,
+                    "candidate_digest": candidate_digest,
+                    "candidate_validation_status": next_state.candidate_validation_status.value,
                 },
             )
 
@@ -640,6 +743,9 @@ class NodeRunner:
         base_state_sha256: str,
         knowledge_snapshot_digest: str | None = None,
         capability_profile_digest: str | None = None,
+        candidate_revision: int | None = None,
+        candidate_digest: str | None = None,
+        candidate_validation_status: ValidationStatus | None = None,
     ) -> PersistentGraphState:
         return self.accept(
             self.prepare(
@@ -649,5 +755,8 @@ class NodeRunner:
                 base_state_sha256=base_state_sha256,
                 knowledge_snapshot_digest=knowledge_snapshot_digest,
                 capability_profile_digest=capability_profile_digest,
+                candidate_revision=candidate_revision,
+                candidate_digest=candidate_digest,
+                candidate_validation_status=candidate_validation_status,
             )
         )

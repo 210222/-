@@ -1,4 +1,4 @@
-"""Persistent cache keys bound to v3.0 graph context and ArtifactRefs only."""
+"""Persistent cache keys bound to v3.1 graph context and ArtifactRefs only."""
 
 from __future__ import annotations
 
@@ -36,6 +36,12 @@ def _optional_digest(value: str | None, field_name: str) -> str | None:
         require_sha256(value, field_name)
     except DomainValidationError as exc:
         raise StateInvariantError(str(exc)) from exc
+    return value
+
+
+def _non_negative_int(value: object, field_name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise StateInvariantError(f"{field_name} must be a non-negative integer")
     return value
 
 
@@ -84,6 +90,8 @@ class NodeCacheKey:
     node_id: str
     stage_signature: str
     input_digests: Mapping[str, str]
+    candidate_revision: int
+    candidate_digest: str
     knowledge_snapshot_digest: str | None
     capability_profile_digest: str | None
 
@@ -96,6 +104,11 @@ class NodeCacheKey:
             except DomainValidationError as exc:
                 raise StateInvariantError(str(exc)) from exc
         object.__setattr__(self, "input_digests", _digests(self.input_digests, "input_digests"))
+        _non_negative_int(self.candidate_revision, "candidate_revision")
+        try:
+            require_sha256(self.candidate_digest, "candidate_digest")
+        except DomainValidationError as exc:
+            raise StateInvariantError(str(exc)) from exc
         _optional_digest(self.knowledge_snapshot_digest, "knowledge_snapshot_digest")
         _optional_digest(self.capability_profile_digest, "capability_profile_digest")
 
@@ -104,6 +117,8 @@ class NodeCacheKey:
             "node_id": self.node_id,
             "stage_signature": self.stage_signature,
             "input_digests": dict(self.input_digests),
+            "candidate_revision": self.candidate_revision,
+            "candidate_digest": self.candidate_digest,
             "knowledge_snapshot_digest": self.knowledge_snapshot_digest,
             "capability_profile_digest": self.capability_profile_digest,
         }
