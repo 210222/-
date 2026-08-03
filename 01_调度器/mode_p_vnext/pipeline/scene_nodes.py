@@ -552,7 +552,14 @@ def run_execution_design(
         "blocking_commit": {"commit_id": commit.commit_id, "beat_count": len(commit.beats)},
         "knowledge_view": _knowledge_view_transport(k2_snapshot),
         "capability_profile": _capability_transport(profile),
-        "approved_fact_handles": sorted(facts.approved_handles),
+        "approved_fact_handles": [
+            {
+                "handle": fact.fact_handle,
+                "semantic": fact.semantic.name,
+                "subject": fact.qualifiers.subject_label,
+            }
+            for fact in facts.facts
+        ],
         "reference_requirements": references,
         "dialogue": dialogue,
         "audio_facts": dialogue,
