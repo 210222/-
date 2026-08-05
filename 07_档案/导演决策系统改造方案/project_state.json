@@ -1,0 +1,126 @@
+{
+  "schema_version": "1.0.0",
+  "project_id": "director-knowledge-rebuild",
+  "status": "initialized",
+  "current_phase": 0,
+  "active_task": {
+    "task_id": "TASK-001",
+    "phase": 0,
+    "task_file": "07_档案/导演决策系统改造方案/TASK_001_ASSET_INVENTORY.md",
+    "goal": "盘点当前 MODE:P 的导演知识、生产读取链、经验、失败反馈和测试，建立迁移事实地图。",
+    "status": "active",
+    "allowed_writes": [
+      "07_档案/导演决策系统改造方案/work/phase_0_inventory/",
+      "07_档案/导演决策系统改造方案/project_state.json"
+    ],
+    "forbidden_writes": [
+      "01_调度器/",
+      "02_Agent/",
+      "03_知识库/",
+      "04_共享/",
+      "05_修复与反馈/",
+      "05_项目经验/",
+      "06_测试/",
+      "CLAUDE.md",
+      "MODE_P_MIGRATION.md"
+    ],
+    "acceptance": [
+      "输出 production/candidate/historical/unknown 分类的知识清单",
+      "所有结论绑定真实仓库路径",
+      "完成规定的分层抽样",
+      "生成 gap report、migration map 和 pilot selection",
+      "不修改生产路径",
+      "更新 project_state 并停止"
+    ],
+    "next_on_success": "TASK-002",
+    "next_on_failure": "TASK-001-REPAIR"
+  },
+  "task_queue": [
+    {
+      "task_id": "TASK-002",
+      "phase": 1,
+      "task_file": "待由 TASK-001 结果生成",
+      "goal": "根据盘点结果进行 Schema 映射演练并修订数据契约。",
+      "status": "queued",
+      "allowed_writes": [
+        "07_档案/导演决策系统改造方案/work/phase_1_schema/"
+      ],
+      "forbidden_writes": [
+        "01_调度器/",
+        "02_Agent/",
+        "04_共享/"
+      ],
+      "acceptance": [
+        "代表性资产可映射",
+        "Schema 可机器校验",
+        "状态枚举不混淆"
+      ],
+      "next_on_success": "TASK-003",
+      "next_on_failure": "TASK-002-REPAIR"
+    }
+  ],
+  "completed_tasks": [],
+  "blocked_tasks": [],
+  "artifacts": [
+    "07_档案/导演决策系统改造方案/README.md",
+    "07_档案/导演决策系统改造方案/GOAL.md",
+    "07_档案/导演决策系统改造方案/MASTER_SYSTEM_PROMPT.md",
+    "07_档案/导演决策系统改造方案/EXECUTION_PLAN.md",
+    "07_档案/导演决策系统改造方案/TASK_001_ASSET_INVENTORY.md",
+    "07_档案/导演决策系统改造方案/ACCEPTANCE_TESTS.md",
+    "07_档案/导演决策系统改造方案/schemas/director_skill.schema.yaml",
+    "07_档案/导演决策系统改造方案/schemas/director_state.schema.json",
+    "07_档案/导演决策系统改造方案/schemas/project_state.schema.json",
+    "07_档案/导演决策系统改造方案/schemas/failure_pattern.schema.yaml"
+  ],
+  "metrics": {
+    "files_inventoried": 0,
+    "assets_catalogued": 0,
+    "skills_drafted": 0,
+    "skills_verified": 0,
+    "failure_patterns": 0,
+    "benchmark_cases": 0,
+    "benchmark_pass_rate": 0
+  },
+  "decisions": [
+    {
+      "decision_id": "DEC-001",
+      "conclusion": "改造方案先作为 07_档案 下的非运行时项目包提交，不直接修改当前 MODE:P。",
+      "reason": "当前 Director/DP 和单一 Master 真源已在生产使用，知识迁移需要先盘点、试点和基准验证。",
+      "date": "2026-08-05"
+    },
+    {
+      "decision_id": "DEC-002",
+      "conclusion": "把 03_知识库/书籍蒸馏草案_v1.0.md 作为 Phase 0 的既有设计输入，不覆盖它。",
+      "reason": "该文件已提出 RIA-TV++ 和初步导演链，本项目负责补全可执行状态、Schema、基准与接入流程。",
+      "date": "2026-08-05"
+    }
+  ],
+  "risks": [
+    {
+      "risk_id": "RISK-001",
+      "description": "新方案与现有 Director 已具备能力重复，造成额外复杂度。",
+      "mitigation": "TASK-001 必须明确现有能力并建立差异地图。"
+    },
+    {
+      "risk_id": "RISK-002",
+      "description": "候选知识未经验证直接进入生产索引。",
+      "mitigation": "所有候选保持隔离，生产接入必须单独 PR。"
+    }
+  ],
+  "unresolved": [
+    "现有胶囊的实际质量、重复率和来源完整度待 TASK-001 盘点。",
+    "最终生产知识存放位置和索引适配方式待试点后决定。",
+    "既有 RIA-TV++ 草案中的规则、情绪映射和直接安装路径需在 TASK-001/试点中验证。"
+  ],
+  "last_run": {
+    "run_id": null,
+    "started_at": null,
+    "finished_at": null,
+    "status": "not_started",
+    "summary": "项目包已初始化，等待执行 TASK-001。",
+    "files_created": [],
+    "files_modified": [],
+    "checks_run": []
+  }
+}

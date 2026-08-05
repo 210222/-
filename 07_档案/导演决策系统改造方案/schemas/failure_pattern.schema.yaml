@@ -1,0 +1,129 @@
+schema_name: director_failure_pattern
+schema_version: 1.0.0
+description: 导演决策失败模式、根因定位和修复契约
+
+required:
+  - failure_id
+  - version
+  - status
+  - name
+  - observable_symptoms
+  - detection
+  - likely_root_causes
+  - earliest_error_level
+  - impact
+  - repair
+  - boundary_conditions
+  - examples
+  - source
+  - confidence
+
+fields:
+  failure_id:
+    type: string
+    pattern: "^FAIL-[A-Z0-9_-]+$"
+
+  version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+
+  status:
+    type: enum
+    values: [draft, review_ready, verified, deprecated, rejected]
+
+  name:
+    type: string
+
+  aliases:
+    type: array
+
+  observable_symptoms:
+    type: array
+    min_items: 1
+
+  detection:
+    type: object
+    required: [method, signals]
+    object_fields:
+      method:
+        enum: [rule, metric, llm_critic, human_review, hybrid]
+      signals:
+        type: array
+      threshold:
+        type: string
+      evidence_required:
+        type: array
+
+  likely_root_causes:
+    type: array
+    min_items: 1
+    item_type: object
+    object_fields:
+      level:
+        enum: [episode, scene, beat, blocking, viewpoint, camera, editing, continuity, knowledge_retrieval]
+      cause: string
+      diagnostic_question: string
+
+  earliest_error_level:
+    type: enum
+    values: [episode, scene, beat, blocking, viewpoint, camera, editing, continuity, knowledge_retrieval]
+
+  impact:
+    type: array
+    min_items: 1
+
+  repair:
+    type: object
+    required: [rollback_to, steps, verification]
+    object_fields:
+      rollback_to:
+        enum: [episode, scene, beat, blocking, viewpoint, camera, editing, continuity, knowledge_retrieval]
+      steps:
+        type: array
+      verification:
+        type: array
+      abort_conditions:
+        type: array
+
+  boundary_conditions:
+    type: array
+    min_items: 1
+    description: 看似相同但不应触发该失败模式的情况
+
+  related_skills:
+    type: array
+
+  examples:
+    type: object
+    required_for_status:
+      review_ready: [positive, false_positive]
+      verified: [positive, false_positive, repaired]
+    object_fields:
+      positive: array
+      false_positive: array
+      repaired: array
+
+  source:
+    type: array
+    min_items: 1
+
+  confidence:
+    type: enum
+    values: [high, medium, low]
+
+initial_required_patterns:
+  - DialogueCoverageCollapse
+  - OverShoulderDependency
+  - DialogueTurnCutting
+  - CameraMovementWithoutCause
+  - ShotVarietyForItsOwnSake
+  - BlockingVacuum
+  - EmotionalFlatline
+  - PowerBlindness
+  - InformationLeak
+  - ShotRedundancy
+  - PrematureCloseUp
+  - ExhaustedEscalation
+  - ContinuityDrift
+  - SecondBySecondMechanicalPlanning
+  - LocalOptimization

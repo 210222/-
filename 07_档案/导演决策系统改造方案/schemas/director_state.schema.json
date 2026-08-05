@@ -1,0 +1,605 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "director_state.schema.json",
+  "title": "Director Decision State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project",
+    "episode",
+    "scenes",
+    "decision_log"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "project_id"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string"
+        },
+        "runtime_mode": {
+          "type": "string"
+        },
+        "source_of_truth": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "episode": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "episode_id",
+        "dramatic_question",
+        "episode_directive",
+        "audience_start_state",
+        "audience_end_state"
+      ],
+      "properties": {
+        "episode_id": {
+          "type": "string"
+        },
+        "theme": {
+          "type": "string"
+        },
+        "dramatic_question": {
+          "type": "string"
+        },
+        "episode_directive": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rejected_because": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "audience_start_state": {
+          "type": "object"
+        },
+        "audience_end_state": {
+          "type": "object"
+        },
+        "emotion_curve": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "information_curve": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "visual_progression": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "characters": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": true,
+        "properties": {
+          "want": {
+            "type": "string"
+          },
+          "need": {
+            "type": "string"
+          },
+          "fear": {
+            "type": "string"
+          },
+          "strategy": {
+            "type": "string"
+          },
+          "knowledge": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hidden_information": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scene"
+      }
+    },
+    "selected_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rejected_skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "skill_id",
+          "reason"
+        ],
+        "properties": {
+          "skill_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "decision_log": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decisionRecord"
+      }
+    },
+    "failed_attempts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "user_feedback": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "lessons_learned": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "$defs": {
+    "decisionRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_id",
+        "level",
+        "conclusion",
+        "confidence",
+        "evidence",
+        "downstream_constraints"
+      ],
+      "properties": {
+        "decision_id": {
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "episode",
+            "scene",
+            "beat",
+            "blocking",
+            "viewpoint",
+            "camera",
+            "editing",
+            "continuity"
+          ]
+        },
+        "conclusion": {
+          "type": "string"
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "supporting_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rejected_because": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rules_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exception_check": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "downstream_constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "scene_id",
+        "scene_function",
+        "entry_state",
+        "exit_state",
+        "beats",
+        "candidate_strategies"
+      ],
+      "properties": {
+        "scene_id": {
+          "type": "string"
+        },
+        "source_lines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scene_function": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 3
+        },
+        "entry_state": {
+          "type": "object"
+        },
+        "exit_state": {
+          "type": "object"
+        },
+        "character_goals": {
+          "type": "object"
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subtext": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "audience_knowledge": {
+          "type": "object"
+        },
+        "power_map": {
+          "type": "object"
+        },
+        "space_map": {
+          "type": "object"
+        },
+        "beats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/beat"
+          },
+          "minItems": 1
+        },
+        "blocking_strategy": {
+          "type": "object"
+        },
+        "candidate_strategies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/candidateStrategy"
+          },
+          "minItems": 3
+        },
+        "selected_strategy": {
+          "type": "string"
+        },
+        "shots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/shot"
+          }
+        }
+      }
+    },
+    "beat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "beat_id",
+        "before_state",
+        "trigger",
+        "character_intention",
+        "after_state",
+        "state_changes",
+        "camera_change_required"
+      ],
+      "properties": {
+        "beat_id": {
+          "type": "string"
+        },
+        "before_state": {
+          "type": "object"
+        },
+        "trigger": {
+          "type": "string"
+        },
+        "character_action": {
+          "type": "string"
+        },
+        "character_intention": {
+          "type": "string"
+        },
+        "subtext": {
+          "type": "string"
+        },
+        "after_state": {
+          "type": "object"
+        },
+        "state_changes": {
+          "type": "object",
+          "properties": {
+            "power": {
+              "type": "string"
+            },
+            "relationship": {
+              "type": "string"
+            },
+            "information": {
+              "type": "string"
+            },
+            "emotion": {
+              "type": "string"
+            },
+            "space": {
+              "type": "string"
+            }
+          }
+        },
+        "camera_change_required": {
+          "type": "boolean"
+        },
+        "camera_change_reason": {
+          "type": "string"
+        }
+      }
+    },
+    "candidateStrategy": {
+      "type": "object",
+      "required": [
+        "strategy_id",
+        "strategy_type",
+        "audience_effect",
+        "blocking",
+        "viewpoint",
+        "tradeoffs"
+      ],
+      "properties": {
+        "strategy_id": {
+          "type": "string"
+        },
+        "strategy_type": {
+          "enum": [
+            "restrained_observation",
+            "subjective_emotion",
+            "relationship_blocking",
+            "hybrid"
+          ]
+        },
+        "audience_effect": {
+          "type": "string"
+        },
+        "blocking": {
+          "type": "string"
+        },
+        "viewpoint": {
+          "type": "string"
+        },
+        "camera_logic": {
+          "type": "string"
+        },
+        "editing_logic": {
+          "type": "string"
+        },
+        "tradeoffs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "score": {
+          "type": "object"
+        },
+        "rejected_because": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "shot": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "shot_id",
+        "beat_id",
+        "dramatic_function",
+        "audience_effect",
+        "traceability",
+        "execution"
+      ],
+      "properties": {
+        "shot_id": {
+          "type": "string"
+        },
+        "beat_id": {
+          "type": "string"
+        },
+        "dramatic_function": {
+          "type": "string"
+        },
+        "audience_effect": {
+          "type": "string"
+        },
+        "traceability": {
+          "type": "object",
+          "required": [
+            "beat_state_change",
+            "scene_function",
+            "episode_directive"
+          ],
+          "properties": {
+            "beat_state_change": {
+              "type": "string"
+            },
+            "scene_function": {
+              "type": "string"
+            },
+            "episode_directive": {
+              "type": "string"
+            }
+          }
+        },
+        "execution": {
+          "type": "object",
+          "required": [
+            "subject",
+            "viewpoint",
+            "framing",
+            "camera_position",
+            "movement",
+            "cut_trigger"
+          ],
+          "properties": {
+            "subject": {
+              "type": "string"
+            },
+            "viewpoint": {
+              "type": "string"
+            },
+            "framing": {
+              "type": "string"
+            },
+            "camera_position": {
+              "type": "string"
+            },
+            "camera_height": {
+              "type": "string"
+            },
+            "lens": {
+              "type": "string"
+            },
+            "composition": {
+              "type": "string"
+            },
+            "movement": {
+              "type": "string"
+            },
+            "movement_trigger": {
+              "type": "string"
+            },
+            "blocking": {
+              "type": "string"
+            },
+            "duration_logic": {
+              "type": "string"
+            },
+            "cut_trigger": {
+              "type": "string"
+            },
+            "continuity_in": {
+              "type": "object"
+            },
+            "continuity_out": {
+              "type": "object"
+            }
+          }
+        },
+        "rules_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "exception_check": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rejected_alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

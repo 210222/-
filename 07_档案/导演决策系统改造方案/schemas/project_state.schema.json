@@ -1,0 +1,291 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project_state.schema.json",
+  "title": "Director Knowledge Rebuild Project State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "project_id",
+    "status",
+    "current_phase",
+    "active_task",
+    "task_queue",
+    "metrics",
+    "last_run"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "project_id": {
+      "const": "director-knowledge-rebuild"
+    },
+    "status": {
+      "enum": [
+        "initialized",
+        "active",
+        "blocked",
+        "paused",
+        "completed"
+      ]
+    },
+    "current_phase": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 8
+    },
+    "active_task": {
+      "$ref": "#/$defs/task"
+    },
+    "task_queue": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/task"
+      }
+    },
+    "completed_tasks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/taskResult"
+      }
+    },
+    "blocked_tasks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/taskResult"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "files_inventoried",
+        "assets_catalogued",
+        "skills_drafted",
+        "skills_verified",
+        "failure_patterns",
+        "benchmark_cases"
+      ],
+      "properties": {
+        "files_inventoried": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assets_catalogued": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skills_drafted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skills_verified": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failure_patterns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "benchmark_cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "benchmark_pass_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "unresolved": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "last_run": {
+      "type": "object",
+      "required": [
+        "run_id",
+        "status",
+        "summary"
+      ],
+      "properties": {
+        "run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "started_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "finished_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "not_started",
+            "completed",
+            "partial",
+            "blocked",
+            "failed"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "files_created": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "files_modified": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "checks_run": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "phase",
+        "task_file",
+        "goal",
+        "status",
+        "allowed_writes",
+        "forbidden_writes",
+        "acceptance"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "task_file": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "queued",
+            "active",
+            "completed",
+            "blocked",
+            "failed"
+          ]
+        },
+        "allowed_writes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "forbidden_writes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "acceptance": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_on_success": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "next_on_failure": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "taskResult": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "status",
+        "summary"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "completed",
+            "blocked",
+            "failed"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

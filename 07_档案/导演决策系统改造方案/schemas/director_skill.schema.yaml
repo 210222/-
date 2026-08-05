@@ -1,0 +1,194 @@
+schema_name: director_skill
+schema_version: 1.0.0
+description: 可执行导演知识资产契约
+
+required:
+  - skill_id
+  - version
+  - status
+  - name
+  - asset_class
+  - category
+  - purpose
+  - dramatic_problem
+  - trigger_conditions
+  - required_inputs
+  - decision_questions
+  - procedure
+  - do_not_use_when
+  - failure_signs
+  - repair_strategy
+  - evaluation
+  - source
+  - confidence
+
+fields:
+  skill_id:
+    type: string
+    pattern: "^DIR-[A-Z0-9_-]+$"
+    description: 永久唯一 ID
+
+  version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+
+  status:
+    type: enum
+    values: [draft, review_ready, verified, deprecated, rejected]
+
+  name:
+    type: string
+
+  asset_class:
+    type: enum
+    values:
+      - principle
+      - decision_rule
+      - planning_skill
+      - functional_skill
+      - atomic_skill
+      - evaluation_rule
+      - conflict_rule
+
+  category:
+    type: enum
+    values:
+      - story_diagnosis
+      - episode_strategy
+      - scene_architecture
+      - beat_analysis
+      - audience_state
+      - blocking
+      - spatial_relationship
+      - viewpoint
+      - cinematography
+      - editing
+      - continuity
+      - scene_pattern
+      - evaluation
+
+  higher_level_dependency:
+    type: array
+    item_type: string
+    description: 该技能必须支持或依赖的上位原则、规划技能或功能技能 ID
+
+  purpose:
+    type: string
+
+  dramatic_problem:
+    type: string
+
+  trigger_conditions:
+    type: array
+    min_items: 1
+    item_type: string
+
+  required_inputs:
+    type: array
+    min_items: 1
+    item_type: string
+
+  decision_questions:
+    type: array
+    min_items: 1
+    item_type: string
+
+  procedure:
+    type: array
+    min_items: 1
+    item_type: string
+
+  candidate_options:
+    type: array
+    item_type: object
+    object_fields:
+      option_id: string
+      description: string
+      select_when: array
+      tradeoffs: array
+
+  selection_rules:
+    type: array
+    item_type: string
+
+  do_not_use_when:
+    type: array
+    min_items: 1
+    item_type: string
+
+  conflicts_with:
+    type: array
+    item_type: string
+
+  priority_rules:
+    type: array
+    item_type: string
+
+  failure_signs:
+    type: array
+    min_items: 1
+    item_type: string
+
+  repair_strategy:
+    type: object
+    required: [rollback_level, steps]
+    object_fields:
+      rollback_level:
+        enum: [episode, scene, beat, blocking, viewpoint, camera, editing, continuity]
+      steps:
+        type: array
+      stop_conditions:
+        type: array
+
+  evaluation:
+    type: object
+    required: [success_indicators, failure_indicators]
+    object_fields:
+      success_indicators:
+        type: array
+      failure_indicators:
+        type: array
+      metrics:
+        type: array
+
+  examples:
+    type: object
+    required_for_status:
+      review_ready: [correct, incorrect, boundary]
+      verified: [correct, incorrect, boundary]
+    object_fields:
+      correct: array
+      incorrect: array
+      boundary: array
+      conflict: array
+
+  source:
+    type: array
+    min_items: 1
+    item_type: object
+    object_fields:
+      source_type:
+        enum: [book, project_experience, benchmark, expert_review, other]
+      title: string
+      chapter: string
+      location: string
+      note: string
+
+  confidence:
+    type: enum
+    values: [high, medium, low]
+
+  evidence:
+    type: array
+    item_type: string
+
+  supersedes:
+    type: array
+    item_type: string
+
+validation_rules:
+  - verified 状态必须包含 correct、incorrect、boundary 三类案例
+  - high 置信度必须至少有两项独立 evidence
+  - atomic_skill 不得缺少 higher_level_dependency
+  - 禁止保存自由思维链或不可验证的自述
+  - 任何 source 缺失的资产不得进入 verified
